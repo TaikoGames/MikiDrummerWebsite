@@ -1,0 +1,15 @@
+<news>
+    <item>
+        <title>Breaking News</title>
+        <description>This is a breaking news story.</description>
+        <link>https://example.com/article1</link>
+        <pubDate>Thu, 26 May 2024 12:00:00 GMT</pubDate>
+    </item>
+    <item>
+        <title>Another News Item</title>
+        <description>This is another news item.</description>
+        <link>https://example.com/article2</link>
+        <pubDate>Fri, 27 May 2024 09:30:00 GMT</pubDate>
+    </item>
+    <!-- Add more items as needed -->
+</news>
