@@ -34,9 +34,9 @@
     <header class="bg-red-800 text-center py-4 bg-opacity-80">
         <img src="https://placehold.co/100x100" alt="MIKIB Logo" class="inline-block">
         <nav class="text-xl font-bold">
-            <a href="#" class="px-4 section-link" data-section="section1">ABOUT</a>
-            <a href="#" class="px-4 section-link" data-section="section2">VIDEOS</a>
-            <a href="#" class="px-4 section-link" data-section="section3">SERVICES</a>
+            <a href="#" class="block sm:inline-block px-4 section-link" data-section="section1">ABOUT</a>
+            <a href="#" class="block sm:inline-block px-4 section-link" data-section="section2">VIDEOS</a>
+            <a href="#" class="block sm:inline-block px-4 section-link" data-section="section3">SERVICES</a>
         </nav>
         <div class="flex justify-center space-x-4 mt-2">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -48,8 +48,8 @@
     <section id="news-section" class="text-center mt-2 py-2 bg-opacity-80 bg-gray-800">
         <p id="news-text" class="text-gray-400 text-lg text-shadow">Loading news...</p>
     </section>
-    <main class="flex justify-between items-start mt-4 px-12 text-shadow">
-        <div id="section1" class="section-content w-1/2 text-left space-y-4">
+    <main class="flex flex-col lg:flex-row justify-between items-start mt-4 px-4 sm:px-12 text-shadow">
+        <div id="section1" class="section-content w-full lg:w-1/2 text-left space-y-4">
             <h1 class="text-4xl font-bold">LIVE DRUM TECHNICIAN</h1>
             <div>
                 <h2 class="text-2xl font-bold">ONLINE SERVICES:</h2>
@@ -84,7 +84,7 @@
                 <iframe src="https://www.youtube.com/embed/videoid4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
-        <div id="section3" class="section-content hidden w-1/2 text-left space-y-4">
+        <div id="section3" class="section-content hidden w-full lg:w-1/2 text-left space-y-4">
             <h1 class="text-4xl font-bold">DRUM EQUIPMENT</h1>
             <div>
                 <h2 class="text-2xl font-bold">AVAILABLE FOR RENT:</h2>
@@ -100,7 +100,7 @@
                 </ul>
             </div>
         </div>
-        <div class="w-1/2 text-center">
+        <div class="w-full lg:w-1/2 text-center mt-4 lg:mt-0">
             <img id="section-image" src="https://placehold.co/400x400" alt="Drum set" class="inline-block">
             <p id="section-caption" class="text-xl font-bold mt-2">PDP MAPLE CUSTOM ZILDJIAN A</p>
         </div>
@@ -168,20 +168,4 @@
             .then(response => {
                 console.log('Fetching news.txt...');
                 if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
-                return response.text();
-            })
-            .then(data => {
-                console.log('Fetched news:', data);
-                const newsItems = data.split('\n');
-                const formattedNews = newsItems.map(item => `<p>${item}</p>`).join('');
-                document.getElementById('news-text').innerHTML = formattedNews;
-            })
-            .catch(error => {
-                console.error('Error fetching news:', error);
-                document.getElementById('news-text').textContent = 'Failed to load news.';
-            });
-    </script>
-</body>
-</html>
+                    throw new Error('Network response was not
