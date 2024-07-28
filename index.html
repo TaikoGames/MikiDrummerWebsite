@@ -31,20 +31,23 @@
     </style>
 </head>
 <body class="bg-fixed-cover text-white font-sans">
-    <header class="bg-red-800 text-center py-4 bg-opacity-80">
-        <img src="https://placehold.co/100x100" alt="MIKIB Logo" class="inline-block">
-        <nav class="text-xl font-bold">
-            <a href="#" class="px-4 section-link" data-section="section1">ABOUT</a>
-            <a href="#" class="px-4 section-link" data-section="section2">VIDEOS</a>
-            <a href="#" class="px-4 section-link" data-section="section3">SERVICES</a>
+    <header class="bg-red-800 flex justify-between items-center py-4 px-4 bg-opacity-80">
+        <div class="flex items-center space-x-4">
+            <img src="https://placehold.co/100x100" alt="MIKIB Logo" class="inline-block">
+        </div>
+        <nav class="flex space-x-8 text-xl font-bold">
+            <a href="#" class="section-link" data-section="section1">ABOUT</a>
+            <a href="#" class="section-link" data-section="section2">VIDEOS</a>
+            <a href="#" class="section-link" data-section="section3">SERVICES</a>
         </nav>
-        <div class="flex justify-center space-x-4 mt-2">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
+        <div class="flex justify-center space-x-4">
+            <a href="#"><i class="fab fa-facebook-f text-2xl"></i></a>
+            <a href="#"><i class="fab fa-twitter text-2xl"></i></a>
+            <a href="#"><i class="fab fa-instagram text-2xl"></i></a>
+            <a href="#"><i class="fab fa-youtube text-2xl"></i></a>
         </div>
     </header>
+    
     <section id="news-section" class="text-center mt-2 py-2 bg-opacity-80 bg-gray-800">
         <p id="news-text" class="text-gray-400 text-lg text-shadow">Loading news...</p>
     </section>
