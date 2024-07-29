@@ -1,15 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <news>
     <item>
-        <title>Breaking News</title>
-        <description>This is a breaking news story.</description>
-        <link>https://example.com/article1</link>
-        <pubDate>Thu, 26 May 2024 12:00:00 GMT</pubDate>
+        <title>Sample News 1</title>
+        <description>This is a description of the first news item.</description>
     </item>
     <item>
-        <title>Another News Item</title>
-        <description>This is another news item.</description>
-        <link>https://example.com/article2</link>
-        <pubDate>Fri, 27 May 2024 09:30:00 GMT</pubDate>
+        <title>Sample News 2</title>
+        <description>This is a description of the second news item.</description>
     </item>
-    <!-- Add more items as needed -->
+ 	<item>
+        <title>Sample News 3</title>
+        <description>This is a description of the 3rd  news item.</description>
+    </item>
 </news>

@@ -28,6 +28,32 @@
             width: 100%;
             height: 100%;
         }
+        .scrolling-wrapper {
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 10px 0;
+        }
+        .news-container {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scroll-left 60s linear infinite;
+        }
+        .news-item {
+            display: inline-block;
+            padding: 0 120px;
+            font-size: 1.2rem;
+            color: white;
+        }
+        @keyframes scroll-left {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(-100%);
+            }
+        }
     </style>
 </head>
 <body class="bg-fixed-cover text-white font-sans">
@@ -49,8 +75,13 @@
     </header>
     
     <section id="news-section" class="text-center mt-2 py-2 bg-opacity-80 bg-gray-800">
-        <p id="news-text" class="text-gray-400 text-lg text-shadow">Loading news...</p>
+        <div id="news-container" class="scrolling-wrapper">
+            <div id="news-text" class="news-container">
+                <div class="news-item">Loading news...</div>
+            </div>
+        </div>
     </section>
+    
     <main class="flex justify-between items-start mt-4 px-12 text-shadow">
         <div id="section1" class="section-content w-1/2 text-left space-y-4">
             <h1 class="text-4xl font-bold">LIVE DRUM TECHNICIAN</h1>
@@ -108,6 +139,7 @@
             <p id="section-caption" class="text-xl font-bold mt-2">PDP MAPLE CUSTOM ZILDJIAN A</p>
         </div>
     </main>
+    
     <footer class="bg-red-800 p-4 mt-8 text-center bg-opacity-80">
         <div class="relative">
             <img src="https://placehold.co/100x100" alt="Album cover" class="absolute bottom-0 left-0">
@@ -158,33 +190,38 @@
 
                 if (sectionData[target].image) {
                     sectionImage.src = sectionData[target].image;
-                    sectionImage.classList.remove('hidden');
-                } else {
-                    sectionImage.classList.add('hidden');
+                    sectionCaption.textContent = sectionData[target].caption;
                 }
-                sectionCaption.textContent = sectionData[target].caption;
             });
         });
 
-        // Load dynamic news text
-        fetch('news.txt')
-            .then(response => {
-                console.log('Fetching news.txt...');
+        async function fetchNews() {
+            try {
+                const response = await fetch('news.xml');
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);
                 }
-                return response.text();
-            })
-            .then(data => {
-                console.log('Fetched news:', data);
-                const newsItems = data.split('\n');
-                const formattedNews = newsItems.map(item => `<p>${item}</p>`).join('');
+                
+                const text = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+                const items = xmlDoc.getElementsByTagName('item');
+                
+                let formattedNews = '';
+                for (let i = 0; i < items.length; i++) {
+                    const title = items[i].getElementsByTagName('title')[0].textContent;
+                    const description = items[i].getElementsByTagName('description')[0].textContent;
+                    formattedNews += `<div class="news-item">${title} - ${description}</div>`;
+                }
+                
                 document.getElementById('news-text').innerHTML = formattedNews;
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error fetching news:', error);
                 document.getElementById('news-text').textContent = 'Failed to load news.';
-            });
+            }
+        }
+
+        fetchNews();
     </script>
 </body>
 </html>
