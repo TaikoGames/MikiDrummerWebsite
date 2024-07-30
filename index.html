@@ -135,7 +135,7 @@
             </div>
         </div>
         <div class="w-1/2 text-center">
-            <img id="section-image" src="https://placehold.co/400x400" alt="Drum set" class="inline-block">
+            <img id="section-image" src="https://placehold.co/400x400" alt="" class="inline-block">
             <p id="section-caption" class="text-xl font-bold mt-2">PDP MAPLE CUSTOM ZILDJIAN A</p>
         </div>
     </main>
@@ -165,15 +165,13 @@
                 image: 'https://placehold.co/400x400',
                 caption: 'PDP MAPLE CUSTOM ZILDJIAN A'
             },
-            section2: {
-                image: '',
-                caption: ''
-            },
+            section2: {}, // Empty object for section2
             section3: {
                 image: 'https://placehold.co/400x400?text=Drum+Equipment',
                 caption: 'High-Quality Drum Equipment'
             }
         };
+        
 
         links.forEach(link => {
             link.addEventListener('click', event => {
@@ -187,13 +185,29 @@
                         section.classList.add('hidden');
                     }
                 });
-
-                if (sectionData[target].image) {
-                    sectionImage.src = sectionData[target].image;
-                    sectionCaption.textContent = sectionData[target].caption;
+        
+                // Handle section data based on the target
+                if (sectionData[target]) {
+                    if (sectionData[target].image) {
+                        sectionImage.src = sectionData[target].image;
+                    } else {
+                        sectionImage.src = ''; // Clear image source
+                    }
+                    sectionCaption.textContent = sectionData[target].caption || ''; // Default to empty string if no caption
+                } else {
+                    sectionImage.src = ''; // Clear image source
+                    sectionCaption.textContent = ''; // Clear caption
+                }
+        
+                // Hide or show image container based on section
+                if (target === 'section2') {
+                    imageContainer.style.display = 'none';
+                } else {
+                    imageContainer.style.display = 'block';
                 }
             });
         });
+        
 
         async function fetchNews() {
             try {
