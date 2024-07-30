@@ -12,4 +12,8 @@
         <title>Sample News 3</title>
         <description>This is a description of the 3rd  news item.</description>
     </item>
+    <item>
+        <title>Sample News 4</title>
+        <description>This is a description of the 4 news item.</description>
+    </item>
 </news>
