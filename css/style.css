@@ -1,0 +1,399 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    font-family: 'Kiln Sans';
+    font-weight: 400;
+    background: #080605;
+}
+
+a.active,
+a:focus,
+button:focus,
+button.active {
+    outline: none;
+}
+
+a:focus,
+a:hover,
+a:active {
+    outline: 0;
+    box-shadow: none;
+}
+
+a:focus,
+a:hover {
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    transition: all 0.5s ease-in-out;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+img {
+    border-style: none;
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+}
+
+.navbar {
+    margin: 0;
+    padding: 0;
+}
+
+@font-face {
+    font-family: 'Kiln Sans';
+    src: url('../fonts/KilnSansRegular-Italic.woff2') format('woff2'),
+        url('../fonts/KilnSansRegular-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Kiln Sans';
+    src: url('../fonts/KilnSansSpiked-Italic.woff2') format('woff2'),
+        url('../fonts/KilnSansSpiked-Italic.woff') format('woff');
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Kiln Sans';
+    src: url('../fonts/KilnSansSpiked.woff2') format('woff2'),
+        url('../fonts/KilnSansSpiked.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Kiln Sans';
+    src: url('../fonts/KilnSansRegular.woff2') format('woff2'),
+        url('../fonts/KilnSansRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+header {
+    background: url('../images/header-bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 9px 0;
+    position: relative;
+    z-index: 999;
+}
+
+.navbar-nav {
+    justify-content: space-between;
+    max-width: 655px;
+    width: 100%;
+}
+
+.navbar-brand {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-brand img {
+    max-width: 90px;
+    width: 100%;
+}
+
+.nav-item .nav-link {
+    font-size: 29px;
+    letter-spacing: 3px;
+    color: #ffffff;
+    padding: 0;
+}
+
+.nav-social ul {
+    display: flex;
+    align-items: center;
+}
+
+.nav-social ul li a {
+    background: #fff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-social ul li {
+    margin-right: 8px;
+}
+
+.nav-social ul li:last-child {
+    margin-right: 0px;
+}
+
+.main-text {
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.hero h1 {
+    font-style: italic;
+    padding-bottom: 30px;
+}
+
+.hero h2 {
+    padding-bottom: 30px;
+}
+
+.hero {
+    background: url('../images/banner.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding-top: 51px;
+    padding-bottom: 81px;
+    height: calc(100vh - 277.33px);
+}
+
+.hero-right {
+    position: relative;
+}
+
+.hero-right .text-box {
+    text-align: center;
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.hero-right p {
+    font-size: 24px;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-transform: lowercase;
+    max-width: 280px;
+    width: 100%;
+}
+
+.hero-left ul {
+    padding-left: 36px;
+    padding-bottom: 28px;
+}
+
+.hero-left ol {
+    padding-left: 36px;
+}
+
+.hero-left ol .main-text {
+    font-style: italic;
+}
+
+.hero-left {
+    position: relative;
+}
+
+.hero-left:after {
+    content: "";
+    position: absolute;
+    right: 0;
+    width: 3px;
+    height: 230px;
+    background: #fff;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.news-pra p {
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+
+.news-pra {
+    background: rgba(255, 255, 255, 0.18);
+    padding: 10px 27px;
+    border-top: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+}
+
+/* audio styling  */
+.audio-player {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.thumbnail {
+    position: absolute;
+    top: -100px;
+    left: -200px;
+}
+
+.thumbnail img {
+    width: 100%;
+    border-radius: 15px;
+    max-width: 170px;
+}
+
+.controls {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.control-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+#seekBar {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 5px;
+    background: black;
+    outline: none;
+    cursor: pointer;
+    margin: 0 10px;
+    border-radius: 5px;
+}
+
+#seekBar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+}
+
+footer span {
+    color: white;
+    font-size: 14px;
+    margin: 0 10px;
+}
+
+footer button i {
+    font-size: 18px;
+}
+
+.playlist {
+    width: 100%;
+    margin-top: 10px;
+    display: none;
+}
+
+#playlist-songs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#playlist-songs li {
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#playlist-songs li.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+footer {
+    background: #460006;
+    padding: 55px 0;
+    position: relative;
+}
+
+.footer-audio-main {
+    position: relative;
+}
+
+/* about page */
+.thumbnail-img {
+    max-width: 168px;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.thumbnail-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 0 20px 0px;
+    border-bottom: 2px solid #aea8a8;
+}
+
+.thumbnail-main .text-box h3,
+.thumbnail-main .text-box p {
+    color: #fff;
+}
+
+.thumbnail-main .text-box h3 {
+    font-size: 20px;
+    line-height: 30px;
+}
+
+.thumbnail-main .text-box p {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.nav-link.active {
+    position: relative;
+    color: #fff !important;
+    text-decoration: underline;
+}
+
+.nav-link.active::after {
+    content: "";
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background: url(../images/active-bg.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 160px;
+    height: 100px;
+    border-radius: 50%;
+    opacity: 1;
+    z-index: -1;
+    mix-blend-mode: overlay;
+}
