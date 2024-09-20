@@ -114,4 +114,14 @@ playlistItems.forEach((item, index) => {
 // Initialize player
 initializePlayer();
 
-  
+//   video overlay
+document.addEventListener('DOMContentLoaded', function() {
+    const liveOverlay = document.querySelector('.live-overlay'); // Selects the first element with the class "live-overlay"
+    const closeOverlayButton = document.querySelector('.close-overlay'); // Selects the first element with the class "close-overlay"
+
+    // Event listener for closing the overlay manually
+    closeOverlayButton.addEventListener('click', () => {
+        liveOverlay.style.display = 'none'; // Hides the overlay
+    });
+});
+

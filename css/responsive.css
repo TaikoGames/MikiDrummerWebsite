@@ -40,6 +40,9 @@
     .main-text {
         font-size: 24px;
     }
+    .overlay-content .video-main iframe {
+        height: 450px;
+    }
 }
 @media(max-width: 1199px){
     .audio-player {
