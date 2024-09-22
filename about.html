@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Include FontAwesome for icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/responsive.css">
+        <title>Mirkidrummer</title>
+    </head>
+    <body>
+        <header>
+            <div class="container">
+                <nav class="navbar navbar-expand-lg">
+                    <a class="navbar-brand" href="index.html">
+                        <img src="images/brand.png" alt="">
+                    </a>
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                        <span class="navbar-toggler-icon"></span>
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="about.html">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="video.html">Videos</a>
+                                <!-- Active link -->
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="service.html">service</a>
+                            </li>
+                        </ul>
+                        <div class="nav-social">
+                            <ul>
+                                <li>
+                                    <a href="#">
+                                        <img src="images/fb.png" alt="">
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <img src="images/twitter.png" alt="">
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <img src="images/instagram.png" alt="">
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <img src="images/youtube.png" alt="">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <div class="news-pra">
+            <p>news - BLA BLABLABLA</p>
+        </div>
+        <section class="hero">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 col-resp">
+                        <h1 class="main-text">LIVE DRUM TECHNICIAN</h1>
+                        <div class="hero-left">
+                            <h2 class="main-text">About:</h2>
+                            <ul>
+                                <li>
+                                    <a href="#" class="main-text">Remote Drum Recording</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="main-text"> Custom Drum Tracks</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="main-text"> Custom Drum Tracks</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="main-text"> Arranging and Composing Drum Parts</a>
+                                </li>
+                                <li class="main-text">Online Drum Lessons:</li>
+                                <li>
+                                    <a href="#" class="main-text"> Private Drum Lessons</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="main-text"> Virtual Concerts and Live Streams</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="main-text"> Video Editing</a>
+                                </li>
+                            </ul>
+                            <h2 class="main-text">In-Person service:</h2>
+                            <ol>
+                                <li>
+                                    <a href="#" class="main-text">Presencial Drum Lessons</a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="hero-right">
+                            <img src="images/band.png" alt="">
+                            <div class="text-box">
+                                <p class="main-text">
+                                    pdp maple custom
+                            zildjian a
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer>
+            <div class="footer-main">
+                <div class="container">
+                    <div class="footer-audio-main">
+                        <div class="audio-player">
+                            <audio id="audio" src="audio/audio1.mp3"></audio>
+                            <div class="thumbnail">
+                                <img id="thumbnail-img" src="images/music-img1.png" alt="Song Thumbnail">
+                            </div>
+                            <div class="controls">
+                                <button id="prev" class="control-button">
+                                    <i class="fas fa-backward"></i>
+                                </button>
+                                <button id="playPause" class="control-button">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button id="next" class="control-button">
+                                    <i class="fas fa-forward"></i>
+                                </button>
+                                <input
+                                    type="range"
+                                    id="seekBar"
+                                    value="0"
+                                    min="0"
+                                    max="100"
+                                    step="1"
+                                >
+                                <span id="currentTime">0:00</span>
+                                <span id="duration">0:00</span>
+                                <button id="playlist" class="control-button">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button id="volume" class="control-button">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                            </div>
+                            <div class="playlist">
+                                <ul id="playlist-songs">
+                                    <li data-src="audio/audio1.mp3" data-thumbnail="images/music-img1.png" class="active">Song 1</li>
+                                    <li data-src="song2.mp3" data-thumbnail="thumbnail2.jpg">Song 2</li>
+                                    <li data-src="song3.mp3" data-thumbnail="thumbnail3.jpg">Song 3</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/custom.js"></script>
+    </body>
+</html>
