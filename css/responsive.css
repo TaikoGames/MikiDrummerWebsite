@@ -40,6 +40,9 @@
     .main-text {
         font-size: 24px;
     }
+    .overlay-content .video-main iframe {
+        height: 450px;
+    }
 }
 @media(max-width: 1199px){
     .audio-player {
@@ -163,6 +166,9 @@
     }
     header {
         padding: 4px 0;
+    }
+    .video-main iframe {
+        height: 230px;
     }
     .navbar-collapse {
         top: 70px;
