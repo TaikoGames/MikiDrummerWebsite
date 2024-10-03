@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/responsive.css">
-        <title>Mirkidrummer</title>
+        <title>Mirkidrummer1</title>
     </head>
     <body>
         <header>
@@ -72,7 +72,56 @@
             </div>
         </header>
         <div class="news-pra">
-            <marquee>news - tetas tetas  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cumque, voluptates ex iusto consequatur aut excepturi necessitatibus velit voluptatum inventore recusandae aperiam quaerat asperiores corporis, totam eos est. Adipisci aperiam tempora delectus iure beatae, magnam porro fugit nulla perspiciatis ipsa possimus amet eveniet voluptatem asperiores, suscipit accusamus hic illo vel nisi nostrum eum obcaecati. Sed quo dolore veritatis! Esse dolorum delectus earum maiores placeat omnis tempora aspernatur inventore quibusdam, accusantium quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi voluptatem, corporis possimus at saepe odio porro, libero fugiat consectetur consequatur, quis qui necessitatibus enim dolores ab sequi sint unde obcaecati dignissimos vitae. Repudiandae expedita fugit iusto iste earum. Maxime nulla debitis eum quidem cum obcaecati tenetur accusantium fuga architecto reprehenderit, distinctio ipsam dolor aliquam aspernatur vel repellendus omnis odio veniam minima ea sunt sit, rerum mollitia quis? Sint, minima? Ipsam animi laboriosam quia ipsum, magnam voluptas itaque corporis dignissimos ratione repellat? Inventore harum voluptatibus, quam praesentium voluptatum nulla aspernatur minima repellat. Vel praesentium veritatis dicta, voluptate voluptatum quam ex suscipit.</marquee>
+          <marquee id="newsMarquee">Loading news...</marquee>
+
+  <script>
+      async function fetchNews() {
+          try {
+              const response = await fetch('news.txt');
+              const data = await response.text();
+
+              // Process the text file and extract both titles and descriptions
+              const newsArray = data.split('\n').filter(line => line.trim() !== ''); // Removing empty lines
+
+              let newsItems = [];
+              let currentNews = {};
+
+              // Loop through each line and extract title and description
+              for (let line of newsArray) {
+                  if (line.startsWith('Title:')) {
+                      if (currentNews.title) {
+                          // Push the previous news item
+                          newsItems.push(currentNews);
+                      }
+                      // Start a new news item
+                      currentNews = { title: line.replace('Title: ', '').trim() };
+                  } else if (line.startsWith('Description:')) {
+                      // Add description to the current news item
+                      currentNews.description = line.replace('Description: ', '').trim();
+                  }
+              }
+
+              // Push the last news item
+              if (currentNews.title) {
+                  newsItems.push(currentNews);
+              }
+
+              // Format the news items into a string for the marquee
+              const newsContent = newsItems.map(news => `${news.title} - ${news.description}`).join(' | ');
+
+              // Display the news titles and descriptions in the marquee
+              document.getElementById('newsMarquee').innerText = `${newsContent}`;
+
+          } catch (error) {
+              document.getElementById('newsMarquee').innerText = 'Error loading news';
+          }
+      }
+
+      // Fetch and display news on page load
+      fetchNews();
+  </script>
+
+
         </div>
         <section class="hero">
             <div class="container">
