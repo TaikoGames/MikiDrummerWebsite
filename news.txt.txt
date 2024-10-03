@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<news>
-    <item>News item 1</item>
-    <item>News item 2</item>
-    <item>News item 3</item>
-</news>
