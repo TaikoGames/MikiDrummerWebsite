@@ -174,9 +174,34 @@
                 </div>
                 <div class="live-overlay">
                     <div class="overlay-content">
-                         <!--live VIDEO LINK-->
                         <div class="video-main">
-                            <iframe width="560" height="315" src="https://www.youtube.com/@companymiki/live" frameborder="0" allowfullscreen></iframe>
+                          <iframe id="youtubeFrame" width="100%" height="495"
+      title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+  <script>
+      // Function to fetch YouTube URL from JSON file
+      async function loadYouTubeURL() {
+          try {
+              // Fetching the JSON file
+              const response = await fetch('youtubeurl.json');
+
+              // Parsing the JSON data
+              const data = await response.json();
+
+              // Getting the iframe element
+              const iframe = document.getElementById('youtubeFrame');
+
+              // Setting the src attribute of the iframe to the URL from JSON
+              iframe.src = data.youtube_url;
+          } catch (error) {
+              console.error('Error loading YouTube URL:', error);
+          }
+      }
+
+      // Load the YouTube URL when the page loads
+      window.onload = loadYouTubeURL;
+  </script>
                         </div>
                       <a href="#" class="close-overlay"><img src="images/cross.png" alt=""></a>
                     </div>
@@ -222,9 +247,10 @@
                             <div class="playlist">
                                 <ul id="playlist-songs">
                                     <li data-src="audio/audio1.mp3" data-thumbnail="images/music-img1.png" class="active">Song 1</li>
-                                    <li data-src="song2.mp3" data-thumbnail="thumbnail2.jpg">Song 2</li>
-                                    <li data-src="song3.mp3" data-thumbnail="thumbnail3.jpg">Song 3</li>
-                                </ul>
+                                    <li data-src="audio/audio2.mp3" data-thumbnail="thumbnail2.jpg">Song 2</li>
+                                    <li data-src="audio/03 - Land and Sea.mp3" data-thumbnail="thumbnail3.jpg">Song 3</li>
+                                    <li data-src="audio/04 - Skamen.mp3" data-thumbnail="thumbnail3.jpg">Song 4</li>
+
                             </div>
                         </div>
                     </div>
