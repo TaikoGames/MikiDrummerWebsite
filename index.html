@@ -45,7 +45,7 @@
                         </ul>
                         <div class="nav-social">
                             <ul>
-                               
+
                                 <li>
                                     <a href="https://www.tiktok.com/@mikibdrummer">
                                         <img src="images/twitter.png" alt="miki drummer tik tok">
@@ -126,12 +126,12 @@
                         <div class="hero-left">
                             <h2 class="main-text">About:</h2>
                             <p class="main-text">
-                                Originally from the sun-soaked shores of Ibiza, Spain, and now shaking things up in Vancouver, 
-                                Miki has been smashing the drums for over two decades. Starting out in the suburban skate punk scene 
+                                Originally from the sun-soaked shores of Ibiza, Spain, and now shaking things up in Vancouver,
+                                Miki has been smashing the drums for over two decades. Starting out in the suburban skate punk scene
                                 of the Balearic Islands, he’s now fully plugged into Vancouver's music scene.
                             </p>
                             <ol>
-                                
+
                             </ol>
                         </div>
                     </div>
@@ -140,7 +140,7 @@
                             <img src="images/band.png" alt="">
                             <div class="text-box">
                                 <p class="main-text">
-                                  
+
                                 </p>
                             </div>
                         </div>
@@ -235,3 +235,46 @@
         <script src="js/custom.js"></script>
     </body>
 </html>
+
+
+
+<script type="text/javascript">
+// Function to show or hide the overlay based on config value
+function toggleOverlay(showOverlay) {
+  var overlay = document.querySelector('.live-overlay');
+  if (showOverlay === "yes") {
+      overlay.style.display = "flex";  // Show the overlay
+  } else {
+      overlay.style.display = "none";  // Hide the overlay
+  }
+}
+
+// Fetch the configuration from the JSON file
+fetch('config.json')
+  .then(response => response.json())
+  .then(data => {
+      toggleOverlay(data.showOverlay); // Call the function with the value from the JSON file
+  })
+  .catch(error => console.error('Error fetching the configuration:', error));
+
+// Event listener to close the overlay when the close button is clicked
+document.querySelector('.close-overlay').addEventListener('click', function(event) {
+  event.preventDefault();
+  document.querySelector('.live-overlay').style.display = "none"; // Hide overlay when clicked
+});
+
+// Optional: Show overlay again on button click
+document.getElementById('showOverlay').addEventListener('click', function() {
+  document.querySelector('.live-overlay').style.display = "flex";  // Show overlay when button clicked
+});
+
+</script>
+
+
+<style media="screen">
+.live-overlay {
+  display: none; /* Initially hide the overlay */
+
+}
+
+</style>
