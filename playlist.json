@@ -8,17 +8,17 @@
     {
       "src": "audio/audio2.mp3",
       "thumbnail": "images/thumbnail-img2.jpg",
-      "title": "Song 2"
+      "title": "Star Shines Trough - Dead Fast"
     },
     {
       "src": "audio/LandSea.mp3",
       "thumbnail": "images/music-img3.jpg",
-      "title": "Song 3"
+      "title": "Land and Sea - Dead Fast"
     },
     {
       "src": "audio/04 - Skamen.mp3",
       "thumbnail": "images/thumbnail-img4.jpg",
-      "title": "Song 4"
+      "title": "Skamen - Dead Fast"
     }
   ]
 }
