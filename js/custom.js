@@ -124,3 +124,34 @@ document.addEventListener('DOMContentLoaded', function() {
         liveOverlay.style.display = 'none'; // Hides the overlay
     });
 });
+// Volume slider
+const volumeButton = document.getElementById('volume');
+const volumeIcon = volumeButton.querySelector('i');
+
+// Create volume slider element
+const volumeSlider = document.createElement('input');
+volumeSlider.type = 'range';
+volumeSlider.id = 'volumeBar';
+volumeSlider.min = 0;
+volumeSlider.max = 1;
+volumeSlider.step = 0.01;
+volumeSlider.value = 1;
+volumeSlider.style.cssText = 'width:80px; margin:0 8px; display:none; accent-color:#fff;';
+volumeButton.parentNode.insertBefore(volumeSlider, volumeButton.nextSibling);
+
+// Toggle slider visibility on button click
+volumeButton.addEventListener('click', () => {
+    volumeSlider.style.display = volumeSlider.style.display === 'none' ? 'inline-block' : 'none';
+});
+
+// Update volume and icon on slider change
+volumeSlider.addEventListener('input', () => {
+    audio.volume = volumeSlider.value;
+    if (audio.volume === 0) {
+        volumeIcon.className = 'fas fa-volume-mute';
+    } else if (audio.volume < 0.5) {
+        volumeIcon.className = 'fas fa-volume-down';
+    } else {
+        volumeIcon.className = 'fas fa-volume-up';
+    }
+});
