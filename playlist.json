@@ -1,0 +1,24 @@
+{
+  "songs": [
+    {
+      "src": "audio/Cornered Demo - Lift The Anchor.mp3",
+      "thumbnail": "images/New folder/Cornered.jpg",
+      "title": "Cornered Demo - Lift The Anchor"
+    },
+    {
+      "src": "audio/audio2.mp3",
+      "thumbnail": "images/thumbnail-img2.jpg",
+      "title": "Song 2"
+    },
+    {
+      "src": "audio/LandSea.mp3",
+      "thumbnail": "images/music-img3.jpg",
+      "title": "Song 3"
+    },
+    {
+      "src": "audio/04 - Skamen.mp3",
+      "thumbnail": "images/thumbnail-img4.jpg",
+      "title": "Song 4"
+    }
+  ]
+}
