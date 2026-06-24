@@ -4,7 +4,12 @@
       "src": "audio/NoOther.mp3",
       "thumbnail": "images/New folder/BBN_TheDescent_B.jpg",
       "title": "No Other - Bound By None"
-    }
+    },
+    {
+      "src": "audio/OnTheDouble.mp3",
+      "thumbnail": "images/New folder/BBN_TheDescent_A.jpg",
+      "title": "On The Double - Bound By None"
+    },
     {
       "src": "audio/Cornered Demo - Lift The Anchor.mp3",
       "thumbnail": "images/New folder/Cornered.jpg",
@@ -24,12 +29,6 @@
       "src": "audio/04 - Skamen.mp3",
       "thumbnail": "images/thumbnail-img4.jpg",
       "title": "Skamen - Dead Fast"
-    },
-    {
-      "src": "audio/OnTheDouble.mp3",
-      "thumbnail": "images/New folder/BBN_TheDescent_A.jpg",
-      "title": "On The Double - Bound By None"
-    },
-    
+    }
   ]
 }
