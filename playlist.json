@@ -1,6 +1,11 @@
 {
   "songs": [
     {
+      "src": "audio/NoOther.mp3",
+      "thumbnail": "images/New folder/BBN_TheDescent_B.jpg",
+      "title": "No Other - Bound By None"
+    }
+    {
       "src": "audio/Cornered Demo - Lift The Anchor.mp3",
       "thumbnail": "images/New folder/Cornered.jpg",
       "title": "Cornered Demo - Lift The Anchor"
@@ -25,10 +30,6 @@
       "thumbnail": "images/New folder/BBN_TheDescent_A.jpg",
       "title": "On The Double - Bound By None"
     },
-    {
-      "src": "audio/NoOther.mp3",
-      "thumbnail": "images/New folder/BBN_TheDescent_B.jpg",
-      "title": "No Other - Bound By None"
-    }
+    
   ]
 }
