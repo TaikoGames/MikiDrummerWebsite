@@ -557,6 +557,9 @@
   }
 
   document.getElementById('startBtn').addEventListener('click', () => isRunning ? stop() : start());
+
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+  window.addEventListener('pagehide', stop);
   document.getElementById('resetBtn').addEventListener('click', () => { updateBPM(120); setKnobAngle(bpmToAngle(120)); });
 
   // Knob
