@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metronome – Miki Drummer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Space+Mono:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080605;
+    --chassis: #181818;
+    --surface: #222;
+    --accent: #e8372a;
+    --accent2: #ff6b5b;
+    --text: #f0ede8;
+    --muted: #555;
+    --red: #ff3b2a;
+    --red-dim: #7a1a10;
+    --red-glow: rgba(232,55,42,0.4);
+  }
+
+  body {
+    background: var(--bg) url('../images/banner.png') center center / cover no-repeat fixed;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    user-select: none;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(8,6,5,0.82);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .device, .brand { position: relative; z-index: 1; }
+
+  /* ── DEVICE SHELL ── */
+  .device {
+    background: var(--chassis);
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 920px;
+    box-shadow: 0 0 0 1px #2e2e2e inset, 0 24px 70px rgba(0,0,0,0.9);
+    display: grid;
+    grid-template-columns: 1fr 130px 1fr;
+    gap: 20px;
+    align-items: center;
+    position: relative;
+  }
+
+  /* corner screws */
+  .screw {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #444, #1a1a1a);
+    border: 1px solid #333;
+  }
+  .screw::after { content:''; position:absolute; width:6px; height:1px; background:#555; top:50%; left:50%; transform:translate(-50%,-50%) rotate(45deg); }
+  .screw.tl { top:10px; left:10px; }
+  .screw.tr { top:10px; right:10px; }
+  .screw.bl { bottom:10px; left:10px; }
+  .screw.br { bottom:10px; right:10px; }
+
+  .panel-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  /* ── LEFT PANEL ── */
+  .left-panel {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  /* ── CRT SCREEN ── */
+  .bpm-screen {
+    flex: 1;
+    background: #0a0302;
+    border: 2px solid #2e0d0a;
+    border-radius: 8px;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 140px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px #1f0a08 inset,
+      0 0 30px rgba(0,0,0,0.9) inset,
+      0 0 20px rgba(232,55,42,0.08);
+  }
+
+  /* scanlines */
+  .bpm-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,0.25) 2px,
+      rgba(0,0,0,0.25) 4px
+    );
+    pointer-events: none;
+    z-index: 2;
+    border-radius: 6px;
+  }
+
+  /* CRT vignette */
+  .bpm-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%);
+    pointer-events: none;
+    z-index: 3;
+    border-radius: 6px;
+  }
+
+  .screen-content { position: relative; z-index: 4; text-align: center; }
+
+  .bpm-number {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(56px, 10vw, 84px);
+    font-weight: 400;
+    line-height: 1;
+    color: var(--red);
+    letter-spacing: 2px;
+    text-shadow:
+      0 0 8px var(--red),
+      0 0 20px var(--red-glow),
+      0 0 40px rgba(232,55,42,0.2);
+    transition: text-shadow 0.06s;
+    animation: flicker 8s infinite;
+  }
+
+  @keyframes flicker {
+    0%,95%,100% { opacity: 1; }
+    96% { opacity: 0.92; }
+    97% { opacity: 1; }
+    98% { opacity: 0.88; }
+    99% { opacity: 1; }
+  }
+
+  .bpm-number.flash {
+    text-shadow:
+      0 0 4px #fff,
+      0 0 12px var(--red),
+      0 0 30px var(--red-glow),
+      0 0 60px rgba(232,55,42,0.4);
+  }
+
+  .bpm-unit {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--red-dim);
+    text-transform: uppercase;
+    text-shadow: 0 0 6px var(--red-dim);
+    margin-top: 2px;
+  }
+
+  .tempo-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--red-dim);
+    text-transform: uppercase;
+    text-shadow: 0 0 6px var(--red-dim);
+    margin-top: 2px;
+  }
+
+  /* ── BEAT DOTS (vertical, left of screen) ── */
+  .beats-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .beat-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    border: 1.5px solid #333;
+    transition: background 0.05s, box-shadow 0.05s, transform 0.05s;
+  }
+
+  .beat-dot.downbeat { border-color: var(--accent); }
+
+  .beat-dot.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.4);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .beat-dot.downbeat.active {
+    background: #fff;
+    border-color: #fff;
+    box-shadow: 0 0 10px #fff;
+  }
+
+  /* ── MIDDLE: TIME SIGNATURE ── */
+  .middle-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .time-btn {
+    background: var(--surface);
+    border: 1px solid #333;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 8px 0;
+    width: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .time-btn:hover { border-color: var(--accent); color: var(--text); }
+  .time-btn.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: flex-start;
+  }
+
+  /* ── BIG KNOB ── */
+  .knob-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .knob {
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%, #3e3e3e, #0e0e0e);
+    border: 3px solid #2a2a2a;
+    box-shadow:
+      0 6px 20px rgba(0,0,0,0.8),
+      0 0 0 1px #444 inset,
+      0 -3px 6px rgba(255,255,255,0.04) inset;
+    position: relative;
+    cursor: grab;
+    touch-action: none;
+    transition: box-shadow 0.15s;
+  }
+
+  .knob::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #444, #111);
+    border: 1px solid #333;
+  }
+
+  .knob:active {
+    cursor: grabbing;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.8), 0 0 0 1px #555 inset, 0 0 18px rgba(232,55,42,0.25);
+  }
+
+  .knob-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(232,55,42,0.4);
+    z-index: 2;
+    top: 16px;
+    left: 50%;
+    margin-left: -5px;
+  }
+
+  .knob-logo {
+    position: absolute;
+    width: 60%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0.12;
+    filter: grayscale(1) brightness(2);
+    mix-blend-mode: screen;
+    z-index: 1;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .knob-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── RIGHT CONTROLS ── */
+  .right-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-reset, .btn-tap {
+    background: var(--surface);
+    border: 1px solid #333;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    padding: 7px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    width: 72px;
+    text-align: center;
+  }
+
+  .btn-reset:hover, .btn-tap:hover { border-color: var(--muted); color: var(--text); }
+  .btn-reset:active, .btn-tap:active { transform: scale(0.96); }
+
+  .btn-start {
+    background: var(--accent);
+    border: 3px solid #0e0e0e;
+    color: #fff;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 2px var(--accent), 0 4px 18px rgba(232,55,42,0.5);
+  }
+
+  .btn-start:hover { background: var(--accent2); box-shadow: 0 0 0 2px var(--accent2), 0 4px 24px rgba(232,55,42,0.7); }
+  .btn-start:active { transform: scale(0.95); }
+
+  /* ── BRAND ── */
+  .brand {
+    margin-top: 18px;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: #2a2a2a;
+    text-transform: uppercase;
+  }
+  .brand a { color: #333; text-decoration: none; transition: color 0.2s; }
+  .brand a:hover { color: var(--accent); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.75rem; }
+
+    .device {
+      grid-template-columns: 1fr;
+      gap: 18px;
+      padding: 18px 14px 22px;
+    }
+
+    /* BPM screen full width, dots go horizontal above it */
+    .left-panel { flex-direction: column; align-items: stretch; gap: 10px; }
+    .beats-col { flex-direction: row; justify-content: center; gap: 14px; }
+    .beat-dot { width: 14px; height: 14px; }
+    .bpm-screen { min-height: 110px; }
+
+    /* Sig buttons in a row */
+    .middle-panel { flex-direction: row; gap: 8px; }
+    .middle-panel .panel-label { display: none; }
+    .time-btn { flex: 1; padding: 10px 0; font-size: 13px; }
+
+    /* Right panel: knob centred, controls beside */
+    .right-panel { justify-content: center; gap: 24px; }
+    .knob { width: 130px; height: 130px; }
+    .knob-dot { top: 11px; }
+    .right-controls { gap: 14px; }
+    .btn-start { width: 56px; height: 56px; }
+    .btn-reset, .btn-tap { width: 64px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="screw tl"></div>
+  <div class="screw tr"></div>
+  <div class="screw bl"></div>
+  <div class="screw br"></div>
+
+  <!-- LEFT: beat dots + BPM screen -->
+  <div class="left-panel">
+    <div class="beats-col" id="beatsRow" aria-hidden="true"></div>
+    <div class="bpm-screen">
+      <div class="screen-content">
+        <div class="bpm-number" id="bpmDisplay" aria-live="polite">120</div>
+        <div class="bpm-unit">BPM</div>
+        <div class="tempo-name" id="tempoName">Moderato</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIDDLE: time signature -->
+  <div class="middle-panel">
+    <div class="panel-label">Signature</div>
+    <button class="time-btn" data-beats="2">2/4</button>
+    <button class="time-btn selected" data-beats="4">4/4</button>
+    <button class="time-btn" data-beats="3">3/4</button>
+    <button class="time-btn" data-beats="6">6/8</button>
+  </div>
+
+  <!-- RIGHT: big knob + controls -->
+  <div class="right-panel">
+    <div class="knob-wrap">
+      <div class="knob" id="bpmKnob" aria-label="BPM knob">
+        <div class="knob-dot" id="knobDot"></div>
+        <img src="../images/brand.png" class="knob-logo" alt="">
+      </div>
+      <div class="knob-label">Tempo</div>
+    </div>
+    <div class="right-controls">
+      <button class="btn-reset" id="resetBtn" aria-label="Reset BPM to 120">Reset</button>
+      <button class="btn-start" id="startBtn" aria-label="Start metronome">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white" id="startIcon">
+          <polygon points="5,3 19,12 5,21"/>
+        </svg>
+      </button>
+      <button class="btn-tap" id="tapBtn" aria-label="Tap tempo">Tap</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="brand"><a href="https://www.mikidrummer.ca" target="_blank" rel="noopener">mikidrummer.ca</a></div>
+
+<script>
+(function() {
+  let bpm = 120, beatsPerMeasure = 4, currentBeat = 0;
+  let isRunning = false, intervalId = null;
+  let tapTimes = [], lastTap = 0;
+
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  function playClick(isDownbeat) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.frequency.value = isDownbeat ? 1200 : 800;
+    gain.gain.setValueAtTime(isDownbeat ? 0.6 : 0.35, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+    osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.09);
+  }
+
+  function getTempoName(b) {
+    if (b < 50)  return 'Largo';
+    if (b < 68)  return 'Larghetto';
+    if (b < 76)  return 'Adagio';
+    if (b < 92)  return 'Andante';
+    if (b < 108) return 'Andante mod.';
+    if (b < 120) return 'Moderato';
+    if (b < 132) return 'Allegretto';
+    if (b < 168) return 'Allegro';
+    if (b < 200) return 'Presto';
+    return 'Prestissimo';
+  }
+
+  function buildBeats() {
+    const row = document.getElementById('beatsRow');
+    row.innerHTML = '';
+    for (let i = 0; i < beatsPerMeasure; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'beat-dot' + (i === 0 ? ' downbeat' : '');
+      row.appendChild(dot);
+    }
+  }
+
+  function highlightBeat(idx) {
+    document.querySelectorAll('.beat-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  }
+
+  function updateBPM(val) {
+    bpm = Math.min(240, Math.max(30, val));
+    document.getElementById('bpmDisplay').textContent = bpm;
+    document.getElementById('tempoName').textContent = getTempoName(bpm);
+    if (isRunning) restart();
+  }
+
+  function tick() {
+    playClick(currentBeat === 0);
+    highlightBeat(currentBeat);
+    const num = document.getElementById('bpmDisplay');
+    num.classList.add('flash');
+    setTimeout(() => num.classList.remove('flash'), 60);
+    currentBeat = (currentBeat + 1) % beatsPerMeasure;
+  }
+
+  function start() {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    currentBeat = 0; tick();
+    intervalId = setInterval(tick, (60 / bpm) * 1000);
+    document.getElementById('startIcon').innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
+    isRunning = true;
+  }
+
+  function stop() {
+    clearInterval(intervalId); intervalId = null;
+    document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('active'));
+    document.getElementById('startIcon').innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+    isRunning = false;
+  }
+
+  function restart() {
+    clearInterval(intervalId); currentBeat = 0;
+    intervalId = setInterval(tick, (60 / bpm) * 1000);
+  }
+
+  document.getElementById('startBtn').addEventListener('click', () => isRunning ? stop() : start());
+  document.getElementById('resetBtn').addEventListener('click', () => { updateBPM(120); setKnobAngle(bpmToAngle(120)); });
+
+  // Knob
+  const knob = document.getElementById('bpmKnob');
+  const dot  = document.getElementById('knobDot');
+  let isDragging = false, lastY = 0, knobAngle = 0;
+  function bpmToAngle(b) { return ((b - 30) / (240 - 30)) * 300 - 150; }
+  function angleToBpm(a) { return Math.round(((a + 150) / 300) * (240 - 30) + 30); }
+
+  function setKnobAngle(angle) {
+    knobAngle = Math.max(-150, Math.min(150, angle));
+    knob.style.transform = `rotate(${knobAngle}deg)`;
+  }
+
+  function onDragStart(e) {
+    isDragging = true;
+    lastY = e.touches ? e.touches[0].clientY : e.clientY;
+    e.preventDefault();
+  }
+
+  function onDragMove(e) {
+    if (!isDragging) return;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    const delta = lastY - y;
+    lastY = y;
+    setKnobAngle(knobAngle + delta * 1.5);
+    updateBPM(angleToBpm(knobAngle));
+  }
+
+  function onDragEnd() { isDragging = false; }
+
+  knob.addEventListener('mousedown',  onDragStart);
+  knob.addEventListener('touchstart', onDragStart, { passive: false });
+  window.addEventListener('mousemove',  onDragMove);
+  window.addEventListener('touchmove',  onDragMove, { passive: false });
+  window.addEventListener('mouseup',  onDragEnd);
+  window.addEventListener('touchend', onDragEnd);
+
+  document.querySelector('.middle-panel').addEventListener('click', e => {
+    const btn = e.target.closest('[data-beats]');
+    if (!btn) return;
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    beatsPerMeasure = +btn.dataset.beats;
+    currentBeat = 0; buildBeats();
+  });
+
+  document.getElementById('tapBtn').addEventListener('click', () => {
+    const now = performance.now();
+    if (lastTap && now - lastTap < 3000) {
+      tapTimes.push(now - lastTap);
+      if (tapTimes.length > 6) tapTimes.shift();
+      const newBpm = Math.round(60000 / (tapTimes.reduce((a, b) => a + b, 0) / tapTimes.length));
+      updateBPM(newBpm);
+      setKnobAngle(bpmToAngle(newBpm));
+    } else { tapTimes = []; }
+    lastTap = now;
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); isRunning ? stop() : start(); }
+    if (e.code === 'ArrowUp')   { updateBPM(bpm + 1); setKnobAngle(bpmToAngle(bpm)); }
+    if (e.code === 'ArrowDown') { updateBPM(bpm - 1); setKnobAngle(bpmToAngle(bpm)); }
+  });
+
+  buildBeats();
+  updateBPM(120);
+  setKnobAngle(bpmToAngle(120));
+})();
+</script>
+</body>
+</html>

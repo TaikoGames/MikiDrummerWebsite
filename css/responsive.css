@@ -107,6 +107,12 @@
     }
     .thumbnail-main-inner{
         padding-top: 20px;
+        flex: none;
+        height: auto;
+    }
+    .thumbnail-main-inner iframe {
+        height: 200px;
+        flex: none;
     }
     .nav-link.active::after{
         display: none;
@@ -120,6 +126,11 @@
         height: auto;
         background-position: right;
         padding: 20px 0;
+    }
+    .hero-right img {
+        height: auto;
+        width: 100%;
+        max-width: 100%;
     }
     .hero-right p {
         font-size: 20px;
