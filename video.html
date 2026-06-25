@@ -3,19 +3,32 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Videos – Miki Drummer | Drum Covers & Live Performances</title>
+        <meta name="description" content="Watch Miki Drummer's drum covers and live performances. Featuring tracks from Get Dead, Hot Water Music, Bad Religion, and more.">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="https://www.mikidrummer.ca/video.html">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://www.mikidrummer.ca/video.html">
+        <meta property="og:title" content="Videos – Miki Drummer | Drum Covers & Live Performances">
+        <meta property="og:description" content="Watch Miki Drummer's drum covers and live performances featuring punk and rock tracks.">
+        <meta property="og:image" content="https://www.mikidrummer.ca/images/band.png">
+        <meta property="og:site_name" content="Miki Drummer">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Videos – Miki Drummer | Drum Covers & Live Performances">
+        <meta name="twitter:description" content="Watch Miki Drummer's drum covers and live performances.">
+        <meta name="twitter:image" content="https://www.mikidrummer.ca/images/band.png">
         <!-- Include FontAwesome for icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/responsive.css">
-        <title>Mirkidrummer || service</title>
     </head>
     <body>
         <header>
             <div class="container">
                 <nav class="navbar navbar-expand-lg">
                     <a class="navbar-brand" href="index.html">
-                        <img src="images/brand.png" alt="">
+                        <img src="images/brand.png" alt="Miki Drummer">
                     </a>
                     <button
                         class="navbar-toggler"
@@ -48,17 +61,17 @@
                                 
                                 <li>
                                     <a href="https://www.tiktok.com/@mikibdrummer">
-                                        <img src="images/twitter.png" alt="">
+                                        <img src="images/twitter.png" alt="Miki Drummer TikTok">
                                     </a>
                                 </li>
                                 <li>
                                     <a href="https://www.instagram.com/mikibdrummer/">
-                                        <img src="images/instagram.png" alt="">
+                                        <img src="images/instagram.png" alt="Miki Drummer Instagram">
                                     </a>
                                 </li>
                                 <li>
                                     <a href="https://www.youtube.com/@CompanyMiki">
-                                        <img src="images/youtube.png" alt="">
+                                        <img src="images/youtube.png" alt="Miki Drummer YouTube">
                                     </a>
                                 </li>
                             </ul>
@@ -67,112 +80,136 @@
                 </nav>
             </div>
         </header>
-        <div class="news-pra">
-          <marquee id="newsMarquee">Loading news...</marquee>
+        <!-- ===================== MARQUEE BAR ===================== -->
+        <style>
+          .miki-marquee-bar { width:100%; background:#111; border-top:1px solid #ffffff; border-bottom:1px solid #ffffff; overflow:hidden; height:36px; display:flex; align-items:center; font-family:'Space Mono','Courier New',monospace; font-size:13px; color:#ccc; letter-spacing:0.04em; }
+          .miki-marquee-bar__badge { flex-shrink:0; background:#e8372a; color:#fff; font-weight:700; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; padding:0 14px; height:100%; display:flex; align-items:center; white-space:nowrap; position:relative; z-index:10; box-shadow:4px 0 12px 4px #111; }
+          .miki-marquee-bar__track { display:flex; align-items:center; white-space:nowrap; will-change:transform; animation:miki-scroll 60s linear infinite; padding-left:60px; }
+          .miki-marquee-bar__track:hover { animation-play-state:paused; }
+          @keyframes miki-scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+          .miki-city { display:inline-flex; align-items:center; gap:10px; white-space:nowrap; }
+          .miki-city__flag { font-size:16px; }
+          .miki-city__name { color:#e8372a; font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; }
+          .miki-city__time { color:#f0ede8; font-size:14px; }
+          .miki-city__weather { color:#999; font-size:12px; }
+          .miki-news-label { color:#e8372a; font-size:10px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; white-space:nowrap; }
+          .miki-news-text { color:#f0ede8; font-size:13px; white-space:nowrap; }
+          .miki-divider { display:inline-block; width:1px; height:20px; background:#333; margin:0 32px; vertical-align:middle; flex-shrink:0; }
+          .miki-sep { color:#e8372a; margin:0 20px; opacity:0.6; font-size:12px; }
+        </style>
 
-  <script>
-      async function fetchNews() {
-          try {
-              const response = await fetch('news.txt');
-              const data = await response.text();
-
-              // Process the text file and extract both titles and descriptions
-              const newsArray = data.split('\n').filter(line => line.trim() !== ''); // Removing empty lines
-
-              let newsItems = [];
-              let currentNews = {};
-
-              // Loop through each line and extract title and description
-              for (let line of newsArray) {
-                  if (line.startsWith('Title:')) {
-                      if (currentNews.title) {
-                          // Push the previous news item
-                          newsItems.push(currentNews);
-                      }
-                      // Start a new news item
-                      currentNews = { title: line.replace('Title: ', '').trim() };
-                  } else if (line.startsWith('Description:')) {
-                      // Add description to the current news item
-                      currentNews.description = line.replace('Description: ', '').trim();
-                  }
-              }
-
-              // Push the last news item
-              if (currentNews.title) {
-                  newsItems.push(currentNews);
-              }
-
-              // Format the news items into a string for the marquee
-              const newsContent = newsItems.map(news => `${news.title} - ${news.description}`).join(' | ');
-
-              // Display the news titles and descriptions in the marquee
-              document.getElementById('newsMarquee').innerText = `${newsContent}`;
-
-          } catch (error) {
-              document.getElementById('newsMarquee').innerText = 'Error loading news';
-          }
-      }
-
-      // Fetch and display news on page load
-      fetchNews();
-  </script>
+        <div class="miki-marquee-bar" role="marquee" aria-label="Miki Drummer live info">
+          <div class="miki-marquee-bar__badge">⚪ Live</div>
+          <div class="miki-marquee-bar__track" id="mikiTrack">
+            <span style="color:#444">Loading...</span>
+          </div>
         </div>
+
+        <script>
+        (function () {
+          const CITIES = [
+            { name: 'Vancouver', flag: '🍁', lat: 49.2827, lon: -123.1207, tz: 'America/Vancouver' },
+            { name: 'Ibiza',     flag: '🌴', lat: 38.9067, lon:   1.4206,  tz: 'Europe/Madrid'    }
+          ];
+          const track = document.getElementById('mikiTrack');
+          function getTime(tz) {
+            return new Date().toLocaleString('en-GB', { timeZone:tz, weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false });
+          }
+          async function getWeather(lat, lon, tz) {
+            const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weathercode,windspeed_10m&temperature_unit=celsius&wind_speed_unit=kmh&timezone='+encodeURIComponent(tz));
+            return (await r.json()).current;
+          }
+          function wIcon(c) { if(c===0)return'☀️';if(c<=2)return'🌤️';if(c===3)return'☁️';if(c<=49)return'🌫️';if(c<=57)return'🌦️';if(c<=67)return'🌧️';if(c<=77)return'❄️';if(c<=82)return'🌦️';if(c<=86)return'🌨️';if(c<=99)return'⛈️';return'🌡️'; }
+          function wDesc(c) { if(c===0)return'Clear';if(c<=2)return'Partly cloudy';if(c===3)return'Overcast';if(c<=49)return'Foggy';if(c<=57)return'Drizzle';if(c<=67)return'Rain';if(c<=77)return'Snow';if(c<=82)return'Showers';if(c<=86)return'Snow showers';if(c<=99)return'Thunderstorm';return'—'; }
+          async function fetchNews() {
+            try {
+              const r = await fetch('news.txt?_='+Date.now());
+              const text = await r.text();
+              const entries = []; let current = {};
+              text.split('\n').forEach(function(line) {
+                line = line.trim();
+                if(line.startsWith('Title:')) { if(current.title) entries.push(current); current={title:line.replace('Title:','').trim()}; }
+                else if(line.startsWith('Description:')) { current.desc=line.replace('Description:','').trim(); }
+              });
+              if(current.title) entries.push(current);
+              return entries;
+            } catch(e) { return []; }
+          }
+          function cityHTML(city, w) {
+            const weather = w ? '<span class="miki-city__weather">'+wIcon(w.weathercode)+' '+wDesc(w.weathercode)+' · '+Math.round(w.temperature_2m)+'°C</span>' : '';
+            return '<span class="miki-city"><span class="miki-city__flag">'+city.flag+'</span><span class="miki-city__name">'+city.name+'</span><span class="miki-city__time" data-tz="'+city.tz+'">'+getTime(city.tz)+'</span>'+weather+'</span>';
+          }
+          function newsHTML(entries) {
+            if(!entries.length) return '';
+            return entries.map(function(e) {
+              var desc = e.desc && e.desc!=='TBA' ? ' — '+e.desc : '';
+              return '<span class="miki-news-label">📰 News</span><span class="miki-sep">▸</span><span class="miki-news-text">'+e.title+desc+'</span>';
+            }).join('<span class="miki-sep">◆</span>');
+          }
+          async function build() {
+            const [weathers, newsEntries] = await Promise.all([
+              Promise.all(CITIES.map(function(c){return getWeather(c.lat,c.lon,c.tz).catch(function(){return null;});})),
+              fetchNews()
+            ]);
+            const cities = CITIES.map(function(c,i){return cityHTML(c,weathers[i]);}).join('<span class="miki-divider"></span>');
+            const news = newsHTML(newsEntries);
+            const spacer = news ? '<span class="miki-divider"></span>' : '';
+            const block = cities + spacer + news;
+            const gap = '<span style="display:inline-block;width:50vw"></span>';
+            track.innerHTML = block + gap + block + gap;
+            requestAnimationFrame(function() {
+              var dur = Math.round(track.scrollWidth / 2 / 80);
+              track.style.animationDuration = Math.max(20,dur)+'s';
+            });
+          }
+          build();
+          setInterval(function(){ track.querySelectorAll('[data-tz]').forEach(function(el){ el.textContent=getTime(el.dataset.tz); }); }, 30000);
+          setInterval(build, 10*60*1000);
+        })();
+        </script>
+        <!-- ===================== END MARQUEE BAR ===================== -->
         <section class="hero about-hero">
             <div class="container">
                 <div class="about-main">
                     <div class="row">
                         <div class="col-xl-8 col-lg-7 col-12">
-                            <div class="video-main">
-                                <iframe
-                                    width="100%"
-                                    height="495"
-                                    src="https://www.youtube.com/embed/Vnxkbt7xEWo?si=ybOTZG-0DH1Up_R7"
-                                    title="YouTube video player"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    referrerpolicy="strict-origin-when-cross-origin"
-                                    allowfullscreen
-                                ></iframe>
-                            </div>
+                            <div class="video-main" id="featuredVideo"></div>
                         </div>
-                        <div class="col-xl-4 col-lg-5 col-12">
-                            <div class="thumbnail-main-inner">
-                                <iframe
-                                    width="100%"
-                                    height="100%"
-                                    src="https://www.youtube.com/embed/Hb0sgnwfHls?si=5I6PmBroFAtCKUfd"
-                                    title="YouTube video player"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    referrerpolicy="strict-origin-when-cross-origin"
-                                    allowfullscreen
-                                ></iframe>
-                                <iframe
-                                    width="100%"
-                                    height="100%"
-                                    src="https://www.youtube.com/embed/f1DRS9IAEWo?si=kf6mcZE3I3p0BoQo"
-                                    title="YouTube video player"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    referrerpolicy="strict-origin-when-cross-origin"
-                                    allowfullscreen
-                                ></iframe>
-                                <iframe
-                                    width="100%"
-                                    height="100%"
-                                    src="https://www.youtube.com/embed/CviWc1tnSP8?si=UMSKtT87pL4oZnSn"
-                                    title="YouTube video player"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    referrerpolicy="strict-origin-when-cross-origin"
-                                    allowfullscreen
-                                ></iframe>
-                            </div>
+                        <div class="col-xl-4 col-lg-5 col-12" style="display:flex; flex-direction:column;">
+                            <div class="thumbnail-main-inner" id="sidebarVideos"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <script>
+        fetch('videos.json?_=' + Date.now())
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+
+            // Featured video
+            var featured = document.getElementById('featuredVideo');
+            var fi = document.createElement('iframe');
+            fi.width = '100%'; fi.height = '495'; fi.frameBorder = '0';
+            fi.allowFullscreen = true; fi.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+            fi.allow = allow; fi.title = data.featured.title;
+            fi.src = 'https://www.youtube.com/embed/' + data.featured.id + '?playsinline=1';
+            featured.appendChild(fi);
+
+            // Sidebar videos
+            var sidebar = document.getElementById('sidebarVideos');
+            data.sidebar.forEach(function(v) {
+              var si = document.createElement('iframe');
+              si.width = '100%'; si.height = '100%'; si.frameBorder = '0';
+              si.allowFullscreen = true; si.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+              si.allow = allow; si.title = v.title;
+              si.src = 'https://www.youtube.com/embed/' + v.id + '?playsinline=1';
+              sidebar.appendChild(si);
+            });
+          });
+        </script>
         <footer>
             <div class="footer-main">
                 <div class="container">
