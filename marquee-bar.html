@@ -1,0 +1,274 @@
+<!--
+  =============================================
+  MIKI DRUMMER — Marquee Bar
+  - Live time + weather: Vancouver & Ibiza
+  - News pulled from /news.txt
+  Paste this where "Loading news..." appears.
+  =============================================
+-->
+
+<style>
+  .miki-marquee-bar {
+    width: 100%;
+    background: #111;
+    border-top: 1px solid #1e1e1e;
+    border-bottom: 1px solid #1e1e1e;
+    overflow: hidden;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    font-family: 'Space Mono', 'Courier New', monospace;
+    font-size: 13px;
+    color: #ccc;
+    letter-spacing: 0.04em;
+  }
+
+  .miki-marquee-bar__badge {
+    flex-shrink: 0;
+    background: #e8372a;
+    color: #fff;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0 14px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    position: relative;
+    z-index: 10;
+    box-shadow: 4px 0 12px 4px #111;
+  }
+
+  .miki-marquee-bar__track {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    will-change: transform;
+    animation: miki-scroll 60s linear infinite;
+    padding-left: 60px;
+  }
+
+  .miki-marquee-bar__track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes miki-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  .miki-city {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+  }
+
+  .miki-city__flag   { font-size: 16px; }
+
+  .miki-city__name {
+    color: #e8372a;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .miki-city__time {
+    color: #f0ede8;
+    font-size: 14px;
+  }
+
+  .miki-city__weather { color: #999; font-size: 12px; }
+
+  .miki-news-label {
+    color: #e8372a;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .miki-news-text {
+    color: #f0ede8;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .miki-divider {
+    display: inline-block;
+    width: 1px;
+    height: 20px;
+    background: #333;
+    margin: 0 32px;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  .miki-sep {
+    color: #e8372a;
+    margin: 0 20px;
+    opacity: 0.6;
+    font-size: 12px;
+  }
+</style>
+
+<div class="miki-marquee-bar" role="marquee" aria-label="Miki Drummer live info">
+  <div class="miki-marquee-bar__badge">📡 Live</div>
+  <div class="miki-marquee-bar__track" id="mikiTrack">
+    <span style="color:#444">Loading...</span>
+  </div>
+</div>
+
+<script>
+(function () {
+
+  const CITIES = [
+    { name: 'Vancouver', flag: '🍁', lat: 49.2827, lon: -123.1207, tz: 'America/Vancouver' },
+    { name: 'Ibiza',     flag: '🌴', lat: 38.9067, lon:   1.4206,  tz: 'Europe/Madrid'    }
+  ];
+
+  const track = document.getElementById('mikiTrack');
+
+  // ── Time ────────────────────────────────────────────────────────────────
+
+  function getTime(tz) {
+    return new Date().toLocaleString('en-GB', {
+      timeZone: tz,
+      weekday: 'short',
+      hour:    '2-digit',
+      minute:  '2-digit',
+      hour12:  false
+    });
+  }
+
+  // ── Weather ──────────────────────────────────────────────────────────────
+
+  async function getWeather(lat, lon, tz) {
+    const url = `https://api.open-meteo.com/v1/forecast` +
+      `?latitude=${lat}&longitude=${lon}` +
+      `&current=temperature_2m,weathercode,windspeed_10m` +
+      `&temperature_unit=celsius&wind_speed_unit=kmh` +
+      `&timezone=${encodeURIComponent(tz)}`;
+    const r = await fetch(url);
+    return (await r.json()).current;
+  }
+
+  function wIcon(c) {
+    if (c === 0) return '☀️';
+    if (c <= 2)  return '🌤️';
+    if (c === 3) return '☁️';
+    if (c <= 49) return '🌫️';
+    if (c <= 57) return '🌦️';
+    if (c <= 67) return '🌧️';
+    if (c <= 77) return '❄️';
+    if (c <= 82) return '🌦️';
+    if (c <= 86) return '🌨️';
+    if (c <= 99) return '⛈️';
+    return '🌡️';
+  }
+
+  function wDesc(c) {
+    if (c === 0) return 'Clear';
+    if (c <= 2)  return 'Partly cloudy';
+    if (c === 3) return 'Overcast';
+    if (c <= 49) return 'Foggy';
+    if (c <= 57) return 'Drizzle';
+    if (c <= 67) return 'Rain';
+    if (c <= 77) return 'Snow';
+    if (c <= 82) return 'Showers';
+    if (c <= 86) return 'Snow showers';
+    if (c <= 99) return 'Thunderstorm';
+    return '—';
+  }
+
+  // ── News.txt parser ──────────────────────────────────────────────────────
+  // Expects repeating blocks of:
+  //   Title: Some title
+  //   Description: Some description
+  // Blank lines between entries are ignored.
+
+  async function fetchNews() {
+    try {
+      const r = await fetch('/news.txt?_=' + Date.now());
+      const text = await r.text();
+      const entries = [];
+      let current = {};
+      text.split('\n').forEach(line => {
+        line = line.trim();
+        if (line.startsWith('Title:')) {
+          if (current.title) entries.push(current);
+          current = { title: line.replace('Title:', '').trim() };
+        } else if (line.startsWith('Description:')) {
+          current.desc = line.replace('Description:', '').trim();
+        }
+      });
+      if (current.title) entries.push(current);
+      return entries;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // ── HTML builders ────────────────────────────────────────────────────────
+
+  function cityHTML(city, w) {
+    const weather = w
+      ? `<span class="miki-city__weather">${wIcon(w.weathercode)} ${wDesc(w.weathercode)} · ${Math.round(w.temperature_2m)}°C · 💨 ${Math.round(w.windspeed_10m)} km/h</span>`
+      : '';
+    return `<span class="miki-city">
+      <span class="miki-city__flag">${city.flag}</span>
+      <span class="miki-city__name">${city.name}</span>
+      <span class="miki-city__time" data-tz="${city.tz}">${getTime(city.tz)}</span>
+      ${weather}
+    </span>`;
+  }
+
+  function newsHTML(entries) {
+    if (!entries.length) return '';
+    return entries.map(e => {
+      const desc = e.desc && e.desc !== 'TBA' ? ` — ${e.desc}` : '';
+      return `<span class="miki-news-label">📰 News</span>
+              <span class="miki-sep">▸</span>
+              <span class="miki-news-text">${e.title}${desc}</span>`;
+    }).join('<span class="miki-sep">◆</span>');
+  }
+
+  // ── Build ─────────────────────────────────────────────────────────────────
+
+  async function build() {
+    const [weathers, newsEntries] = await Promise.all([
+      Promise.all(CITIES.map(c => getWeather(c.lat, c.lon, c.tz).catch(() => null))),
+      fetchNews()
+    ]);
+
+    const cities = CITIES.map((c, i) => cityHTML(c, weathers[i])).join('<span class="miki-divider"></span>');
+    const news   = newsHTML(newsEntries);
+    const spacer = news ? '<span class="miki-divider"></span>' : '';
+
+    const block = cities + spacer + news;
+    track.innerHTML = block + '<span class="miki-sep" style="margin:0 40px">◆</span>' + block;
+
+    requestAnimationFrame(() => {
+      const dur = Math.round(track.scrollWidth / 2 / 80);
+      track.style.animationDuration = Math.max(20, dur) + 's';
+    });
+  }
+
+  build();
+
+  // Update clock every 30s
+  setInterval(() => {
+    track.querySelectorAll('[data-tz]').forEach(el => {
+      el.textContent = getTime(el.dataset.tz);
+    });
+  }, 30000);
+
+  // Full refresh every 10 min
+  setInterval(build, 10 * 60 * 1000);
+
+})();
+</script>
