@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Punk BC — Upcoming Punk & Hardcore Shows in British Columbia</title>
+  <meta name="description" content="Find upcoming punk, hardcore, metal and crust shows across British Columbia — Vancouver, Victoria, Kelowna, Nanaimo and beyond. Dates, venues, tickets and band info.">
+  <meta name="keywords" content="punk shows BC, punk shows Vancouver, hardcore Vancouver, punk shows Victoria, hardcore BC, punk concerts British Columbia, BC punk scene, crust punk BC, metal shows Vancouver, Rickshaw Theatre, Biltmore Cabaret, Astoria Vancouver, upcoming shows BC 2026">
+  <link rel="canonical" href="https://www.mikidrummer.ca/punkbc">
+  <meta property="og:title" content="Punk BC — Upcoming Punk & Hardcore Shows in British Columbia">
+  <meta property="og:description" content="Your community guide to punk, hardcore, metal and crust shows across BC. Updated regularly.">
+  <meta property="og:url" content="https://www.mikidrummer.ca/punkbc">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Subhumans.jpg/330px-Subhumans.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Punk BC — Upcoming Punk & Hardcore Shows in BC">
+  <meta name="twitter:description" content="Your community guide to punk, hardcore, metal and crust shows across British Columbia.">
+  <meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Subhumans.jpg/330px-Subhumans.jpg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Punk BC",
+    "url": "https://www.mikidrummer.ca/punkbc",
+    "description": "Community guide to upcoming punk, hardcore and metal shows across British Columbia",
+    "publisher": {
+      "@type": "Person",
+      "name": "Miki Drummer",
+      "url": "https://www.mikidrummer.ca"
+    }
+  }
+  </script>
+
+  <!-- Google tag -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C75363M813"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-C75363M813');
+  </script>
+
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #111;
+      --border: #222;
+      --red: #dc2626;
+      --red-dim: #7f1d1d;
+      --white: #f5f5f5;
+      --gray: #9ca3af;
+      --gray-dim: #374151;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      border-bottom: 2px solid var(--red);
+      padding: 20px 16px;
+      background: #000;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-icon {
+      font-size: 36px;
+      line-height: 1;
+    }
+    .logo-text h1 {
+      font-size: clamp(24px, 5vw, 40px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1;
+    }
+    .logo-text p {
+      font-size: 10px;
+      color: var(--red);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap-6px;
+      font-size: 11px;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--red);
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    #submit-btn {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    #submit-btn:hover { background: #b91c1c; }
+
+    /* ── CITY FILTER ── */
+    .city-bar {
+      background: #0d0d0d;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .city-bar::-webkit-scrollbar { display: none; }
+    .city-tabs {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0;
+      padding: 0 16px;
+    }
+    .city-tab {
+      padding: 12px 20px;
+      font-size: 12px;
+      font-family: inherit;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--gray);
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .city-tab:hover { color: var(--white); }
+    .city-tab.active {
+      color: var(--red);
+      border-bottom-color: var(--red);
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── SHOW CARDS ── */
+    #shows-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .show-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .show-card:hover {
+      border-color: var(--red);
+      transform: translateY(-2px);
+    }
+    .show-card-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background: #1a1a1a;
+      display: block;
+    }
+    .show-card-img-placeholder {
+      width: 100%;
+      height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #1a0000 0%, #0a0a0a 50%, #1a0000 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .show-card-img-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+    }
+    .show-card-img-placeholder::after {
+      content: '⚡';
+      position: absolute;
+      font-size: 80px;
+      opacity: 0.04;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .show-card-body {
+      padding: 14px;
+    }
+    .show-date {
+      font-size: 10px;
+      color: var(--red);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .show-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--white);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .show-venue {
+      font-size: 12px;
+      color: var(--gray);
+      margin-bottom: 8px;
+    }
+    .show-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag {
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+    .tag-city { background: var(--gray-dim); color: var(--white); }
+    .tag-genre { background: var(--red-dim); color: #fca5a5; }
+    .show-price {
+      font-size: 11px;
+      color: var(--gray);
+      margin-top: 8px;
+    }
+
+    /* ── SKELETON ── */
+    .skeleton {
+      background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .skeleton-img { height: 160px; }
+    .skeleton-body { padding: 14px; }
+    .skeleton-line { height: 12px; margin-bottom: 8px; }
+
+    /* ── EMPTY / ERROR ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray);
+      grid-column: 1 / -1;
+    }
+    .empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 13px; letter-spacing: 1px; }
+
+    /* ── SUBMIT MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #111;
+      border: 1px solid var(--red);
+      border-radius: 8px;
+      padding: 28px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal h2 {
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      color: var(--red);
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: #0a0a0a;
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--red); }
+    .form-group select option { background: #111; }
+    .form-group textarea { height: 80px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-submit {
+      flex: 1;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #b91c1c; }
+    .btn-cancel {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--gray);
+      padding: 12px 20px;
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+    .btn-cancel:hover { border-color: var(--gray); }
+    .form-success {
+      text-align: center;
+      padding: 30px 0;
+    }
+    .form-success .check { font-size: 40px; margin-bottom: 10px; }
+    .form-success p { color: var(--gray); font-size: 13px; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 16px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--gray-dim);
+      letter-spacing: 1px;
+    }
+    footer a { color: var(--red); text-decoration: none; }
+
+    /* ── API KEY SETUP ── */
+    #api-setup {
+      display: none;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    #api-setup.show { display: flex; }
+    #api-setup h2 {
+      font-size: 28px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+    #api-setup p { color: var(--gray); font-size: 13px; margin-bottom: 24px; max-width: 400px; }
+    #api-setup a { color: var(--red); }
+    .key-input-row { display: flex; gap: 8px; max-width: 460px; width: 100%; }
+    .key-input-row input {
+      flex: 1;
+      background: #111;
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: 4px;
+      outline: none;
+    }
+    .key-input-row input:focus { border-color: var(--red); }
+    .key-input-row button {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-family: inherit;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      #shows-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- API Key Setup Screen -->
+<div id="api-setup">
+  <div style="font-size:48px;margin-bottom:16px">🤘</div>
+  <h2>Punk BC</h2>
+  <p>Needs a free Ticketmaster API key to pull live show data. No credit card required.</p>
+  <a href="https://developer.ticketmaster.com/products-and-docs/apis/getting-started/" target="_blank" rel="noopener">→ Get your free key at developer.ticketmaster.com</a>
+  <br><br>
+  <div class="key-input-row">
+    <input type="text" id="tm-key-input" placeholder="Paste Ticketmaster API key..." />
+    <button onclick="saveKey()">GO</button>
+  </div>
+  <p style="margin-top:12px;font-size:11px">Stored locally in your browser. Never sent anywhere else.</p>
+</div>
+
+<!-- Main Dashboard -->
+<div id="app" style="display:none">
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">🤘</div>
+        <div class="logo-text">
+          <h1>Punk BC</h1>
+          <p>British Columbia Punk &amp; Hardcore Shows</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="live-badge">
+          <div class="live-dot"></div>
+          LIVE
+        </div>
+        <div id="last-updated" style="font-size:10px;color:#6b7280;"></div>
+        <button id="submit-btn" onclick="openModal()">+ Submit a Show</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="city-bar">
+    <div class="city-tabs" id="city-tabs">
+      <button class="city-tab active" data-city="all" onclick="filterCity(this)">All BC</button>
+      <button class="city-tab" data-city="Vancouver" onclick="filterCity(this)">Vancouver</button>
+      <button class="city-tab" data-city="Victoria" onclick="filterCity(this)">Victoria</button>
+      <button class="city-tab" data-city="Kelowna" onclick="filterCity(this)">Kelowna</button>
+      <button class="city-tab" data-city="Burnaby" onclick="filterCity(this)">Burnaby</button>
+      <button class="city-tab" data-city="Surrey" onclick="filterCity(this)">Surrey</button>
+      <button class="city-tab" data-city="Abbotsford" onclick="filterCity(this)">Abbotsford</button>
+      <button class="city-tab" data-city="Nanaimo" onclick="filterCity(this)">Nanaimo</button>
+      <button class="city-tab" data-city="Prince George" onclick="filterCity(this)">Prince George</button>
+    </div>
+  </div>
+
+  <main>
+    <p class="section-title" id="shows-label">Upcoming Shows</p>
+    <div id="shows-grid"></div>
+  </main>
+
+  <footer>
+    PUNK BC · <a href="https://www.mikidrummer.ca">mikidrummer.ca</a> · Community-powered
+  </footer>
+</div>
+
+<!-- Submit Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2>Submit a Show</h2>
+    <div id="form-body">
+      <div class="form-group">
+        <label>Band / Artist Name *</label>
+        <input type="text" id="f-band" placeholder="e.g. Dead Kennedys" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="f-date" />
+        </div>
+        <div class="form-group">
+          <label>Doors / Show Time</label>
+          <input type="time" id="f-time" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Venue Name *</label>
+        <input type="text" id="f-venue" placeholder="e.g. Rickshaw Theatre" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>City *</label>
+          <select id="f-city">
+            <option value="">Select city...</option>
+            <option>Vancouver</option>
+            <option>Victoria</option>
+            <option>Kelowna</option>
+            <option>Burnaby</option>
+            <option>Surrey</option>
+            <option>Abbotsford</option>
+            <option>Nanaimo</option>
+            <option>Prince George</option>
+            <option>Other BC</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ticket Price</label>
+          <input type="text" id="f-price" placeholder="e.g. $15 / Free" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Ticket / Event Link</label>
+        <input type="url" id="f-link" placeholder="https://..." />
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="f-notes" placeholder="Supporting bands, all ages, etc."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-submit" onclick="submitShow()">Submit Show</button>
+      </div>
+    </div>
+    <div id="form-success" class="form-success" style="display:none">
+      <div class="check">✅</div>
+      <h3 style="margin-bottom:8px">Show submitted!</h3>
+      <p>Thanks for keeping the scene alive. We'll review and add it shortly.</p>
+      <button class="btn-cancel" style="margin-top:16px" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Google Sheet CSV — update this URL after sharing the sheet publicly
+  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSGC8UWiTGPVcaol0IuVAYGH010vzPVZUG40ZpYJJgg7JeQ-2XcEh6CABmK0nKVjzPQ0P5HVILcmAPg/pub?output=csv'
+
+  // Fallback/seed data — edit the Google Sheet to manage shows in production
+  const SEED_SHOWS = [
+    { 'Band / Artist': 'The Subhumans', 'Date': '2026-07-12', 'Time': '20:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '$20', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Punk', 'Notes': 'All ages', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Subhumans.jpg/330px-Subhumans.jpg' },
+    { 'Band / Artist': 'Baptists', 'Date': '2026-07-18', 'Time': '21:00', 'Venue': 'Venue', 'City': 'Vancouver', 'Price': '$15', 'Ticket Link': '', 'Genre': 'Hardcore', 'Notes': 'With Bootlicker', 'Image URL': 'https://upload.wikimedia.org/wikipedia/en/5/5c/Baptists_%28band%29.jpg' },
+    { 'Band / Artist': 'Dead Flesh Fashion', 'Date': '2026-07-19', 'Time': '21:00', 'Venue': 'Biltmore Cabaret', 'City': 'Vancouver', 'Price': '$12', 'Ticket Link': '', 'Genre': 'Hardcore', 'Notes': '', 'Image URL': '' },
+    { 'Band / Artist': 'Propagandhi', 'Date': '2026-07-26', 'Time': '20:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '$28', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Punk', 'Notes': 'Canadian legends', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Propagandhi_2007.jpg/330px-Propagandhi_2007.jpg' },
+    { 'Band / Artist': 'Dayglo Abortions', 'Date': '2026-08-02', 'Time': '20:00', 'Venue': 'Capital Ballroom', 'City': 'Victoria', 'Price': '$18', 'Ticket Link': 'https://capitalballroom.ca', 'Genre': 'Punk', 'Notes': '', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Dayglos_at_The_Cobalt_Hotel.jpg/330px-Dayglos_at_The_Cobalt_Hotel.jpg' },
+    { 'Band / Artist': 'DOA', 'Date': '2026-08-08', 'Time': '19:30', 'Venue': 'Cobalt', 'City': 'Vancouver', 'Price': '$12', 'Ticket Link': '', 'Genre': 'Punk', 'Notes': '19+', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/IbDoa1.jpg/330px-IbDoa1.jpg' },
+    { 'Band / Artist': 'Nomeansno', 'Date': '2026-08-09', 'Time': '20:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '$25', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Punk', 'Notes': '', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Nomeansno.jpg/330px-Nomeansno.jpg' },
+    { 'Band / Artist': 'The Exploited', 'Date': '2026-08-14', 'Time': '20:30', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '$30', 'Ticket Link': '', 'Genre': 'Punk', 'Notes': 'UK Tour', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/The_Exploited_onstage_2014_%28cropped%29.jpg/330px-The_Exploited_onstage_2014_%28cropped%29.jpg' },
+    { 'Band / Artist': 'Sick Of It All', 'Date': '2026-08-15', 'Time': '20:30', 'Venue': 'The Pearl', 'City': 'Vancouver', 'Price': '$30', 'Ticket Link': '', 'Genre': 'Hardcore', 'Notes': 'US Tour', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Sick_of_It_All_-_Reload_Festival_2018_001_%28cropped%29.jpg/330px-Sick_of_It_All_-_Reload_Festival_2018_001_%28cropped%29.jpg' },
+    { 'Band / Artist': 'Pennywise', 'Date': '2026-08-21', 'Time': '20:00', 'Venue': 'Venue', 'City': 'Vancouver', 'Price': '$35', 'Ticket Link': 'https://venuelive.ca', 'Genre': 'Punk', 'Notes': '', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Pennywise_Warped_Tour_%28cropped%29.jpg/330px-Pennywise_Warped_Tour_%28cropped%29.jpg' },
+    { 'Band / Artist': 'Bootlicker', 'Date': '2026-08-30', 'Time': '21:00', 'Venue': 'Sugar Nightclub', 'City': 'Victoria', 'Price': '$10', 'Ticket Link': '', 'Genre': 'Hardcore', 'Notes': '', 'Image URL': 'https://lastfm.freetls.fastly.net/i/u/300x300/574baf9d3413a66faf02a00975e96e2b' },
+    { 'Band / Artist': 'Bad Religion', 'Date': '2026-09-04', 'Time': '20:00', 'Venue': 'Commodore Ballroom', 'City': 'Vancouver', 'Price': '$40', 'Ticket Link': 'https://livenation.com', 'Genre': 'Punk', 'Notes': 'With opener', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Hellfest2018BadReligion_07.jpg/330px-Hellfest2018BadReligion_07.jpg' },
+    { 'Band / Artist': 'Ancient Filth', 'Date': '2026-09-05', 'Time': '21:00', 'Venue': 'Biltmore Cabaret', 'City': 'Vancouver', 'Price': '$12', 'Ticket Link': '', 'Genre': 'Metal/Crust', 'Notes': '', 'Image URL': 'https://lastfm.freetls.fastly.net/i/u/300x300/8e0e7c8b2ed944d294006701798321a5' },
+    { 'Band / Artist': 'Anti-Flag', 'Date': '2026-09-11', 'Time': '20:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '$22', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Punk', 'Notes': 'All ages', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Anti-Flag_-_Reload_Festival_2017_00.jpg/330px-Anti-Flag_-_Reload_Festival_2017_00.jpg' },
+    { 'Band / Artist': 'Dismal Outlook', 'Date': '2026-09-12', 'Time': '21:00', 'Venue': 'Capital Ballroom', 'City': 'Victoria', 'Price': '$15', 'Ticket Link': '', 'Genre': 'Hardcore', 'Notes': '', 'Image URL': '' },
+    { 'Band / Artist': 'Agnostic Front', 'Date': '2026-09-17', 'Time': '20:30', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '$25', 'Ticket Link': '', 'Genre': 'Hardcore', 'Notes': 'NYC legends', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Agnostic_Front_Metal_Frenzy_2024_20.jpg/330px-Agnostic_Front_Metal_Frenzy_2024_20.jpg' },
+    { 'Band / Artist': 'Iron Lung', 'Date': '2026-09-18', 'Time': '21:00', 'Venue': 'Astoria', 'City': 'Vancouver', 'Price': '$18', 'Ticket Link': '', 'Genre': 'Hardcore', 'Notes': 'US Tour', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Ironlung4.jpg/330px-Ironlung4.jpg' },
+    { 'Band / Artist': 'Martyr AD', 'Date': '2026-09-19', 'Time': '20:00', 'Venue': 'Sapphire', 'City': 'Kelowna', 'Price': '$12', 'Ticket Link': '', 'Genre': 'Metal', 'Notes': '', 'Image URL': 'https://lastfm.freetls.fastly.net/i/u/300x300/40f586081bec41c2a217fd66619c7655' },
+    { 'Band / Artist': 'Converge', 'Date': '2026-09-25', 'Time': '20:00', 'Venue': 'Venue', 'City': 'Vancouver', 'Price': '$30', 'Ticket Link': 'https://venuelive.ca', 'Genre': 'Hardcore', 'Notes': 'US Tour', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Converge_on_16_February_2019_in_Tokyo%2C_Japan_%28cropped%29.jpg/330px-Converge_on_16_February_2019_in_Tokyo%2C_Japan_%28cropped%29.jpg' },
+    { 'Band / Artist': 'Death Sentence', 'Date': '2026-09-26', 'Time': '21:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '$20', 'Ticket Link': '', 'Genre': 'Punk', 'Notes': '', 'Image URL': 'https://lastfm.freetls.fastly.net/i/u/300x300/2cf844a094b84f8db64c161de9e46479' },
+    { 'Band / Artist': 'Career Suicide', 'Date': '2026-10-03', 'Time': '21:00', 'Venue': 'Biltmore Cabaret', 'City': 'Vancouver', 'Price': '$14', 'Ticket Link': '', 'Genre': 'Hardcore', 'Notes': '', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Career_suicide_live.jpg/330px-Career_suicide_live.jpg' },
+    { 'Band / Artist': 'Corner Boys', 'Date': '2026-10-10', 'Time': '20:00', 'Venue': 'Cobalt', 'City': 'Vancouver', 'Price': '$10', 'Ticket Link': '', 'Genre': 'Punk', 'Notes': '', 'Image URL': '' },
+    { 'Band / Artist': 'Fucked Up', 'Date': '2026-10-17', 'Time': '20:30', 'Venue': 'Venue', 'City': 'Vancouver', 'Price': '$22', 'Ticket Link': '', 'Genre': 'Punk/Hardcore', 'Notes': '', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Fucked_up_at_the_polaris_music_prize_gala_2009_by_dustin_rabin.jpg/330px-Fucked_up_at_the_polaris_music_prize_gala_2009_by_dustin_rabin.jpg' },
+    { 'Band / Artist': 'Iskra', 'Date': '2026-10-24', 'Time': '21:00', 'Venue': 'Astoria', 'City': 'Vancouver', 'Price': '$8', 'Ticket Link': '', 'Genre': 'Black Metal/Crust', 'Notes': 'All ages welcome', 'Image URL': 'https://lastfm.freetls.fastly.net/i/u/300x300/51d668569c2949588aaf740764c1e876' },
+    { 'Band / Artist': 'Antifa Dance Party', 'Date': '2026-10-31', 'Time': '20:00', 'Venue': 'The Astoria', 'City': 'Vancouver', 'Price': '$10', 'Ticket Link': '', 'Genre': 'Punk', 'Notes': 'Halloween show', 'Image URL': '' },
+    { 'Band / Artist': 'Vancouver Jazz Fest', 'Date': '2026-07-31', 'Time': '10:00', 'Venue': 'Various', 'City': 'Vancouver', 'Price': '$22', 'Ticket Link': 'https://www.coastaljazz.ca/events/', 'Genre': 'Jazz', 'Notes': 'Vancouver Jazz Fest', 'Image URL': 'https://assets0.dostuffmedia.com/uploads/aws_asset/aws_asset/32216241/ba097535-3dc3-4791-a8db-d7ab2b7ccd06.jpg' },
+  ]
+
+  let allShows = []
+  let activeCity = 'all'
+
+  function boot() {
+    document.getElementById('api-setup').style.display = 'none'
+    document.getElementById('app').style.display = 'block'
+    // Show seed data immediately, then try to fetch live sheet
+    const today = new Date().toISOString().split('T')[0]
+    allShows = SEED_SHOWS.filter(r => r['Date'] >= today)
+    renderShows()
+    fetchShows()
+    setInterval(fetchShows, 5 * 60 * 1000)
+  }
+
+  function parseCSV(text) {
+    const lines = text.trim().split('\n')
+    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim())
+    return lines.slice(1).map(line => {
+      const cols = []
+      let cur = '', inQuote = false
+      for (const ch of line) {
+        if (ch === '"') { inQuote = !inQuote }
+        else if (ch === ',' && !inQuote) { cols.push(cur.trim()); cur = '' }
+        else { cur += ch }
+      }
+      cols.push(cur.trim())
+      const obj = {}
+      headers.forEach((h, i) => obj[h] = (cols[i] ?? '').replace(/^"|"$/g, ''))
+      return obj
+    }).filter(r => r['Band / Artist'])
+  }
+
+  async function fetchShows() {
+    const proxies = [
+      t => CSV_URL + '&t=' + t,
+      t => 'https://corsproxy.io/?url=' + encodeURIComponent(CSV_URL + '&t=' + t),
+      t => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(CSV_URL + '&t=' + t),
+    ]
+    for (const proxy of proxies) {
+      try {
+        const res = await fetch(proxy(Date.now()))
+        if (!res.ok) continue
+        const text = await res.text()
+        if (!text.includes('Band') && !text.includes(',')) continue
+        const rows = parseCSV(text)
+        const today = new Date().toISOString().split('T')[0]
+        const upcoming = rows.filter(r => r['Date'] >= today).sort((a, b) => a['Date'].localeCompare(b['Date']))
+        if (upcoming.length > 0) {
+          allShows = upcoming
+          document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString()
+          renderShows()
+        }
+        return
+      } catch (e) {
+        // try next proxy
+      }
+    }
+  }
+
+  function filterCity(btn) {
+    document.querySelectorAll('.city-tab').forEach(t => t.classList.remove('active'))
+    btn.classList.add('active')
+    activeCity = btn.dataset.city
+    renderShows()
+  }
+
+  function renderShows() {
+    const filtered = activeCity === 'all'
+      ? allShows
+      : allShows.filter(e =>
+          (e['City'] ?? '').toLowerCase().includes(activeCity.toLowerCase())
+        )
+
+    const label = document.getElementById('shows-label')
+    label.textContent = `${filtered.length} Upcoming Show${filtered.length !== 1 ? 's' : ''}${activeCity !== 'all' ? ' in ' + activeCity : ' Across BC'}`
+
+    if (!filtered.length) {
+      document.getElementById('shows-grid').innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">🎸</div>
+          <p>No shows found${activeCity !== 'all' ? ' in ' + activeCity : ''}.<br>Be the first to submit one!</p>
+        </div>`
+      return
+    }
+
+    // Palette for placeholder gradients — cycles by index
+    const palettes = [
+      ['#7f1d1d','#dc2626'], ['#1e3a5f','#2563eb'], ['#14532d','#16a34a'],
+      ['#4a1d96','#7c3aed'], ['#78350f','#d97706'], ['#1e3a5f','#0891b2'],
+      ['#3b0764','#a21caf'], ['#052e16','#15803d'],
+    ]
+
+    document.getElementById('shows-grid').innerHTML = filtered.map((e, i) => {
+      const date = e['Date'] ?? ''
+      const time = e['Time'] ?? ''
+      const venueName = e['Venue'] ?? 'Unknown Venue'
+      const city = e['City'] ?? 'BC'
+      const price = e['Price'] ?? ''
+      const ticketUrl = e['Ticket Link'] ?? ''
+      const genre = e['Genre'] ?? ''
+      const band = e['Band / Artist'] ?? 'Unknown Artist'
+      const notes = e['Notes'] ?? ''
+      const imageUrl = e['Image URL'] ?? ''
+
+      const dateStr = date
+        ? new Date(date + 'T12:00:00').toLocaleDateString('en-CA', {
+            weekday: 'short', month: 'short', day: 'numeric'
+          }).toUpperCase()
+        : 'TBA'
+
+      const initials = band.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase()
+      const [bg1, bg2] = palettes[i % palettes.length]
+
+      const thumb = imageUrl
+        ? `<img class="show-card-img" src="${imageUrl}" alt="${band}" referrerpolicy="no-referrer">`
+        : (() => {
+            const imgs = allShows.map(s => s['Image URL']).filter(Boolean)
+            const bg = imgs[Math.floor(Math.random() * imgs.length)] || ''
+            const bgStyle = bg ? `background-image:url('${bg}');background-size:cover;background-position:center;` : ''
+            return `<div class="show-card-img-placeholder" style="${bgStyle}"><span style="font-size:22px;font-weight:900;letter-spacing:3px;color:#fff;font-family:'Courier New',monospace;position:relative;z-index:1;text-shadow:0 0 12px #dc2626,0 2px 4px rgba(0,0,0,0.9)">${band.toUpperCase()}</span><span style="font-size:11px;letter-spacing:5px;color:#dc2626;font-family:'Courier New',monospace;position:relative;z-index:1;font-weight:900;text-shadow:0 0 8px #dc2626">PUNK BC</span></div>`
+          })()
+
+      const inner = `
+        ${thumb}
+        <div class="show-card-body">
+          <div class="show-date">${dateStr}${time ? ' · ' + time : ''}</div>
+          <div class="show-name">${band}</div>
+          <div class="show-venue">📍 ${venueName}</div>
+          <div class="show-tags">
+            <span class="tag tag-city">${city}</span>
+            ${genre ? `<span class="tag tag-genre">${genre}</span>` : ''}
+          </div>
+          ${price ? `<div class="show-price">${price}</div>` : ''}
+          ${notes ? `<div class="show-price" style="color:#6b7280;margin-top:4px;font-size:10px">${notes}</div>` : ''}
+        </div>`
+
+      const venueMap = {
+        'Rickshaw Theatre':   'https://rickshawtheatre.com',
+        'Biltmore Cabaret':   'https://biltmorecabaret.com',
+        'Commodore Ballroom': 'https://commodoreballroom.com',
+        'Cobalt':             'https://thecobalt.ca',
+        'The Cobalt':         'https://thecobalt.ca',
+        'Venue':              'https://venuelive.ca',
+        'Capital Ballroom':   'https://capitalballroom.ca',
+        'Sugar Nightclub':    'https://sugarnightclub.com',
+        'The Pearl':          'https://thepearlvancouver.com',
+        'Astoria':            'https://theastoria.ca',
+        'The Astoria':        'https://theastoria.ca',
+        'Sapphire':           'https://www.eventbrite.ca',
+      }
+      const href = ticketUrl || venueMap[venueName] || 'https://www.eventbrite.ca'
+      return `<a class="show-card" href="${href}" target="_blank" rel="noopener noreferrer">${inner}</a>`
+    }).join('')
+  }
+
+  function renderSkeleton() {
+    document.getElementById('shows-grid').innerHTML = Array(6).fill(0).map(() => `
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line" style="width:40%;margin-bottom:10px"></div>
+          <div class="skeleton skeleton-line" style="width:80%;height:16px;margin-bottom:8px"></div>
+          <div class="skeleton skeleton-line" style="width:60%"></div>
+        </div>
+      </div>`).join('')
+  }
+
+  function openModal() {
+    document.getElementById('modal').classList.add('open')
+    document.getElementById('form-body').style.display = 'block'
+    document.getElementById('form-success').style.display = 'none'
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open')
+  }
+
+  async function submitShow() {
+    const band = document.getElementById('f-band').value.trim()
+    const date = document.getElementById('f-date').value
+    const venue = document.getElementById('f-venue').value.trim()
+    const city = document.getElementById('f-city').value
+    if (!band || !date || !venue || !city) {
+      alert('Please fill in Band, Date, Venue and City.')
+      return
+    }
+    const btn = document.querySelector('.btn-submit')
+    btn.textContent = 'Sending...'
+    btn.disabled = true
+    try {
+      const res = await fetch('https://formspree.io/f/xpqgrqvb', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          'Band / Artist': band,
+          'Date': date,
+          'Time': document.getElementById('f-time').value,
+          'Venue': venue,
+          'City': city,
+          'Price': document.getElementById('f-price').value,
+          'Ticket Link': document.getElementById('f-link').value,
+          'Notes': document.getElementById('f-notes').value,
+          '👇 PASTE THIS INTO CELL A OF AN EMPTY ROW IN THE SHEET': `={"${band}","${date}","${document.getElementById('f-time').value}","${venue}","${city}","${document.getElementById('f-price').value}","${document.getElementById('f-link').value}","","${document.getElementById('f-notes').value}",""}`,
+        })
+      })
+      if (!res.ok) throw new Error()
+      document.getElementById('form-body').style.display = 'none'
+      document.getElementById('form-success').style.display = 'block'
+    } catch {
+      alert('Something went wrong. Please try again.')
+    } finally {
+      btn.textContent = 'Submit Show'
+      btn.disabled = false
+    }
+  }
+
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal()
+  })
+
+  boot()
+</script>
+</body>
+</html>
