@@ -254,14 +254,17 @@
       animation: soldpulse 2s ease-in-out infinite;
     }
     @keyframes sealpulse {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px #DAA520) drop-shadow(0 0 12px #B8860B); }
-      50% { transform: scale(1.08); filter: drop-shadow(0 0 14px #FFD700) drop-shadow(0 0 28px #DAA520); }
+      0%   { transform: scale(1)    rotate(-5deg); filter: drop-shadow(0 0 6px #DAA520) drop-shadow(0 0 12px #B8860B); }
+      25%  { transform: scale(1.06) rotate(0deg);  filter: drop-shadow(0 0 14px #FFD700) drop-shadow(0 0 28px #DAA520); }
+      50%  { transform: scale(1.08) rotate(5deg);  filter: drop-shadow(0 0 14px #FFD700) drop-shadow(0 0 28px #DAA520); }
+      75%  { transform: scale(1.06) rotate(0deg);  filter: drop-shadow(0 0 14px #FFD700) drop-shadow(0 0 28px #DAA520); }
+      100% { transform: scale(1)    rotate(-5deg); filter: drop-shadow(0 0 6px #DAA520) drop-shadow(0 0 12px #B8860B); }
     }
     .curated-badge {
       position: absolute; bottom: -22px; right: -62px;
       width: 150px; height: 150px;
       pointer-events: none;
-      animation: sealpulse 2.4s ease-in-out infinite;
+      animation: sealpulse 3s ease-in-out infinite;
       transform-origin: center;
     }
     .show-card-img-placeholder {
