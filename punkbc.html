@@ -221,12 +221,15 @@
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 6px;
-      overflow: hidden;
+      overflow: visible;
       transition: border-color 0.2s, transform 0.2s;
       cursor: pointer;
       text-decoration: none;
       color: inherit;
       display: block;
+    }
+    .show-card-img {
+      border-radius: 6px 6px 0 0;
     }
     .show-card:hover {
       border-color: var(--red);
