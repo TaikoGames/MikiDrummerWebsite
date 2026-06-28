@@ -811,7 +811,8 @@
       const isSvgPlaceholder = imageUrl && imageUrl.includes('punkbc-placeholder')
       const src = (imageUrl && !isSvgPlaceholder) ? imageUrl : FALLBACK
       const imgEl = `<img class="show-card-img" src="${src}" alt="${band}" referrerpolicy="no-referrer" onerror="this.src='${FALLBACK}';this.referrerPolicy='no-referrer'">`
-      const thumb = `<div style="position:relative;overflow:visible">${imgEl}${soldOut ? `<img src="/sold.svg" alt="Sold Out" class="sold-badge">` : ''}${curated ? `<img src="/images/punkbc-seal.png" alt="Punk BC Recommended" class="curated-badge">` : ''}</div>`
+      const sealDelay = ((i * 0.37) % 2.2).toFixed(2)
+      const thumb = `<div style="position:relative;overflow:visible">${imgEl}${soldOut ? `<img src="/sold.svg" alt="Sold Out" class="sold-badge">` : ''}${curated ? `<img src="/images/punkbc-seal.png" alt="Punk BC Recommended" class="curated-badge" style="animation-delay:-${sealDelay}s">` : ''}</div>`
 
       const inner = `
         ${thumb}
