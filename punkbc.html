@@ -779,9 +779,8 @@
       const soldOut = !!(e['X'] || e['Sold Out'] || e['sold out'] || e['SOLD OUT'])
       const FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg'
       const isSvgPlaceholder = imageUrl && imageUrl.includes('punkbc-placeholder')
-      const imgEl = (imageUrl && !isSvgPlaceholder)
-        ? `<img class="show-card-img" src="${imageUrl}" alt="${band}" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=\\'show-card-img\\' style=\\'background-image:url(\\'${FALLBACK}\\');background-size:cover;background-position:center;\\'></div>'">`
-        : `<div class="show-card-img" style="background-image:url('${FALLBACK}');background-size:cover;background-position:center;"></div>`
+      const src = (imageUrl && !isSvgPlaceholder) ? imageUrl : FALLBACK
+      const imgEl = `<img class="show-card-img" src="${src}" alt="${band}" referrerpolicy="no-referrer" onerror="this.src='${FALLBACK}';this.referrerPolicy='no-referrer'">`
       const thumb = `<div style="position:relative">${imgEl}${soldOut ? `<img src="/sold.svg" alt="Sold Out" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">` : ''}</div>`
 
       const inner = `
