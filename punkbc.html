@@ -239,6 +239,17 @@
       background: #1a1a1a;
       display: block;
     }
+    @keyframes soldpulse {
+      0%, 100% { transform: translate(-50%,-50%) scale(1); }
+      50% { transform: translate(-50%,-50%) scale(1.06); }
+    }
+    .sold-badge {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 100%; height: 100%;
+      pointer-events: none;
+      animation: soldpulse 2s ease-in-out infinite;
+    }
     .show-card-img-placeholder {
       width: 100%;
       height: 160px;
@@ -781,7 +792,7 @@
       const isSvgPlaceholder = imageUrl && imageUrl.includes('punkbc-placeholder')
       const src = (imageUrl && !isSvgPlaceholder) ? imageUrl : FALLBACK
       const imgEl = `<img class="show-card-img" src="${src}" alt="${band}" referrerpolicy="no-referrer" onerror="this.src='${FALLBACK}';this.referrerPolicy='no-referrer'">`
-      const thumb = `<div style="position:relative">${imgEl}${soldOut ? `<img src="/sold.svg" alt="Sold Out" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">` : ''}</div>`
+      const thumb = `<div style="position:relative">${imgEl}${soldOut ? `<img src="/sold.svg" alt="Sold Out" class="sold-badge">` : ''}</div>`
 
       const inner = `
         ${thumb}
