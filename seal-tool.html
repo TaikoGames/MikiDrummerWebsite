@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Seal Cleanup Tool</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #111; color: #eee; font-family: sans-serif; padding: 20px; }
+h2 { margin-bottom: 8px; color: #DAA520; }
+p.sub { font-size: 13px; color: #888; margin-bottom: 12px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 10px 0; font-size: 13px; }
+input[type=range] { width: 120px; accent-color: #DAA520; }
+button, label.btn { font-size: 13px; border: 1px solid #444; border-radius: 6px; padding: 8px 18px; cursor: pointer; background: #222; color: #eee; }
+button:hover, label.btn:hover { background: #333; }
+.frame { background: repeating-conic-gradient(#555 0% 25%, #333 0% 50%) 0 0/16px 16px; border-radius: 10px; min-height: 300px; display: flex; justify-content: center; align-items: center; margin: 12px 0; cursor: crosshair; }
+canvas { max-width: 100%; max-height: 500px; border-radius: 8px; }
+#status { font-size: 12px; color: #aaa; min-height: 18px; margin: 4px 0; }
+#picked { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; display: inline-block; background: #555; vertical-align: middle; }
+</style>
+</head>
+<body>
+<h2>Seal Cleanup Tool</h2>
+<p class="sub">Click on any noise/background area to remove that color. Adjust tolerance to fine-tune.</p>
+
+<div class="row">
+  <label class="btn" for="filein">📁 Load PNG</label>
+  <button onclick="loadCurrent()">🔄 Load current seal</button>
+  <span id="picked"></span>
+  <label>Tolerance <span id="tv">30</span></label>
+  <input type="range" min="1" max="150" value="30" id="tol" oninput="document.getElementById('tv').textContent=this.value">
+  <button onclick="undo()">↩ Undo</button>
+  <button id="eraserBtn" onclick="toggleEraser()">🧹 Eraser</button>
+  <label>Size <span id="esizev">20</span></label>
+  <input type="range" min="2" max="80" value="20" id="esize" oninput="document.getElementById('esizev').textContent=this.value">
+  <button onclick="doDownload()">⬇ Download PNG</button>
+</div>
+
+<div id="status">Load the seal PNG, then click on noisy areas to erase them</div>
+
+<input type="file" id="filein" accept="image/*" style="display:none" onchange="loadFile(this)">
+
+<div class="frame" id="frame">
+  <canvas id="c"></canvas>
+</div>
+
+<script>
+let history = [], eraserMode = false, painting = false
+const c = document.getElementById('c')
+const ctx = c.getContext('2d', { willReadFrequently: true })
+
+function loadCurrent() {
+  const img = new Image()
+  img.crossOrigin = 'anonymous'
+  img.onload = () => { drawImg(img) }
+  img.onerror = () => { document.getElementById('status').textContent = 'Could not load — use Load PNG button instead' }
+  img.src = '/images/punkbc-seal.png?' + Date.now()
+}
+
+function loadFile(inp) {
+  const f = inp.files[0]; if (!f) return
+  const r = new FileReader()
+  r.onload = e => { const img = new Image(); img.onload = () => drawImg(img); img.src = e.target.result }
+  r.readAsDataURL(f)
+}
+
+function drawImg(img) {
+  c.width = img.width; c.height = img.height
+  ctx.clearRect(0, 0, c.width, c.height)
+  ctx.drawImage(img, 0, 0)
+  document.getElementById('status').textContent = 'Click on noisy/background areas to remove that color'
+  history = []
+}
+
+function toggleEraser() {
+  eraserMode = !eraserMode
+  document.getElementById('eraserBtn').style.background = eraserMode ? '#DAA520' : ''
+  document.getElementById('eraserBtn').style.color = eraserMode ? '#111' : ''
+  c.style.cursor = eraserMode ? 'cell' : 'crosshair'
+  document.getElementById('status').textContent = eraserMode ? 'Eraser on — click and drag to erase' : 'Click on noisy areas to remove that color'
+}
+
+function getPos(e) {
+  const rect = c.getBoundingClientRect()
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY
+  return [
+    Math.round((clientX - rect.left) * c.width / rect.width),
+    Math.round((clientY - rect.top) * c.height / rect.height)
+  ]
+}
+
+function erase(e) {
+  if (!eraserMode || !painting) return
+  e.preventDefault()
+  const [x, y] = getPos(e)
+  const r = +document.getElementById('esize').value
+  ctx.save()
+  ctx.globalCompositeOperation = 'destination-out'
+  ctx.beginPath()
+  ctx.arc(x, y, r, 0, Math.PI*2)
+  ctx.fill()
+  ctx.restore()
+}
+
+c.addEventListener('mousedown', e => { if (eraserMode) { painting = true; history.push(ctx.getImageData(0,0,c.width,c.height)); if(history.length>20)history.shift(); erase(e) } })
+c.addEventListener('mousemove', erase)
+c.addEventListener('mouseup', () => painting = false)
+c.addEventListener('mouseleave', () => painting = false)
+
+c.addEventListener('click', e => {
+  if (eraserMode) return
+  const rect = c.getBoundingClientRect()
+  const x = Math.round((e.clientX - rect.left) * c.width / rect.width)
+  const y = Math.round((e.clientY - rect.top) * c.height / rect.height)
+  const px = ctx.getImageData(x, y, 1, 1).data
+  const col = [px[0], px[1], px[2]]
+  document.getElementById('picked').style.background = `rgb(${col[0]},${col[1]},${col[2]})`
+
+  // Save state
+  history.push(ctx.getImageData(0, 0, c.width, c.height))
+  if (history.length > 20) history.shift()
+
+  const tol = +document.getElementById('tol').value
+  const d = ctx.getImageData(0, 0, c.width, c.height)
+  let removed = 0
+  for (let i = 0; i < d.data.length; i += 4) {
+    if (d.data[i+3] === 0) continue
+    const dr = d.data[i]-col[0], dg = d.data[i+1]-col[1], db = d.data[i+2]-col[2]
+    const dist = Math.sqrt(dr*dr + dg*dg + db*db)
+    if (dist < tol) { d.data[i+3] = 0; removed++ }
+    else if (dist < tol+15) d.data[i+3] = Math.round((dist-tol)/15 * d.data[i+3])
+  }
+  ctx.putImageData(d, 0, 0)
+  document.getElementById('status').textContent = `Removed ~${removed.toLocaleString()} px — undo if too much, or click another area`
+})
+
+function undo() {
+  if (!history.length) return
+  ctx.putImageData(history.pop(), 0, 0)
+  document.getElementById('status').textContent = 'Undone'
+}
+
+function doDownload() {
+  const a = document.createElement('a')
+  a.download = 'punkbc-seal.png'
+  a.href = c.toDataURL('image/png')
+  a.click()
+}
+</script>
+</body>
+</html>
