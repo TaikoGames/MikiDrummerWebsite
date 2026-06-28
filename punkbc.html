@@ -776,14 +776,8 @@
       const initials = band.split(' ').map(w => w[0]).join('').substring(0, 3).toUpperCase()
       const [bg1, bg2] = palettes[i % palettes.length]
 
-      const thumb = imageUrl
-        ? `<img class="show-card-img" src="${imageUrl}" alt="${band}" referrerpolicy="no-referrer">`
-        : (() => {
-            const imgs = allShows.map(s => s['Image URL']).filter(Boolean)
-            const bg = imgs[Math.floor(Math.random() * imgs.length)] || ''
-            const bgStyle = bg ? `background-image:url('${bg}');background-size:cover;background-position:center;` : ''
-            return `<div class="show-card-img-placeholder" style="${bgStyle}"><span style="font-size:22px;font-weight:900;letter-spacing:3px;color:#fff;font-family:'Courier New',monospace;position:relative;z-index:1;text-shadow:0 0 12px #dc2626,0 2px 4px rgba(0,0,0,0.9)">${band.toUpperCase()}</span><span style="font-size:11px;letter-spacing:5px;color:#dc2626;font-family:'Courier New',monospace;position:relative;z-index:1;font-weight:900;text-shadow:0 0 8px #dc2626">PUNK BC</span></div>`
-          })()
+      const FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg'
+      const thumb = `<img class="show-card-img" src="${imageUrl || FALLBACK}" alt="${band}" referrerpolicy="no-referrer">`
 
       const inner = `
         ${thumb}
