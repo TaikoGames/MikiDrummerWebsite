@@ -254,17 +254,18 @@
       animation: soldpulse 2s ease-in-out infinite;
     }
     @keyframes sealpulse {
-      0%   { transform: scale(1)    rotate(-5deg); filter: drop-shadow(0 0 6px #DAA520) drop-shadow(0 0 12px #B8860B); }
-      25%  { transform: scale(1.06) rotate(0deg);  filter: drop-shadow(0 0 14px #FFD700) drop-shadow(0 0 28px #DAA520); }
-      50%  { transform: scale(1.08) rotate(5deg);  filter: drop-shadow(0 0 14px #FFD700) drop-shadow(0 0 28px #DAA520); }
-      75%  { transform: scale(1.06) rotate(0deg);  filter: drop-shadow(0 0 14px #FFD700) drop-shadow(0 0 28px #DAA520); }
-      100% { transform: scale(1)    rotate(-5deg); filter: drop-shadow(0 0 6px #DAA520) drop-shadow(0 0 12px #B8860B); }
+      0%   { transform: scale(1);    filter: drop-shadow(0 0 4px #DAA520); }
+      10%  { transform: scale(1.1);  filter: drop-shadow(0 0 18px #FFD700) drop-shadow(0 0 32px #DAA520); }
+      20%  { transform: scale(1);    filter: drop-shadow(0 0 4px #DAA520); }
+      30%  { transform: scale(1.07); filter: drop-shadow(0 0 14px #FFD700) drop-shadow(0 0 24px #DAA520); }
+      45%  { transform: scale(1);    filter: drop-shadow(0 0 4px #DAA520); }
+      100% { transform: scale(1);    filter: drop-shadow(0 0 4px #DAA520); }
     }
     .curated-badge {
       position: absolute; bottom: -22px; right: -32px;
       width: 150px; height: 150px;
       pointer-events: none;
-      animation: sealpulse 3s ease-in-out infinite;
+      animation: sealpulse 2.2s ease-in-out infinite;
       transform-origin: center;
     }
     .show-card-img-placeholder {
