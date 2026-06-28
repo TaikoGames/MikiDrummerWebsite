@@ -1,55 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300" viewBox="0 0 400 300">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="300" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
   <defs>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;display=swap');
-    </style>
     <filter id="darken">
-      <feColorMatrix type="matrix" values="0.25 0 0 0 0  0 0.25 0 0 0  0 0 0.25 0 0  0 0 0 1 0"/>
-    </filter>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="3" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      <feColorMatrix type="matrix" values="0.3 0 0 0 0  0 0.3 0 0 0  0 0 0.3 0 0  0 0 0 1 0"/>
     </filter>
   </defs>
-
-  <!-- Background crowd image -->
   <image href="https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg"
          x="0" y="0" width="400" height="300"
          preserveAspectRatio="xMidYMid slice"
          filter="url(#darken)"
          referrerpolicy="no-referrer"/>
-
-  <!-- Red tint overlay -->
-  <rect width="400" height="300" fill="#dc2626" opacity="0.15"/>
-
-  <!-- Top + bottom red bars -->
-  <rect x="0" y="0" width="400" height="5" fill="#dc2626"/>
-  <rect x="0" y="295" width="400" height="5" fill="#dc2626"/>
-
-  <!-- PUNK text -->
-  <text x="200" y="148"
-        font-family="'Bebas Neue', Impact, Arial Black, sans-serif"
-        font-size="90" font-weight="900"
-        fill="#dc2626"
-        text-anchor="middle"
-        letter-spacing="12"
-        filter="url(#glow)">PUNK</text>
-
-  <!-- BC text -->
-  <text x="200" y="210"
-        font-family="'Bebas Neue', Impact, Arial Black, sans-serif"
-        font-size="90" font-weight="900"
-        fill="#ffffff"
-        text-anchor="middle"
-        letter-spacing="20"
-        filter="url(#glow)">BC</text>
-
-  <!-- Subtitle -->
-  <text x="200" y="240"
-        font-family="Courier New, monospace"
-        font-size="10"
-        fill="#dc2626"
-        text-anchor="middle"
-        letter-spacing="5"
-        opacity="0.8">BRITISH COLUMBIA</text>
+  <rect width="400" height="300" fill="#dc2626" opacity="0.08"/>
 </svg>
