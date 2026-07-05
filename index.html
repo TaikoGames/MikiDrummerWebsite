@@ -181,6 +181,11 @@
           .miki-city__name { color: #e8372a; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
           .miki-city__time { color: #f0ede8; font-size: 14px; }
           .miki-city__weather { color: #999; font-size: 12px; }
+          .miki-family-label { color: #e8372a; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap; }
+          .miki-family { display: inline-flex; align-items: center; gap: 22px; white-space: nowrap; }
+          .miki-family-link { display: inline-flex; align-items: center; }
+          .miki-family-logo { height: 22px; width: auto; display: block; opacity: 0.92; }
+          .miki-family-link:hover .miki-family-logo { opacity: 1; }
           .miki-news-label { color: #e8372a; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap; }
           .miki-news-text { color: #f0ede8; font-size: 13px; white-space: nowrap; }
           .miki-divider { display: inline-block; width: 1px; height: 20px; background: #333; margin: 0 32px; vertical-align: middle; flex-shrink: 0; }
@@ -263,6 +268,14 @@
               + weather + '</span>';
           }
 
+          function familyHTML() {
+            return '<span class="miki-family">'
+              + '<span class="miki-family-label">Family</span>'
+              + '<a class="miki-family-link" href="https://www.soultonecymbals.com/" target="_blank" rel="noopener"><img class="miki-family-logo" src="https://www.soultonecymbals.com/sites/default/files/logo.jpg" alt="Soultone Cymbals" title="Soultone Cymbals" referrerpolicy="no-referrer" loading="lazy"></a>'
+              + '<a class="miki-family-link" href="https://woodiesdrumsticks.com/" target="_blank" rel="noopener"><img class="miki-family-logo" src="https://woodiesdrumsticks.com/cdn/shop/files/Woodies_Logo_White-2_73966fa2-99ab-4fa4-8516-a13d5216496f.png?v=1749693953&width=240" alt="Woodies Drumsticks" title="Woodies Drumsticks" referrerpolicy="no-referrer" loading="lazy"></a>'
+              + '</span>';
+          }
+
           function newsHTML(entries) {
             if (!entries.length) return '';
             return entries.map(function(e) {
@@ -279,9 +292,12 @@
               fetchNews()
             ]);
             const cities = CITIES.map(function(c, i) { return cityHTML(c, weathers[i]); }).join('<span class="miki-divider"></span>');
+            const family = familyHTML();
             const news   = newsHTML(newsEntries);
             const spacer = news ? '<span class="miki-divider"></span>' : '';
-            const block  = cities + spacer + news;
+            const block  = cities
+              + '<span class="miki-divider"></span>' + family
+              + spacer + news;
             const gap = '<span style="display:inline-block;width:50vw"></span>';
             track.innerHTML = block + gap + block + gap;
             requestAnimationFrame(function() {
