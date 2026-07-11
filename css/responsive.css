@@ -161,10 +161,8 @@
     .audio-player{
         display: block;
     }
-    .thumbnail img {
-        max-width: 110px;
-    }
     .thumbnail {
+        --disc-size: 130px;
         padding-bottom: 14px;
     }
     .control-button,

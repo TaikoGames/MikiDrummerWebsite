@@ -32,7 +32,15 @@ const playPauseIcon = playPauseButton.querySelector('i');
 const nextButton = document.getElementById('next');
 const prevButton = document.getElementById('prev');
 const thumbnailImg = document.getElementById('thumbnail-img');
+const thumbnail = document.querySelector('.thumbnail');
 const playlistContainer = document.getElementById('playlist-songs');
+
+// Spin the vinyl disc only while audio is actually playing
+if (thumbnail) {
+    audio.addEventListener('play', () => thumbnail.classList.add('spinning'));
+    audio.addEventListener('pause', () => thumbnail.classList.remove('spinning'));
+    audio.addEventListener('ended', () => thumbnail.classList.remove('spinning'));
+}
 
 let songs = [];
 let currentSongIndex = 0;
