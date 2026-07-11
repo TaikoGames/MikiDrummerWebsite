@@ -268,15 +268,67 @@ color: #ffffff;
 }
 
 .thumbnail {
+    --disc-size: 170px;
     position: absolute;
     top: -100px;
     left: -200px;
+    width: var(--disc-size);
+    height: var(--disc-size);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* grooved black vinyl disc */
+    background:
+        radial-gradient(circle at center,
+            #000 0 30%,
+            rgba(0, 0, 0, 0) 30% 31%,
+            #191919 31% 100%),
+        repeating-radial-gradient(circle at center,
+            #0a0a0a 0 2px,
+            #181818 2px 4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), inset 0 0 25px rgba(0, 0, 0, 0.85);
+    animation: vinyl-spin 4s linear infinite;
+    animation-play-state: paused;
 }
 
+/* the cover artwork becomes the record's center label */
 .thumbnail img {
-    width: 100%;
-    border-radius: 15px;
-    max-width: 170px;
+    width: 46%;
+    height: 46%;
+    max-width: none;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+}
+
+/* center spindle hole */
+.thumbnail::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #0d0d0d;
+    box-shadow: inset 0 0 2px #000, 0 0 0 2px rgba(255, 255, 255, 0.12);
+    z-index: 2;
+}
+
+/* spin only while a track is playing */
+.thumbnail.spinning {
+    animation-play-state: running;
+}
+
+@keyframes vinyl-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .thumbnail {
+        animation: none;
+    }
 }
 
 .controls {
