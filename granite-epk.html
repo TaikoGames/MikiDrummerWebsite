@@ -56,10 +56,12 @@
     .hero .wrap { position: relative; z-index: 2; padding-bottom: 64px; width: 100%; }
     .hero .kicker { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
     .hero .kicker .line { height: 1px; width: 46px; background: var(--molten); }
-    .hero h1 {
-        font-size: clamp(84px, 20vw, 240px);
-        margin: 0 0 18px -0.06em;
-        text-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    .hero-logo {
+        display: block;
+        width: min(720px, 90%);
+        height: auto;
+        margin: 0 0 20px;
+        filter: drop-shadow(0 10px 34px rgba(0,0,0,0.6));
     }
     .hero .tag { font-size: clamp(17px, 2.4vw, 22px); color: var(--stone-100); max-width: 640px; font-weight: 500; }
     .hero .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
@@ -154,7 +156,7 @@
     .reach { display: inline-block; margin-top: 8px; padding: 16px 40px; border-radius: 100px; background: var(--molten); color: #180a03; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; box-shadow: 0 14px 34px rgba(232,103,42,0.35); }
 
     footer { padding: 40px 0 60px; border-top: 1px solid var(--edge); text-align: center; color: var(--stone-400); font-size: 13px; }
-    footer .mk { font-family: "Arial Black", sans-serif; letter-spacing: 0.2em; color: var(--stone-300); font-size: 15px; margin-bottom: 8px; }
+    footer .mk { height: 30px; width: auto; opacity: 0.7; margin: 0 auto 10px; display: block; }
 
     .mockup-banner {
         position: sticky; top: 0; z-index: 50; background: var(--molten); color: #180a03;
@@ -179,7 +181,7 @@
     <img class="hero-photo" src="images/granite/hero.jpg" alt="Granite performing live">
     <div class="wrap">
         <div class="kicker"><span class="line"></span><span class="eyebrow">Electronic Press Kit</span></div>
-        <h1 class="display">Granite</h1>
+        <img class="hero-logo" src="images/granite/logo.png" alt="GRANITE">
         <p class="tag ph">One-line band statement goes here — the hook a promoter reads first.</p>
         <div class="meta">
             <span class="chip"><b>Genre</b> — replace</span>
@@ -283,7 +285,7 @@
 </section>
 
 <footer>
-    <div class="mk">GRANITE</div>
+    <img class="mk" src="images/granite/logo.png" alt="GRANITE">
     Electronic Press Kit · Mockup — replace placeholder content with the real thing.
 </footer>
 
