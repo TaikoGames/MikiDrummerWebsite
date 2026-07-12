@@ -171,6 +171,11 @@
     }
     @media (prefers-reduced-motion: reduce) { .player.playing .art .eq span { animation: none; } }
 
+    /* ---- SoundCloud player ---- */
+    .sc-player { display: block; width: 100%; border-radius: 14px; border: 1px solid var(--edge); background: var(--stone-900); }
+    .listen-cta { margin-top: 16px; }
+    .print-listen { display: none; }
+
     /* ---- Save as PDF button ---- */
     .pdf-btn {
         position: fixed; top: 16px; right: 16px; z-index: 60;
@@ -196,6 +201,8 @@
         .shot { break-inside: avoid; page-break-inside: avoid; }
         .connect { break-inside: avoid; page-break-inside: avoid; }
         .social, .reach { border-color: var(--molten) !important; }
+        .sc-player { display: none !important; }
+        .print-listen { display: inline-block; color: var(--molten); font-weight: 700; }
     }
 </style>
 </head>
@@ -231,6 +238,17 @@
     </div>
 </section>
 
+<!-- ===================== LISTEN ===================== -->
+<section id="listen">
+    <div class="wrap">
+        <div class="sec-head"><h2 class="display">Listen</h2></div>
+        <iframe class="sc-player" height="360" scrolling="no" frameborder="no" allow="autoplay" loading="lazy"
+            title="GRANITE on SoundCloud"
+            src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fon.soundcloud.com%2FFDNDweADZuy3ubKul7&color=%23e8672a&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+        <a class="print-listen" href="https://on.soundcloud.com/FDNDweADZuy3ubKul7">Listen at on.soundcloud.com/FDNDweADZuy3ubKul7</a>
+    </div>
+</section>
+
 <!-- ===================== CONNECT ===================== -->
 <section id="connect" class="connect">
     <div class="wrap">
@@ -240,6 +258,7 @@
         <div class="socials">
             <a class="social" href="https://www.instagram.com/granitevancouver/" target="_blank" rel="noopener"><span class="g"></span> Instagram</a>
             <a class="social" href="https://www.facebook.com/share/1DSNouNpFK/" target="_blank" rel="noopener"><span class="g"></span> Facebook</a>
+            <a class="social" href="https://on.soundcloud.com/FDNDweADZuy3ubKul7" target="_blank" rel="noopener"><span class="g"></span> SoundCloud</a>
         </div>
         <a class="reach" href="https://www.instagram.com/granitevancouver/" target="_blank" rel="noopener">Message us on Instagram</a>
     </div>
