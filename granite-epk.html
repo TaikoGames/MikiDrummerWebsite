@@ -174,40 +174,17 @@
 </head>
 <body>
 
-<div class="mockup-banner">Draft — photos &amp; socials are real. Bio, video &amp; music still to come.</div>
-
 <!-- ===================== HERO ===================== -->
 <header class="hero">
     <img class="hero-photo" src="images/granite/hero.jpg" alt="Granite performing live">
     <div class="wrap">
         <div class="kicker"><span class="line"></span><span class="eyebrow">Electronic Press Kit</span></div>
         <img class="hero-logo" src="images/granite/logo.png" alt="GRANITE">
-        <p class="tag ph">One-line band statement goes here — the hook a promoter reads first.</p>
         <div class="meta">
-            <span class="chip"><b>Genre</b> — replace</span>
             <span class="chip"><b>Based in</b> — Vancouver</span>
         </div>
     </div>
 </header>
-
-<!-- ===================== BIO ===================== -->
-<section id="bio">
-    <div class="wrap">
-        <div class="sec-head"><h2 class="display">Bio</h2></div>
-        <div class="bio-grid">
-            <div class="bio-body">
-                <p class="ph">Opening line — who Granite is and the one thing that makes you worth booking.</p>
-                <p class="ph">Second paragraph — your story: how you formed, your sound, who you share the stage with. Paste your real bio and this whole block gets replaced.</p>
-                <p class="ph">Third paragraph — recent highlights: releases, notable shows, press, streams. Keep it tight and quotable.</p>
-            </div>
-            <div class="facts">
-                <div class="row"><span class="k">For fans of</span><span class="v ph">band, band, band</span></div>
-                <div class="row"><span class="k">Hometown</span><span class="v">Vancouver, BC</span></div>
-                <div class="row"><span class="k">Latest release</span><span class="v ph">title / year</span></div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- ===================== PHOTOS ===================== -->
 <section id="photos">
@@ -222,47 +199,6 @@
             </div>
         </div>
         <p class="note">Live photos · hi-res versions available on request.</p>
-    </div>
-</section>
-
-<!-- ===================== VIDEOS ===================== -->
-<section id="videos">
-    <div class="wrap">
-        <div class="sec-head"><h2 class="display">Watch</h2></div>
-        <div class="videos">
-            <div class="vid"><div class="thumb"><div class="play"></div></div><div class="cap"><h3 class="ph">Music video / live clip title</h3><span>YouTube · replace with link</span></div></div>
-        </div>
-        <p class="note">On the real page these become embedded, playable YouTube/Vimeo videos.</p>
-    </div>
-</section>
-
-<!-- ===================== LISTEN ===================== -->
-<section id="listen">
-    <div class="wrap">
-        <div class="sec-head"><h2 class="display">Listen</h2></div>
-        <div class="listen-grid">
-            <div class="player" id="player">
-                <div class="art">
-                    <span class="cam">💿</span>
-                    <div class="eq"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-                </div>
-                <div class="track ph">Track title</div>
-                <div class="who">GRANITE</div>
-                <div class="bar"><i id="bar"></i></div>
-                <div class="ctl">
-                    <button aria-label="Previous">⏮</button>
-                    <button class="pp" id="pp" aria-label="Play">▶</button>
-                    <button aria-label="Next">⏭</button>
-                </div>
-            </div>
-            <div>
-                <div class="streams">
-                    <a class="stream" href="#"><span class="dot"></span> Spotify</a>
-                    <a class="stream" href="#"><span class="dot"></span> Bandcamp</a>
-                </div>
-                <p class="listen-note">The player will stream your real tracks (Spotify/Bandcamp embed or your MP3s), and these link straight to your profiles.</p>
-            </div>
-        </div>
     </div>
 </section>
 
@@ -282,22 +218,7 @@
 
 <footer>
     <img class="mk" src="images/granite/logo.png" alt="GRANITE">
-    Electronic Press Kit · Mockup — replace placeholder content with the real thing.
+    Vancouver · Electronic Press Kit
 </footer>
-
-<script>
-    // mock player
-    (function () {
-        const player = document.getElementById('player'), pp = document.getElementById('pp'), bar = document.getElementById('bar');
-        let playing = false, pct = 30, timer;
-        pp.addEventListener('click', () => {
-            playing = !playing;
-            player.classList.toggle('playing', playing);
-            pp.textContent = playing ? '⏸' : '▶';
-            clearInterval(timer);
-            if (playing) timer = setInterval(() => { pct = (pct + 0.4) % 100; bar.style.width = pct + '%'; }, 100);
-        });
-    })();
-</script>
 </body>
 </html>
