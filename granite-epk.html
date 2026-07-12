@@ -170,9 +170,38 @@
         .videos { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) { .player.playing .art .eq span { animation: none; } }
+
+    /* ---- Save as PDF button ---- */
+    .pdf-btn {
+        position: fixed; top: 16px; right: 16px; z-index: 60;
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 11px 18px; border-radius: 100px;
+        background: var(--molten); color: #180a03;
+        font: 700 13px/1 "Helvetica Neue", system-ui, sans-serif;
+        letter-spacing: 0.05em; text-transform: uppercase;
+        border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        transition: filter 0.15s ease, transform 0.05s ease;
+    }
+    .pdf-btn:hover { filter: brightness(1.08); }
+    .pdf-btn:active { transform: translateY(1px); }
+
+    /* ---- print / PDF layout ---- */
+    @page { size: A4; margin: 10mm; }
+    @media print {
+        :root, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: var(--stone-950); }
+        .pdf-btn { display: none !important; }
+        .hero { min-height: 0; height: 200mm; }
+        section { padding: 18px 0; }
+        .sec-head { break-after: avoid; page-break-after: avoid; }
+        .shot { break-inside: avoid; page-break-inside: avoid; }
+        .connect { break-inside: avoid; page-break-inside: avoid; }
+        .social, .reach { border-color: var(--molten) !important; }
+    }
 </style>
 </head>
 <body>
+
+<button class="pdf-btn" id="pdfBtn" aria-label="Save this press kit as a PDF">⬇ Save as PDF</button>
 
 <!-- ===================== HERO ===================== -->
 <header class="hero">
@@ -220,5 +249,9 @@
     <img class="mk" src="images/granite/logo.png" alt="GRANITE">
     Vancouver · Electronic Press Kit
 </footer>
+
+<script>
+    document.getElementById('pdfBtn').addEventListener('click', function () { window.print(); });
+</script>
 </body>
 </html>
