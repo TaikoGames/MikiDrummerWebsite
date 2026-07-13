@@ -127,6 +127,18 @@
     .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .grid3 .shot { aspect-ratio: 1 / 1; }
     .note { margin-top: 18px; font-size: 13px; color: var(--stone-400); }
+    .media-actions { margin-top: 26px; }
+    .dl-btn-media {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 13px 24px; border-radius: 100px;
+        background: var(--molten); color: #180a03;
+        font: 700 13px/1 "Helvetica Neue", system-ui, sans-serif;
+        letter-spacing: 0.05em; text-transform: uppercase;
+        border: none; cursor: pointer; transition: filter 0.15s ease, transform 0.05s ease;
+    }
+    .dl-btn-media:hover { filter: brightness(1.08); }
+    .dl-btn-media:active { transform: translateY(1px); }
+    .dl-btn-media:disabled { opacity: 0.6; cursor: default; }
 
     /* ---------- VIDEOS ---------- */
     .videos { display: grid; grid-template-columns: 1fr; gap: 22px; max-width: 760px; }
@@ -244,7 +256,7 @@
         .shot { break-inside: avoid; page-break-inside: avoid; }
         .connect { break-inside: avoid; page-break-inside: avoid; }
         .social, .reach { border-color: var(--molten) !important; }
-        .sc-player, .sc-card, .videos, .sc-list { display: none !important; }
+        .sc-player, .sc-card, .videos, .sc-list, .media-actions { display: none !important; }
         .print-listen { display: inline-block; color: var(--molten); font-weight: 700; }
     }
 </style>
@@ -310,6 +322,9 @@
                 <div class="cap"><h3>Granite — Live</h3><span>YouTube</span></div>
             </div>
         </div>
+        <div class="media-actions">
+            <button class="dl-btn-media" id="dlAllBtn">⬇ Download all photos + logo</button>
+        </div>
     </div>
 </section>
 
@@ -328,11 +343,6 @@
             <iframe class="sc-track-player" height="120" scrolling="no" frameborder="no" allow="autoplay" loading="lazy" title="Granite — Astro Fungus on SoundCloud" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fuser-968824092%2Fastro-fungus&color=%23e8672a&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false"></iframe>
             <iframe class="sc-track-player" height="120" scrolling="no" frameborder="no" allow="autoplay" loading="lazy" title="Granite — Devilbliss on SoundCloud" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fuser-968824092%2Fdevilbliss&color=%23e8672a&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false"></iframe>
         </div>
-        <a class="sc-card" href="https://soundcloud.com/dg1company/blindsight" target="_blank" rel="noopener" style="margin-top:18px">
-            <span class="sc-play">▶</span>
-            <span class="sc-txt"><b>Open on SoundCloud</b><small>Stream GRANITE</small></span>
-            <span class="sc-arrow">↗</span>
-        </a>
         <a class="print-listen" href="https://soundcloud.com/dg1company/blindsight">Listen at soundcloud.com/dg1company/blindsight</a>
     </div>
 </section>
@@ -357,8 +367,28 @@
     Vancouver · Electronic Press Kit
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
     document.getElementById('pdfBtn').addEventListener('click', function () { window.print(); });
+
+    document.getElementById('dlAllBtn').addEventListener('click', async function () {
+        const btn = this, orig = btn.textContent;
+        if (typeof JSZip === 'undefined') { window.location.href = 'images/granite/'; return; }
+        btn.disabled = true; btn.textContent = 'Preparing…';
+        const files = ['logo.png','hero.jpg','feature.jpg','live-01.jpg','live-02.jpg','live-03.jpg','live-04.jpg','live-05.jpg','live-06.jpg'];
+        const zip = new JSZip(), folder = zip.folder('granite-press-photos');
+        let added = 0;
+        await Promise.all(files.map(async function (f) {
+            try { const r = await fetch('images/granite/' + f); if (!r.ok) return; folder.file(f, await r.blob()); added++; } catch (e) {}
+        }));
+        if (!added) { alert('No images found to download.'); btn.disabled = false; btn.textContent = orig; return; }
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'granite-press-photos.zip';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+        btn.disabled = false; btn.textContent = orig;
+    });
 </script>
 </body>
 </html>
