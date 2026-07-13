@@ -215,6 +215,11 @@
     .sc-card .sc-txt small { color: var(--stone-400); font-size: 13px; }
     .sc-card .sc-arrow { margin-left: auto; color: var(--stone-400); font-size: 18px; }
     .print-listen { display: none; }
+    .sc-tracks { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .sc-tracks-label { display: block; width: 100%; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone-400); margin-bottom: 4px; }
+    .sc-track { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 100px; border: 1px solid var(--edge); background: var(--stone-900); color: var(--stone-100); font-size: 14px; font-weight: 600; transition: border-color 0.2s ease, transform 0.15s ease; }
+    .sc-track::before { content: "\25B6"; color: var(--molten); font-size: 10px; }
+    .sc-track:hover { border-color: var(--molten); transform: translateY(-2px); }
 
     /* ---- Save as PDF button ---- */
     .pdf-btn {
@@ -317,6 +322,18 @@
             <span class="sc-txt"><b>Open on SoundCloud</b><small>Stream GRANITE</small></span>
             <span class="sc-arrow">↗</span>
         </a>
+        <div class="sc-tracks">
+            <span class="sc-tracks-label">More tracks on SoundCloud</span>
+            <a class="sc-track" href="https://soundcloud.com/user-968824092/blindsight" target="_blank" rel="noopener">Blindsight</a>
+            <a class="sc-track" href="https://soundcloud.com/user-968824092/skookum" target="_blank" rel="noopener">Skookum</a>
+            <a class="sc-track" href="https://soundcloud.com/user-968824092/hemogoblin" target="_blank" rel="noopener">Hemogoblin</a>
+            <a class="sc-track" href="https://soundcloud.com/user-968824092/pony-up-1" target="_blank" rel="noopener">Pony Up</a>
+            <a class="sc-track" href="https://soundcloud.com/user-968824092/sour-diesel" target="_blank" rel="noopener">Sour Diesel</a>
+            <a class="sc-track" href="https://soundcloud.com/user-968824092/tiamat" target="_blank" rel="noopener">Tiamat</a>
+            <a class="sc-track" href="https://soundcloud.com/user-968824092/cursed" target="_blank" rel="noopener">Cursed</a>
+            <a class="sc-track" href="https://soundcloud.com/user-968824092/astro-fungus" target="_blank" rel="noopener">Astro Fungus</a>
+            <a class="sc-track" href="https://soundcloud.com/user-968824092/devilbliss" target="_blank" rel="noopener">Devilbliss</a>
+        </div>
         <a class="print-listen" href="https://soundcloud.com/user-968824092/blindsight">Listen at soundcloud.com/user-968824092/blindsight</a>
     </div>
 </section>
