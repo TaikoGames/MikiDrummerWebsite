@@ -251,6 +251,8 @@
                   current = { title: line.replace('Title:', '').trim() };
                 } else if (line.startsWith('Description:')) {
                   current.desc = line.replace('Description:', '').trim();
+                } else if (line.startsWith('Link:')) {
+                  current.link = line.replace('Link:', '').trim();
                 }
               });
               if (current.title) entries.push(current);
@@ -281,9 +283,13 @@
             if (!entries.length) return '';
             return entries.map(function(e) {
               var desc = e.desc && e.desc !== 'TBA' ? ' — ' + e.desc : '';
+              var text = e.title + desc;
+              var inner = e.link
+                ? '<a class="miki-news-text" href="' + e.link + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px">' + text + '</a>'
+                : '<span class="miki-news-text">' + text + '</span>';
               return '<span class="miki-news-label">📰 News</span>'
                 + '<span class="miki-sep">▸</span>'
-                + '<span class="miki-news-text">' + e.title + desc + '</span>';
+                + inner;
             }).join('<span class="miki-sep">◆</span>');
           }
 
