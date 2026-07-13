@@ -356,7 +356,6 @@
         <div class="socials">
             <a class="social" href="https://www.instagram.com/granitevancouver/" target="_blank" rel="noopener"><span class="g"></span> Instagram</a>
             <a class="social" href="https://www.facebook.com/share/1DSNouNpFK/" target="_blank" rel="noopener"><span class="g"></span> Facebook</a>
-            <a class="social" href="https://on.soundcloud.com/D8bm1d6levoEw64IeJ" target="_blank" rel="noopener"><span class="g"></span> SoundCloud</a>
         </div>
         <a class="reach" href="https://www.instagram.com/granitevancouver/" target="_blank" rel="noopener">Message us on Instagram</a>
     </div>
@@ -375,7 +374,7 @@
         const btn = this, orig = btn.textContent;
         if (typeof JSZip === 'undefined') { window.location.href = 'images/granite/'; return; }
         btn.disabled = true; btn.textContent = 'Preparing…';
-        const files = ['logo.png','hero.jpg','feature.jpg','live-01.jpg','live-02.jpg','live-03.jpg','live-04.jpg','live-05.jpg','live-06.jpg'];
+        const files = ['logo.png','logo-black.png','hero.jpg','feature.jpg','live-01.jpg','live-02.jpg','live-03.jpg','live-04.jpg','live-05.jpg','live-06.jpg'];
         const zip = new JSZip(), folder = zip.folder('granite-press-photos');
         let added = 0;
         await Promise.all(files.map(async function (f) {
