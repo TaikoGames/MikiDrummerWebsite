@@ -201,9 +201,19 @@
     }
     @media (prefers-reduced-motion: reduce) { .player.playing .art .eq span { animation: none; } }
 
-    /* ---- SoundCloud player ---- */
+    /* ---- SoundCloud player / listen card ---- */
     .sc-player { display: block; width: 100%; border-radius: 14px; border: 1px solid var(--edge); background: var(--stone-900); }
-    .listen-cta { margin-top: 16px; }
+    .sc-card {
+        display: flex; align-items: center; gap: 18px; padding: 20px 24px; border-radius: 14px;
+        border: 1px solid var(--edge); background: var(--stone-900); color: var(--stone-100); max-width: 520px;
+        transition: border-color 0.2s ease, transform 0.15s ease;
+    }
+    .sc-card:hover { border-color: var(--molten); transform: translateY(-2px); }
+    .sc-card .sc-play { flex: none; width: 52px; height: 52px; border-radius: 50%; background: var(--molten); color: #180a03; display: grid; place-items: center; font-size: 20px; box-shadow: 0 8px 20px rgba(232,103,42,0.4); }
+    .sc-card .sc-txt { display: flex; flex-direction: column; line-height: 1.3; }
+    .sc-card .sc-txt b { font-size: 17px; }
+    .sc-card .sc-txt small { color: var(--stone-400); font-size: 13px; }
+    .sc-card .sc-arrow { margin-left: auto; color: var(--stone-400); font-size: 18px; }
     .print-listen { display: none; }
 
     /* ---- Save as PDF button ---- */
@@ -231,7 +241,7 @@
         .shot { break-inside: avoid; page-break-inside: avoid; }
         .connect { break-inside: avoid; page-break-inside: avoid; }
         .social, .reach { border-color: var(--molten) !important; }
-        .sc-player { display: none !important; }
+        .sc-player, .sc-card { display: none !important; }
         .print-listen { display: inline-block; color: var(--molten); font-weight: 700; }
     }
 </style>
@@ -293,9 +303,11 @@
 <section id="listen">
     <div class="wrap">
         <div class="sec-head"><h2 class="display">Listen</h2></div>
-        <iframe class="sc-player" height="360" scrolling="no" frameborder="no" allow="autoplay" loading="lazy"
-            title="GRANITE on SoundCloud"
-            src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fon.soundcloud.com%2FD8bm1d6levoEw64IeJ&color=%23e8672a&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+        <a class="sc-card" href="https://on.soundcloud.com/D8bm1d6levoEw64IeJ" target="_blank" rel="noopener">
+            <span class="sc-play">▶</span>
+            <span class="sc-txt"><b>Listen on SoundCloud</b><small>Stream GRANITE</small></span>
+            <span class="sc-arrow">↗</span>
+        </a>
         <a class="print-listen" href="https://on.soundcloud.com/D8bm1d6levoEw64IeJ">Listen at on.soundcloud.com/D8bm1d6levoEw64IeJ</a>
     </div>
 </section>
