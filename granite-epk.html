@@ -1,7 +1,39 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GRANITE — Electronic Press Kit</title>
+<title>GRANITE — Vancouver Metal / Grunge Band | Press Kit</title>
+<meta name="description" content="GRANITE is a genre-bending metal and grunge band from Vancouver, BC — heavy riffs, raw vocals, and a relentless live show. Photos, music, and booking contact.">
+<meta name="keywords" content="Granite, Granite Vancouver, Vancouver metal band, grunge band Vancouver, heavy music Vancouver, metal grunge, Pacific Northwest metal, live band Vancouver, band press kit">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.mikidrummer.ca/granite-epk.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mikidrummer.ca/granite-epk.html">
+<meta property="og:title" content="GRANITE — Vancouver Metal / Grunge Band">
+<meta property="og:description" content="Heavy, raw, and hard to describe. A metal-grunge band out of Vancouver, BC. Photos, music, and booking.">
+<meta property="og:image" content="https://www.mikidrummer.ca/images/granite/hero.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GRANITE — Vancouver Metal / Grunge Band">
+<meta name="twitter:description" content="Heavy, raw, and hard to describe. Metal-grunge out of Vancouver, BC.">
+<meta name="twitter:image" content="https://www.mikidrummer.ca/images/granite/hero.jpg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicGroup",
+  "name": "Granite",
+  "genre": ["Metal", "Grunge", "Heavy Rock"],
+  "foundingLocation": { "@type": "Place", "name": "Vancouver, British Columbia, Canada" },
+  "url": "https://www.mikidrummer.ca/granite-epk.html",
+  "image": "https://www.mikidrummer.ca/images/granite/hero.jpg",
+  "description": "Granite is a genre-bending metal and grunge band from Vancouver, BC.",
+  "sameAs": [
+    "https://www.instagram.com/granitevancouver/",
+    "https://www.facebook.com/share/1DSNouNpFK/",
+    "https://on.soundcloud.com/D8bm1d6levoEw64IeJ"
+  ]
+}
+</script>
 <style>
     :root {
         --stone-950: #0f1012;
@@ -39,17 +71,30 @@
         color: var(--molten); font-weight: 700;
     }
     .ph { color: var(--stone-400); font-style: italic; }
-    .ph::before { content: ""; }
+    .ph::before { content: "⟶ "; color: var(--molten); font-style: normal; }
     a { color: inherit; text-decoration: none; }
 
     /* ---------- HERO ---------- */
-    .hero { position: relative; background: #000; overflow: hidden; }
-    .hero-img { display: block; width: 100%; height: auto; max-height: 88vh; object-fit: contain; margin: 0 auto; background: #000; }
-    .hero .hero-intro { position: relative; z-index: 2; padding: 30px 24px 44px; }
-    .hero .kicker { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .hero { position: relative; min-height: 92vh; display: flex; align-items: flex-end; overflow: hidden; }
+    .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 28%; z-index: 0; }
+    .hero::after {
+        content: ""; position: absolute; inset: 0; z-index: 1;
+        background:
+            radial-gradient(120% 90% at 50% 0%, rgba(232,103,42,0.14), transparent 52%),
+            linear-gradient(to bottom, rgba(15,16,18,0.32) 0%, rgba(15,16,18,0.42) 38%, rgba(15,16,18,0.9) 86%, var(--stone-950) 100%);
+    }
+    .hero .wrap { position: relative; z-index: 2; padding-bottom: 64px; width: 100%; }
+    .hero .kicker { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
     .hero .kicker .line { height: 1px; width: 46px; background: var(--molten); }
+    .hero-logo {
+        display: block;
+        width: min(720px, 90%);
+        height: auto;
+        margin: 0 0 20px;
+        filter: drop-shadow(0 10px 34px rgba(0,0,0,0.6));
+    }
     .hero .tag { font-size: clamp(17px, 2.4vw, 22px); color: var(--stone-100); max-width: 640px; font-weight: 500; }
-    .hero .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .hero .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
     .chip {
         border: 1px solid var(--edge); background: rgba(255,255,255,0.03);
         padding: 8px 16px; border-radius: 100px; font-size: 13px; letter-spacing: 0.06em;
@@ -74,17 +119,13 @@
     .facts .v { color: var(--stone-100); font-weight: 600; text-align: right; }
 
     /* ---------- PHOTOS ---------- */
-    .gallery { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 150px; gap: 14px; }
-    .shot { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--edge); display: grid; place-items: center; }
-    .shot.big { grid-column: span 2; grid-row: span 2; }
-    .shot .lbl { position: absolute; bottom: 10px; left: 12px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone-300); z-index: 2; }
-    .shot .dl { position: absolute; top: 10px; right: 12px; font-size: 11px; color: var(--stone-400); z-index: 2; }
-    .shot .cam { font-size: 26px; opacity: 0.4; z-index: 2; }
-    .shot::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, var(--stone-700), var(--stone-900)); z-index: 0; }
-    .shot > * { position: relative; }
-    .shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-    .shot .lbl, .shot .dl { z-index: 3; }
-    .shot .dl { text-decoration: none; }
+    .gallery { display: flex; flex-direction: column; gap: 14px; }
+    .shot { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--edge); background: var(--stone-900); }
+    .shot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+    .shot:hover img { transform: scale(1.04); }
+    .shot.feature { aspect-ratio: 2 / 1; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid3 .shot { aspect-ratio: 1 / 1; }
     .note { margin-top: 18px; font-size: 13px; color: var(--stone-400); }
 
     /* ---------- VIDEOS ---------- */
@@ -129,8 +170,6 @@
     .stream:active { transform: translateY(1px); }
     .stream .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--molten); }
     .listen-note { color: var(--stone-400); font-size: 14px; margin-top: 20px; }
-    .listen-wrap { max-width: 720px; }
-    .sc-player { display: block; width: 100%; border: 1px solid var(--edge); border-radius: 12px; margin-bottom: 18px; }
 
     /* ---------- CONNECT ---------- */
     .connect { text-align: center; }
@@ -147,7 +186,7 @@
     .reach { display: inline-block; margin-top: 8px; padding: 16px 40px; border-radius: 100px; background: var(--molten); color: #180a03; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; box-shadow: 0 14px 34px rgba(232,103,42,0.35); }
 
     footer { padding: 40px 0 60px; border-top: 1px solid var(--edge); text-align: center; color: var(--stone-400); font-size: 13px; }
-    footer .mk { font-family: "Arial Black", sans-serif; letter-spacing: 0.2em; color: var(--stone-300); font-size: 15px; margin-bottom: 8px; }
+    footer .mk { height: 30px; width: auto; opacity: 0.7; margin: 0 auto 10px; display: block; }
 
     .mockup-banner {
         position: sticky; top: 0; z-index: 50; background: var(--molten); color: #180a03;
@@ -156,21 +195,71 @@
 
     @media (max-width: 780px) {
         .bio-grid, .listen-grid { grid-template-columns: 1fr; gap: 28px; }
-        .gallery { grid-template-columns: repeat(2, 1fr); }
+        .grid3 { grid-template-columns: repeat(2, 1fr); }
+        .shot.feature { aspect-ratio: 3 / 2; }
         .videos { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) { .player.playing .art .eq span { animation: none; } }
+
+    /* ---- SoundCloud player / listen card ---- */
+    .sc-player { display: block; width: 100%; border-radius: 14px; border: 1px solid var(--edge); background: var(--stone-900); }
+    .sc-card {
+        display: flex; align-items: center; gap: 18px; padding: 20px 24px; border-radius: 14px;
+        border: 1px solid var(--edge); background: var(--stone-900); color: var(--stone-100); max-width: 520px;
+        transition: border-color 0.2s ease, transform 0.15s ease;
+    }
+    .sc-card:hover { border-color: var(--molten); transform: translateY(-2px); }
+    .sc-card .sc-play { flex: none; width: 52px; height: 52px; border-radius: 50%; background: var(--molten); color: #180a03; display: grid; place-items: center; font-size: 20px; box-shadow: 0 8px 20px rgba(232,103,42,0.4); }
+    .sc-card .sc-txt { display: flex; flex-direction: column; line-height: 1.3; }
+    .sc-card .sc-txt b { font-size: 17px; }
+    .sc-card .sc-txt small { color: var(--stone-400); font-size: 13px; }
+    .sc-card .sc-arrow { margin-left: auto; color: var(--stone-400); font-size: 18px; }
+    .print-listen { display: none; }
+
+    /* ---- Save as PDF button ---- */
+    .pdf-btn {
+        position: fixed; top: 16px; right: 16px; z-index: 60;
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 11px 18px; border-radius: 100px;
+        background: var(--molten); color: #180a03;
+        font: 700 13px/1 "Helvetica Neue", system-ui, sans-serif;
+        letter-spacing: 0.05em; text-transform: uppercase;
+        border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        transition: filter 0.15s ease, transform 0.05s ease;
+    }
+    .pdf-btn:hover { filter: brightness(1.08); }
+    .pdf-btn:active { transform: translateY(1px); }
+
+    /* ---- print / PDF layout ---- */
+    @page { size: A4; margin: 10mm; }
+    @media print {
+        :root, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: var(--stone-950); }
+        .pdf-btn { display: none !important; }
+        .hero { min-height: 0; height: 200mm; }
+        section { padding: 18px 0; }
+        .sec-head { break-after: avoid; page-break-after: avoid; }
+        .shot { break-inside: avoid; page-break-inside: avoid; }
+        .connect { break-inside: avoid; page-break-inside: avoid; }
+        .social, .reach { border-color: var(--molten) !important; }
+        .sc-player, .sc-card, .videos { display: none !important; }
+        .print-listen { display: inline-block; color: var(--molten); font-weight: 700; }
+    }
 </style>
+</head>
+<body>
+
+<button class="pdf-btn" id="pdfBtn" aria-label="Save this press kit as a PDF">⬇ Save as PDF</button>
 
 <!-- ===================== HERO ===================== -->
 <header class="hero">
-    <img class="hero-img" src="granite-header.jpg" alt="Granite — live" onerror="this.style.display='none'">
-    <div class="hero-intro wrap">
+    <img class="hero-photo" src="images/granite/hero.jpg" alt="Granite performing live">
+    <div class="wrap">
         <div class="kicker"><span class="line"></span><span class="eyebrow">Electronic Press Kit</span></div>
-        <p class="tag ph">One-line band statement — the hook a promoter reads first.</p>
+        <img class="hero-logo" src="images/granite/logo.png" alt="GRANITE — Vancouver metal grunge band">
+        <p class="tag">Metal-grunge out of Vancouver — heavy, raw, and hard to describe.</p>
         <div class="meta">
-            <span class="chip"><b>Genre</b> Metal</span>
-            <span class="chip"><b>Based in</b> Port Coquitlam, BC</span>
+            <span class="chip"><b>Genre</b> — Metal / Grunge</span>
+            <span class="chip"><b>Based in</b> — Vancouver, BC</span>
         </div>
     </div>
 </header>
@@ -181,43 +270,38 @@
         <div class="sec-head"><h2 class="display">Bio</h2></div>
         <div class="bio-grid">
             <div class="bio-body">
-                <p class="ph">Opening line — who Granite is and the one thing that makes you worth booking.</p>
-                <p class="ph">Second paragraph — your story: how you formed, your sound, who you share the stage with. Paste your real bio and this whole block gets replaced.</p>
-                <p class="ph">Third paragraph — recent highlights: releases, notable shows, press, streams. Keep it tight and quotable.</p>
+                <p>GRANITE is a Vancouver metal band that refuses to sit still in one genre. Equal parts crushing metal and dirt-under-the-fingernails grunge, their sound is heavy, hook-driven, and hard to file — the kind of noise that hits like a boot to the chest and lingers like a bad decision.</p>
+                <p>Forged in Vancouver's underground, GRANITE deal in downtuned riffs, raw-throated vocals, and a live show that leaves rooms sweat-soaked and ears ringing. It's grunge grit welded to metal weight: sludgy when it wants to be, savage when it needs to be, and always built to move a crowd.</p>
+                <p>Whether they're splitting a bill with local heavyweights or tearing up a basement show, GRANITE bring the same thing every night — real, loud, unfiltered heavy music from the Pacific Northwest. Hard to describe. Easy to feel.</p>
             </div>
             <div class="facts">
-                <div class="row"><span class="k">For fans of</span><span class="v ph">band, band, band</span></div>
-                <div class="row"><span class="k">Hometown</span><span class="v">Port Coquitlam, BC</span></div>
-                <div class="row"><span class="k">Latest release</span><span class="v ph">title / year</span></div>
+                <div class="row"><span class="k">Genre</span><span class="v">Metal · Grunge</span></div>
+                <div class="row"><span class="k">Hometown</span><span class="v">Vancouver, BC</span></div>
+                <div class="row"><span class="k">Sounds like</span><span class="v">Hard to describe</span></div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ===================== PHOTOS ===================== -->
-<section id="photos">
+<!-- ===================== MEDIA ===================== -->
+<section id="media">
     <div class="wrap">
-        <div class="sec-head"><h2 class="display">Photos</h2></div>
-        <div class="gallery">
-            <div class="shot big"><img src="granite-live-1.jpg" alt="Granite live — guitar" onerror="this.remove()"><span class="lbl">Live</span><a class="dl" href="granite-live-1.jpg" download>hi-res ↓</a></div>
-            <div class="shot"><img src="granite-live-2.jpg" alt="Granite live — vocals" onerror="this.remove()"><span class="lbl">Live</span><a class="dl" href="granite-live-2.jpg" download>hi-res ↓</a></div>
-            <div class="shot"><img src="granite-live-3.jpg" alt="Granite live — vocals & bass" onerror="this.remove()"><span class="lbl">Live</span><a class="dl" href="granite-live-3.jpg" download>hi-res ↓</a></div>
-            <div class="shot"><img src="granite-header.jpg" alt="Granite — promo" onerror="this.remove()"><span class="cam">📷</span><span class="lbl">Promo</span></div>
-        </div>
-        <p class="note">Right-click / tap "hi-res ↓" to download full-res files for promoters.</p>
-    </div>
-</section>
-
-<!-- ===================== VIDEOS ===================== -->
-<section id="videos">
-    <div class="wrap">
-        <div class="sec-head"><h2 class="display">Watch</h2></div>
+        <div class="sec-head"><h2 class="display">Media</h2></div>
         <div class="videos">
             <div class="vid">
                 <div class="thumb"><iframe src="https://www.youtube.com/embed/Qovij1CQUV4" title="Granite — live" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>
                 <div class="cap"><h3>Granite — Live</h3><span>YouTube</span></div>
             </div>
         </div>
+        <div class="gallery">
+            <figure class="shot feature"><img src="images/granite/feature.jpg" alt="Granite vocalist live" loading="lazy"></figure>
+            <div class="grid3">
+                <figure class="shot"><img src="images/granite/live-01.jpg" alt="Granite live" loading="lazy"></figure>
+                <figure class="shot"><img src="images/granite/live-02.jpg" alt="Granite guitarist live" loading="lazy"></figure>
+                <figure class="shot"><img src="images/granite/live-03.jpg" alt="Granite live" loading="lazy"></figure>
+            </div>
+        </div>
+        <p class="note">Live photos · hi-res versions available on request.</p>
     </div>
 </section>
 
@@ -225,15 +309,15 @@
 <section id="listen">
     <div class="wrap">
         <div class="sec-head"><h2 class="display">Listen</h2></div>
-        <div class="listen-wrap">
-            <iframe class="sc-player" width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" loading="lazy"
-                title="Granite — Blindsight on SoundCloud"
-                src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fuser-968824092%2Fblindsight&color=%23e8672a&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>
-            <div class="streams">
-                <a class="stream" href="https://soundcloud.com/user-968824092/blindsight" target="_blank" rel="noopener"><span class="dot"></span> SoundCloud</a>
-            </div>
-            <p class="listen-note">Hit play above, or open the full profile on SoundCloud.</p>
-        </div>
+        <iframe class="sc-player" width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" loading="lazy"
+            title="Granite — Blindsight on SoundCloud"
+            src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fuser-968824092%2Fblindsight&color=%23e8672a&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>
+        <a class="sc-card" href="https://soundcloud.com/user-968824092/blindsight" target="_blank" rel="noopener" style="margin-top:16px">
+            <span class="sc-play">▶</span>
+            <span class="sc-txt"><b>Open on SoundCloud</b><small>Stream GRANITE</small></span>
+            <span class="sc-arrow">↗</span>
+        </a>
+        <a class="print-listen" href="https://soundcloud.com/user-968824092/blindsight">Listen at soundcloud.com/user-968824092/blindsight</a>
     </div>
 </section>
 
@@ -242,67 +326,23 @@
     <div class="wrap">
         <span class="eyebrow">Reach out</span>
         <h2 class="display">Let's talk</h2>
-        <p>Booking, press, or just to say hi — slide into the DMs on any of these.</p>
+        <p>Booking, press, or just to say hi — slide into the DMs on Instagram or Facebook.</p>
         <div class="socials">
-            <a class="social" href="https://www.instagram.com/granitevancouver" target="_blank" rel="noopener"><span class="g"></span> Instagram</a>
-            <a class="social" href="https://www.facebook.com/Granite666" target="_blank" rel="noopener"><span class="g"></span> Facebook</a>
+            <a class="social" href="https://www.instagram.com/granitevancouver/" target="_blank" rel="noopener"><span class="g"></span> Instagram</a>
+            <a class="social" href="https://www.facebook.com/share/1DSNouNpFK/" target="_blank" rel="noopener"><span class="g"></span> Facebook</a>
+            <a class="social" href="https://on.soundcloud.com/D8bm1d6levoEw64IeJ" target="_blank" rel="noopener"><span class="g"></span> SoundCloud</a>
         </div>
-        <a class="reach" href="https://www.instagram.com/granitevancouver" target="_blank" rel="noopener">Message us</a>
+        <a class="reach" href="https://www.instagram.com/granitevancouver/" target="_blank" rel="noopener">Message us on Instagram</a>
     </div>
 </section>
 
 <footer>
-    <div class="mk">GRANITE</div>
-    Electronic Press Kit · Port Coquitlam, BC
+    <img class="mk" src="images/granite/logo.png" alt="GRANITE">
+    Vancouver · Electronic Press Kit
 </footer>
 
 <script>
-    // granite speckle texture
-    (function () {
-        const cv = document.getElementById('granite');
-        if (!cv) return;
-        const ctx = cv.getContext('2d');
-        function draw() {
-            const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            const w = cv.clientWidth, h = cv.clientHeight;
-            cv.width = w * dpr; cv.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            const g = ctx.createLinearGradient(0, 0, w, h);
-            g.addColorStop(0, '#3c4046'); g.addColorStop(0.5, '#2a2d32'); g.addColorStop(1, '#191b1e');
-            ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-            // fine speckle
-            const n = Math.floor(w * h / 42);
-            for (let i = 0; i < n; i++) {
-                const x = Math.random() * w, y = Math.random() * h, s = Math.random() * 2.2 + 0.4, r = Math.random();
-                if (r < 0.5) ctx.fillStyle = 'rgba(0,0,0,' + (0.25 + Math.random() * 0.4) + ')';
-                else if (r < 0.9) ctx.fillStyle = 'rgba(198,204,212,' + (0.12 + Math.random() * 0.28) + ')';
-                else ctx.fillStyle = 'rgba(232,103,42,' + (0.08 + Math.random() * 0.22) + ')';
-                ctx.fillRect(x, y, s, s);
-            }
-            // larger feldspar flecks for a real stone look
-            const chunks = Math.floor(w * h / 5200);
-            for (let i = 0; i < chunks; i++) {
-                const x = Math.random() * w, y = Math.random() * h, s = Math.random() * 5 + 2.5;
-                ctx.fillStyle = Math.random() < 0.7
-                    ? 'rgba(210,215,222,' + (0.06 + Math.random() * 0.12) + ')'
-                    : 'rgba(0,0,0,' + (0.2 + Math.random() * 0.25) + ')';
-                ctx.beginPath(); ctx.ellipse(x, y, s, s * (0.5 + Math.random() * 0.6), Math.random() * 3.14, 0, 6.29); ctx.fill();
-            }
-        }
-        draw();
-        let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(draw, 200); });
-    })();
-
-    // mock player
-    (function () {
-        const player = document.getElementById('player'), pp = document.getElementById('pp'), bar = document.getElementById('bar');
-        if (!player || !pp || !bar) return;
-        let playing = false, pct = 30, timer;
-        pp.addEventListener('click', () => {
-            playing = !playing;
-            player.classList.toggle('playing', playing);
-            pp.textContent = playing ? '⏸' : '▶';
-            clearInterval(timer);
-            if (playing) timer = setInterval(() => { pct = (pct + 0.4) % 100; bar.style.width = pct + '%'; }, 100);
-        });
-    })();
+    document.getElementById('pdfBtn').addEventListener('click', function () { window.print(); });
 </script>
+</body>
+</html>
