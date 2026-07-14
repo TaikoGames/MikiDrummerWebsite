@@ -641,6 +641,10 @@
         <input type="url" id="f-link" placeholder="https://..." />
       </div>
       <div class="form-group">
+        <label>Poster / Flyer Link</label>
+        <input type="url" id="f-poster" placeholder="https://... (flyer image URL)" />
+      </div>
+      <div class="form-group">
         <label>Notes</label>
         <textarea id="f-notes" placeholder="Supporting bands, all ages, etc."></textarea>
       </div>
@@ -894,8 +898,9 @@
           'City': city,
           'Price': document.getElementById('f-price').value,
           'Ticket Link': document.getElementById('f-link').value,
+          'Poster / Flyer': document.getElementById('f-poster').value,
           'Notes': document.getElementById('f-notes').value,
-          '👇 PASTE THIS INTO CELL A OF AN EMPTY ROW IN THE SHEET': `={"${band}","${date}","${document.getElementById('f-time').value}","${venue}","${city}","${document.getElementById('f-price').value}","${document.getElementById('f-link').value}","","${document.getElementById('f-notes').value}",""}`,
+          '👇 PASTE THIS INTO CELL A OF AN EMPTY ROW IN THE SHEET': `={"${band}","${date}","${document.getElementById('f-time').value}","${venue}","${city}","${document.getElementById('f-price').value}","${document.getElementById('f-link').value}","","${document.getElementById('f-notes').value}","${document.getElementById('f-poster').value}"}`,
         })
       })
       if (!res.ok) throw new Error()
