@@ -401,6 +401,134 @@
             </div>
         </footer>
 
+        <!-- ===================== 🇪🇸 FIREWORKS (Campeones!) ===================== -->
+        <canvas id="mikiFireworks" aria-hidden="true"></canvas>
+        <style>
+          #mikiFireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            #mikiFireworks { display: none; }
+          }
+        </style>
+        <script>
+        (function () {
+          if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+          var canvas = document.getElementById('mikiFireworks');
+          var ctx = canvas.getContext('2d');
+          // España flag colours: red & gold, with a touch of white sparkle.
+          var COLORS = ['#c60b1e', '#ffc400', '#ffd94a', '#e8372a', '#ffffff'];
+          var particles = [];
+          var rockets = [];
+          var running = true;
+          var startTime = Date.now();
+          var DURATION = 9000; // celebrate for ~9s, then fade out
+
+          function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+          }
+          resize();
+          window.addEventListener('resize', resize);
+
+          function rand(min, max) { return Math.random() * (max - min) + min; }
+
+          function launchRocket() {
+            rockets.push({
+              x: rand(canvas.width * 0.15, canvas.width * 0.85),
+              y: canvas.height,
+              targetY: rand(canvas.height * 0.15, canvas.height * 0.45),
+              vy: rand(-11, -8),
+              color: COLORS[Math.floor(Math.random() * 2)]
+            });
+          }
+
+          function explode(x, y, color) {
+            var count = Math.floor(rand(40, 70));
+            for (var i = 0; i < count; i++) {
+              var angle = rand(0, Math.PI * 2);
+              var speed = rand(1.5, 6.5);
+              particles.push({
+                x: x, y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 1,
+                decay: rand(0.008, 0.02),
+                color: Math.random() < 0.75 ? color : COLORS[Math.floor(Math.random() * COLORS.length)],
+                size: rand(1.5, 3)
+              });
+            }
+          }
+
+          function tick() {
+            if (!running) return;
+            var elapsed = Date.now() - startTime;
+            var globalFade = elapsed > DURATION ? Math.max(0, 1 - (elapsed - DURATION) / 1200) : 1;
+
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(8, 6, 5, 0.22)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = 'lighter';
+
+            for (var i = rockets.length - 1; i >= 0; i--) {
+              var r = rockets[i];
+              r.x += 0; r.y += r.vy;
+              ctx.fillStyle = r.color;
+              ctx.beginPath();
+              ctx.arc(r.x, r.y, 2.5, 0, Math.PI * 2);
+              ctx.fill();
+              if (r.y <= r.targetY || r.vy >= 0) {
+                explode(r.x, r.y, r.color);
+                rockets.splice(i, 1);
+              }
+            }
+
+            for (var j = particles.length - 1; j >= 0; j--) {
+              var p = particles[j];
+              p.vx *= 0.985;
+              p.vy *= 0.985;
+              p.vy += 0.035; // gravity
+              p.x += p.vx;
+              p.y += p.vy;
+              p.life -= p.decay;
+              if (p.life <= 0) { particles.splice(j, 1); continue; }
+              ctx.globalAlpha = Math.max(0, p.life) * globalFade;
+              ctx.fillStyle = p.color;
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+
+            if (elapsed > DURATION && particles.length === 0 && rockets.length === 0) {
+              running = false;
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              canvas.style.display = 'none';
+              return;
+            }
+            requestAnimationFrame(tick);
+          }
+
+          // Fire an opening barrage, then keep launching until the duration is up.
+          for (var k = 0; k < 4; k++) setTimeout(launchRocket, k * 250);
+          var launcher = setInterval(function () {
+            if (Date.now() - startTime > DURATION) { clearInterval(launcher); return; }
+            launchRocket();
+            if (Math.random() < 0.4) launchRocket();
+          }, 550);
+
+          requestAnimationFrame(tick);
+        })();
+        </script>
+        <!-- ===================== END FIREWORKS ===================== -->
+
         <script src="js/bootstrap.min.js"></script>
         <script src="js/custom.js"></script>
 
