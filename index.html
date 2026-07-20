@@ -253,10 +253,18 @@
                   current.desc = line.replace('Description:', '').trim();
                 } else if (line.startsWith('Link:')) {
                   current.link = line.replace('Link:', '').trim();
+                } else if (line.startsWith('Expires:')) {
+                  current.expires = line.replace('Expires:', '').trim();
                 }
               });
               if (current.title) entries.push(current);
-              return entries;
+              // Drop any item whose Expires date (YYYY-MM-DD) has passed.
+              var now = Date.now();
+              return entries.filter(function(e) {
+                if (!e.expires) return true;
+                var d = new Date(e.expires + 'T23:59:59');
+                return isNaN(d.getTime()) || d.getTime() >= now;
+              });
             } catch (e) { return []; }
           }
 
