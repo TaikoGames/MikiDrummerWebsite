@@ -32,22 +32,22 @@
     },
     {
       "src": "audio/Bajo el nivel del mal.mp3",
-      "thumbnail": "images/Groenlandia.jpg",
+      "thumbnail": "images/diera-cover.png",
       "title": "Bajo el nivel del mal - Diera"
     },
     {
       "src": "audio/Groenlandia.mp3",
-      "thumbnail": "images/Groenlandia.jpg",
+      "thumbnail": "images/diera-cover.png",
       "title": "Groenlandia - Diera"
     },
     {
       "src": "audio/La tragedia de los comunes.mp3",
-      "thumbnail": "images/Groenlandia.jpg",
+      "thumbnail": "images/diera-cover.png",
       "title": "La tragedia de los comunes - Diera"
     },
     {
       "src": "audio/Sebastopol García.mp3",
-      "thumbnail": "images/Groenlandia.jpg",
+      "thumbnail": "images/diera-cover.png",
       "title": "Sebastopol García - Diera"
     }
   ]
