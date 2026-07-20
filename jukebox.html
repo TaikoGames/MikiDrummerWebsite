@@ -688,7 +688,7 @@
     }
 
     // ---------- load playlist ----------
-    fetch('playlist.json')
+    fetch('playlist.json?_=' + Date.now())
         .then(r => r.json())
         .then(data => {
             songs = (data && data.songs) || [];
