@@ -476,8 +476,11 @@
             var elapsed = Date.now() - startTime;
             var globalFade = elapsed > DURATION ? Math.max(0, 1 - (elapsed - DURATION) / 1200) : 1;
 
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = 'rgba(8, 6, 5, 0.22)';
+            // Fade previous frames toward transparent (keeps comet trails) WITHOUT
+            // painting black over the page — destination-out erases, it doesn't tint.
+            ctx.globalAlpha = 1;
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = 'lighter';
 
