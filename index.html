@@ -301,10 +301,10 @@
             const cities = CITIES.map(function(c, i) { return cityHTML(c, weathers[i]); }).join('<span class="miki-divider"></span>');
             const family = familyHTML();
             const news   = newsHTML(newsEntries);
-            const spacer = news ? '<span class="miki-divider"></span>' : '';
-            const block  = cities
-              + '<span class="miki-divider"></span>' + family
-              + spacer + news;
+            const newsBlock = news ? news + '<span class="miki-divider"></span>' : '';
+            const block  = newsBlock
+              + family
+              + '<span class="miki-divider"></span>' + cities;
             const gap = '<span style="display:inline-block;width:50vw"></span>';
             track.innerHTML = block + gap + block + gap;
             requestAnimationFrame(function() {
