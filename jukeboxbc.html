@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Punk Jukebox — Submit & Stream DIY Punk, Hardcore & Metal from BC</title>
+  <meta name="description" content="A community jukebox for punk, hardcore, metal and crust bands. Submit your track, stream the scene. Spotify for punks — no gatekeepers, no algorithm.">
+  <meta name="keywords" content="punk jukebox, submit punk music, BC punk bands, hardcore streaming, DIY punk, demo submission, underground music BC, punk demos Vancouver">
+  <link rel="canonical" href="https://www.mikidrummer.ca/jukeboxbc">
+  <meta property="og:title" content="Punk Jukebox — Spotify for Punks">
+  <meta property="og:description" content="Submit your track, stream the scene. A community jukebox for DIY punk, hardcore and metal.">
+  <meta property="og:url" content="https://www.mikidrummer.ca/jukeboxbc">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Punk Jukebox — Spotify for Punks">
+  <meta name="twitter:description" content="Submit your track, stream the scene. A community jukebox for DIY punk, hardcore and metal.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Punk Jukebox",
+    "url": "https://www.mikidrummer.ca/jukeboxbc",
+    "description": "A community jukebox where punk, hardcore and metal bands submit and stream their music",
+    "publisher": { "@type": "Person", "name": "Miki Drummer", "url": "https://www.mikidrummer.ca" }
+  }
+  </script>
+
+  <!-- Google tag -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C75363M813"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-C75363M813');
+  </script>
+
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #111;
+      --border: #222;
+      --red: #dc2626;
+      --red-dim: #7f1d1d;
+      --white: #f5f5f5;
+      --gray: #9ca3af;
+      --gray-dim: #374151;
+      --player-h: 78px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+    }
+    body.has-player { padding-bottom: var(--player-h); }
+
+    /* ── HEADER ── */
+    header {
+      border-bottom: 2px solid var(--red);
+      padding: 20px 16px;
+      background: #000;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .logo { display: flex; align-items: center; gap: 14px; }
+    .logo-icon { font-size: 36px; line-height: 1; }
+    .logo-text h1 {
+      font-size: clamp(24px, 5vw, 40px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1;
+    }
+    .logo-text p {
+      font-size: 10px;
+      color: var(--red);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .nav-link {
+      font-size: 11px;
+      color: var(--gray);
+      border: 1px solid var(--border);
+      padding: 7px 12px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .nav-link:hover { color: var(--white); border-color: var(--gray); }
+    #submit-btn {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    #submit-btn:hover { background: #b91c1c; }
+
+    /* ── GENRE FILTER ── */
+    .genre-bar {
+      background: #0d0d0d;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .genre-bar::-webkit-scrollbar { display: none; }
+    .genre-tabs { max-width: 1200px; margin: 0 auto; display: flex; padding: 0 16px; }
+    .genre-tab {
+      padding: 12px 20px;
+      font-size: 12px;
+      font-family: inherit;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--gray);
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .genre-tab:hover { color: var(--white); }
+    .genre-tab.active { color: var(--red); border-bottom-color: var(--red); }
+
+    /* ── MAIN ── */
+    main { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── TRACK GRID ── */
+    #tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .track-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .track-card:hover { border-color: var(--red); transform: translateY(-2px); }
+    .track-card.playing { border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
+    .track-top { display: flex; gap: 12px; padding: 12px; }
+    .cover-wrap { position: relative; flex-shrink: 0; }
+    .track-cover {
+      width: 72px; height: 72px;
+      border-radius: 4px;
+      object-fit: cover;
+      background: #1a1a1a;
+      display: block;
+    }
+    .cover-ph {
+      width: 72px; height: 72px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: -1px;
+    }
+    .play-btn {
+      position: absolute;
+      bottom: 4px; right: 4px;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: var(--red);
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      transition: transform 0.15s, background 0.2s;
+    }
+    .play-btn:hover { transform: scale(1.12); background: #ef4444; }
+    .track-meta { min-width: 0; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .track-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--white);
+      line-height: 1.25;
+      margin-bottom: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .track-artist { font-size: 12px; color: var(--gray); margin-bottom: 8px; }
+    .track-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+    .tag-city { background: var(--gray-dim); color: var(--white); }
+    .tag-genre { background: var(--red-dim); color: #fca5a5; }
+    .track-foot {
+      border-top: 1px solid var(--border);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--gray);
+    }
+    .track-foot .notes {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 10px;
+      color: #6b7280;
+    }
+    .foot-link {
+      color: var(--red);
+      text-decoration: none;
+      white-space: nowrap;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 10px;
+    }
+    .foot-link:hover { text-decoration: underline; }
+    .embed-slot { padding: 0 12px 12px; }
+    .embed-slot iframe { width: 100%; border: 0; border-radius: 4px; display: block; }
+
+    /* ── EMPTY ── */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--gray); grid-column: 1 / -1; }
+    .empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 13px; letter-spacing: 1px; line-height: 1.6; }
+
+    /* ── PERSISTENT PLAYER BAR ── */
+    #player {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: var(--player-h);
+      background: #000;
+      border-top: 2px solid var(--red);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      gap: 14px;
+      padding: 0 16px;
+    }
+    #player.show { display: flex; }
+    #p-cover {
+      width: 52px; height: 52px;
+      border-radius: 4px;
+      object-fit: cover;
+      background: #1a1a1a;
+      flex-shrink: 0;
+    }
+    .p-info { min-width: 0; width: 150px; flex-shrink: 0; }
+    #p-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--white);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #p-artist { font-size: 11px; color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .p-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .p-btn {
+      background: none;
+      border: none;
+      color: var(--white);
+      font-size: 15px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+    .p-btn:hover { color: var(--red); }
+    #p-play {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--red);
+      color: #fff;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #p-play:hover { background: #ef4444; color: #fff; }
+    .p-seek-wrap { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .p-time { font-size: 10px; color: var(--gray); width: 34px; text-align: center; flex-shrink: 0; }
+    #p-seek {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--gray-dim);
+      cursor: pointer;
+      min-width: 40px;
+    }
+    #p-seek::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: var(--red);
+      cursor: pointer;
+    }
+    #p-seek::-moz-range-thumb {
+      width: 13px; height: 13px;
+      border: none;
+      border-radius: 50%;
+      background: var(--red);
+      cursor: pointer;
+    }
+
+    /* ── SUBMIT MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 400;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #111;
+      border: 1px solid var(--red);
+      border-radius: 8px;
+      padding: 28px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal h2 {
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      color: var(--red);
+    }
+    .modal .sub { font-size: 11px; color: var(--gray); margin-bottom: 20px; line-height: 1.5; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      background: #0a0a0a;
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--red); }
+    .form-group .hint { font-size: 10px; color: #6b7280; margin-top: 4px; text-transform: none; letter-spacing: 0; }
+    .form-group select option { background: #111; }
+    .form-group textarea { height: 70px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-submit {
+      flex: 1;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #b91c1c; }
+    .btn-cancel {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--gray);
+      padding: 12px 20px;
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+    .btn-cancel:hover { border-color: var(--gray); }
+    .form-success { text-align: center; padding: 30px 0; }
+    .form-success .check { font-size: 40px; margin-bottom: 10px; }
+    .form-success p { color: var(--gray); font-size: 13px; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 16px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--gray-dim);
+      letter-spacing: 1px;
+    }
+    footer a { color: var(--red); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      #tracks-grid { grid-template-columns: 1fr; }
+      .p-info { width: 90px; }
+      .p-seek-wrap { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">📻</div>
+        <div class="logo-text">
+          <h1>Punk Jukebox</h1>
+          <p>Spotify for Punks · Submit &amp; Stream</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <a class="nav-link" href="/punkbc">← Shows</a>
+        <button id="submit-btn" onclick="openModal()">+ Submit a Track</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="genre-bar">
+    <div class="genre-tabs" id="genre-tabs">
+      <button class="genre-tab active" data-genre="all" onclick="filterGenre(this)">All</button>
+      <button class="genre-tab" data-genre="Punk" onclick="filterGenre(this)">Punk</button>
+      <button class="genre-tab" data-genre="Hardcore" onclick="filterGenre(this)">Hardcore</button>
+      <button class="genre-tab" data-genre="Metal" onclick="filterGenre(this)">Metal / Crust</button>
+      <button class="genre-tab" data-genre="Ska" onclick="filterGenre(this)">Ska</button>
+      <button class="genre-tab" data-genre="Post" onclick="filterGenre(this)">Post-Punk</button>
+      <button class="genre-tab" data-genre="Instrumental" onclick="filterGenre(this)">Instrumental</button>
+      <button class="genre-tab" data-genre="Demo" onclick="filterGenre(this)">Demos</button>
+    </div>
+  </div>
+
+  <main>
+    <p class="section-title" id="tracks-label">The Jukebox</p>
+    <div id="tracks-grid"></div>
+  </main>
+
+  <footer>
+    PUNK JUKEBOX · <a href="/punkbc">Punk BC Shows</a> · <a href="https://www.mikidrummer.ca">mikidrummer.ca</a> · Community-powered, no algorithm
+  </footer>
+
+  <!-- Persistent Player Bar -->
+  <div id="player">
+    <img id="p-cover" alt="">
+    <div class="p-info">
+      <div id="p-title">—</div>
+      <div id="p-artist">—</div>
+    </div>
+    <div class="p-controls">
+      <button class="p-btn" id="p-prev" onclick="prevTrack()" title="Previous">⏮</button>
+      <button class="p-btn" id="p-play" onclick="togglePlay()" title="Play/Pause">▶</button>
+      <button class="p-btn" id="p-next" onclick="nextTrack()" title="Next">⏭</button>
+    </div>
+    <div class="p-seek-wrap">
+      <span class="p-time" id="p-cur">0:00</span>
+      <input type="range" id="p-seek" min="0" max="1000" value="0">
+      <span class="p-time" id="p-dur">0:00</span>
+    </div>
+  </div>
+  <audio id="audio"></audio>
+
+  <!-- Submit Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>Submit a Track</h2>
+      <div id="form-body">
+        <p class="sub">DIY only — your own band, your own recording. We review submissions and add them to the jukebox. Free, no gatekeeping.</p>
+        <div class="form-group">
+          <label>Band / Artist Name *</label>
+          <input type="text" id="f-band" placeholder="e.g. Cornered" />
+        </div>
+        <div class="form-group">
+          <label>Track Title *</label>
+          <input type="text" id="f-title" placeholder="e.g. Lift The Anchor" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Genre *</label>
+            <select id="f-genre">
+              <option value="">Select...</option>
+              <option>Punk</option>
+              <option>Hardcore</option>
+              <option>Metal</option>
+              <option>Crust</option>
+              <option>Ska</option>
+              <option>Post-Punk</option>
+              <option>Instrumental</option>
+              <option>Demo</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="f-city" placeholder="e.g. Vancouver" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Track Link *</label>
+          <input type="url" id="f-link" placeholder="Bandcamp / SoundCloud / YouTube / direct .mp3" />
+          <div class="hint">Bandcamp, SoundCloud and YouTube links get an embedded player. A direct .mp3 link plays right in the jukebox bar.</div>
+        </div>
+        <div class="form-group">
+          <label>Cover Art URL</label>
+          <input type="url" id="f-cover" placeholder="https://... (optional)" />
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="f-notes" placeholder="Release year, label, 'FFO ...', etc."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button class="btn-submit" onclick="submitTrack()">Submit Track</button>
+        </div>
+      </div>
+      <div id="form-success" class="form-success" style="display:none">
+        <div class="check">🤘</div>
+        <h3 style="margin-bottom:8px">Track submitted!</h3>
+        <p>Thanks for feeding the jukebox. We'll review and add it soon.</p>
+        <button class="btn-cancel" style="margin-top:16px" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Google Sheet CSV — publish a sheet with the columns below and paste its CSV URL here.
+  // Columns: Band / Artist, Track Title, Genre, City, Cover URL, Audio URL, Link, Notes
+  const CSV_URL = ''
+
+  // Seed data / fallback — plays out of the box from the /jukebox folder.
+  // Convention: each track's audio and cover share the Track Title as their
+  // filename → jukebox/<Track Title>.mp3 and jukebox/<Track Title>.jpg.
+  // A missing .jpg just falls back to a colored initials tile automatically.
+  const SEED_TRACKS = [
+    { 'Band / Artist': 'Cornered',      'Track Title': 'Lift The Anchor', 'Genre': 'Punk / Demo',  'City': 'Vancouver', 'Notes': 'Rough demo cut' },
+    { 'Band / Artist': 'Bound By None', 'Track Title': 'On The Double',   'Genre': 'Hardcore',     'City': 'Vancouver', 'Notes': '' },
+    { 'Band / Artist': 'Bound By None', 'Track Title': 'No Other',        'Genre': 'Hardcore',     'City': 'Vancouver', 'Notes': '' },
+    { 'Band / Artist': 'Dead Fast',     'Track Title': 'Land and Sea',    'Genre': 'Punk',         'City': 'Vancouver', 'Notes': '' },
+    { 'Band / Artist': 'Dead Fast',     'Track Title': 'Skamen',          'Genre': 'Ska',          'City': 'Vancouver', 'Notes': '' },
+    { 'Band / Artist': 'Dead Fast',     'Track Title': 'Open Ground',     'Genre': 'Instrumental', 'City': 'Vancouver', 'Notes': 'Brass arrangement' },
+    { 'Band / Artist': 'Dead Fast',     'Track Title': 'Artifacts',       'Genre': 'Instrumental', 'City': 'Vancouver', 'Notes': '' },
+    { 'Band / Artist': 'Dead Fast',     'Track Title': 'Empty Lots',      'Genre': 'Punk',         'City': 'Vancouver', 'Notes': '' },
+    { 'Band / Artist': 'Diera',         'Track Title': 'Bajo el nivel del mal',     'Genre': 'Punk', 'City': 'Barcelona', 'Notes': '' },
+    { 'Band / Artist': 'Diera',         'Track Title': 'Groenlandia',               'Genre': 'Punk', 'City': 'Barcelona', 'Notes': '' },
+    { 'Band / Artist': 'Diera',         'Track Title': 'La tragedia de los comunes', 'Genre': 'Punk', 'City': 'Barcelona', 'Notes': '' },
+    { 'Band / Artist': 'Diera',         'Track Title': 'Sebastopol García',         'Genre': 'Punk', 'City': 'Barcelona', 'Notes': '' },
+  ].map(t => ({
+    ...t,
+    'Cover URL': 'jukebox/' + t['Track Title'] + '.jpg',
+    'Audio URL': 'jukebox/' + t['Track Title'] + '.mp3',
+    'Link': '',
+  }))
+
+  const FORMSPREE = 'https://formspree.io/f/xpqgrqvb'
+  const palettes = [
+    ['#7f1d1d','#dc2626'], ['#1e3a5f','#2563eb'], ['#14532d','#16a34a'],
+    ['#4a1d96','#7c3aed'], ['#78350f','#d97706'], ['#1e3a5f','#0891b2'],
+    ['#3b0764','#a21caf'], ['#052e16','#15803d'],
+  ]
+
+  let allTracks = []
+  let activeGenre = 'all'
+  let queue = []        // audio-playable tracks in current view
+  let curIndex = -1
+  const audio = document.getElementById('audio')
+
+  function boot() {
+    allTracks = SEED_TRACKS.slice()
+    renderTracks()
+    if (CSV_URL) { fetchTracks(); setInterval(fetchTracks, 5 * 60 * 1000) }
+  }
+
+  /* ── Data ── */
+  function parseCSV(text) {
+    const lines = text.trim().split('\n')
+    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim())
+    return lines.slice(1).map(line => {
+      const cols = []
+      let cur = '', inQuote = false
+      for (const ch of line) {
+        if (ch === '"') { inQuote = !inQuote }
+        else if (ch === ',' && !inQuote) { cols.push(cur.trim()); cur = '' }
+        else { cur += ch }
+      }
+      cols.push(cur.trim())
+      const obj = {}
+      headers.forEach((h, i) => obj[h] = (cols[i] ?? '').replace(/^"|"$/g, ''))
+      return obj
+    }).filter(r => r['Band / Artist'] && r['Track Title'])
+  }
+
+  async function fetchTracks() {
+    const proxies = [
+      t => CSV_URL + '&t=' + t,
+      t => 'https://corsproxy.io/?url=' + encodeURIComponent(CSV_URL + '&t=' + t),
+      t => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(CSV_URL + '&t=' + t),
+    ]
+    for (const proxy of proxies) {
+      try {
+        const res = await fetch(proxy(Date.now()))
+        if (!res.ok) continue
+        const text = await res.text()
+        if (!text.includes(',')) continue
+        const rows = parseCSV(text)
+        if (rows.length > 0) { allTracks = rows; renderTracks(); return }
+      } catch (e) { /* try next proxy */ }
+    }
+  }
+
+  /* ── Filter ── */
+  function filterGenre(btn) {
+    document.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'))
+    btn.classList.add('active')
+    activeGenre = btn.dataset.genre
+    renderTracks()
+  }
+
+  function matchesGenre(t) {
+    if (activeGenre === 'all') return true
+    const g = (t['Genre'] || '').toLowerCase()
+    if (activeGenre === 'Metal') return g.includes('metal') || g.includes('crust')
+    if (activeGenre === 'Post') return g.includes('post')
+    return g.includes(activeGenre.toLowerCase())
+  }
+
+  function resolveUrl(u) { return (u && !u.includes('://')) ? encodeURI(u) : u }
+
+  /* ── Embeds ── */
+  function embedFor(link) {
+    if (!link) return null
+    try {
+      const u = new URL(link)
+      const host = u.hostname.replace('www.', '')
+      if (host.includes('youtube.com') || host.includes('youtu.be')) {
+        let id = ''
+        if (host.includes('youtu.be')) id = u.pathname.slice(1)
+        else id = u.searchParams.get('v') || ''
+        if (id) return `<iframe height="152" src="https://www.youtube.com/embed/${id}" allow="encrypted-media" allowfullscreen loading="lazy"></iframe>`
+      }
+      if (host.includes('soundcloud.com')) {
+        return `<iframe height="120" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(link)}&color=%23dc2626&visual=false" allow="autoplay" loading="lazy"></iframe>`
+      }
+    } catch (e) { /* not a valid URL */ }
+    return null
+  }
+
+  /* ── Render ── */
+  function renderTracks() {
+    const filtered = allTracks.filter(matchesGenre)
+    queue = filtered.filter(t => (t['Audio URL'] || '').trim())
+
+    const label = document.getElementById('tracks-label')
+    label.textContent = `${filtered.length} Track${filtered.length !== 1 ? 's' : ''}${activeGenre !== 'all' ? ' · ' + (document.querySelector('.genre-tab.active')?.textContent || '') : ' in the Jukebox'}`
+
+    const grid = document.getElementById('tracks-grid')
+    if (!filtered.length) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">📻</div>
+          <p>Nothing here yet.<br>Be the first — submit your track!</p>
+        </div>`
+      return
+    }
+
+    grid.innerHTML = filtered.map(t => {
+      const band = t['Band / Artist'] || 'Unknown'
+      const title = t['Track Title'] || 'Untitled'
+      const genre = t['Genre'] || ''
+      const city = t['City'] || ''
+      const cover = t['Cover URL'] || ''
+      const audioUrl = (t['Audio URL'] || '').trim()
+      const link = (t['Link'] || '').trim()
+      const notes = t['Notes'] || ''
+
+      const idx = palettes.length ? (band.length + title.length) % palettes.length : 0
+      const [bg1, bg2] = palettes[idx]
+      const initials = (band.split(' ').map(w => w[0]).join('') + title.charAt(0)).substring(0, 3).toUpperCase()
+
+      const coverEl = cover
+        ? `<img class="track-cover" src="${resolveUrl(cover)}" alt="${band}" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=\\'cover-ph\\' style=\\'background:linear-gradient(135deg,${bg1},${bg2})\\'>${initials}</div>'">`
+        : `<div class="cover-ph" style="background:linear-gradient(135deg,${bg1},${bg2})">${initials}</div>`
+
+      const qi = queue.indexOf(t)
+      const embed = !audioUrl ? embedFor(link) : null
+
+      let playControl = ''
+      if (audioUrl) {
+        playControl = `<button class="play-btn" data-qi="${qi}" onclick="playFromCard(${qi})" title="Play">▶</button>`
+      } else if (embed) {
+        playControl = `<button class="play-btn" onclick="toggleEmbed(this)" title="Show player">▶</button>`
+      } else if (link) {
+        playControl = `<a class="play-btn" href="${link}" target="_blank" rel="noopener" title="Open">↗</a>`
+      }
+
+      const footLink = link
+        ? `<a class="foot-link" href="${link}" target="_blank" rel="noopener">Source ↗</a>`
+        : (audioUrl ? `<span class="foot-link" style="color:var(--gray)">▶ In jukebox</span>` : '')
+
+      return `
+        <div class="track-card" data-qi="${audioUrl ? qi : ''}">
+          <div class="track-top">
+            <div class="cover-wrap">
+              ${coverEl}
+              ${playControl}
+            </div>
+            <div class="track-meta">
+              <div class="track-title">${title}</div>
+              <div class="track-artist">${band}</div>
+              <div class="track-tags">
+                ${city ? `<span class="tag tag-city">${city}</span>` : ''}
+                ${genre ? `<span class="tag tag-genre">${genre}</span>` : ''}
+              </div>
+            </div>
+          </div>
+          ${embed ? `<div class="embed-slot" data-embed="${encodeURIComponent(embed)}"></div>` : ''}
+          ${(notes || footLink) ? `<div class="track-foot"><span class="notes">${notes}</span>${footLink}</div>` : ''}
+        </div>`
+    }).join('')
+
+    highlightPlaying()
+  }
+
+  function toggleEmbed(btn) {
+    const slot = btn.closest('.track-card').querySelector('.embed-slot')
+    if (!slot) return
+    if (slot.innerHTML) { slot.innerHTML = ''; btn.textContent = '▶' }
+    else { slot.innerHTML = decodeURIComponent(slot.dataset.embed); btn.textContent = '✕' }
+  }
+
+  /* ── Player ── */
+  function playFromCard(qi) {
+    if (qi < 0 || qi >= queue.length) return
+    if (curIndex === qi && !audio.paused) { audio.pause(); return }
+    if (curIndex === qi && audio.paused) { audio.play(); return }
+    playTrack(qi)
+  }
+
+  function playTrack(i) {
+    curIndex = i
+    const t = queue[i]
+    audio.src = resolveUrl(t['Audio URL'])
+    audio.play().catch(() => {})
+    document.getElementById('p-title').textContent = t['Track Title'] || 'Untitled'
+    document.getElementById('p-artist').textContent = t['Band / Artist'] || ''
+    const cover = document.getElementById('p-cover')
+    if (t['Cover URL']) { cover.src = t['Cover URL']; cover.style.display = 'block' }
+    else { cover.style.display = 'none' }
+    document.getElementById('player').classList.add('show')
+    document.body.classList.add('has-player')
+    highlightPlaying()
+  }
+
+  function togglePlay() {
+    if (curIndex === -1 && queue.length) { playTrack(0); return }
+    if (audio.paused) audio.play(); else audio.pause()
+  }
+  function nextTrack() { if (queue.length) playTrack((curIndex + 1) % queue.length) }
+  function prevTrack() {
+    if (!queue.length) return
+    if (audio.currentTime > 3) { audio.currentTime = 0; return }
+    playTrack((curIndex - 1 + queue.length) % queue.length)
+  }
+
+  function highlightPlaying() {
+    document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'))
+    if (curIndex === -1) return
+    const t = queue[curIndex]
+    const qi = queue.indexOf(t)
+    const card = document.querySelector(`.track-card[data-qi="${qi}"]`)
+    if (card) card.classList.add('playing')
+  }
+
+  function fmt(s) {
+    if (!isFinite(s)) return '0:00'
+    const m = Math.floor(s / 60), sec = Math.floor(s % 60)
+    return m + ':' + String(sec).padStart(2, '0')
+  }
+
+  audio.addEventListener('play',  () => document.getElementById('p-play').textContent = '⏸')
+  audio.addEventListener('pause', () => document.getElementById('p-play').textContent = '▶')
+  audio.addEventListener('ended', nextTrack)
+  audio.addEventListener('loadedmetadata', () => document.getElementById('p-dur').textContent = fmt(audio.duration))
+  audio.addEventListener('timeupdate', () => {
+    document.getElementById('p-cur').textContent = fmt(audio.currentTime)
+    const seek = document.getElementById('p-seek')
+    if (audio.duration) seek.value = (audio.currentTime / audio.duration) * 1000
+  })
+  document.getElementById('p-seek').addEventListener('input', e => {
+    if (audio.duration) audio.currentTime = (e.target.value / 1000) * audio.duration
+  })
+
+  /* ── Submit ── */
+  function openModal() {
+    document.getElementById('modal').classList.add('open')
+    document.getElementById('form-body').style.display = 'block'
+    document.getElementById('form-success').style.display = 'none'
+  }
+  function closeModal() { document.getElementById('modal').classList.remove('open') }
+
+  async function submitTrack() {
+    const band = document.getElementById('f-band').value.trim()
+    const title = document.getElementById('f-title').value.trim()
+    const genre = document.getElementById('f-genre').value
+    const link = document.getElementById('f-link').value.trim()
+    if (!band || !title || !genre || !link) {
+      alert('Please fill in Band, Track Title, Genre and a Track Link.')
+      return
+    }
+    const btn = document.querySelector('.btn-submit')
+    btn.textContent = 'Sending...'
+    btn.disabled = true
+    try {
+      const res = await fetch(FORMSPREE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          'Submission Type': '🎵 JUKEBOX TRACK',
+          'Band / Artist': band,
+          'Track Title': title,
+          'Genre': genre,
+          'City': document.getElementById('f-city').value,
+          'Link': link,
+          'Cover URL': document.getElementById('f-cover').value,
+          'Notes': document.getElementById('f-notes').value,
+          '👇 PASTE INTO A NEW ROW OF THE JUKEBOX SHEET': `={"${band}","${title}","${genre}","${document.getElementById('f-city').value}","${document.getElementById('f-cover').value}","","${link}","${document.getElementById('f-notes').value}"}`,
+        })
+      })
+      if (!res.ok) throw new Error()
+      document.getElementById('form-body').style.display = 'none'
+      document.getElementById('form-success').style.display = 'block'
+    } catch {
+      alert('Something went wrong. Please try again.')
+    } finally {
+      btn.textContent = 'Submit Track'
+      btn.disabled = false
+    }
+  }
+
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal()
+  })
+
+  boot()
+</script>
+</body>
+</html>
