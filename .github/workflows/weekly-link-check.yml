@@ -1,0 +1,59 @@
+name: Weekly link check
+
+# Runs every Monday, and can be triggered by hand from the Actions tab.
+on:
+  schedule:
+    - cron: "0 14 * * 1"   # Mondays 14:00 UTC (~6-7am Vancouver)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run link checker (live site + profiles)
+        id: check
+        run: |
+          set +e
+          python tools/check-links.py
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: link-report
+          path: link-report.md
+
+      - name: Open an issue if links are broken
+        if: steps.check.outputs.code != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('link-report.md', 'utf8');
+            const today = new Date().toISOString().slice(0, 10);
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🔗 Broken links found — ${today}`,
+              body: report + `\n\n---\n_Automated by .github/workflows/weekly-link-check.yml_`,
+              labels: ['link-check'],
+            });
+
+      - name: Fail the run if links are broken
+        if: steps.check.outputs.code != '0'
+        run: |
+          echo "Broken links or dead profiles detected — see the report artifact / new issue."
+          exit 1
