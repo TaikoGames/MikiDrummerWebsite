@@ -200,6 +200,7 @@ def write_html(path, total, ok_count, profile_items, internal_bad, missing_img,
 
     html_doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Link Check — mikidrummer.ca</title><style>{HTML_CSS}</style></head><body>
 <div class="wrap">
   <h1>Link Check</h1>
