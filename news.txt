@@ -4,6 +4,7 @@ Expires: 2026-08-03
 Title: Granite LIVE @ Lana Lou's 🇨🇦
 Description: August 2 — Vancouver
 Link: https://www.facebook.com/share/1B7K1Gf4Ep/
+Expires: 2026-08-03
 
 Title: New Video Out Now!
 Description: Check it on YouTube
