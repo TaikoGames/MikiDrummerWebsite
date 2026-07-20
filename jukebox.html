@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jukebox | Miki Drummer</title>
+    <meta name="description" content="The Miki Drummer jukebox — spin the records, watch the visualizer, and submit a song for the playlist.">
+    <link rel="canonical" href="https://www.mikidrummer.ca/jukebox.html">
+    <link rel="icon" href="favicon.ico">
+
+    <!-- shared fonts (Kiln Sans) + icons -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="theme-color" content="#080605">
+
+    <style>
+        /* ===== jukebox page — jb- prefix keeps it clear of the footer player ===== */
+        .jb-page {
+            --jb-bg: #080605;
+            --jb-panel: #17090a;
+            --jb-panel-edge: rgba(232, 55, 42, 0.22);
+            --jb-accent: #e8372a;
+            --jb-accent-deep: #460006;
+            --jb-ink: #f4efe6;
+            --jb-muted: #a89a94;
+            --jb-disc: 300px;
+
+            min-height: 100vh;
+            background:
+                radial-gradient(1100px 620px at 50% -8%, #3a0409 0%, transparent 62%),
+                linear-gradient(to bottom, var(--jb-bg), #12080a 70%, #1c0509);
+            color: var(--jb-ink);
+            font-family: system-ui, "Segoe UI", Arial, sans-serif;
+            padding: 0 18px 80px;
+        }
+
+        /* slim standalone header */
+        .jb-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 22px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .jb-top a.jb-brand { display: inline-flex; align-items: center; gap: 12px; color: var(--jb-ink); }
+        .jb-brand img { width: 52px; height: auto; }
+        .jb-brand span {
+            font-family: 'Kiln Sans', system-ui, sans-serif;
+            font-style: italic;
+            letter-spacing: 2px;
+            font-size: 18px;
+        }
+        .jb-back {
+            color: var(--jb-muted);
+            font-size: 13px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s ease;
+        }
+        .jb-back:hover { color: var(--jb-accent); }
+
+        .jb-title {
+            text-align: center;
+            margin: 40px auto 6px;
+        }
+        .jb-title .eyebrow {
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.34em;
+            font-size: 12px;
+            color: var(--jb-accent);
+            margin-bottom: 12px;
+        }
+        .jb-title h1 {
+            font-family: 'Kiln Sans', system-ui, sans-serif;
+            font-style: italic;
+            font-size: clamp(34px, 7vw, 58px);
+            letter-spacing: 2px;
+            line-height: 1;
+            text-wrap: balance;
+        }
+
+        /* the player card */
+        .jb-player {
+            max-width: 720px;
+            margin: 34px auto 0;
+            background: linear-gradient(180deg, var(--jb-panel), #0d0405);
+            border: 1px solid var(--jb-panel-edge);
+            border-radius: 20px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            padding: 40px 32px 28px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .jb-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+        }
+
+        /* ---- spinning vinyl ---- */
+        .jb-disc {
+            position: relative;
+            width: var(--jb-disc);
+            height: var(--jb-disc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                /* rotating light streaks that catch as it spins */
+                conic-gradient(from 0deg,
+                    rgba(255, 255, 255, 0) 0deg,
+                    rgba(255, 255, 255, 0.08) 20deg,
+                    rgba(255, 255, 255, 0) 58deg,
+                    rgba(255, 255, 255, 0) 168deg,
+                    rgba(255, 255, 255, 0.06) 200deg,
+                    rgba(255, 255, 255, 0) 244deg,
+                    rgba(255, 255, 255, 0) 360deg),
+                /* fine concentric grooves */
+                repeating-radial-gradient(circle at center,
+                    rgba(255, 255, 255, 0.045) 0 1px,
+                    rgba(0, 0, 0, 0.55) 1px 2.5px),
+                /* record body with depth */
+                radial-gradient(circle at 50% 40%, #262626 0%, #151515 46%, #080808 82%, #020202 100%);
+            box-shadow:
+                0 26px 52px rgba(0, 0, 0, 0.72),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+                inset 0 0 42px rgba(0, 0, 0, 0.9);
+            animation: jb-spin 4s linear infinite;
+            animation-play-state: paused;
+        }
+        .jb-disc.spinning { animation-play-state: running; }
+        /* glossy specular highlight — fixed, sits above, doesn't spin */
+        .jb-disc-sheen {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 3;
+            background:
+                radial-gradient(115% 80% at 32% 20%, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.05) 22%, rgba(255, 255, 255, 0) 46%),
+                radial-gradient(90% 70% at 72% 86%, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 42%);
+        }
+        .jb-label {
+            position: relative;
+            z-index: 2;
+            width: 42%;
+            height: 42%;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow:
+                0 0 0 4px rgba(0, 0, 0, 0.55),
+                0 0 0 5px rgba(255, 255, 255, 0.12),
+                inset 0 0 10px rgba(0, 0, 0, 0.45),
+                0 2px 10px rgba(0, 0, 0, 0.55);
+        }
+        .jb-disc::after {
+            content: "";
+            position: absolute;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #000 0 40%, #1c1c1c 100%);
+            box-shadow: inset 0 0 2px #000, 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 0 3px rgba(255, 255, 255, 0.1);
+            z-index: 4;
+        }
+        @keyframes jb-spin { to { transform: rotate(360deg); } }
+
+        .jb-now {
+            text-align: center;
+            min-height: 44px;
+        }
+        .jb-now .jb-song {
+            font-family: 'Kiln Sans', system-ui, sans-serif;
+            font-style: italic;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+        .jb-now .jb-artist { color: var(--jb-muted); font-size: 14px; margin-top: 4px; }
+
+        /* ---- spectro visualizer ---- */
+        .jb-visualizer {
+            width: 100%;
+            height: 84px;
+            display: block;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        /* ---- controls ---- */
+        .jb-seekrow {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            font-variant-numeric: tabular-nums;
+        }
+        .jb-seekrow .jb-time { font-size: 12px; color: var(--jb-muted); min-width: 38px; }
+        .jb-seekrow .jb-time.jb-dur { text-align: right; }
+        input[type="range"].jb-range {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 5px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.14);
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"].jb-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px; height: 15px;
+            border-radius: 50%;
+            background: var(--jb-accent);
+            box-shadow: 0 0 8px rgba(232, 55, 42, 0.7);
+            cursor: pointer;
+        }
+        input[type="range"].jb-range::-moz-range-thumb {
+            width: 15px; height: 15px; border: none;
+            border-radius: 50%; background: var(--jb-accent); cursor: pointer;
+        }
+
+        .jb-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            width: 100%;
+        }
+        .jb-btn {
+            flex: 0 0 auto;
+            background: none;
+            border: none;
+            color: var(--jb-ink);
+            font-size: 20px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .jb-btn:hover { background: rgba(255, 255, 255, 0.08); }
+        .jb-btn:focus-visible { outline: 2px solid var(--jb-accent); outline-offset: 2px; }
+        .jb-btn.jb-play {
+            background: var(--jb-accent);
+            color: #180203;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            box-shadow: 0 8px 22px rgba(232, 55, 42, 0.4);
+        }
+        .jb-btn.jb-play:hover { filter: brightness(1.08); background: var(--jb-accent); }
+        /* toggled-on state (shuffle) */
+        .jb-btn.active { color: var(--jb-accent); background: rgba(232, 55, 42, 0.12); }
+        .jb-vol-wrap { display: flex; align-items: center; gap: 8px; }
+        .jb-vol-wrap input[type="range"].jb-range { width: 84px; flex: none; }
+
+        /* ---- playlist ---- */
+        .jb-list-wrap {
+            max-width: 720px;
+            margin: 30px auto 0;
+        }
+        .jb-list-wrap h2 {
+            font-family: 'Kiln Sans', system-ui, sans-serif;
+            font-style: italic;
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: var(--jb-muted);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .jb-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+        .jb-list li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--jb-muted);
+            border: 1px solid transparent;
+            transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+        }
+        .jb-list li:hover { background: rgba(255, 255, 255, 0.05); color: var(--jb-ink); }
+        .jb-list li.active {
+            background: rgba(232, 55, 42, 0.12);
+            border-color: rgba(232, 55, 42, 0.4);
+            color: var(--jb-ink);
+        }
+        .jb-list .jb-thumb {
+            width: 42px; height: 42px; border-radius: 6px; object-fit: cover; flex: none;
+            background: #000;
+        }
+        .jb-list .jb-num { width: 20px; text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; }
+        .jb-list .jb-track-title { flex: 1; font-size: 15px; }
+        .jb-list li.active .jb-num { color: var(--jb-accent); }
+        .jb-eq { width: 16px; display: none; }
+        .jb-list li.active.playing .jb-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+        .jb-eq span {
+            width: 3px; background: var(--jb-accent); border-radius: 2px;
+            animation: jb-eq 0.9s ease-in-out infinite;
+        }
+        .jb-eq span:nth-child(1) { height: 40%; animation-delay: -0.2s; }
+        .jb-eq span:nth-child(2) { height: 90%; animation-delay: -0.5s; }
+        .jb-eq span:nth-child(3) { height: 60%; animation-delay: -0.1s; }
+        @keyframes jb-eq { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+
+        /* ---- submit a song ---- */
+        .jb-submit {
+            max-width: 720px;
+            margin: 44px auto 0;
+            background: linear-gradient(180deg, rgba(70, 0, 6, 0.35), rgba(0, 0, 0, 0.25));
+            border: 1px solid var(--jb-panel-edge);
+            border-radius: 18px;
+            padding: 30px 28px;
+        }
+        .jb-submit h2 {
+            font-family: 'Kiln Sans', system-ui, sans-serif;
+            font-style: italic;
+            font-size: clamp(22px, 4vw, 28px);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .jb-submit p.jb-sub { color: var(--jb-muted); font-size: 14px; margin-bottom: 22px; }
+        .jb-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .jb-field { display: flex; flex-direction: column; gap: 6px; }
+        .jb-field.jb-wide { grid-column: 1 / -1; }
+        .jb-field label {
+            font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--jb-muted);
+        }
+        .jb-field input, .jb-field textarea {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 9px;
+            padding: 11px 13px;
+            color: var(--jb-ink);
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .jb-field textarea { resize: vertical; min-height: 74px; }
+        .jb-field input:focus, .jb-field textarea:focus {
+            outline: none;
+            border-color: var(--jb-accent);
+            box-shadow: 0 0 0 3px rgba(232, 55, 42, 0.18);
+        }
+        .jb-submit-btn {
+            grid-column: 1 / -1;
+            justify-self: start;
+            margin-top: 4px;
+            background: var(--jb-accent);
+            color: #180203;
+            border: none;
+            border-radius: 10px;
+            padding: 13px 30px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: filter 0.15s ease, transform 0.05s ease;
+        }
+        .jb-submit-btn:hover { filter: brightness(1.08); }
+        .jb-submit-btn:active { transform: translateY(1px); }
+        .jb-submit-btn:disabled { opacity: 0.6; cursor: default; }
+        .jb-form-msg { grid-column: 1 / -1; font-size: 14px; min-height: 20px; }
+        .jb-form-msg.ok { color: #7ee081; }
+        .jb-form-msg.err { color: #ff8a7a; }
+
+        @media (max-width: 560px) {
+            .jb-page { --jb-disc: 220px; }
+            .jb-player { padding: 30px 18px 22px; }
+            .jb-form { grid-template-columns: 1fr; }
+            .jb-brand span { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .jb-disc, .jb-eq span { animation: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="jb-page">
+
+    <div class="jb-top">
+        <a class="jb-brand" href="/index.html">
+            <img src="images/brand.png" alt="Miki Drummer">
+            <span>Miki Drummer</span>
+        </a>
+        <a class="jb-back" href="/index.html"><i class="fas fa-arrow-left"></i> Back to site</a>
+    </div>
+
+    <div class="jb-title">
+        <span class="eyebrow">Now spinning</span>
+        <h1>The Jukebox</h1>
+    </div>
+
+    <!-- ===================== PLAYER ===================== -->
+    <div class="jb-player">
+        <audio id="jb-audio" crossorigin="anonymous"></audio>
+        <div class="jb-stage">
+            <div class="jb-disc" id="jb-disc">
+                <img class="jb-label" id="jb-label" src="images/music-img1.png" alt="Cover art">
+                <div class="jb-disc-sheen"></div>
+            </div>
+
+            <div class="jb-now">
+                <div class="jb-song" id="jb-song">Loading playlist…</div>
+                <div class="jb-artist" id="jb-artist"></div>
+            </div>
+
+            <canvas class="jb-visualizer" id="jb-visualizer" aria-hidden="true"></canvas>
+
+            <div class="jb-seekrow">
+                <span class="jb-time" id="jb-current">0:00</span>
+                <input type="range" class="jb-range" id="jb-seek" value="0" min="0" max="100" step="0.1" aria-label="Seek">
+                <span class="jb-time jb-dur" id="jb-duration">0:00</span>
+            </div>
+
+            <div class="jb-buttons">
+                <button class="jb-btn" id="jb-shuffle" aria-label="Shuffle" aria-pressed="false"><i class="fas fa-shuffle"></i></button>
+                <button class="jb-btn" id="jb-prev" aria-label="Previous track"><i class="fas fa-backward-step"></i></button>
+                <button class="jb-btn jb-play" id="jb-play" aria-label="Play"><i class="fas fa-play"></i></button>
+                <button class="jb-btn" id="jb-next" aria-label="Next track"><i class="fas fa-forward-step"></i></button>
+                <div class="jb-vol-wrap">
+                    <button class="jb-btn" id="jb-mute" aria-label="Mute"><i class="fas fa-volume-high"></i></button>
+                    <input type="range" class="jb-range" id="jb-vol" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== PLAYLIST ===================== -->
+    <div class="jb-list-wrap">
+        <h2>Playlist</h2>
+        <ul class="jb-list" id="jb-list"></ul>
+    </div>
+
+    <!-- ===================== SUBMIT A SONG ===================== -->
+    <div class="jb-submit">
+        <h2>Submit a song</h2>
+        <p class="jb-sub">Got a track Miki should spin? Drop it below — a name and a link is all it takes.</p>
+        <form class="jb-form" id="jb-song-form">
+            <div class="jb-field">
+                <label for="s-name">Your name</label>
+                <input type="text" id="s-name" name="Your name" autocomplete="name">
+            </div>
+            <div class="jb-field">
+                <label for="s-email">Your email (optional)</label>
+                <input type="email" id="s-email" name="_replyto" autocomplete="email">
+            </div>
+            <div class="jb-field">
+                <label for="s-song">Song title *</label>
+                <input type="text" id="s-song" name="Song" required>
+            </div>
+            <div class="jb-field">
+                <label for="s-artist">Artist / band *</label>
+                <input type="text" id="s-artist" name="Artist" required>
+            </div>
+            <div class="jb-field jb-wide">
+                <label for="s-link">Link (YouTube, Spotify, Bandcamp…)</label>
+                <input type="url" id="s-link" name="Link" placeholder="https://">
+            </div>
+            <div class="jb-field jb-wide">
+                <label for="s-note">Why this one? (optional)</label>
+                <textarea id="s-note" name="Note"></textarea>
+            </div>
+            <input type="hidden" name="_subject" value="🎵 New jukebox song submission">
+            <button type="submit" class="jb-submit-btn" id="jb-submit-btn">Send it in</button>
+            <div class="jb-form-msg" id="jb-form-msg" role="status" aria-live="polite"></div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+(function () {
+    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xpqgrqvb';
+
+    const audio = document.getElementById('jb-audio');
+    const disc = document.getElementById('jb-disc');
+    const label = document.getElementById('jb-label');
+    const songEl = document.getElementById('jb-song');
+    const artistEl = document.getElementById('jb-artist');
+    const listEl = document.getElementById('jb-list');
+    const playBtn = document.getElementById('jb-play');
+    const playIcon = playBtn.querySelector('i');
+    const prevBtn = document.getElementById('jb-prev');
+    const nextBtn = document.getElementById('jb-next');
+    const shuffleBtn = document.getElementById('jb-shuffle');
+    const seek = document.getElementById('jb-seek');
+    const curEl = document.getElementById('jb-current');
+    const durEl = document.getElementById('jb-duration');
+    const volBtn = document.getElementById('jb-mute');
+    const volIcon = volBtn.querySelector('i');
+    const vol = document.getElementById('jb-vol');
+    const canvas = document.getElementById('jb-visualizer');
+
+    let songs = [];
+    let index = 0;
+    let started = false;
+    let shuffle = false;
+
+    // next track: random when shuffle is on, otherwise sequential
+    function nextIndex() {
+        if (shuffle && songs.length > 1) {
+            let r;
+            do { r = Math.floor(Math.random() * songs.length); } while (r === index);
+            return r;
+        }
+        return index + 1;
+    }
+
+    function fmt(t) {
+        if (!isFinite(t)) return '0:00';
+        const m = Math.floor(t / 60);
+        const s = Math.floor(t % 60);
+        return m + ':' + (s < 10 ? '0' + s : s);
+    }
+
+    // Split "Title - Artist" into two lines when possible
+    function parseTitle(raw) {
+        const i = raw.lastIndexOf(' - ');
+        if (i > -1) return { title: raw.slice(0, i).trim(), artist: raw.slice(i + 3).trim() };
+        return { title: raw.trim(), artist: '' };
+    }
+
+    function renderList() {
+        listEl.innerHTML = '';
+        songs.forEach((song, i) => {
+            const p = parseTitle(song.title);
+            const li = document.createElement('li');
+            li.innerHTML =
+                '<span class="jb-num">' + (i + 1) + '</span>' +
+                '<img class="jb-thumb" src="' + song.thumbnail + '" alt="" loading="lazy">' +
+                '<span class="jb-track-title">' + p.title + (p.artist ? ' — ' + p.artist : '') + '</span>' +
+                '<span class="jb-eq"><span></span><span></span><span></span></span>';
+            li.addEventListener('click', () => selectSong(i, true));
+            listEl.appendChild(li);
+        });
+    }
+
+    function updateListUI() {
+        [...listEl.children].forEach((li, i) => {
+            li.classList.toggle('active', i === index);
+            li.classList.toggle('playing', i === index && !audio.paused);
+        });
+    }
+
+    function selectSong(i, play) {
+        if (i < 0) i = songs.length - 1;
+        if (i >= songs.length) i = 0;
+        index = i;
+        const song = songs[i];
+        const p = parseTitle(song.title);
+        audio.src = song.src;
+        label.src = song.thumbnail;
+        songEl.textContent = p.title;
+        artistEl.textContent = p.artist;
+        updateListUI();
+        if (play) startPlayback();
+    }
+
+    function startPlayback() {
+        ensureAudioGraph();
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        audio.play().catch(() => {});
+    }
+
+    // ---------- Web Audio visualizer ----------
+    let audioCtx, analyser, dataArray, rafId;
+    const ctx2d = canvas.getContext('2d');
+
+    function sizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = canvas.clientWidth * dpr;
+        canvas.height = canvas.clientHeight * dpr;
+        ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', sizeCanvas);
+
+    function ensureAudioGraph() {
+        if (audioCtx) return;
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioCtx.createMediaElementSource(audio);
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 128;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            sizeCanvas();
+            drawViz();
+        } catch (e) {
+            // Visualizer unavailable (e.g. cross-origin) — audio still plays normally.
+            console.warn('Visualizer disabled:', e);
+        }
+    }
+
+    function drawViz() {
+        rafId = requestAnimationFrame(drawViz);
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        ctx2d.clearRect(0, 0, w, h);
+        if (!analyser || audio.paused) {
+            // idle: faint flat line
+            ctx2d.fillStyle = 'rgba(232,55,42,0.25)';
+            ctx2d.fillRect(0, h - 2, w, 2);
+            return;
+        }
+        analyser.getByteFrequencyData(dataArray);
+        const bars = dataArray.length;
+        const gap = 2;
+        const bw = (w - gap * (bars - 1)) / bars;
+        for (let i = 0; i < bars; i++) {
+            const v = dataArray[i] / 255;
+            const bh = Math.max(2, v * h);
+            const x = i * (bw + gap);
+            const grad = ctx2d.createLinearGradient(0, h, 0, h - bh);
+            grad.addColorStop(0, '#e8372a');
+            grad.addColorStop(1, '#ffb199');
+            ctx2d.fillStyle = grad;
+            ctx2d.fillRect(x, h - bh, bw, bh);
+        }
+    }
+
+    // ---------- events ----------
+    playBtn.addEventListener('click', () => {
+        if (audio.paused) startPlayback();
+        else audio.pause();
+    });
+    prevBtn.addEventListener('click', () => selectSong(index - 1, true));
+    nextBtn.addEventListener('click', () => selectSong(nextIndex(), true));
+    shuffleBtn.addEventListener('click', () => {
+        shuffle = !shuffle;
+        shuffleBtn.classList.toggle('active', shuffle);
+        shuffleBtn.setAttribute('aria-pressed', shuffle);
+    });
+
+    audio.addEventListener('play', () => {
+        started = true;
+        disc.classList.add('spinning');
+        playIcon.className = 'fas fa-pause';
+        updateListUI();
+    });
+    audio.addEventListener('pause', () => {
+        disc.classList.remove('spinning');
+        playIcon.className = 'fas fa-play';
+        updateListUI();
+    });
+    audio.addEventListener('ended', () => selectSong(nextIndex(), true));
+
+    audio.addEventListener('timeupdate', () => {
+        if (audio.duration) {
+            seek.value = (audio.currentTime / audio.duration) * 100;
+            curEl.textContent = fmt(audio.currentTime);
+        }
+    });
+    audio.addEventListener('loadedmetadata', () => { durEl.textContent = fmt(audio.duration); });
+
+    seek.addEventListener('input', () => {
+        if (audio.duration) audio.currentTime = (seek.value / 100) * audio.duration;
+    });
+
+    vol.addEventListener('input', () => {
+        audio.volume = vol.value;
+        audio.muted = false;
+        setVolIcon();
+    });
+    volBtn.addEventListener('click', () => {
+        audio.muted = !audio.muted;
+        setVolIcon();
+    });
+    function setVolIcon() {
+        const v = audio.muted ? 0 : audio.volume;
+        volIcon.className = 'fas ' + (v === 0 ? 'fa-volume-xmark' : v < 0.5 ? 'fa-volume-low' : 'fa-volume-high');
+    }
+
+    // ---------- load playlist ----------
+    fetch('playlist.json')
+        .then(r => r.json())
+        .then(data => {
+            songs = (data && data.songs) || [];
+            if (!songs.length) throw new Error('empty');
+            renderList();
+            selectSong(0, false);
+        })
+        .catch(err => {
+            console.error('Playlist failed to load:', err);
+            songEl.textContent = 'Playlist unavailable';
+        });
+
+    // ---------- submit a song ----------
+    const form = document.getElementById('jb-song-form');
+    const msg = document.getElementById('jb-form-msg');
+    const submitBtn = document.getElementById('jb-submit-btn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        msg.className = 'jb-form-msg';
+        msg.textContent = '';
+        const song = document.getElementById('s-song').value.trim();
+        const artist = document.getElementById('s-artist').value.trim();
+        if (!song || !artist) {
+            msg.className = 'jb-form-msg err';
+            msg.textContent = 'Please fill in at least the song title and artist.';
+            return;
+        }
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+        try {
+            const res = await fetch(FORMSPREE_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    'Your name': document.getElementById('s-name').value.trim(),
+                    '_replyto': document.getElementById('s-email').value.trim(),
+                    'Song': song,
+                    'Artist': artist,
+                    'Link': document.getElementById('s-link').value.trim(),
+                    'Note': document.getElementById('s-note').value.trim(),
+                    '_subject': '🎵 New jukebox song submission'
+                })
+            });
+            if (!res.ok) throw new Error('bad response');
+            form.reset();
+            msg.className = 'jb-form-msg ok';
+            msg.textContent = 'Thanks! Your song is on its way to Miki. 🥁';
+        } catch (err) {
+            msg.className = 'jb-form-msg err';
+            msg.textContent = 'Something went wrong — please try again in a moment.';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send it in';
+        }
+    });
+})();
+</script>
+</body>
+</html>
