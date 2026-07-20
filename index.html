@@ -421,15 +421,16 @@
         (function () {
           if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+          // Celebrate España's World Cup win for two weeks, then stop on its own.
+          var END_DATE = new Date('2026-08-03T23:59:59');
+          if (new Date() > END_DATE) return;
+
           var canvas = document.getElementById('mikiFireworks');
           var ctx = canvas.getContext('2d');
           // España flag colours: red & gold, with a touch of white sparkle.
           var COLORS = ['#c60b1e', '#ffc400', '#ffd94a', '#e8372a', '#ffffff'];
           var particles = [];
           var rockets = [];
-          var running = true;
-          var startTime = Date.now();
-          var DURATION = 9000; // celebrate for ~9s, then fade out
 
           function resize() {
             canvas.width = window.innerWidth;
@@ -468,18 +469,14 @@
           }
 
           function tick() {
-            if (!running) return;
-            var elapsed = Date.now() - startTime;
-            var globalFade = elapsed > DURATION ? Math.max(0, 1 - (elapsed - DURATION) / 1200) : 1;
-
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = 'rgba(8, 6, 5, 0.22)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Clear each frame so the page stays visible — just floating particles.
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.globalCompositeOperation = 'lighter';
 
             for (var i = rockets.length - 1; i >= 0; i--) {
               var r = rockets[i];
-              r.x += 0; r.y += r.vy;
+              r.y += r.vy;
+              ctx.globalAlpha = 1;
               ctx.fillStyle = r.color;
               ctx.beginPath();
               ctx.arc(r.x, r.y, 2.5, 0, Math.PI * 2);
@@ -499,30 +496,22 @@
               p.y += p.vy;
               p.life -= p.decay;
               if (p.life <= 0) { particles.splice(j, 1); continue; }
-              ctx.globalAlpha = Math.max(0, p.life) * globalFade;
+              ctx.globalAlpha = Math.max(0, p.life);
               ctx.fillStyle = p.color;
               ctx.beginPath();
               ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
               ctx.fill();
             }
             ctx.globalAlpha = 1;
-
-            if (elapsed > DURATION && particles.length === 0 && rockets.length === 0) {
-              running = false;
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              canvas.style.display = 'none';
-              return;
-            }
             requestAnimationFrame(tick);
           }
 
-          // Fire an opening barrage, then keep launching until the duration is up.
-          for (var k = 0; k < 4; k++) setTimeout(launchRocket, k * 250);
-          var launcher = setInterval(function () {
-            if (Date.now() - startTime > DURATION) { clearInterval(launcher); return; }
+          // Keep launching rockets the whole time the page is open.
+          launchRocket();
+          setInterval(function () {
             launchRocket();
             if (Math.random() < 0.4) launchRocket();
-          }, 550);
+          }, 900);
 
           requestAnimationFrame(tick);
         })();
