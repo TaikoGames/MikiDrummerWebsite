@@ -29,6 +29,26 @@
       "src": "audio/04 - Skamen.mp3",
       "thumbnail": "images/thumbnail-img4.jpg",
       "title": "Skamen - Dead Fast"
+    },
+    {
+      "src": "audio/Bajo el nivel del mal.mp3",
+      "thumbnail": "images/Groenlandia.jpg",
+      "title": "Bajo el nivel del mal - Diera"
+    },
+    {
+      "src": "audio/Groenlandia.mp3",
+      "thumbnail": "images/Groenlandia.jpg",
+      "title": "Groenlandia - Diera"
+    },
+    {
+      "src": "audio/La tragedia de los comunes.mp3",
+      "thumbnail": "images/Groenlandia.jpg",
+      "title": "La tragedia de los comunes - Diera"
+    },
+    {
+      "src": "audio/Sebastopol García.mp3",
+      "thumbnail": "images/Groenlandia.jpg",
+      "title": "Sebastopol García - Diera"
     }
   ]
 }
