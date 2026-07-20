@@ -1,9 +1,9 @@
-name: Weekly link check
+name: Monthly link check
 
-# Runs every Monday, and can be triggered by hand from the Actions tab.
+# Runs on the 1st of each month, and can be triggered by hand from the Actions tab.
 on:
   schedule:
-    - cron: "0 14 * * 1"   # Mondays 14:00 UTC (~6-7am Vancouver)
+    - cron: "0 14 1 * *"   # 1st of each month, 14:00 UTC (~6-7am Vancouver)
   workflow_dispatch:
 
 permissions:
