@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 jobs:
@@ -28,6 +28,16 @@ jobs:
           set +e
           python tools/check-links.py
           echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Publish visual dashboard to the site
+        if: always()
+        run: |
+          git config user.name "link-check-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add link-report.html
+          git commit -m "Update link report dashboard [skip ci]" || echo "no change"
+          git pull --rebase origin main
+          git push
 
       - name: Upload report
         if: always()
