@@ -27,7 +27,7 @@ SITE = "https://www.mikidrummer.ca"
 # Pages to crawl for links (the site we control)
 PAGES = [
     "/", "/about.html", "/video.html", "/services.html",
-    "/punkbc.html", "/bands.html", "/meet-mat.html",
+    "/punkbc.html", "/bands.html",
     "/granite-epk.html", "/lift-the-anchor-epk.html",
 ]
 
