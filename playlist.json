@@ -49,6 +49,11 @@
       "src": "audio/Sebastopol García.mp3",
       "thumbnail": "images/diera-cover.png",
       "title": "Sebastopol García - Diera"
+    },
+    {
+      "src": "audio/Per mi.mp3",
+      "thumbnail": "images/diera-cover.png",
+      "title": "Per mi - Diera"
     }
   ]
 }
