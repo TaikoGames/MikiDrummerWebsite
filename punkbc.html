@@ -669,15 +669,15 @@
   // Fallback/seed data — edit the Google Sheet to manage shows in production.
   // Last refreshed 2026-07-25 from public listings (Songkick / Bandsintown / do604 / Eventbrite).
   // Venue sites block automated access, so verify dates/prices before relying on them.
-  // Image URL left blank → card shows the built-in crowd fallback; paste a flyer URL to override.
+  // Image URL: real Wikimedia band photo where one exists, else the crowd fallback; paste a flyer URL to override.
   const SEED_SHOWS = [
-    { 'Band / Artist': 'Fiddlehead', 'Date': '2026-07-31', 'Time': '20:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Post-Hardcore', 'Notes': 'With Narrow Head, Knumears, Destiny Bond', 'Image URL': '' },
-    { 'Band / Artist': 'Kataklysm', 'Date': '2026-08-02', 'Time': '18:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Death Metal', 'Notes': 'With Six Feet Under', 'Image URL': '' },
-    { 'Band / Artist': 'Cold Fame', 'Date': '2026-08-05', 'Time': '19:00', 'Venue': 'The Cobalt', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://thecobalt.ca', 'Genre': 'Punk', 'Notes': 'With Altered by Mom', 'Image URL': '' },
-    { 'Band / Artist': 'Playlunch', 'Date': '2026-08-07', 'Time': '20:00', 'Venue': 'Biltmore Cabaret', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://biltmorecabaret.com', 'Genre': 'Punk', 'Notes': '', 'Image URL': '' },
-    { 'Band / Artist': 'Silkworm', 'Date': '2026-08-23', 'Time': '19:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Post-Hardcore', 'Notes': '', 'Image URL': '' },
-    { 'Band / Artist': 'Unsane', 'Date': '2026-09-20', 'Time': '19:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Noise Rock', 'Notes': '19+ event', 'Image URL': '' },
-    { 'Band / Artist': 'Good Riddance', 'Date': '2026-10-09', 'Time': '20:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Melodic Hardcore', 'Notes': '', 'Image URL': '' },
+    { 'Band / Artist': 'Fiddlehead', 'Date': '2026-07-31', 'Time': '20:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Post-Hardcore', 'Notes': 'With Narrow Head, Knumears, Destiny Bond', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg' },
+    { 'Band / Artist': 'Kataklysm', 'Date': '2026-08-02', 'Time': '18:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Death Metal', 'Notes': 'With Six Feet Under', 'Image URL': 'https://commons.wikimedia.org/wiki/Special:FilePath/Kataklysm_-_Wacken_Open_Air_2015-2386.jpg?width=600' },
+    { 'Band / Artist': 'Cold Fame', 'Date': '2026-08-05', 'Time': '19:00', 'Venue': 'The Cobalt', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://thecobalt.ca', 'Genre': 'Punk', 'Notes': 'With Altered by Mom', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg' },
+    { 'Band / Artist': 'Playlunch', 'Date': '2026-08-07', 'Time': '20:00', 'Venue': 'Biltmore Cabaret', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://biltmorecabaret.com', 'Genre': 'Punk', 'Notes': '', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg' },
+    { 'Band / Artist': 'Silkworm', 'Date': '2026-08-23', 'Time': '19:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Post-Hardcore', 'Notes': '', 'Image URL': 'https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg' },
+    { 'Band / Artist': 'Unsane', 'Date': '2026-09-20', 'Time': '19:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Noise Rock', 'Notes': '19+ event', 'Image URL': 'https://commons.wikimedia.org/wiki/Special:FilePath/Unsane_2005_red.jpg?width=600' },
+    { 'Band / Artist': 'Good Riddance', 'Date': '2026-10-09', 'Time': '20:00', 'Venue': 'Rickshaw Theatre', 'City': 'Vancouver', 'Price': '', 'Ticket Link': 'https://rickshawtheatre.com', 'Genre': 'Melodic Hardcore', 'Notes': '', 'Image URL': 'https://commons.wikimedia.org/wiki/Special:FilePath/Russ_Rankin_2019_(cropped).jpg?width=600' },
   ]
 
   let allShows = []
