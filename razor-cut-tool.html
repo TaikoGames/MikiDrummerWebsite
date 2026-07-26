@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Razor Cut — Silence Splitter</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    --bg:#0D0F0D;
+    --panel:#151815;
+    --line:#262b26;
+    --green:#9FEF00;
+    --amber:#FFB627;
+    --text:#EDEDED;
+    --muted:#8A9186;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .mono{font-family:'JetBrains Mono','Space Mono',monospace;}
+  header{
+    padding:28px 20px 16px;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--green);
+    margin:0 0 6px;
+  }
+  h1{
+    margin:0;
+    font-size:26px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    color:var(--muted);
+    font-size:13.5px;
+    margin-top:6px;
+    line-height:1.5;
+  }
+  main{padding:20px;max-width:640px;margin:0 auto;}
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .drop{
+    border:1.5px dashed var(--line);
+    border-radius:12px;
+    padding:26px 16px;
+    text-align:center;
+    color:var(--muted);
+    font-size:14px;
+    cursor:pointer;
+  }
+  .drop.active{border-color:var(--green);color:var(--green);}
+  input[type=file]{display:none;}
+  .sourceTabs{
+    display:flex;
+    gap:6px;
+    margin-bottom:14px;
+  }
+  .srcTab{
+    flex:1;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--muted);
+    font-size:12.5px;
+    font-weight:600;
+    border-radius:8px;
+    padding:10px 8px;
+  }
+  .srcTab.active{
+    border-color:var(--green);
+    color:var(--green);
+  }
+  .textin{
+    width:100%;
+    background:#0a0c0a;
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:var(--text);
+    font-size:14px;
+    padding:12px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .textin:focus{outline:none;border-color:var(--green);}
+  details{
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:16px;
+  }
+  details[open] summary{margin-bottom:2px;}
+  summary{list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  .filename{
+    margin-top:10px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--green);
+    word-break:break-all;
+  }
+  label.ctrl{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin:16px 0 6px;
+    display:flex;
+    justify-content:space-between;
+  }
+  label.ctrl span.val{
+    color:var(--amber);
+    font-family:'JetBrains Mono',monospace;
+  }
+  input[type=range]{
+    width:100%;
+    accent-color:var(--green);
+    height:28px;
+  }
+  button{
+    font-family:inherit;
+    font-size:14.5px;
+    font-weight:600;
+    border:none;
+    border-radius:10px;
+    padding:14px 18px;
+    cursor:pointer;
+    width:100%;
+  }
+  .btn-primary{
+    background:var(--green);
+    color:#0D0F0D;
+    margin-top:18px;
+  }
+  .btn-primary:disabled{background:#3a4436;color:#6b7264;cursor:not-allowed;}
+  .btn-secondary{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--text);
+    margin-top:10px;
+  }
+  #status{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:10px;
+    min-height:16px;
+  }
+  #waveWrap{position:relative;}
+  canvas{width:100%;display:block;border-radius:8px;background:#0a0c0a;}
+  .tickrow{
+    display:flex;
+    justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .legend{
+    display:flex;
+    gap:16px;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:10px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .swatch{width:10px;height:10px;border-radius:2px;display:inline-block;}
+  .results h2{
+    font-size:15px;
+    margin:0 0 4px;
+  }
+  .results .count{color:var(--muted);font-size:12.5px;margin-bottom:14px;}
+  .clip{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 0;
+    border-top:1px solid var(--line);
+  }
+  .clip:first-of-type{border-top:none;}
+  .clip .idx{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--amber);
+    font-size:13px;
+    width:28px;
+  }
+  .clip .meta{flex:1;min-width:0;}
+  .clip .len{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .clip audio{width:100%;height:32px;margin-top:4px;}
+  .clip a.dl{
+    color:var(--green);
+    text-decoration:none;
+    font-size:12px;
+    font-family:'JetBrains Mono',monospace;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:6px 10px;
+    white-space:nowrap;
+  }
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:11.5px;
+    padding:24px 20px 40px;
+    font-family:'JetBrains Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">01 · load — 02 · cut — 03 · export</p>
+  <h1>Razor Cut</h1>
+  <p class="sub">Drops your audio on a virtual splice block and cuts it wherever it goes quiet. Everything runs in this browser tab — nothing uploads anywhere.</p>
+</header>
+
+<main>
+
+  <div class="panel">
+    <div class="sourceTabs">
+      <button type="button" class="srcTab active" id="tabUpload">Upload file</button>
+      <button type="button" class="srcTab" id="tabDrive">Google Drive link</button>
+    </div>
+
+    <div id="uploadSource">
+      <div class="drop" id="drop">
+        <div id="dropLabel">Tap to choose an audio file<br><span style="font-size:12px;">MP3, WAV, M4A, OGG</span></div>
+        <div class="filename" id="filename"></div>
+      </div>
+      <input type="file" id="fileInput" accept="audio/*">
+    </div>
+
+    <div id="driveSource" style="display:none;">
+      <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 14px;">Google blocks browsers from reading Drive file bytes directly (CORS). The fix below is a tiny proxy that runs on <b>your own</b> Google account — one-time setup, then every Drive link just works.</p>
+
+      <details id="setupDetails">
+        <summary class="mono" style="color:var(--green);font-size:12.5px;cursor:pointer;">Set up the proxy (one time, ~2 min)</summary>
+        <ol style="font-size:12.5px;color:var(--muted);line-height:1.7;padding-left:18px;margin:10px 0;">
+          <li>Go to <b>script.google.com</b> → <b>New project</b></li>
+          <li>Delete the placeholder code, paste in the code below</li>
+          <li>Tap <b>Deploy → New deployment</b></li>
+          <li>Type: <b>Web app</b> · Execute as: <b>Me</b> · Who has access: <b>Anyone</b></li>
+          <li>Authorize it, then copy the Web app URL (ends in <span class="mono">/exec</span>)</li>
+          <li>Paste that URL into the field below — you only do this once, ever</li>
+        </ol>
+        <div style="position:relative;">
+          <pre id="scriptCode" class="mono" style="background:#0a0c0a;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:11px;line-height:1.5;overflow-x:auto;white-space:pre;">function doGet(e) {
+  var id = e.parameter.id;
+  var file = DriveApp.getFileById(id);
+  var blob = file.getBlob();
+  var b64 = Utilities.base64Encode(blob.getBytes());
+  return ContentService
+    .createTextOutput(JSON.stringify({
+      name: file.getName(),
+      mimeType: blob.getContentType(),
+      data: b64
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+          <button type="button" class="btn-secondary" id="copyScriptBtn" style="margin-top:8px;">Copy code</button>
+        </div>
+      </details>
+
+      <label class="ctrl">Your Apps Script proxy URL <span class="val" id="proxySavedTag"></span></label>
+      <input type="text" id="proxyUrl" class="textin" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocorrect="off">
+
+      <label class="ctrl">Google Drive share link</label>
+      <input type="text" id="driveUrl" class="textin" placeholder="https://drive.google.com/file/d/…/view" autocapitalize="off" autocorrect="off">
+
+      <button class="btn-secondary" id="driveFetchBtn" style="margin-top:10px;">Fetch from Drive</button>
+      <div id="driveStatus" class="mono" style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;"></div>
+    </div>
+
+    <label class="ctrl">Silence threshold <span class="val" id="threshVal">-40 dB</span></label>
+    <input type="range" id="thresh" min="-60" max="-15" value="-40" step="1">
+
+    <label class="ctrl">Min. gap length <span class="val" id="gapVal">500 ms</span></label>
+    <input type="range" id="gapLen" min="150" max="3000" value="500" step="50">
+
+    <label class="ctrl">Min. clip length <span class="val" id="clipVal">1.0 s</span></label>
+    <input type="range" id="clipLen" min="0.3" max="10" value="1" step="0.1">
+
+    <button class="btn-primary" id="processBtn" disabled>Load a file first</button>
+    <div id="status"></div>
+  </div>
+
+  <div class="panel" id="wavePanel" style="display:none;">
+    <div id="waveWrap"><canvas id="wave" height="140"></canvas></div>
+    <div class="tickrow"><span id="t0">0:00</span><span id="tEnd">0:00</span></div>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--green);"></i>waveform</span>
+      <span><i class="swatch" style="background:var(--amber);"></i>cut point</span>
+    </div>
+  </div>
+
+  <div class="panel results" id="resultsPanel" style="display:none;">
+    <h2>Clips</h2>
+    <p class="count" id="clipCount"></p>
+    <div id="clipList"></div>
+    <button class="btn-secondary" id="zipBtn">Download all as .zip</button>
+  </div>
+
+</main>
+
+<footer>runs entirely on-device · no audio leaves your phone</footer>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const drop = document.getElementById('drop');
+const dropLabel = document.getElementById('dropLabel');
+const filenameEl = document.getElementById('filename');
+const processBtn = document.getElementById('processBtn');
+const statusEl = document.getElementById('status');
+const threshSlider = document.getElementById('thresh');
+const gapSlider = document.getElementById('gapLen');
+const clipSlider = document.getElementById('clipLen');
+const threshVal = document.getElementById('threshVal');
+const gapVal = document.getElementById('gapVal');
+const clipVal = document.getElementById('clipVal');
+const wavePanel = document.getElementById('wavePanel');
+const waveCanvas = document.getElementById('wave');
+const resultsPanel = document.getElementById('resultsPanel');
+const clipList = document.getElementById('clipList');
+const clipCount = document.getElementById('clipCount');
+const zipBtn = document.getElementById('zipBtn');
+const t0El = document.getElementById('t0');
+const tEndEl = document.getElementById('tEnd');
+
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let currentBuffer = null;
+let currentFileBase = 'clip';
+let currentSegments = []; // {startSample, endSample}
+let currentBlobs = []; // {blob, name}
+let envelopeCache = null;
+
+const tabUpload = document.getElementById('tabUpload');
+const tabDrive = document.getElementById('tabDrive');
+const uploadSource = document.getElementById('uploadSource');
+const driveSource = document.getElementById('driveSource');
+const driveUrl = document.getElementById('driveUrl');
+const driveFetchBtn = document.getElementById('driveFetchBtn');
+const driveStatus = document.getElementById('driveStatus');
+
+tabUpload.addEventListener('click', () => {
+  tabUpload.classList.add('active');
+  tabDrive.classList.remove('active');
+  uploadSource.style.display = 'block';
+  driveSource.style.display = 'none';
+});
+tabDrive.addEventListener('click', () => {
+  tabDrive.classList.add('active');
+  tabUpload.classList.remove('active');
+  driveSource.style.display = 'block';
+  uploadSource.style.display = 'none';
+});
+
+function extractDriveId(url) {
+  const patterns = [
+    /\/file\/d\/([a-zA-Z0-9_-]+)/,
+    /[?&]id=([a-zA-Z0-9_-]+)/,
+    /\/d\/([a-zA-Z0-9_-]+)/
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+async function loadDecodedBuffer(arrayBuf, labelName) {
+  currentFileBase = labelName.replace(/\.[^/.]+$/, '');
+  currentBuffer = await audioCtx.decodeAudioData(arrayBuf);
+  statusEl.textContent = `Loaded: ${currentBuffer.duration.toFixed(1)}s · ${currentBuffer.sampleRate}Hz · ${currentBuffer.numberOfChannels}ch`;
+  processBtn.disabled = false;
+  processBtn.textContent = 'Find cuts & split';
+  envelopeCache = computeEnvelope(currentBuffer);
+  drawWave(envelopeCache, []);
+  wavePanel.style.display = 'block';
+  resultsPanel.style.display = 'none';
+}
+
+function base64ToArrayBuffer(b64) {
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+const proxyUrlInput = document.getElementById('proxyUrl');
+const proxySavedTag = document.getElementById('proxySavedTag');
+const copyScriptBtn = document.getElementById('copyScriptBtn');
+const scriptCode = document.getElementById('scriptCode');
+
+const savedProxy = localStorage.getItem('rc_proxy_url');
+if (savedProxy) { proxyUrlInput.value = savedProxy; proxySavedTag.textContent = 'saved'; }
+proxyUrlInput.addEventListener('change', () => {
+  const v = proxyUrlInput.value.trim();
+  if (v) { localStorage.setItem('rc_proxy_url', v); proxySavedTag.textContent = 'saved'; }
+});
+
+copyScriptBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(scriptCode.textContent);
+    copyScriptBtn.textContent = 'Copied ✓';
+    setTimeout(() => copyScriptBtn.textContent = 'Copy code', 1500);
+  } catch {
+    copyScriptBtn.textContent = 'Select the text above manually';
+  }
+});
+
+driveFetchBtn.addEventListener('click', async () => {
+  const raw = driveUrl.value.trim();
+  const proxy = proxyUrlInput.value.trim();
+  if (!raw) { driveStatus.textContent = 'Paste a Drive share link first.'; return; }
+  const id = extractDriveId(raw);
+  if (!id) { driveStatus.textContent = "Couldn't find a file ID in that link. Use the full share link from Drive's Share menu."; return; }
+  if (!proxy) { driveStatus.textContent = 'Set up the proxy above first (one-time) and paste its URL.'; return; }
+
+  driveFetchBtn.disabled = true;
+  driveStatus.textContent = 'Fetching through your proxy…';
+  processBtn.disabled = true;
+  processBtn.textContent = 'Loading…';
+
+  try {
+    const resp = await fetch(`${proxy}?id=${encodeURIComponent(id)}`);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const json = await resp.json();
+    if (json.error) throw new Error(json.error);
+    const buf = base64ToArrayBuffer(json.data);
+    await loadDecodedBuffer(buf, json.name || `drive_${id}`);
+    driveStatus.textContent = `Loaded "${json.name}" from Drive.`;
+  } catch (err) {
+    driveStatus.textContent = 'Could not fetch that file: ' + err.message + '. Check the proxy URL is correct and the deployment access is set to "Anyone".';
+    processBtn.disabled = true;
+    processBtn.textContent = 'Load a file first';
+  } finally {
+    driveFetchBtn.disabled = false;
+  }
+});
+
+drop.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  filenameEl.textContent = file.name;
+  drop.classList.add('active');
+  currentFileBase = file.name.replace(/\.[^/.]+$/, '');
+  statusEl.textContent = 'Decoding audio…';
+  processBtn.disabled = true;
+  processBtn.textContent = 'Decoding…';
+  try {
+    const arrayBuf = await file.arrayBuffer();
+    currentBuffer = await audioCtx.decodeAudioData(arrayBuf);
+    statusEl.textContent = `Loaded: ${currentBuffer.duration.toFixed(1)}s · ${currentBuffer.sampleRate}Hz · ${currentBuffer.numberOfChannels}ch`;
+    processBtn.disabled = false;
+    processBtn.textContent = 'Find cuts & split';
+    envelopeCache = computeEnvelope(currentBuffer);
+    drawWave(envelopeCache, []);
+    wavePanel.style.display = 'block';
+    resultsPanel.style.display = 'none';
+  } catch (err) {
+    statusEl.textContent = 'Could not decode that file: ' + err.message;
+    processBtn.disabled = true;
+    processBtn.textContent = 'Load a file first';
+  }
+});
+
+threshSlider.addEventListener('input', () => threshVal.textContent = threshSlider.value + ' dB');
+gapSlider.addEventListener('input', () => gapVal.textContent = gapSlider.value + ' ms');
+clipSlider.addEventListener('input', () => clipVal.textContent = parseFloat(clipSlider.value).toFixed(1) + ' s');
+
+function computeEnvelope(buffer) {
+  const winMs = 20;
+  const winSamples = Math.max(1, Math.round(buffer.sampleRate * winMs / 1000));
+  const chans = [];
+  for (let c = 0; c < buffer.numberOfChannels; c++) chans.push(buffer.getChannelData(c));
+  const totalWindows = Math.ceil(buffer.length / winSamples);
+  const db = new Float32Array(totalWindows);
+  for (let w = 0; w < totalWindows; w++) {
+    const start = w * winSamples;
+    const end = Math.min(start + winSamples, buffer.length);
+    let sumSq = 0, n = 0;
+    for (let c = 0; c < chans.length; c++) {
+      const data = chans[c];
+      for (let i = start; i < end; i++) { sumSq += data[i]*data[i]; n++; }
+    }
+    const rms = n > 0 ? Math.sqrt(sumSq / n) : 0;
+    db[w] = rms > 0 ? 20*Math.log10(rms) : -100;
+  }
+  return { db, winSamples, totalWindows, sampleRate: buffer.sampleRate, totalSamples: buffer.length };
+}
+
+function findCutPoints(env, thresholdDb, minGapMs) {
+  const minGapWindows = Math.max(1, Math.round((minGapMs/1000) * env.sampleRate / env.winSamples));
+  const cuts = [];
+  let runStart = -1;
+  for (let w = 0; w < env.totalWindows; w++) {
+    const silent = env.db[w] < thresholdDb;
+    if (silent && runStart === -1) runStart = w;
+    if (!silent && runStart !== -1) {
+      if (w - runStart >= minGapWindows) {
+        const midWindow = Math.floor((runStart + w) / 2);
+        cuts.push(midWindow * env.winSamples);
+      }
+      runStart = -1;
+    }
+  }
+  if (runStart !== -1 && env.totalWindows - runStart >= minGapWindows) {
+    const midWindow = Math.floor((runStart + env.totalWindows) / 2);
+    cuts.push(midWindow * env.winSamples);
+  }
+  return cuts;
+}
+
+function buildSegments(cuts, totalSamples, sampleRate, minClipSec) {
+  const bounds = [0, ...cuts, totalSamples];
+  let segs = [];
+  for (let i = 0; i < bounds.length - 1; i++) {
+    segs.push({ start: bounds[i], end: bounds[i+1] });
+  }
+  // merge segments shorter than minClipSec into neighbor
+  const minSamples = minClipSec * sampleRate;
+  let merged = [];
+  for (let seg of segs) {
+    if (merged.length > 0 && (seg.end - seg.start) < minSamples) {
+      merged[merged.length-1].end = seg.end;
+    } else if (merged.length === 0 && (seg.end - seg.start) < minSamples && segs.length > 1) {
+      merged.push(seg); // will merge into next iteration if next is also small, else stays
+    } else {
+      merged.push(seg);
+    }
+  }
+  // second pass: if first seg is still tiny, merge into second
+  if (merged.length > 1 && (merged[0].end - merged[0].start) < minSamples) {
+    merged[1].start = merged[0].start;
+    merged.shift();
+  }
+  return merged.filter(s => s.end > s.start);
+}
+
+function drawWave(env, cutSamplesList) {
+  const dpr = window.devicePixelRatio || 1;
+  const cssWidth = waveCanvas.clientWidth || 600;
+  const cssHeight = 140;
+  waveCanvas.width = cssWidth * dpr;
+  waveCanvas.height = cssHeight * dpr;
+  const ctx = waveCanvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0,0,cssWidth,cssHeight);
+  ctx.fillStyle = '#0a0c0a';
+  ctx.fillRect(0,0,cssWidth,cssHeight);
+
+  const n = env.totalWindows;
+  const barsPerPixel = n / cssWidth;
+  ctx.fillStyle = '#9FEF00';
+  const mid = cssHeight/2;
+  for (let x = 0; x < cssWidth; x++) {
+    const wStart = Math.floor(x * barsPerPixel);
+    const wEnd = Math.max(wStart+1, Math.floor((x+1) * barsPerPixel));
+    let maxDb = -100;
+    for (let w = wStart; w < wEnd && w < n; w++) maxDb = Math.max(maxDb, env.db[w]);
+    const norm = Math.max(0, Math.min(1, (maxDb + 60) / 60)); // -60..0dB -> 0..1
+    const h = norm * (cssHeight*0.42);
+    ctx.fillRect(x, mid - h, 1, h*2);
+  }
+
+  ctx.strokeStyle = '#FFB627';
+  ctx.lineWidth = 2;
+  for (const s of cutSamplesList) {
+    const x = (s / env.totalSamples) * cssWidth;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, cssHeight);
+    ctx.stroke();
+  }
+
+  t0El.textContent = '0:00';
+  tEndEl.textContent = formatTime(env.totalSamples / env.sampleRate);
+}
+
+function formatTime(sec) {
+  sec = Math.max(0, sec);
+  const m = Math.floor(sec/60);
+  const s = Math.floor(sec%60);
+  return m + ':' + String(s).padStart(2,'0');
+}
+
+function sliceBuffer(buffer, startSample, endSample) {
+  const len = endSample - startSample;
+  const newBuf = audioCtx.createBuffer(buffer.numberOfChannels, len, buffer.sampleRate);
+  for (let c = 0; c < buffer.numberOfChannels; c++) {
+    const src = buffer.getChannelData(c).subarray(startSample, endSample);
+    newBuf.copyToChannel(src, c);
+  }
+  return newBuf;
+}
+
+function audioBufferToWavBlob(buffer) {
+  const numChannels = buffer.numberOfChannels;
+  const sampleRate = buffer.sampleRate;
+  const len = buffer.length;
+  const interleaved = new Float32Array(len * numChannels);
+  const chans = [];
+  for (let c = 0; c < numChannels; c++) chans.push(buffer.getChannelData(c));
+  for (let i = 0; i < len; i++) {
+    for (let c = 0; c < numChannels; c++) {
+      interleaved[i*numChannels + c] = chans[c][i];
+    }
+  }
+  const bytesPerSample = 2;
+  const blockAlign = numChannels * bytesPerSample;
+  const dataSize = interleaved.length * bytesPerSample;
+  const buf = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buf);
+  function writeStr(offset, str) { for (let i=0;i<str.length;i++) view.setUint8(offset+i, str.charCodeAt(i)); }
+  writeStr(0,'RIFF');
+  view.setUint32(4, 36+dataSize, true);
+  writeStr(8,'WAVE');
+  writeStr(12,'fmt ');
+  view.setUint32(16,16,true);
+  view.setUint16(20,1,true);
+  view.setUint16(22,numChannels,true);
+  view.setUint32(24,sampleRate,true);
+  view.setUint32(28,sampleRate*blockAlign,true);
+  view.setUint16(32,blockAlign,true);
+  view.setUint16(34,16,true);
+  writeStr(36,'data');
+  view.setUint32(40,dataSize,true);
+  let offset = 44;
+  for (let i = 0; i < interleaved.length; i++) {
+    let s = Math.max(-1, Math.min(1, interleaved[i]));
+    s = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    view.setInt16(offset, s, true);
+    offset += 2;
+  }
+  return new Blob([buf], { type: 'audio/wav' });
+}
+
+processBtn.addEventListener('click', async () => {
+  if (!currentBuffer) return;
+  processBtn.disabled = true;
+  processBtn.textContent = 'Cutting…';
+  statusEl.textContent = 'Analyzing for silence…';
+  await new Promise(r => setTimeout(r, 30));
+
+  const thresholdDb = parseFloat(threshSlider.value);
+  const minGapMs = parseFloat(gapSlider.value);
+  const minClipSec = parseFloat(clipSlider.value);
+
+  const cuts = findCutPoints(envelopeCache, thresholdDb, minGapMs);
+  currentSegments = buildSegments(cuts, currentBuffer.length, currentBuffer.sampleRate, minClipSec);
+  const cutSamples = currentSegments.slice(1).map(s => s.start);
+  drawWave(envelopeCache, cutSamples);
+
+  currentBlobs = [];
+  clipList.innerHTML = '';
+  for (let i = 0; i < currentSegments.length; i++) {
+    const seg = currentSegments[i];
+    const buf = sliceBuffer(currentBuffer, seg.start, seg.end);
+    const blob = audioBufferToWavBlob(buf);
+    const name = `${currentFileBase}_${String(i+1).padStart(2,'0')}.wav`;
+    currentBlobs.push({ blob, name });
+
+    const url = URL.createObjectURL(blob);
+    const durSec = (seg.end - seg.start) / currentBuffer.sampleRate;
+    const row = document.createElement('div');
+    row.className = 'clip';
+    row.innerHTML = `
+      <div class="idx">${String(i+1).padStart(2,'0')}</div>
+      <div class="meta">
+        <div class="len">${formatTime(durSec)}</div>
+        <audio controls src="${url}"></audio>
+      </div>
+      <a class="dl" href="${url}" download="${name}">save</a>
+    `;
+    clipList.appendChild(row);
+  }
+  clipCount.textContent = `${currentSegments.length} clip${currentSegments.length===1?'':'s'} from ${formatTime(currentBuffer.duration)} of audio`;
+  resultsPanel.style.display = 'block';
+  statusEl.textContent = 'Done. Adjust sliders and re-run any time.';
+  processBtn.disabled = false;
+  processBtn.textContent = 'Re-run with these settings';
+  resultsPanel.scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+zipBtn.addEventListener('click', async () => {
+  if (!currentBlobs.length) return;
+  zipBtn.disabled = true;
+  zipBtn.textContent = 'Zipping…';
+  const zip = new JSZip();
+  for (const { blob, name } of currentBlobs) zip.file(name, blob);
+  const content = await zip.generateAsync({ type: 'blob' });
+  const url = URL.createObjectURL(content);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${currentFileBase}_split.zip`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  zipBtn.disabled = false;
+  zipBtn.textContent = 'Download all as .zip';
+});
+
+window.addEventListener('resize', () => {
+  if (envelopeCache) {
+    const cutSamples = currentSegments.slice(1).map(s => s.start);
+    drawWave(envelopeCache, cutSamples);
+  }
+});
+</script>
+</body>
+</html>
