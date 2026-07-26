@@ -1,0 +1,5 @@
+# Claude Code local tooling (worktrees, launch config, scratch)
+.claude/
+
+# Generated scratch report (the .html dashboard is published to the site)
+link-report.md
