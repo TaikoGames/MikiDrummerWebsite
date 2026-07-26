@@ -432,6 +432,25 @@
             cursor: pointer;
         }
         .jb-embed-box button:hover { filter: brightness(1.08); }
+
+        /* ---- link / embed tracks (YouTube, Spotify) ---- */
+        .jb-embed-player { width: 100%; margin: 6px 0 4px; }
+        .jb-yt { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 12px; overflow: hidden; }
+        .jb-yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        .jb-spotify { width: 100%; height: 152px; border: 0; border-radius: 12px; }
+        .jb-extlink {
+            display: inline-block;
+            margin: 10px auto;
+            background: var(--jb-accent);
+            color: #180203;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .jb-extlink:hover { filter: brightness(1.08); }
+        .jb-stage.is-link .jb-visualizer,
+        .jb-stage.is-link .jb-seekrow { display: none; }
     </style>
 </head>
 <body>
@@ -463,6 +482,8 @@
                 <div class="jb-song" id="jb-song">Loading playlist…</div>
                 <div class="jb-artist" id="jb-artist"></div>
             </div>
+
+            <div class="jb-embed-player" id="jb-embed-player" hidden></div>
 
             <canvas class="jb-visualizer" id="jb-visualizer" aria-hidden="true"></canvas>
 
@@ -559,6 +580,48 @@
     const volIcon = volBtn.querySelector('i');
     const vol = document.getElementById('jb-vol');
     const canvas = document.getElementById('jb-visualizer');
+    const stage = document.querySelector('.jb-stage');
+    const embedPlayer = document.getElementById('jb-embed-player');
+    const DEFAULT_LABEL = 'images/music-img1.png';
+
+    // ----- link helpers: paste a YouTube/Spotify link instead of uploading a file -----
+    function ytId(url) {
+        if (!url) return null;
+        const m = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+        return m ? m[1] : null;
+    }
+    function spotify(url) {
+        if (!url) return null;
+        const m = String(url).match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|album|playlist|episode)\/([A-Za-z0-9]+)/);
+        return m ? { type: m[1], id: m[2] } : null;
+    }
+    function isLink(song) { return !song.src && !!song.link; }
+    function resolveThumb(song) {
+        if (song.thumbnail) return song.thumbnail;
+        const y = ytId(song.link);
+        if (y) return 'https://img.youtube.com/vi/' + y + '/hqdefault.jpg';
+        return DEFAULT_LABEL;
+    }
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    function buildEmbed(song, autoplay) {
+        const y = ytId(song.link);
+        if (y) {
+            return '<div class="jb-yt"><iframe src="https://www.youtube-nocookie.com/embed/' + y +
+                '?rel=0&autoplay=' + (autoplay ? 1 : 0) + '" title="' + esc(song.title) +
+                '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
+        }
+        const s = spotify(song.link);
+        if (s) {
+            return '<iframe class="jb-spotify" src="https://open.spotify.com/embed/' + s.type + '/' + s.id +
+                (autoplay ? '?autoplay=1' : '') + '" title="' + esc(song.title) +
+                '" allow="autoplay; encrypted-media" loading="lazy"></iframe>';
+        }
+        return '<a class="jb-extlink" href="' + esc(song.link) + '" target="_blank" rel="noopener">▶ Open track ↗</a>';
+    }
 
     let songs = [];
     let index = 0;
@@ -596,7 +659,7 @@
             const li = document.createElement('li');
             li.innerHTML =
                 '<span class="jb-num">' + (i + 1) + '</span>' +
-                '<img class="jb-thumb" src="' + song.thumbnail + '" alt="" loading="lazy">' +
+                '<img class="jb-thumb" src="' + resolveThumb(song) + '" alt="" loading="lazy">' +
                 '<span class="jb-track-title">' + p.title + (p.artist ? ' — ' + p.artist : '') + '</span>' +
                 '<span class="jb-eq"><span></span><span></span><span></span></span>';
             li.addEventListener('click', () => selectSong(i, true));
@@ -617,12 +680,27 @@
         index = i;
         const song = songs[i];
         const p = parseTitle(song.title);
-        audio.src = song.src;
-        label.src = song.thumbnail;
+        label.src = resolveThumb(song);
         songEl.textContent = p.title;
         artistEl.textContent = p.artist;
         updateListUI();
-        if (play) startPlayback();
+
+        if (isLink(song)) {
+            // link-based track — plays through the platform's own embed
+            try { audio.pause(); } catch (e) {}
+            audio.removeAttribute('src');
+            disc.classList.remove('spinning');
+            stage.classList.add('is-link');
+            embedPlayer.innerHTML = buildEmbed(song, play);
+            embedPlayer.hidden = false;
+            playIcon.className = 'fas fa-play';
+        } else {
+            stage.classList.remove('is-link');
+            embedPlayer.hidden = true;
+            embedPlayer.innerHTML = '';
+            audio.src = song.src;
+            if (play) startPlayback();
+        }
     }
 
     function startPlayback() {
@@ -689,6 +767,13 @@
 
     // ---------- events ----------
     playBtn.addEventListener('click', () => {
+        const song = songs[index];
+        if (song && isLink(song)) {
+            // (re)load the embed and start it playing
+            embedPlayer.innerHTML = buildEmbed(song, true);
+            embedPlayer.hidden = false;
+            return;
+        }
         if (audio.paused) startPlayback();
         else audio.pause();
     });

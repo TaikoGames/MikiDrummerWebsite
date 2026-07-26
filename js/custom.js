@@ -66,8 +66,10 @@ function changeSong(index, shouldPlay = true) {
 }
 
 function buildPlaylist(data) {
-    songs = data.songs;
+    // Footer player only handles audio files — skip link-based (YouTube/Spotify) tracks.
+    songs = (data.songs || []).filter(s => s && s.src);
     playlistContainer.innerHTML = '';
+    if (!songs.length) return;
     songs.forEach((song, index) => {
         const li = document.createElement('li');
         li.textContent = song.title;
