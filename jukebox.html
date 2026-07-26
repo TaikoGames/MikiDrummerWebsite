@@ -391,6 +391,47 @@
         @media (prefers-reduced-motion: reduce) {
             .jb-disc, .jb-eq span { animation: none; }
         }
+        /* ---- embed link (very bottom) ---- */
+        .jb-embed { text-align: center; margin: 34px auto 60px; }
+        .jb-embed-link {
+            color: var(--jb-muted);
+            font-size: 13px;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+        .jb-embed-link:hover { color: var(--jb-accent); }
+        .jb-embed-box {
+            display: flex;
+            gap: 8px;
+            max-width: 560px;
+            margin: 14px auto 0;
+        }
+        .jb-embed-box input {
+            flex: 1;
+            min-width: 0;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: var(--jb-ink);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+            font-size: 12px;
+        }
+        .jb-embed-box button {
+            flex-shrink: 0;
+            background: var(--jb-accent);
+            color: #180203;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .jb-embed-box button:hover { filter: brightness(1.08); }
     </style>
 </head>
 <body>
@@ -483,6 +524,15 @@
             <button type="submit" class="jb-submit-btn" id="jb-submit-btn">Send it in</button>
             <div class="jb-form-msg" id="jb-form-msg" role="status" aria-live="polite"></div>
         </form>
+    </div>
+
+    <!-- ===================== EMBED LINK (very bottom) ===================== -->
+    <div class="jb-embed">
+        <button type="button" id="jb-embed-toggle" class="jb-embed-link">🔗 Embed this jukebox on your site</button>
+        <div class="jb-embed-box" id="jb-embed-box" hidden>
+            <input type="text" id="jb-embed-code" readonly aria-label="Jukebox embed code">
+            <button type="button" id="jb-embed-copy">Copy</button>
+        </div>
     </div>
 
 </div>
@@ -747,6 +797,34 @@
             submitBtn.textContent = 'Send it in';
         }
     });
+
+    // ---------- embed link ----------
+    const embedToggle = document.getElementById('jb-embed-toggle');
+    const embedBox = document.getElementById('jb-embed-box');
+    const embedCode = document.getElementById('jb-embed-code');
+    const embedCopy = document.getElementById('jb-embed-copy');
+    if (embedToggle && embedBox && embedCode && embedCopy) {
+        embedCode.value = '<iframe src="https://www.mikidrummer.ca/jukebox.html" width="100%" height="900" style="border:0" title="Miki Drummer Jukebox"></iframe>';
+        embedToggle.addEventListener('click', () => {
+            embedBox.hidden = !embedBox.hidden;
+            if (!embedBox.hidden) { embedCode.focus(); embedCode.select(); }
+        });
+        embedCopy.addEventListener('click', () => {
+            embedCode.select();
+            embedCode.setSelectionRange(0, 99999);
+            const done = () => {
+                embedCopy.textContent = 'Copied!';
+                setTimeout(() => { embedCopy.textContent = 'Copy'; }, 1600);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(embedCode.value).then(done).catch(() => {
+                    try { document.execCommand('copy'); } catch (e) {} done();
+                });
+            } else {
+                try { document.execCommand('copy'); } catch (e) {} done();
+            }
+        });
+    }
 })();
 </script>
 </body>
