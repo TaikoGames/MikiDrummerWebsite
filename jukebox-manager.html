@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Jukebox Manager | Miki Drummer</title>
+    <link rel="icon" href="favicon.ico">
+    <style>
+        :root {
+            --bg: #1c1113;
+            --panel: #2b1619;
+            --edge: rgba(232, 55, 42, 0.28);
+            --accent: #e8372a;
+            --ink: #f4efe6;
+            --muted: #a89a94;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background:
+                radial-gradient(1100px 620px at 50% -8%, #5a1119 0%, transparent 62%),
+                linear-gradient(to bottom, var(--bg), #241014 70%, #2e0d12);
+            color: var(--ink);
+            font-family: system-ui, "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
+            padding: 28px 18px 80px;
+        }
+        .wrap { max-width: 760px; margin: 0 auto; }
+        h1 { font-size: 26px; margin: 0 0 4px; }
+        .lead { color: var(--muted); font-size: 14px; margin: 0 0 22px; }
+        .lead a { color: var(--accent); }
+        h2 { font-size: 15px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin: 26px 0 12px; }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(180deg, var(--panel), #1a0d0f);
+            border: 1px solid var(--edge);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+        }
+        .row img {
+            width: 44px; height: 44px; border-radius: 6px; object-fit: cover;
+            background: #000; flex-shrink: 0;
+        }
+        .row .meta { flex: 1; min-width: 0; }
+        .row .title-in {
+            width: 100%; background: transparent; border: none; color: var(--ink);
+            font-size: 15px; font-family: inherit; padding: 2px 0;
+        }
+        .row .title-in:focus { outline: none; border-bottom: 1px solid var(--accent); }
+        .row .sub { font-size: 11px; color: var(--muted); margin-top: 2px; word-break: break-all; }
+        .badge {
+            flex-shrink: 0; font-size: 10px; font-weight: bold; letter-spacing: 1px;
+            text-transform: uppercase; padding: 3px 8px; border-radius: 20px;
+            border: 1px solid var(--edge); color: var(--muted);
+        }
+        .badge.yt { color: #ff5a4d; border-color: #ff5a4d55; }
+        .badge.sp { color: #1ed760; border-color: #1ed76055; }
+        .iconbtn {
+            flex-shrink: 0; background: transparent; border: 1px solid rgba(255,255,255,0.14);
+            color: var(--ink); width: 30px; height: 30px; border-radius: 7px; cursor: pointer;
+            font-size: 14px; line-height: 1; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .iconbtn:hover { background: rgba(255,255,255,0.08); }
+        .iconbtn.del { border-color: var(--edge); color: var(--accent); }
+        .iconbtn.del:hover { background: var(--accent); color: #180203; }
+        .iconbtn:disabled { opacity: 0.3; cursor: default; }
+
+        .add {
+            background: linear-gradient(180deg, var(--panel), #1a0d0f);
+            border: 1px solid var(--edge); border-radius: 12px; padding: 16px;
+        }
+        .field { margin-bottom: 10px; }
+        .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+        .field input, .field select {
+            width: 100%; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.14);
+            color: var(--ink); border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 14px;
+        }
+        .btn {
+            background: var(--accent); color: #180203; border: none; border-radius: 8px;
+            padding: 11px 18px; font-weight: bold; cursor: pointer; font-size: 14px;
+        }
+        .btn:hover { filter: brightness(1.08); }
+        .btn.ghost { background: transparent; color: var(--ink); border: 1px solid rgba(255,255,255,0.18); }
+        .btn.ghost:hover { background: rgba(255,255,255,0.08); }
+
+        .out textarea {
+            width: 100%; height: 240px; background: #000; border: 1px solid var(--edge);
+            color: #cfe8cf; border-radius: 10px; padding: 12px; font-family: ui-monospace, Menlo, monospace;
+            font-size: 12px; resize: vertical;
+        }
+        .out-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .hint {
+            font-size: 12px; color: var(--muted); background: rgba(0,0,0,0.25);
+            border-left: 3px solid var(--accent); padding: 10px 12px; border-radius: 6px; margin-top: 14px;
+        }
+        .msg { font-size: 13px; color: #7ee787; margin-left: 10px; }
+        .toprow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+        .back { color: var(--muted); font-size: 13px; text-decoration: none; }
+        .back:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="toprow">
+        <h1>🎛️ Jukebox Manager</h1>
+        <a class="back" href="/jukebox.html">← View jukebox</a>
+    </div>
+    <p class="lead">Remove, reorder, and add songs, then save the generated file back to your site. This tool only builds the file — it can't change the live site on its own.</p>
+
+    <h2>Songs <span id="count" class="msg"></span></h2>
+    <div id="list"></div>
+
+    <h2>Add a song</h2>
+    <div class="add">
+        <div class="field">
+            <label for="a-title">Title <span style="color:var(--muted)">(shown as "Song - Artist")</span></label>
+            <input type="text" id="a-title" placeholder="e.g. Fire Sale - Get Dead">
+        </div>
+        <div class="field">
+            <label for="a-type">Type</label>
+            <select id="a-type">
+                <option value="link">Link (YouTube / Spotify)</option>
+                <option value="file">Audio file (uploaded to the site)</option>
+            </select>
+        </div>
+        <div class="field" id="f-link">
+            <label for="a-link">Link URL</label>
+            <input type="url" id="a-link" placeholder="https://youtu.be/…">
+        </div>
+        <div class="field" id="f-src" hidden>
+            <label for="a-src">Audio file path</label>
+            <input type="text" id="a-src" placeholder="audio/YourSong.mp3">
+        </div>
+        <div class="field" id="f-thumb" hidden>
+            <label for="a-thumb">Cover image path</label>
+            <input type="text" id="a-thumb" placeholder="images/your-cover.jpg">
+        </div>
+        <button class="btn" id="a-add">+ Add song</button>
+    </div>
+
+    <h2>Save the playlist</h2>
+    <div class="out">
+        <textarea id="output" readonly aria-label="Generated playlist.json"></textarea>
+        <div class="out-actions">
+            <button class="btn" id="copy">Copy JSON</button>
+            <button class="btn ghost" id="download">Download playlist.json</button>
+            <span class="msg" id="save-msg"></span>
+        </div>
+        <div class="hint">
+            <strong>To publish:</strong> save this as <code>playlist.json</code> in your site's repo
+            (on GitHub: open <code>playlist.json</code> → “Edit” → paste → commit), or download it and drag it
+            in — or just send the file to Claude and it'll push it live.
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const DEFAULT_LABEL = 'images/music-img1.png';
+    let songs = [];
+
+    const listEl = document.getElementById('list');
+    const outputEl = document.getElementById('output');
+    const countEl = document.getElementById('count');
+
+    function ytId(url) {
+        if (!url) return null;
+        const m = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+        return m ? m[1] : null;
+    }
+    function spotify(url) {
+        if (!url) return null;
+        const m = String(url).match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|album|playlist|episode)\/([A-Za-z0-9]+)/);
+        return m ? { type: m[1], id: m[2] } : null;
+    }
+    function typeOf(song) {
+        if (song.src) return { key: 'file', label: 'MP3', cls: '' };
+        if (ytId(song.link)) return { key: 'yt', label: 'YouTube', cls: 'yt' };
+        if (spotify(song.link)) return { key: 'sp', label: 'Spotify', cls: 'sp' };
+        if (song.link) return { key: 'link', label: 'Link', cls: '' };
+        return { key: 'none', label: '—', cls: '' };
+    }
+    function thumbOf(song) {
+        if (song.thumbnail) return song.thumbnail;
+        const y = ytId(song.link);
+        if (y) return 'https://img.youtube.com/vi/' + y + '/hqdefault.jpg';
+        return DEFAULT_LABEL;
+    }
+    function esc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function render() {
+        listEl.innerHTML = '';
+        songs.forEach((song, i) => {
+            const t = typeOf(song);
+            const row = document.createElement('div');
+            row.className = 'row';
+            row.innerHTML =
+                '<img src="' + esc(thumbOf(song)) + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
+                '<div class="meta">' +
+                    '<input class="title-in" value="' + esc(song.title || '') + '" data-i="' + i + '">' +
+                    '<div class="sub">' + esc(song.src || song.link || '') + '</div>' +
+                '</div>' +
+                '<span class="badge ' + t.cls + '">' + t.label + '</span>' +
+                '<button class="iconbtn up" title="Move up" ' + (i === 0 ? 'disabled' : '') + '>↑</button>' +
+                '<button class="iconbtn down" title="Move down" ' + (i === songs.length - 1 ? 'disabled' : '') + '>↓</button>' +
+                '<button class="iconbtn del" title="Remove">✕</button>';
+            row.querySelector('.title-in').addEventListener('input', (e) => { songs[i].title = e.target.value; updateOutput(); });
+            row.querySelector('.up').addEventListener('click', () => move(i, -1));
+            row.querySelector('.down').addEventListener('click', () => move(i, 1));
+            row.querySelector('.del').addEventListener('click', () => remove(i));
+            listEl.appendChild(row);
+        });
+        countEl.textContent = songs.length + ' song' + (songs.length === 1 ? '' : 's');
+        updateOutput();
+    }
+
+    function move(i, dir) {
+        const j = i + dir;
+        if (j < 0 || j >= songs.length) return;
+        const tmp = songs[i]; songs[i] = songs[j]; songs[j] = tmp;
+        render();
+    }
+    function remove(i) {
+        const name = songs[i].title || 'this song';
+        if (!confirm('Remove "' + name + '"?')) return;
+        songs.splice(i, 1);
+        render();
+    }
+    function updateOutput() {
+        // strip empty optional fields for a clean file
+        const clean = songs.map(s => {
+            const o = {};
+            if (s.title) o.title = s.title;
+            if (s.src) o.src = s.src;
+            if (s.link) o.link = s.link;
+            if (s.thumbnail) o.thumbnail = s.thumbnail;
+            return o;
+        });
+        outputEl.value = JSON.stringify({ songs: clean }, null, 2) + '\n';
+    }
+
+    // ---- add ----
+    const typeSel = document.getElementById('a-type');
+    const fLink = document.getElementById('f-link');
+    const fSrc = document.getElementById('f-src');
+    const fThumb = document.getElementById('f-thumb');
+    typeSel.addEventListener('change', () => {
+        const isFile = typeSel.value === 'file';
+        fLink.hidden = isFile;
+        fSrc.hidden = !isFile;
+        fThumb.hidden = !isFile;
+    });
+    document.getElementById('a-add').addEventListener('click', () => {
+        const title = document.getElementById('a-title').value.trim();
+        if (!title) { alert('Please add a title.'); return; }
+        if (typeSel.value === 'file') {
+            const src = document.getElementById('a-src').value.trim();
+            const thumb = document.getElementById('a-thumb').value.trim();
+            if (!src) { alert('Please add the audio file path.'); return; }
+            const s = { src, title };
+            if (thumb) s.thumbnail = thumb;
+            songs.push(s);
+        } else {
+            const link = document.getElementById('a-link').value.trim();
+            if (!link) { alert('Please paste a link.'); return; }
+            songs.push({ title, link });
+        }
+        document.getElementById('a-title').value = '';
+        document.getElementById('a-link').value = '';
+        document.getElementById('a-src').value = '';
+        document.getElementById('a-thumb').value = '';
+        render();
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    });
+
+    // ---- save ----
+    const saveMsg = document.getElementById('save-msg');
+    document.getElementById('copy').addEventListener('click', () => {
+        outputEl.select();
+        const flash = () => { saveMsg.textContent = 'Copied!'; setTimeout(() => saveMsg.textContent = '', 1600); };
+        if (navigator.clipboard) navigator.clipboard.writeText(outputEl.value).then(flash).catch(() => { document.execCommand('copy'); flash(); });
+        else { document.execCommand('copy'); flash(); }
+    });
+    document.getElementById('download').addEventListener('click', () => {
+        const blob = new Blob([outputEl.value], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'playlist.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    });
+
+    // ---- load ----
+    fetch('playlist.json?_=' + Date.now())
+        .then(r => r.json())
+        .then(data => { songs = (data && data.songs) || []; render(); })
+        .catch(() => {
+            listEl.innerHTML = '<p class="lead">Could not load playlist.json.</p>';
+        });
+})();
+</script>
+</body>
+</html>
