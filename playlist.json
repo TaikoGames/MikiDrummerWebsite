@@ -31,6 +31,31 @@
       "title": "Skamen - Dead Fast"
     },
     {
+      "src": "audio/Bajo el nivel del mal.mp3",
+      "thumbnail": "images/diera-cover.png",
+      "title": "Bajo el nivel del mal - Diera"
+    },
+    {
+      "src": "audio/Groenlandia.mp3",
+      "thumbnail": "images/Groenlandia.jpg",
+      "title": "Groenlandia - Diera"
+    },
+    {
+      "src": "audio/La tragedia de los comunes.mp3",
+      "thumbnail": "images/diera-cover.png",
+      "title": "La tragedia de los comunes - Diera"
+    },
+    {
+      "src": "audio/Sebastopol García.mp3",
+      "thumbnail": "images/diera-cover.png",
+      "title": "Sebastopol García - Diera"
+    },
+    {
+      "src": "audio/Per mi.mp3",
+      "thumbnail": "images/Groenlandia.jpg",
+      "title": "Per mi (In Catalan) - Diera"
+    },
+    {
       "title": "Get Dead - Fire Sale",
       "link": "https://youtu.be/Vnxkbt7xEWo"
     }
