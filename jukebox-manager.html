@@ -87,6 +87,12 @@
         .btn:hover { filter: brightness(1.08); }
         .btn.ghost { background: transparent; color: var(--ink); border: 1px solid rgba(255,255,255,0.18); }
         .btn.ghost:hover { background: rgba(255,255,255,0.08); }
+        .cover-row { display: flex; gap: 8px; align-items: center; }
+        .cover-row input[type=text] { flex: 1; min-width: 0; }
+        .cover-row .btn { flex-shrink: 0; white-space: nowrap; }
+        .cover-note { font-size: 12px; color: #7ee787; margin-top: 6px; min-height: 14px; }
+        .row img.cover-edit { cursor: pointer; }
+        .row img.cover-edit:hover { outline: 2px solid var(--accent); }
 
         .out textarea {
             width: 100%; height: 240px; background: #000; border: 1px solid var(--edge);
@@ -113,7 +119,9 @@
     <p class="lead">Remove, reorder, and add songs, then save the generated file back to your site. This tool only builds the file — it can't change the live site on its own.</p>
 
     <h2>Songs <span id="count" class="msg"></span></h2>
+    <p class="lead" style="margin:-6px 0 12px">Tip: click any cover to upload new artwork.</p>
     <div id="list"></div>
+    <input type="file" id="row-thumb-file" accept="image/*" hidden>
 
     <h2>Add a song</h2>
     <div class="add">
@@ -136,9 +144,14 @@
             <label for="a-src">Audio file path</label>
             <input type="text" id="a-src" placeholder="audio/YourSong.mp3">
         </div>
-        <div class="field" id="f-thumb" hidden>
-            <label for="a-thumb">Cover image path</label>
-            <input type="text" id="a-thumb" placeholder="images/your-cover.jpg">
+        <div class="field">
+            <label for="a-thumb">Cover image <span style="color:var(--muted)">(optional — YouTube fills in automatically)</span></label>
+            <div class="cover-row">
+                <input type="text" id="a-thumb" placeholder="images/cover.jpg  or  https://…">
+                <button type="button" class="btn ghost" id="a-thumb-upload">Upload image…</button>
+            </div>
+            <input type="file" id="a-thumb-file" accept="image/*" hidden>
+            <div class="cover-note" id="a-thumb-note"></div>
         </div>
         <button class="btn" id="a-add">+ Add song</button>
     </div>
@@ -196,6 +209,28 @@
             .replace(/&/g, '&amp;').replace(/"/g, '&quot;')
             .replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
+    // Read an image file, downscale it, and return a compact JPEG data URI
+    // so artwork embeds straight into playlist.json (no separate upload needed).
+    function fileToThumb(file) {
+        return new Promise((resolve, reject) => {
+            if (!file || !/^image\//.test(file.type)) { reject(new Error('Please choose an image file.')); return; }
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                const max = 400;
+                let w = img.width, h = img.height;
+                if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
+                else if (h > max) { w = Math.round(w * max / h); h = max; }
+                const c = document.createElement('canvas');
+                c.width = w; c.height = h;
+                c.getContext('2d').drawImage(img, 0, 0, w, h);
+                URL.revokeObjectURL(url);
+                resolve(c.toDataURL('image/jpeg', 0.82));
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read that image.')); };
+            img.src = url;
+        });
+    }
 
     function render() {
         listEl.innerHTML = '';
@@ -204,7 +239,7 @@
             const row = document.createElement('div');
             row.className = 'row';
             row.innerHTML =
-                '<img src="' + esc(thumbOf(song)) + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
+                '<img class="cover-edit" src="' + esc(thumbOf(song)) + '" alt="" title="Click to upload artwork" onerror="this.onerror=null;this.src=\'' + DEFAULT_LABEL + '\'">' +
                 '<div class="meta">' +
                     '<input class="title-in" value="' + esc(song.title || '') + '" data-i="' + i + '">' +
                     '<div class="sub">' + esc(song.src || song.link || '') + '</div>' +
@@ -213,6 +248,7 @@
                 '<button class="iconbtn up" title="Move up" ' + (i === 0 ? 'disabled' : '') + '>↑</button>' +
                 '<button class="iconbtn down" title="Move down" ' + (i === songs.length - 1 ? 'disabled' : '') + '>↓</button>' +
                 '<button class="iconbtn del" title="Remove">✕</button>';
+            row.querySelector('.cover-edit').addEventListener('click', () => { rowThumbTarget = i; rowThumbFile.value = ''; rowThumbFile.click(); });
             row.querySelector('.title-in').addEventListener('input', (e) => { songs[i].title = e.target.value; updateOutput(); });
             row.querySelector('.up').addEventListener('click', () => move(i, -1));
             row.querySelector('.down').addEventListener('click', () => move(i, 1));
@@ -252,34 +288,65 @@
     const typeSel = document.getElementById('a-type');
     const fLink = document.getElementById('f-link');
     const fSrc = document.getElementById('f-src');
-    const fThumb = document.getElementById('f-thumb');
     typeSel.addEventListener('change', () => {
         const isFile = typeSel.value === 'file';
         fLink.hidden = isFile;
         fSrc.hidden = !isFile;
-        fThumb.hidden = !isFile;
     });
+
+    // Cover upload for the add form (embeds an uploaded image as a data URI)
+    const thumbInput = document.getElementById('a-thumb');
+    const thumbFile = document.getElementById('a-thumb-file');
+    const thumbNote = document.getElementById('a-thumb-note');
+    let uploadedCover = '';
+    document.getElementById('a-thumb-upload').addEventListener('click', () => { thumbFile.value = ''; thumbFile.click(); });
+    thumbFile.addEventListener('change', () => {
+        const f = thumbFile.files && thumbFile.files[0];
+        if (!f) return;
+        fileToThumb(f).then(uri => {
+            uploadedCover = uri;
+            thumbInput.value = '';
+            thumbInput.placeholder = 'using uploaded image';
+            thumbNote.textContent = '✓ artwork ready (' + Math.round(uri.length / 1024) + ' KB, embedded)';
+        }).catch(err => { thumbNote.textContent = ''; alert(err.message); });
+    });
+    thumbInput.addEventListener('input', () => { uploadedCover = ''; thumbNote.textContent = ''; thumbInput.placeholder = 'images/cover.jpg  or  https://…'; });
+
     document.getElementById('a-add').addEventListener('click', () => {
         const title = document.getElementById('a-title').value.trim();
         if (!title) { alert('Please add a title.'); return; }
+        const cover = uploadedCover || thumbInput.value.trim();
+        let s;
         if (typeSel.value === 'file') {
             const src = document.getElementById('a-src').value.trim();
-            const thumb = document.getElementById('a-thumb').value.trim();
             if (!src) { alert('Please add the audio file path.'); return; }
-            const s = { src, title };
-            if (thumb) s.thumbnail = thumb;
-            songs.push(s);
+            s = { src, title };
         } else {
             const link = document.getElementById('a-link').value.trim();
             if (!link) { alert('Please paste a link.'); return; }
-            songs.push({ title, link });
+            s = { title, link };
         }
+        if (cover) s.thumbnail = cover;
+        songs.push(s);
         document.getElementById('a-title').value = '';
         document.getElementById('a-link').value = '';
         document.getElementById('a-src').value = '';
-        document.getElementById('a-thumb').value = '';
+        thumbInput.value = '';
+        uploadedCover = '';
+        thumbNote.textContent = '';
+        thumbInput.placeholder = 'images/cover.jpg  or  https://…';
         render();
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    });
+
+    // Cover upload for existing rows (click a cover to replace it)
+    const rowThumbFile = document.getElementById('row-thumb-file');
+    let rowThumbTarget = -1;
+    rowThumbFile.addEventListener('change', () => {
+        const f = rowThumbFile.files && rowThumbFile.files[0];
+        if (!f || rowThumbTarget < 0) return;
+        const idx = rowThumbTarget;
+        fileToThumb(f).then(uri => { songs[idx].thumbnail = uri; render(); }).catch(err => alert(err.message));
     });
 
     // ---- save ----
