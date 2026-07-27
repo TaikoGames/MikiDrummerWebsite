@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Razor Cut — Silence Splitter</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 <style>
   :root{
     --bg:#0D0F0D;
@@ -285,6 +286,12 @@
       <div id="driveStatus" class="mono" style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;"></div>
     </div>
 
+    <label class="ctrl">Export format</label>
+    <div class="sourceTabs" id="formatTabs">
+      <button type="button" class="srcTab active" id="fmtMp3">MP3</button>
+      <button type="button" class="srcTab" id="fmtWav">WAV</button>
+    </div>
+
     <label class="ctrl">Silence threshold <span class="val" id="threshVal">-40 dB</span></label>
     <input type="range" id="thresh" min="-60" max="-15" value="-40" step="1">
 
@@ -346,6 +353,19 @@ let currentFileBase = 'clip';
 let currentSegments = []; // {startSample, endSample}
 let currentBlobs = []; // {blob, name}
 let envelopeCache = null;
+let exportFormat = 'mp3'; // default to MP3
+
+const fmtMp3 = document.getElementById('fmtMp3');
+const fmtWav = document.getElementById('fmtWav');
+function setFormat(f) {
+  exportFormat = f;
+  fmtMp3.classList.toggle('active', f === 'mp3');
+  fmtWav.classList.toggle('active', f === 'wav');
+  // if clips are already showing, re-encode them in the new format
+  if (currentBuffer && currentSegments.length) processBtn.click();
+}
+fmtMp3.addEventListener('click', () => setFormat('mp3'));
+fmtWav.addEventListener('click', () => setFormat('wav'));
 
 const tabUpload = document.getElementById('tabUpload');
 const tabDrive = document.getElementById('tabDrive');
@@ -651,6 +671,40 @@ function audioBufferToWavBlob(buffer) {
   return new Blob([buf], { type: 'audio/wav' });
 }
 
+function floatTo16(f32) {
+  const out = new Int16Array(f32.length);
+  for (let i = 0; i < f32.length; i++) {
+    let s = Math.max(-1, Math.min(1, f32[i]));
+    out[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+  }
+  return out;
+}
+
+function audioBufferToMp3Blob(buffer, kbps) {
+  kbps = kbps || 192;
+  const channels = Math.min(2, buffer.numberOfChannels);
+  const sampleRate = buffer.sampleRate;
+  const encoder = new lamejs.Mp3Encoder(channels, sampleRate, kbps);
+  const left = floatTo16(buffer.getChannelData(0));
+  const right = channels > 1 ? floatTo16(buffer.getChannelData(1)) : null;
+  const blockSize = 1152;
+  const mp3Data = [];
+  for (let i = 0; i < left.length; i += blockSize) {
+    const l = left.subarray(i, i + blockSize);
+    let chunk;
+    if (channels > 1) {
+      const r = right.subarray(i, i + blockSize);
+      chunk = encoder.encodeBuffer(l, r);
+    } else {
+      chunk = encoder.encodeBuffer(l);
+    }
+    if (chunk.length > 0) mp3Data.push(chunk);
+  }
+  const flush = encoder.flush();
+  if (flush.length > 0) mp3Data.push(flush);
+  return new Blob(mp3Data, { type: 'audio/mpeg' });
+}
+
 processBtn.addEventListener('click', async () => {
   if (!currentBuffer) return;
   processBtn.disabled = true;
@@ -669,11 +723,16 @@ processBtn.addEventListener('click', async () => {
 
   currentBlobs = [];
   clipList.innerHTML = '';
+  const useMp3 = exportFormat === 'mp3' && typeof lamejs !== 'undefined';
+  if (exportFormat === 'mp3' && typeof lamejs === 'undefined') {
+    statusEl.textContent = 'MP3 encoder failed to load — exporting WAV instead.';
+  }
   for (let i = 0; i < currentSegments.length; i++) {
     const seg = currentSegments[i];
     const buf = sliceBuffer(currentBuffer, seg.start, seg.end);
-    const blob = audioBufferToWavBlob(buf);
-    const name = `${currentFileBase}_${String(i+1).padStart(2,'0')}.wav`;
+    const ext = useMp3 ? 'mp3' : 'wav';
+    const blob = useMp3 ? audioBufferToMp3Blob(buf) : audioBufferToWavBlob(buf);
+    const name = `${currentFileBase}_${String(i+1).padStart(2,'0')}.${ext}`;
     currentBlobs.push({ blob, name });
 
     const url = URL.createObjectURL(blob);
