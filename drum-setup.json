@@ -1,0 +1,12 @@
+{
+  "pieces": [
+    { "type": "kick",     "label": "Kick",   "fx": 0.50, "fy": 0.70, "fr": 0.075 },
+    { "type": "snare",    "label": "Snare",  "fx": 0.43, "fy": 0.55, "fr": 0.048 },
+    { "type": "hihat",    "label": "Hi-Hat", "fx": 0.34, "fy": 0.57, "fr": 0.042 },
+    { "type": "tomHigh",  "label": "Tom 1",  "fx": 0.47, "fy": 0.39, "fr": 0.040 },
+    { "type": "tomMid",   "label": "Tom 2",  "fx": 0.55, "fy": 0.39, "fr": 0.044 },
+    { "type": "floorTom", "label": "Floor",  "fx": 0.64, "fy": 0.60, "fr": 0.058 },
+    { "type": "crash",    "label": "Crash",  "fx": 0.36, "fy": 0.33, "fr": 0.052 },
+    { "type": "ride",     "label": "Ride",   "fx": 0.65, "fy": 0.34, "fr": 0.062 }
+  ]
+}
