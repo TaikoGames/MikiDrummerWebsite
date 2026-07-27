@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drum Map Editor — Miki Drummer</title>
+<meta name="description" content="Interactive drum map editor — drag, arrange, label and play a drum kit layout. Build your setup, hear each piece, and export the diagram.">
+<style>
+  :root{
+    --bg:#0e1013; --panel:#16191d; --edge:rgba(255,255,255,.09);
+    --ink:#eef1f4; --muted:#9aa4af; --accent:#e8672a; --accent2:#22d3ee;
+    --gold:#d8b24e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:"Helvetica Neue",system-ui,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+  .app{display:flex;flex-direction:column;height:100vh}
+
+  header{padding:12px 18px;border-bottom:1px solid var(--edge);display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#0b0d10}
+  header h1{font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+  header h1 b{color:var(--accent)}
+  header .spacer{flex:1}
+  header a.home{font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--edge);padding:6px 12px;border-radius:8px}
+  header a.home:hover{color:var(--ink);border-color:var(--muted)}
+
+  .toolbar{display:flex;gap:8px;padding:10px 14px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--edge);background:var(--panel)}
+  .group{display:flex;gap:6px;align-items:center;padding-right:10px;margin-right:2px;border-right:1px solid var(--edge)}
+  .group:last-child{border-right:0}
+  .glabel{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+  button.tool{
+    background:#1e2228;border:1px solid var(--edge);color:var(--ink);font:600 12px/1 inherit;
+    padding:8px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,transform .05s;
+  }
+  button.tool:hover{background:#262b32;border-color:var(--muted)}
+  button.tool:active{transform:translateY(1px)}
+  button.tool.cym{border-color:rgba(216,178,78,.5)}
+  button.tool.accent{background:var(--accent);color:#180a03;border-color:var(--accent);font-weight:800}
+  button.tool.accent:hover{filter:brightness(1.08)}
+
+  .stage-wrap{flex:1;position:relative;overflow:hidden}
+  .stage{position:absolute;inset:0;background:
+    radial-gradient(60% 55% at 50% 62%, rgba(232,103,42,.06), transparent 60%),
+    radial-gradient(circle at 50% 62%, rgba(255,255,255,.04) 0 32%, transparent 33%),
+    linear-gradient(#111417,#0c0e11);
+    background-size:auto, auto, auto;
+  }
+  .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+  .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:15px;text-align:center;pointer-events:none;padding:20px}
+  .empty b{color:var(--ink)}
+
+  .piece{position:absolute;border-radius:50%;cursor:grab;display:flex;align-items:center;justify-content:center;user-select:none;touch-action:none;box-shadow:0 8px 22px rgba(0,0,0,.45)}
+  .piece:active{cursor:grabbing}
+  .piece .lbl{font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);pointer-events:none;text-align:center;line-height:1.1;padding:0 6px}
+  .piece.drum{background:radial-gradient(circle at 50% 38%, rgba(255,255,255,.18), rgba(0,0,0,.25) 72%);border:3px solid rgba(255,255,255,.12)}
+  .piece.drum::after{content:"";position:absolute;inset:8%;border-radius:50%;border:2px solid rgba(255,255,255,.12)}
+  .piece.cymbal{background:radial-gradient(circle at 50% 42%, rgba(255,255,255,.35), var(--gold) 30%, #9a7a2c 92%);border:2px solid rgba(0,0,0,.25)}
+  .piece.cymbal::after{content:"";position:absolute;inset:14%;border-radius:50%;border:1px solid rgba(0,0,0,.18);box-shadow:inset 0 0 0 8px rgba(255,255,255,.05)}
+  .piece.cymbal .lbl{color:#231a06;text-shadow:0 1px 1px rgba(255,255,255,.3)}
+  .piece.sel{outline:2px solid var(--accent2);outline-offset:3px}
+  .piece.hit{animation:hit .18s ease}
+  @keyframes hit{0%{transform:scale(1)}40%{transform:scale(1.09)}100%{transform:scale(1)}}
+  .handle{position:absolute;right:-9px;bottom:-9px;width:20px;height:20px;border-radius:50%;background:var(--accent2);border:2px solid #0b0d10;cursor:nwse-resize;z-index:5}
+  .del{position:absolute;right:-10px;top:-10px;width:22px;height:22px;border-radius:50%;background:#dc2626;color:#fff;border:2px solid #0b0d10;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;z-index:5}
+
+  .hint{position:absolute;left:14px;bottom:12px;color:var(--muted);font-size:12px;background:rgba(0,0,0,.35);padding:7px 12px;border-radius:8px;border:1px solid var(--edge);pointer-events:none}
+  .hint b{color:var(--accent2)}
+  @media(max-width:640px){.glabel{display:none}.hint{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Drum<b>Map</b> Editor</h1>
+    <div class="spacer"></div>
+    <a class="home" href="/index.html">← mikidrummer.ca</a>
+  </header>
+
+  <div class="toolbar" id="toolbar">
+    <div class="group">
+      <span class="glabel">Drums</span>
+      <button class="tool" data-add="kick">Kick</button>
+      <button class="tool" data-add="snare">Snare</button>
+      <button class="tool" data-add="tomHigh">Tom 1</button>
+      <button class="tool" data-add="tomMid">Tom 2</button>
+      <button class="tool" data-add="floorTom">Floor</button>
+    </div>
+    <div class="group">
+      <span class="glabel">Cymbals</span>
+      <button class="tool cym" data-add="hihat">Hi-Hat</button>
+      <button class="tool cym" data-add="crash">Crash</button>
+      <button class="tool cym" data-add="ride">Ride</button>
+      <button class="tool cym" data-add="china">China</button>
+      <button class="tool cym" data-add="splash">Splash</button>
+    </div>
+    <div class="group">
+      <span class="glabel">Kit</span>
+      <button class="tool accent" id="preset">Load 5-piece</button>
+      <button class="tool" id="clear">Clear</button>
+    </div>
+    <div class="group">
+      <span class="glabel">Layout</span>
+      <button class="tool" id="save">Save</button>
+      <button class="tool" id="load">Load</button>
+      <button class="tool" id="export">Export PNG</button>
+      <button class="tool accent" id="tosite" title="Download drum-setup.json to show your kit on the Services page">★ Save to site</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+      <div class="grid"></div>
+      <div class="empty" id="empty">Add pieces from the toolbar, or <b>Load 5-piece</b> to start.<br>Drag to move · click to play · scroll or corner-drag to resize · double-click to rename.</div>
+    </div>
+    <div class="hint"><b>Click</b> a piece to hear it · <b>drag</b> to move · <b>double-click</b> to rename</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const KIT = {
+    kick:    {label:'Kick',    r:74, kind:'drum',   color:'#b9553a', sound:'kick'},
+    snare:   {label:'Snare',   r:46, kind:'drum',   color:'#c9ccd1', sound:'snare'},
+    tomHigh: {label:'Tom 1',   r:40, kind:'drum',   color:'#9a6440', sound:'tomHigh'},
+    tomMid:  {label:'Tom 2',   r:44, kind:'drum',   color:'#8a5836', sound:'tomMid'},
+    floorTom:{label:'Floor',   r:56, kind:'drum',   color:'#7a4a30', sound:'floorTom'},
+    hihat:   {label:'Hi-Hat',  r:42, kind:'cymbal', color:'#d8b24e', sound:'hihat'},
+    crash:   {label:'Crash',   r:54, kind:'cymbal', color:'#e2c15a', sound:'crash'},
+    ride:    {label:'Ride',    r:62, kind:'cymbal', color:'#d8b24e', sound:'ride'},
+    china:   {label:'China',   r:52, kind:'cymbal', color:'#cf9f3e', sound:'china'},
+    splash:  {label:'Splash',  r:32, kind:'cymbal', color:'#e6cd77', sound:'splash'},
+  };
+
+  const stage = document.getElementById('stage');
+  const empty = document.getElementById('empty');
+  let pieces = [];      // {id,type,x,y,r,label}
+  let selected = null;
+  let uid = 1;
+  let addN = 0;
+
+  /* ---------- Audio ---------- */
+  let AC;
+  function ac(){ if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); return AC; }
+  function noise(ctx,dur){ const n=Math.max(1,ctx.sampleRate*dur|0); const b=ctx.createBuffer(1,n,ctx.sampleRate); const d=b.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1; return b; }
+  function env(g,ctx,a,d,peak){ const t=ctx.currentTime; g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(peak,t+a); g.gain.exponentialRampToValueAtTime(.0001,t+a+d); }
+  function tuned(ctx,f0,f1,dec,peak,type){ const o=ctx.createOscillator(),g=ctx.createGain(); o.type=type||'sine'; o.frequency.setValueAtTime(f0,ctx.currentTime); o.frequency.exponentialRampToValueAtTime(f1,ctx.currentTime+dec*0.7); env(g,ctx,.002,dec,peak); o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime+dec+.05); }
+  function cym(ctx,dur,hp,peak){ const s=ctx.createBufferSource(); s.buffer=noise(ctx,dur); const f=ctx.createBiquadFilter(); f.type='highpass'; f.frequency.value=hp; const g=ctx.createGain(); env(g,ctx,.002,dur,peak); s.connect(f).connect(g).connect(ctx.destination); s.start(); }
+  const SOUND = {
+    kick:    ()=>{ const c=ac(); tuned(c,150,48,.28,1,'sine'); },
+    snare:   ()=>{ const c=ac(); cym(c,.22,1400,.5); tuned(c,190,120,.12,.4,'triangle'); },
+    tomHigh: ()=>tuned(ac(),220,120,.32,.85,'sine'),
+    tomMid:  ()=>tuned(ac(),165,90,.36,.85,'sine'),
+    floorTom:()=>tuned(ac(),110,60,.42,.9,'sine'),
+    hihat:   ()=>cym(ac(),.06,9000,.4),
+    crash:   ()=>cym(ac(),1.2,3800,.5),
+    ride:    ()=>{ const c=ac(); cym(c,.5,6500,.28); tuned(c,520,480,.4,.12,'square'); },
+    china:   ()=>cym(ac(),1.0,3200,.5),
+    splash:  ()=>cym(ac(),.4,7500,.45),
+  };
+  function play(type){ try{ (SOUND[KIT[type].sound]||function(){})(); }catch(e){} }
+
+  /* ---------- Render ---------- */
+  function el(p){
+    const spec = KIT[p.type];
+    const d = document.createElement('div');
+    d.className = 'piece '+spec.kind;
+    d.dataset.id = p.id;
+    if(spec.kind==='drum') d.style.background = 'radial-gradient(circle at 50% 38%, rgba(255,255,255,.20), '+spec.color+' 70%)';
+    place(d,p);
+    const l = document.createElement('span'); l.className='lbl'; l.textContent=p.label; d.appendChild(l);
+    stage.appendChild(d);
+    return d;
+  }
+  function place(d,p){ d.style.left=(p.x-p.r)+'px'; d.style.top=(p.y-p.r)+'px'; d.style.width=(p.r*2)+'px'; d.style.height=(p.r*2)+'px'; }
+  function nodeOf(p){ return stage.querySelector('.piece[data-id="'+p.id+'"]'); }
+
+  function render(){
+    stage.querySelectorAll('.piece').forEach(n=>n.remove());
+    pieces.forEach(el);
+    empty.style.display = pieces.length ? 'none':'flex';
+    if(selected && !pieces.find(p=>p.id===selected)) selected=null;
+    decorate();
+  }
+  function decorate(){
+    stage.querySelectorAll('.piece').forEach(n=>{ n.classList.remove('sel'); n.querySelectorAll('.handle,.del').forEach(x=>x.remove()); });
+    if(selected==null) return;
+    const n = stage.querySelector('.piece[data-id="'+selected+'"]'); if(!n) return;
+    n.classList.add('sel');
+    const h=document.createElement('div'); h.className='handle'; n.appendChild(h);
+    const del=document.createElement('div'); del.className='del'; del.textContent='×'; n.appendChild(del);
+    del.addEventListener('pointerdown',e=>{ e.stopPropagation(); remove(selected); });
+  }
+
+  /* ---------- Piece ops ---------- */
+  function add(type,x,y){
+    const spec=KIT[type];
+    const R=stage.getBoundingClientRect();
+    if(x==null){ addN++; x=R.width/2 + ((addN%5)-2)*70; y=R.height/2 + (Math.floor(addN/5)%3-1)*70; }
+    const p={id:uid++,type,x,y,r:spec.r,label:spec.label};
+    pieces.push(p); render(); selected=p.id; decorate(); play(type);
+  }
+  function remove(id){ pieces=pieces.filter(p=>p.id!==id); if(selected===id)selected=null; render(); }
+  function clampP(p){ const R=stage.getBoundingClientRect(); p.x=Math.max(p.r,Math.min(R.width-p.r,p.x)); p.y=Math.max(p.r,Math.min(R.height-p.r,p.y)); }
+
+  /* ---------- Interaction ---------- */
+  let mode=null, active=null, start=null, moved=false;
+  stage.addEventListener('pointerdown',e=>{
+    const h=e.target.closest('.handle');
+    const node=e.target.closest('.piece');
+    if(h && node){ const p=pieces.find(x=>x.id==node.dataset.id); mode='resize'; active=p; start={x:e.clientX,y:e.clientY,r:p.r}; node.setPointerCapture(e.pointerId); e.preventDefault(); return; }
+    if(node){
+      const p=pieces.find(x=>x.id==node.dataset.id);
+      selected=p.id; decorate();
+      mode='drag'; active=p; moved=false; start={x:e.clientX,y:e.clientY,px:p.x,py:p.y};
+      node.setPointerCapture(e.pointerId); e.preventDefault();
+    } else { selected=null; decorate(); }
+  });
+  stage.addEventListener('pointermove',e=>{
+    if(!mode||!active) return;
+    if(mode==='drag'){
+      const dx=e.clientX-start.x, dy=e.clientY-start.y;
+      if(Math.abs(dx)>4||Math.abs(dy)>4) moved=true;
+      active.x=start.px+dx; active.y=start.py+dy; clampP(active); place(nodeOf(active),active);
+    } else if(mode==='resize'){
+      const dx=e.clientX-start.x, dy=e.clientY-start.y;
+      active.r=Math.max(18,Math.min(140,start.r+(dx+dy)/2)); clampP(active); place(nodeOf(active),active);
+    }
+  });
+  stage.addEventListener('pointerup',e=>{
+    if(mode==='drag'&&active&&!moved) play(active.type);
+    mode=null; active=null;
+  });
+  // scroll to resize selected
+  stage.addEventListener('wheel',e=>{
+    if(selected==null) return; const p=pieces.find(x=>x.id===selected); if(!p) return;
+    e.preventDefault(); p.r=Math.max(18,Math.min(140,p.r-Math.sign(e.deltaY)*3)); clampP(p); place(nodeOf(p),p);
+  },{passive:false});
+  // double-click to rename
+  stage.addEventListener('dblclick',e=>{
+    const node=e.target.closest('.piece'); if(!node) return;
+    const p=pieces.find(x=>x.id==node.dataset.id); if(!p) return;
+    const v=prompt('Label for this piece:',p.label); if(v!=null){ p.label=v.trim()||p.label; render(); }
+  });
+  // delete key
+  window.addEventListener('keydown',e=>{ if((e.key==='Delete'||e.key==='Backspace')&&selected!=null){ e.preventDefault(); remove(selected); } });
+
+  /* ---------- Toolbar ---------- */
+  document.getElementById('toolbar').addEventListener('click',e=>{
+    const b=e.target.closest('button[data-add]'); if(b) add(b.dataset.add);
+  });
+  document.getElementById('clear').addEventListener('click',()=>{ if(!pieces.length||confirm('Clear the whole map?')){ pieces=[]; selected=null; addN=0; render(); }});
+  document.getElementById('preset').addEventListener('click',loadPreset);
+  document.getElementById('save').addEventListener('click',()=>{ localStorage.setItem('drumMap', JSON.stringify(pieces)); flash('Saved to this browser'); });
+  document.getElementById('load').addEventListener('click',()=>{ const s=localStorage.getItem('drumMap'); if(!s){ flash('Nothing saved yet'); return; } try{ pieces=JSON.parse(s); uid=pieces.reduce((m,p)=>Math.max(m,p.id),0)+1; selected=null; render(); flash('Loaded'); }catch(e){ flash('Could not load'); } });
+  document.getElementById('export').addEventListener('click',exportPNG);
+  document.getElementById('tosite').addEventListener('click',exportSetup);
+
+  function exportSetup(){
+    if(!pieces.length){ flash('Add some pieces first'); return; }
+    const R=stage.getBoundingClientRect();
+    const data={ pieces: pieces.map(p=>({
+      type:p.type, label:p.label,
+      fx:+(p.x/R.width).toFixed(4), fy:+(p.y/R.height).toFixed(4), fr:+(p.r/R.width).toFixed(4)
+    })) };
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='drum-setup.json';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+    flash('Downloaded drum-setup.json — save it in the site to show your kit');
+  }
+
+  function loadPreset(){
+    const R=stage.getBoundingClientRect(); const cx=R.width/2, cy=R.height/2;
+    pieces=[]; uid=1;
+    const P=(type,dx,dy,r)=>{ const s=KIT[type]; pieces.push({id:uid++,type,x:cx+dx,y:cy+dy,r:r||s.r,label:s.label}); };
+    P('kick',0,120,78);
+    P('snare',-70,30,44);
+    P('hihat',-150,45,40);
+    P('tomHigh',-38,-40,38);
+    P('tomMid',48,-40,42);
+    P('floorTom',150,60,56);
+    P('crash',-135,-70,50);
+    P('ride',150,-60,60);
+    pieces.forEach(clampP); selected=null; render();
+  }
+
+  function exportPNG(){
+    const R=stage.getBoundingClientRect();
+    const cv=document.createElement('canvas'); cv.width=R.width; cv.height=R.height;
+    const g=cv.getContext('2d');
+    g.fillStyle='#0d0f11'; g.fillRect(0,0,cv.width,cv.height);
+    g.fillStyle='rgba(255,255,255,.04)'; g.beginPath(); g.arc(cv.width/2,cv.height*0.62,Math.min(cv.width,cv.height)*0.3,0,7); g.fill();
+    pieces.forEach(p=>{
+      const s=KIT[p.type];
+      g.beginPath(); g.arc(p.x,p.y,p.r,0,7);
+      if(s.kind==='cymbal'){ const rg=g.createRadialGradient(p.x,p.y-p.r*0.2,p.r*0.1,p.x,p.y,p.r); rg.addColorStop(0,'#f3e3a8'); rg.addColorStop(.35,s.color); rg.addColorStop(1,'#8a6d28'); g.fillStyle=rg; }
+      else { const rg=g.createRadialGradient(p.x,p.y-p.r*0.3,p.r*0.1,p.x,p.y,p.r); rg.addColorStop(0,'#ffffff'); rg.addColorStop(.15,s.color); rg.addColorStop(1,'rgba(0,0,0,.4)'); g.fillStyle=rg; }
+      g.fill(); g.lineWidth=2; g.strokeStyle='rgba(255,255,255,.15)'; g.stroke();
+      g.fillStyle = s.kind==='cymbal' ? '#231a06' : '#fff';
+      g.font='700 '+Math.max(11,Math.min(16,p.r*0.4))+'px Helvetica, Arial, sans-serif'; g.textAlign='center'; g.textBaseline='middle';
+      g.fillText(p.label, p.x, p.y);
+    });
+    const a=document.createElement('a'); a.href=cv.toDataURL('image/png'); a.download='drum-map.png'; a.click();
+  }
+
+  let flashT;
+  function flash(msg){ let f=document.getElementById('flash'); if(!f){ f=document.createElement('div'); f.id='flash'; f.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1e2228;border:1px solid var(--edge);color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.5)'; document.body.appendChild(f); } f.textContent=msg; f.style.opacity='1'; clearTimeout(flashT); flashT=setTimeout(()=>f.style.opacity='0',1400); f.style.transition='opacity .3s'; }
+
+  // start with a preset so it's immediately alive
+  window.addEventListener('load',()=>{ setTimeout(loadPreset,60); });
+})();
+</script>
+</body>
+</html>

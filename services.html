@@ -21,6 +21,28 @@
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/responsive.css">
+        <style>
+          .mySetup{text-align:center}
+          .mySetup-head{font-weight:800;font-size:19px;margin-bottom:10px}
+          .kit-view{position:relative;width:100%;aspect-ratio:4/3;min-height:240px;border-radius:14px;overflow:hidden;background:radial-gradient(60% 55% at 50% 62%,rgba(232,55,42,.10),transparent 60%),linear-gradient(#14171b,#0c0e11);border:1px solid rgba(0,0,0,.25);box-shadow:inset 0 0 40px rgba(0,0,0,.4)}
+          .kit-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#8a929c;font-size:13px}
+          .kv-piece{position:absolute;border:0;padding:0;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.45);transition:transform .12s}
+          .kv-piece span{font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.75);pointer-events:none;padding:0 4px;text-align:center;line-height:1.05}
+          .kv-piece.drum{border:2px solid rgba(255,255,255,.12)}
+          .kv-piece.cymbal{background:radial-gradient(circle at 50% 42%, rgba(255,255,255,.35), #d8b24e 30%, #9a7a2c 92%)}
+          .kv-piece.cymbal span{color:#231a06;text-shadow:0 1px 1px rgba(255,255,255,.35)}
+          .kv-piece:hover{transform:scale(1.06)}
+          .kv-piece.hit{animation:kvhit .18s ease}
+          @keyframes kvhit{0%{transform:scale(1)}40%{transform:scale(1.13)}100%{transform:scale(1)}}
+          .kit-link{display:inline-block;margin-top:12px;font-size:14px;color:#e8672a;text-decoration:none;font-weight:700}
+          .kit-link:hover{text-decoration:underline}
+          .setup-modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:2000;display:none;align-items:center;justify-content:center;padding:18px}
+          .setup-modal.open{display:flex}
+          .setup-dialog{position:relative;background:#101317;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:22px 22px 18px;width:100%;max-width:640px;box-shadow:0 30px 80px rgba(0,0,0,.6);text-align:center}
+          .setup-title{color:#eef1f4;font-weight:800;font-size:16px;margin-bottom:14px}
+          .setup-close{position:absolute;top:8px;right:12px;background:none;border:0;color:#9aa4af;font-size:28px;line-height:1;cursor:pointer}
+          .setup-close:hover{color:#fff}
+        </style>
     </head>
     <body>
         <header>
@@ -177,6 +199,7 @@
                                 <li><a href="#" class="main-text">🔧 Live Drum Setup and Tuning</a></li>
                                 <li><a href="#" class="main-text">🔊 Live Sound Support</a></li>
                                 <li><a href="#" class="main-text">🚚 Drums Rental (Contact for inventory and pricing)</a></li>
+                                <li><a href="#" class="main-text" id="setupLink">🥁 Check out my setup</a></li>
                             </ul>
                         </div>
                     </div>
@@ -228,7 +251,67 @@
             </div>
         </footer>
 
+        <div class="setup-modal" id="setupModal" aria-hidden="true">
+          <div class="setup-dialog">
+            <button class="setup-close" id="setupClose" aria-label="Close">&times;</button>
+            <div class="setup-title">🥁 My kit — tap a piece to hear it</div>
+            <div class="kit-view" id="kitView"><span class="kit-hint">loading…</span></div>
+            <a class="kit-link" href="/drum-map.html">Build your own kit map →</a>
+          </div>
+        </div>
+
         <script src="js/bootstrap.min.js"></script>
         <script src="js/custom.js"></script>
+        <script>
+        /* "Check out my setup" — read-only interactive kit map, fed by drum-setup.json */
+        (function(){
+          const KIT={
+            kick:{kind:'drum',color:'#b9553a',s:'kick'}, snare:{kind:'drum',color:'#c9ccd1',s:'snare'},
+            tomHigh:{kind:'drum',color:'#9a6440',s:'tomHigh'}, tomMid:{kind:'drum',color:'#8a5836',s:'tomMid'},
+            floorTom:{kind:'drum',color:'#7a4a30',s:'floorTom'}, hihat:{kind:'cymbal',color:'#d8b24e',s:'hihat'},
+            crash:{kind:'cymbal',color:'#e2c15a',s:'crash'}, ride:{kind:'cymbal',color:'#d8b24e',s:'ride'},
+            china:{kind:'cymbal',color:'#cf9f3e',s:'china'}, splash:{kind:'cymbal',color:'#e6cd77',s:'splash'}
+          };
+          let AC; function ac(){ if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended')AC.resume(); return AC; }
+          function noise(c,d){const n=Math.max(1,c.sampleRate*d|0),b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;return b;}
+          function env(g,c,at,de,pk){const t=c.currentTime;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(pk,t+at);g.gain.exponentialRampToValueAtTime(.0001,t+at+de);}
+          function tuned(c,f0,f1,de,pk,ty){const o=c.createOscillator(),g=c.createGain();o.type=ty||'sine';o.frequency.setValueAtTime(f0,c.currentTime);o.frequency.exponentialRampToValueAtTime(f1,c.currentTime+de*.7);env(g,c,.002,de,pk);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+de+.05);}
+          function cym(c,du,hp,pk){const s=c.createBufferSource();s.buffer=noise(c,du);const f=c.createBiquadFilter();f.type='highpass';f.frequency.value=hp;const g=c.createGain();env(g,c,.002,du,pk);s.connect(f).connect(g).connect(c.destination);s.start();}
+          const SND={kick:()=>tuned(ac(),150,48,.28,1),snare:()=>{const c=ac();cym(c,.22,1400,.5);tuned(c,190,120,.12,.4,'triangle');},tomHigh:()=>tuned(ac(),220,120,.32,.85),tomMid:()=>tuned(ac(),165,90,.36,.85),floorTom:()=>tuned(ac(),110,60,.42,.9),hihat:()=>cym(ac(),.06,9000,.4),crash:()=>cym(ac(),1.2,3800,.5),ride:()=>{const c=ac();cym(c,.5,6500,.28);tuned(c,520,480,.4,.12,'square');},china:()=>cym(ac(),1,3200,.5),splash:()=>cym(ac(),.4,7500,.45)};
+          function play(t){try{(SND[(KIT[t]||{}).s]||function(){})();}catch(e){}}
+          const view=document.getElementById('kitView');
+          const modal=document.getElementById('setupModal');
+          const link=document.getElementById('setupLink');
+          if(!view||!modal||!link) return;
+          let data=null, loaded=false;
+          function render(){
+            if(!data||!data.pieces) return;
+            const W=view.clientWidth,H=view.clientHeight;
+            view.querySelectorAll('.kv-piece').forEach(n=>n.remove());
+            const hint=view.querySelector('.kit-hint'); if(hint) hint.textContent='tap a piece to hear it';
+            data.pieces.forEach(p=>{
+              const s=KIT[p.type]||KIT.snare, r=p.fr*W, x=p.fx*W, y=p.fy*H;
+              const d=document.createElement('button'); d.className='kv-piece '+s.kind; d.type='button';
+              d.style.left=(x-r)+'px'; d.style.top=(y-r)+'px'; d.style.width=(2*r)+'px'; d.style.height=(2*r)+'px';
+              if(s.kind==='drum') d.style.background='radial-gradient(circle at 50% 38%, rgba(255,255,255,.2), '+s.color+' 70%)';
+              d.innerHTML='<span>'+(p.label||'')+'</span>';
+              d.addEventListener('click',()=>{ play(p.type); d.classList.remove('hit'); void d.offsetWidth; d.classList.add('hit'); });
+              view.appendChild(d);
+            });
+          }
+          function load(){
+            if(loaded){ render(); return; }
+            fetch('drum-setup.json?_='+Date.now()).then(r=>r.json()).then(d=>{ data=d; loaded=true; render(); })
+              .catch(()=>{ const h=view.querySelector('.kit-hint'); if(h) h.textContent='setup coming soon'; });
+          }
+          function openModal(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); load(); }
+          function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+          link.addEventListener('click',e=>{ e.preventDefault(); openModal(); });
+          document.getElementById('setupClose').addEventListener('click',closeModal);
+          modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+          window.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+          let rt; window.addEventListener('resize',()=>{ if(modal.classList.contains('open')){ clearTimeout(rt); rt=setTimeout(render,150);} });
+        })();
+        </script>
     </body>
 </html>
