@@ -24,21 +24,23 @@
         <style>
           .mySetup{text-align:center}
           .mySetup-head{font-weight:800;font-size:19px;margin-bottom:10px}
-          .kit-view{position:relative;width:100%;aspect-ratio:4/3;min-height:240px;border-radius:14px;overflow:hidden;background:radial-gradient(60% 55% at 50% 62%,rgba(232,55,42,.10),transparent 60%),linear-gradient(#14171b,#0c0e11);border:1px solid rgba(0,0,0,.25);box-shadow:inset 0 0 40px rgba(0,0,0,.4)}
+          .kit-view{position:relative;width:100%;aspect-ratio:4/3;min-height:320px;border-radius:16px;overflow:hidden;background:radial-gradient(120% 85% at 50% 8%,rgba(232,103,42,.13),transparent 55%),radial-gradient(60% 42% at 50% 78%,rgba(255,255,255,.07),transparent 62%),linear-gradient(#171a1e,#0b0d10);border:1px solid rgba(0,0,0,.3);box-shadow:inset 0 0 60px rgba(0,0,0,.5)}
           .kit-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#8a929c;font-size:13px}
-          .kv-piece{position:absolute;border:0;padding:0;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.45);transition:transform .12s}
-          .kv-piece span{font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.75);pointer-events:none;padding:0 4px;text-align:center;line-height:1.05}
-          .kv-piece.drum{border:2px solid rgba(255,255,255,.12)}
-          .kv-piece.cymbal{background:radial-gradient(circle at 50% 42%, rgba(255,255,255,.35), #d8b24e 30%, #9a7a2c 92%)}
-          .kv-piece.cymbal span{color:#231a06;text-shadow:0 1px 1px rgba(255,255,255,.35)}
-          .kv-piece:hover{transform:scale(1.06)}
+          .kv-piece{position:absolute;border:0;padding:0;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(0,0,0,.5);transition:transform .12s,box-shadow .12s,filter .12s}
+          .kv-piece span{font-size:12px;font-weight:800;letter-spacing:.02em;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8);pointer-events:none;padding:0 4px;text-align:center;line-height:1.05;position:relative;z-index:2}
+          .kv-piece.drum{border:3px solid rgba(255,255,255,.16);box-shadow:0 12px 28px rgba(0,0,0,.55),inset 0 3px 10px rgba(255,255,255,.16),inset 0 -10px 22px rgba(0,0,0,.55)}
+          .kv-piece.drum::after{content:"";position:absolute;inset:15%;border-radius:50%;border:2px solid rgba(255,255,255,.18);background:radial-gradient(circle at 50% 32%,rgba(255,255,255,.16),rgba(0,0,0,.14) 72%)}
+          .kv-piece.cymbal{background:repeating-radial-gradient(circle at 50% 50%,rgba(0,0,0,.05) 0 2px,transparent 2px 4px),radial-gradient(circle at 50% 40%,rgba(255,255,255,.55),#e9c765 26%,#bb9139 66%,#7c5f22 100%);border:2px solid rgba(0,0,0,.32);box-shadow:0 10px 22px rgba(0,0,0,.5),inset 0 1px 3px rgba(255,255,255,.55)}
+          .kv-piece.cymbal::after{content:"";position:absolute;left:50%;top:50%;width:26%;height:26%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 50% 38%,#f6e6ab,#b98f37);box-shadow:inset 0 1px 2px rgba(255,255,255,.6),0 1px 3px rgba(0,0,0,.45)}
+          .kv-piece.cymbal span{color:#231a06;text-shadow:0 1px 1px rgba(255,255,255,.4)}
+          .kv-piece:hover{transform:scale(1.07);box-shadow:0 0 0 3px rgba(232,103,42,.55),0 12px 28px rgba(0,0,0,.6);z-index:3}
           .kv-piece.hit{animation:kvhit .18s ease}
           @keyframes kvhit{0%{transform:scale(1)}40%{transform:scale(1.13)}100%{transform:scale(1)}}
           .kit-link{display:inline-block;margin-top:12px;font-size:14px;color:#e8672a;text-decoration:none;font-weight:700}
           .kit-link:hover{text-decoration:underline}
           .setup-modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:2000;display:none;align-items:center;justify-content:center;padding:18px}
           .setup-modal.open{display:flex}
-          .setup-dialog{position:relative;background:#101317;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:22px 22px 18px;width:100%;max-width:640px;box-shadow:0 30px 80px rgba(0,0,0,.6);text-align:center}
+          .setup-dialog{position:relative;background:#101317;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:22px 22px 18px;width:100%;max-width:960px;max-height:94vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.6);text-align:center}
           .setup-title{color:#eef1f4;font-weight:800;font-size:16px;margin-bottom:14px}
           .setup-close{position:absolute;top:8px;right:12px;background:none;border:0;color:#9aa4af;font-size:28px;line-height:1;cursor:pointer}
           .setup-close:hover{color:#fff}
@@ -287,7 +289,7 @@
             if(!data||!data.pieces) return;
             const W=view.clientWidth,H=view.clientHeight;
             view.querySelectorAll('.kv-piece').forEach(n=>n.remove());
-            const hint=view.querySelector('.kit-hint'); if(hint) hint.textContent='tap a piece to hear it';
+            const hint=view.querySelector('.kit-hint'); if(hint) hint.style.display = (data.pieces&&data.pieces.length) ? 'none' : 'block';
             data.pieces.forEach(p=>{
               const s=KIT[p.type]||KIT.snare, r=p.fr*W, x=p.fx*W, y=p.fy*H;
               const d=document.createElement('button'); d.className='kv-piece '+s.kind; d.type='button';
