@@ -36,8 +36,15 @@
           .kv-piece:hover{transform:scale(1.07);box-shadow:0 0 0 3px rgba(232,103,42,.55),0 12px 28px rgba(0,0,0,.6);z-index:3}
           .kv-piece.hit{animation:kvhit .18s ease}
           @keyframes kvhit{0%{transform:scale(1)}40%{transform:scale(1.13)}100%{transform:scale(1)}}
-          .kit-link{display:inline-block;margin-top:12px;font-size:14px;color:#e8672a;text-decoration:none;font-weight:700}
+          .kit-link{display:inline-block;margin-top:14px;font-size:14px;color:#e8672a;text-decoration:none;font-weight:700}
           .kit-link:hover{text-decoration:underline}
+          .kit-list{margin-top:14px;text-align:left;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+          .kit-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:#0c0f13;cursor:pointer;transition:background .12s,border-color .12s}
+          .kit-row:hover{background:#161a1f;border-color:rgba(232,103,42,.5)}
+          .kit-row .rn{font-weight:800;font-size:13.5px;color:#eef1f4;white-space:nowrap}
+          .kit-row .rs{font-size:12px;color:#d8b24e;font-family:ui-monospace,Menlo,monospace;text-align:right}
+          .kit-note{margin-top:10px;font-size:11.5px;color:#8a929c}
+          @media(max-width:560px){.kit-list{grid-template-columns:1fr}}
           .setup-modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:2000;display:none;align-items:center;justify-content:center;padding:18px}
           .setup-modal.open{display:flex}
           .setup-dialog{position:relative;background:#101317;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:22px 22px 18px;width:100%;max-width:960px;max-height:94vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.6);text-align:center}
@@ -262,6 +269,8 @@
             <button class="setup-close" id="setupClose" aria-label="Close">&times;</button>
             <div class="setup-title">🥁 My kit — tap a piece to hear it</div>
             <div class="kit-view" id="kitView"><span class="kit-hint">loading…</span></div>
+            <div class="kit-list" id="kitList"></div>
+            <div class="kit-note">Sizes are rough — the kit is Mapex, cymbals Soultone, sticks Woodies.</div>
             <a class="kit-link" href="/drum-map.html">Build your own kit map →</a>
           </div>
         </div>
@@ -277,6 +286,11 @@
             floorTom:{kind:'drum',color:'#7a4a30',s:'floorTom'}, hihat:{kind:'cymbal',color:'#d8b24e',s:'hihat'},
             crash:{kind:'cymbal',color:'#e2c15a',s:'crash'}, ride:{kind:'cymbal',color:'#d8b24e',s:'ride'},
             china:{kind:'cymbal',color:'#cf9f3e',s:'china'}, splash:{kind:'cymbal',color:'#e6cd77',s:'splash'}
+          };
+          const SPEC={
+            kick:'Mapex · 22"', snare:'Mapex · 14"×5.5"', tomHigh:'Mapex · 12"', tomMid:'Mapex · 10"',
+            floorTom:'Mapex · 16"', hihat:'Soultone · 14"', crash:'Soultone · 16"', ride:'Soultone · 20"',
+            china:'Soultone · 18"', splash:'Soultone · 10"'
           };
           let AC; function ac(){ if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended')AC.resume(); return AC; }
           function noise(c,d){const n=Math.max(1,c.sampleRate*d|0),b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;return b;}
@@ -297,13 +311,23 @@
             const hint=view.querySelector('.kit-hint'); if(hint) hint.style.display = (data.pieces&&data.pieces.length) ? 'none' : 'block';
             data.pieces.forEach(p=>{
               const S=(W<560?1.3:1.12), s=KIT[p.type]||KIT.snare, r=p.fr*W*S, x=p.fx*W, y=p.fy*H;
-              const d=document.createElement('button'); d.className='kv-piece '+s.kind; d.type='button';
+              const d=document.createElement('button'); d.className='kv-piece '+s.kind; d.type='button'; d.dataset.type=p.type;
               d.style.left=(x-r)+'px'; d.style.top=(y-r)+'px'; d.style.width=(2*r)+'px'; d.style.height=(2*r)+'px';
               if(s.kind==='drum') d.style.background='radial-gradient(circle at 50% 38%, rgba(255,255,255,.2), '+s.color+' 70%)';
               d.innerHTML='<span>'+(p.label||'')+'</span>';
               d.addEventListener('click',()=>{ play(p.type); d.classList.remove('hit'); void d.offsetWidth; d.classList.add('hit'); });
               view.appendChild(d);
             });
+            const list=document.getElementById('kitList');
+            if(list){
+              list.innerHTML='';
+              data.pieces.forEach(p=>{
+                const row=document.createElement('div'); row.className='kit-row';
+                row.innerHTML='<span class="rn">'+(p.label||p.type)+'</span><span class="rs">'+(SPEC[p.type]||'')+'</span>';
+                row.addEventListener('click',()=>{ play(p.type); const n=view.querySelector('.kv-piece[data-type="'+p.type+'"]'); if(n){ n.classList.remove('hit'); void n.offsetWidth; n.classList.add('hit'); } });
+                list.appendChild(row);
+              });
+            }
           }
           function load(){
             if(loaded){ render(); return; }
