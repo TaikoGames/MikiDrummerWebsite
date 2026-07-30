@@ -270,7 +270,7 @@
             <div class="setup-title">🥁 My kit — tap a piece to hear it</div>
             <div class="kit-view" id="kitView"><span class="kit-hint">loading…</span></div>
             <div class="kit-list" id="kitList"></div>
-            <div class="kit-note">Sizes are rough — the kit is PDP Pacific, cymbals Soultone Abby, sticks Woodies.</div>
+            <div class="kit-note">Sizes are rough — the kit is PDP Pacific, cymbals Soultone Abbey, sticks Woodies.</div>
             <a class="kit-link" href="/drum-map.html">Build your own kit map →</a>
           </div>
         </div>
@@ -289,8 +289,8 @@
           };
           const SPEC={
             kick:'PDP · 22"', snare:'PDP · 14"×5.5"', tomHigh:'PDP · 12"', tomMid:'PDP · 10"',
-            floorTom:'PDP · 16"', hihat:'Soultone Abby · 14"', crash:'Soultone Abby · 16"', ride:'Soultone Abby · 20"',
-            china:'Soultone Abby · 18"', splash:'Soultone Abby · 10"'
+            floorTom:'PDP · 16"', hihat:'Soultone Abbey · 14"', crash:'Soultone Abbey · 16"', ride:'Soultone Abbey · 20"',
+            china:'Soultone Abbey · 18"', splash:'Soultone Abbey · 10"'
           };
           let AC; function ac(){ if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended')AC.resume(); return AC; }
           function noise(c,d){const n=Math.max(1,c.sampleRate*d|0),b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;return b;}
