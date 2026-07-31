@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Site Admin — Miki Drummer</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2c2023;
+    --accent:#e8372a; --gold:#e7b53c; --ink:#f4efe6; --muted:#a2938c; --ok:#7ee787;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1100px 620px at 50% -10%, #3a0a0a 0%, transparent 60%),
+      linear-gradient(#0d0b0c,#140d0d 70%,#170c0c);
+    color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    min-height:100vh;padding:24px 16px 120px;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  h1{font-size:24px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:13.5px;margin-bottom:22px}
+  .status{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:6px 12px}
+  .status .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:middle}
+
+  h2.sec{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+
+  .card{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .card.wide{grid-column:1/-1}
+  .card .hd{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .card .ttl{font-size:16px;font-weight:800;display:flex;align-items:center;gap:9px}
+  .card .desc{color:var(--muted);font-size:13px;margin-top:8px;line-height:1.5}
+  .tag{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}
+  .tag.live{color:var(--ok);border-color:rgba(126,231,135,.4)}
+  .tag.idea{color:var(--gold);border-color:rgba(231,181,60,.4)}
+
+  /* switch */
+  .switch{position:relative;display:inline-block;width:52px;height:30px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0}
+  .track{position:absolute;inset:0;background:#3a2c2c;border-radius:30px;transition:.2s;border:1px solid var(--line)}
+  .track::before{content:"";position:absolute;height:22px;width:22px;left:4px;top:3px;background:#cabfb8;border-radius:50%;transition:.2s}
+  .switch input:checked + .track{background:var(--accent);border-color:var(--accent)}
+  .switch input:checked + .track::before{transform:translateX(21px);background:#fff}
+  .switch input:disabled + .track{opacity:.5}
+
+  label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
+  input[type=text],input[type=url],textarea{
+    width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--ink);
+    border-radius:9px;padding:11px 12px;font-family:inherit;font-size:13.5px
+  }
+  input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  textarea{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;min-height:150px;resize:vertical;line-height:1.5}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#180203;border:none;border-radius:9px;padding:10px 16px;font-weight:800;font-size:13.5px;cursor:pointer;text-decoration:none}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{background:rgba(255,255,255,.06)}
+  .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  .msg{font-size:12.5px;color:var(--ok);min-height:16px}
+
+  .linkcard{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .linkcard .meta{font-size:12.5px;color:var(--muted);margin-top:4px}
+
+  .savebar{position:fixed;left:0;right:0;bottom:0;background:rgba(16,11,12,.96);border-top:1px solid var(--line);
+    padding:12px 16px;display:none;align-items:center;justify-content:space-between;gap:12px;backdrop-filter:blur(6px);z-index:50}
+  .savebar.show{display:flex}
+  .savebar .txt{font-size:13px;color:var(--muted)}
+  .savebar .txt b{color:var(--ink)}
+  .note{font-size:12px;color:var(--muted);background:rgba(0,0,0,.25);border-left:3px solid var(--accent);padding:10px 12px;border-radius:6px;margin-top:14px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>🎛️ Site Admin</h1>
+      <div class="sub">Flip switches and edit content — no code. Save the file, or hand it to Claude to publish.</div>
+    </div>
+    <div class="status"><span class="dot"></span>mikidrummer.ca</div>
+  </div>
+
+  <!-- ===================== LIVE CONTROLS ===================== -->
+  <h2 class="sec">Live controls</h2>
+
+  <div class="card wide">
+    <div class="hd">
+      <div class="ttl">🎬 Intro video <span class="tag live">live</span></div>
+      <label class="switch"><input type="checkbox" id="videoToggle"><span class="track"></span></label>
+    </div>
+    <div class="desc">When ON, visitors landing on the homepage see this video full-screen with a close button. Turn OFF for a normal homepage.</div>
+    <label class="fld" for="videoUrl">YouTube embed URL</label>
+    <input type="url" id="videoUrl" placeholder="https://www.youtube.com/embed/VIDEO_ID">
+    <div class="row">
+      <button class="btn" id="saveVideo">Save intro video</button>
+      <span class="msg" id="videoMsg"></span>
+    </div>
+    <div class="note">Downloads <b>config.json</b> and <b>youtubeurl.json</b>. Drop them into the repo (or send to Claude) and it goes live.</div>
+  </div>
+
+  <div class="card wide">
+    <div class="hd">
+      <div class="ttl">📰 News ticker <span class="tag live">live</span></div>
+    </div>
+    <div class="desc">The scrolling news bar at the top of the site. One item per block: <code>Title</code>, optional <code>Description</code>, <code>Link</code>, <code>Expires: YYYY-MM-DD</code>.</div>
+    <label class="fld" for="newsBox">news.txt</label>
+    <textarea id="newsBox" spellcheck="false"></textarea>
+    <div class="row">
+      <button class="btn" id="saveNews">Save news</button>
+      <span class="msg" id="newsMsg"></span>
+    </div>
+  </div>
+
+  <!-- ===================== TOOLS ===================== -->
+  <h2 class="sec">Manage</h2>
+  <div class="grid">
+    <a class="card linkcard" href="/jukebox-manager.html">
+      <div><div class="ttl">💿 Jukebox</div><div class="meta" id="songCount">songs…</div></div>
+      <span class="btn ghost">Open →</span>
+    </a>
+    <a class="card linkcard" href="/drum-map.html">
+      <div><div class="ttl">🥁 Drum kit</div><div class="meta">Edit the “my setup” map</div></div>
+      <span class="btn ghost">Open →</span>
+    </a>
+    <a class="card linkcard" href="/punkbc.html">
+      <div><div class="ttl">🎫 Shows</div><div class="meta">Punk BC listings</div></div>
+      <span class="btn ghost">Open →</span>
+    </a>
+    <a class="card linkcard" href="/razor-cut-tool.html">
+      <div><div class="ttl">✂️ Razor Cut</div><div class="meta">Split audio into clips</div></div>
+      <span class="btn ghost">Open →</span>
+    </a>
+  </div>
+
+  <!-- ===================== IDEAS ===================== -->
+  <h2 class="sec">Ideas — say which you want wired up</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="hd"><div class="ttl">🎆 Celebration mode</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
+      <div class="desc">One switch to fire the confetti/fireworks (España win, a release, NYE) instead of date-hardcoding it. <span class="tag idea">idea</span></div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">📢 Announcement banner</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
+      <div class="desc">A dismissible site-wide bar — “New single out Friday”, “On tour in Spain”. Toggle + custom text. <span class="tag idea">idea</span></div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🟢 Availability status</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
+      <div class="desc">Flip between “Available for sessions / lessons” and “Booked / on tour” — shown as a badge. <span class="tag idea">idea</span></div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">⭐ Featured video</div><span class="tag idea">idea</span></div>
+      <div class="desc">Pick the homepage player’s featured video from a dropdown instead of editing JSON.</div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🖼️ Hero photo</div><span class="tag idea">idea</span></div>
+      <div class="desc">Swap the homepage band photo by uploading a new one.</div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🎨 Accent colour</div><span class="tag idea">idea</span></div>
+      <div class="desc">Change the site’s red accent site-wide with a colour picker for seasonal looks.</div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🔗 Social links</div><span class="tag idea">idea</span></div>
+      <div class="desc">Edit the Instagram / TikTok / YouTube handles in one place.</div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🚧 Maintenance mode</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
+      <div class="desc">Show a “back soon” splash while you rework a page. <span class="tag idea">idea</span></div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:22px">
+    <b>How saving works:</b> the site is static (GitHub Pages), so this panel builds the config files and you save them to the repo — or just send them to Claude and it pushes them live. The “idea” cards are mockups; tell me which to make real and I’ll wire them to actual switches like the intro video.
+  </div>
+</div>
+
+<div class="savebar" id="saveBar">
+  <div class="txt"><b id="dirtyCount">0</b> unsaved change(s)</div>
+  <button class="btn" id="downloadAll">Download changed files</button>
+</div>
+
+<script>
+(function(){
+  const state = { showOverlay:'no', youtubeUrl:'', news:'' };
+  const orig = { showOverlay:'no', youtubeUrl:'', news:'' };
+
+  const videoToggle=document.getElementById('videoToggle');
+  const videoUrl=document.getElementById('videoUrl');
+  const newsBox=document.getElementById('newsBox');
+  const saveBar=document.getElementById('saveBar');
+  const dirtyCount=document.getElementById('dirtyCount');
+
+  function download(name,text,type){
+    const blob=new Blob([text],{type:type||'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  }
+  function configJson(){ return JSON.stringify({ showOverlay: state.showOverlay }, null, 2)+'\n'; }
+  function youtubeJson(){ return JSON.stringify({ youtube_url: state.youtubeUrl }, null, 2)+'\n'; }
+
+  function refreshDirty(){
+    let n=0;
+    if(state.showOverlay!==orig.showOverlay || state.youtubeUrl!==orig.youtubeUrl) n++;
+    if(state.news!==orig.news) n++;
+    dirtyCount.textContent=n;
+    saveBar.classList.toggle('show', n>0);
+  }
+
+  // ---- load current state ----
+  fetch('config.json?_='+Date.now()).then(r=>r.json()).then(d=>{
+    state.showOverlay=orig.showOverlay=(d.showOverlay||'no');
+    videoToggle.checked = state.showOverlay==='yes';
+  }).catch(()=>{});
+  fetch('youtubeurl.json?_='+Date.now()).then(r=>r.json()).then(d=>{
+    state.youtubeUrl=orig.youtubeUrl=(d.youtube_url||'');
+    videoUrl.value=state.youtubeUrl;
+  }).catch(()=>{});
+  fetch('news.txt?_='+Date.now()).then(r=>r.text()).then(t=>{
+    state.news=orig.news=t; newsBox.value=t;
+  }).catch(()=>{});
+  fetch('playlist.json?_='+Date.now()).then(r=>r.json()).then(d=>{
+    const n=(d.songs||[]).length; document.getElementById('songCount').textContent=n+' song'+(n===1?'':'s');
+  }).catch(()=>{ document.getElementById('songCount').textContent='manage playlist'; });
+
+  // ---- wire controls ----
+  videoToggle.addEventListener('change',()=>{ state.showOverlay=videoToggle.checked?'yes':'no'; refreshDirty(); });
+  videoUrl.addEventListener('input',()=>{ state.youtubeUrl=videoUrl.value.trim(); refreshDirty(); });
+  newsBox.addEventListener('input',()=>{ state.news=newsBox.value; refreshDirty(); });
+
+  document.getElementById('saveVideo').addEventListener('click',()=>{
+    download('config.json',configJson());
+    setTimeout(()=>download('youtubeurl.json',youtubeJson()),350);
+    orig.showOverlay=state.showOverlay; orig.youtubeUrl=state.youtubeUrl; refreshDirty();
+    document.getElementById('videoMsg').textContent='Downloaded config.json + youtubeurl.json';
+    setTimeout(()=>document.getElementById('videoMsg').textContent='',2500);
+  });
+  document.getElementById('saveNews').addEventListener('click',()=>{
+    download('news.txt',state.news,'text/plain');
+    orig.news=state.news; refreshDirty();
+    document.getElementById('newsMsg').textContent='Downloaded news.txt';
+    setTimeout(()=>document.getElementById('newsMsg').textContent='',2500);
+  });
+  document.getElementById('downloadAll').addEventListener('click',()=>{
+    if(state.showOverlay!==orig.showOverlay || state.youtubeUrl!==orig.youtubeUrl){ download('config.json',configJson()); setTimeout(()=>download('youtubeurl.json',youtubeJson()),300); }
+    if(state.news!==orig.news){ setTimeout(()=>download('news.txt',state.news,'text/plain'),600); }
+    orig.showOverlay=state.showOverlay; orig.youtubeUrl=state.youtubeUrl; orig.news=state.news; refreshDirty();
+  });
+})();
+</script>
+</body>
+</html>
