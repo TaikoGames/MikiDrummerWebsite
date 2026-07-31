@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Site Admin — Miki Drummer</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2c2023;
+    --accent:#e8372a; --gold:#e7b53c; --ink:#f4efe6; --muted:#a2938c; --ok:#7ee787;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1100px 620px at 50% -10%, #3a0a0a 0%, transparent 60%),
+      linear-gradient(#0d0b0c,#140d0d 70%,#170c0c);
+    color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    min-height:100vh;padding:24px 16px 120px;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  h1{font-size:24px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:13.5px;margin-bottom:22px}
+  .status{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:6px 12px}
+  .status .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:middle}
+
+  h2.sec{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+
+  .card{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .card.wide{grid-column:1/-1}
+  .card .hd{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .card .ttl{font-size:16px;font-weight:800;display:flex;align-items:center;gap:9px}
+  .card .desc{color:var(--muted);font-size:13px;margin-top:8px;line-height:1.5}
+  .tag{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}
+  .tag.live{color:var(--ok);border-color:rgba(126,231,135,.4)}
+  .tag.idea{color:var(--gold);border-color:rgba(231,181,60,.4)}
+
+  /* switch */
+  .switch{position:relative;display:inline-block;width:52px;height:30px;flex-shrink:0}
+  .switch input{opacity:0;width:0;height:0}
+  .track{position:absolute;inset:0;background:#3a2c2c;border-radius:30px;transition:.2s;border:1px solid var(--line)}
+  .track::before{content:"";position:absolute;height:22px;width:22px;left:4px;top:3px;background:#cabfb8;border-radius:50%;transition:.2s}
+  .switch input:checked + .track{background:var(--accent);border-color:var(--accent)}
+  .switch input:checked + .track::before{transform:translateX(21px);background:#fff}
+  .switch input:disabled + .track{opacity:.5}
+  .autooff{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .ao-label{font-size:12.5px;color:var(--muted)}
+  .chip{background:#1f1618;border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:7px 13px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#180203}
+  .ao-status{font-size:12.5px;color:var(--gold);font-family:ui-monospace,Menlo,monospace;margin-left:2px}
+
+  label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
+  input[type=text],input[type=url],textarea{
+    width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--ink);
+    border-radius:9px;padding:11px 12px;font-family:inherit;font-size:13.5px
+  }
+  input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  textarea{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;min-height:150px;resize:vertical;line-height:1.5}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#180203;border:none;border-radius:9px;padding:10px 16px;font-weight:800;font-size:13.5px;cursor:pointer;text-decoration:none}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{background:rgba(255,255,255,.06)}
+  .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  .msg{font-size:12.5px;color:var(--ok);min-height:16px}
+
+  .linkcard{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .linkcard .meta{font-size:12.5px;color:var(--muted);margin-top:4px}
+
+  .savebar{position:fixed;left:0;right:0;bottom:0;background:rgba(16,11,12,.96);border-top:1px solid var(--line);
+    padding:12px 16px;display:none;align-items:center;justify-content:space-between;gap:12px;backdrop-filter:blur(6px);z-index:50}
+  .savebar.show{display:flex}
+  .savebar .txt{font-size:13px;color:var(--muted)}
+  .savebar .txt b{color:var(--ink)}
+  .note{font-size:12px;color:var(--muted);background:rgba(0,0,0,.25);border-left:3px solid var(--accent);padding:10px 12px;border-radius:6px;margin-top:14px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>🎛️ Site Admin</h1>
+      <div class="sub">Flip switches and edit content — no code. Changes save straight to your live site.</div>
+    </div>
+    <div class="status"><span class="dot" id="connDot" style="background:#6b7280"></span><span id="connText">not connected</span></div>
+  </div>
+
+  <!-- ===================== CONNECT ===================== -->
+  <div class="card wide" id="ghCard">
+    <div class="hd"><div class="ttl">🔑 Connection <span class="tag" id="ghTag">not connected</span></div></div>
+    <div class="desc">Paste a GitHub token (fine-grained, scoped to <b>this repo</b>, permission <b>Contents: read &amp; write</b>) so switches save straight to the site. It's stored only in this browser — never in the page.</div>
+    <label class="fld" for="ghToken">GitHub token</label>
+    <div class="row" style="margin-top:0">
+      <input type="password" id="ghToken" placeholder="github_pat_…" autocomplete="off" style="flex:1;min-width:200px">
+      <button class="btn" id="ghSave">Connect</button>
+      <a class="btn ghost" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Get a token ↗</a>
+    </div>
+    <div class="msg" id="ghMsg" style="color:var(--muted)"></div>
+  </div>
+
+  <!-- ===================== LIVE CONTROLS ===================== -->
+  <h2 class="sec">Live controls</h2>
+
+  <div class="card wide">
+    <div class="hd">
+      <div class="ttl">🎬 Intro video <span class="tag live">live</span></div>
+      <label class="switch"><input type="checkbox" id="videoToggle"><span class="track"></span></label>
+    </div>
+    <div class="desc">When ON, visitors landing on the homepage see the intro video full-screen with a close button. Turn OFF for a normal homepage. The video itself is already set in the site config — this is just the on/off.</div>
+    <div class="autooff">
+      <span class="ao-label">Show for the next:</span>
+      <button class="chip" data-hrs="1">1h</button>
+      <button class="chip" data-hrs="3">3h</button>
+      <button class="chip" data-hrs="6">6h</button>
+      <button class="chip" data-hrs="12">12h</button>
+      <button class="chip" data-hrs="24">24h</button>
+      <span class="ao-status" id="aoStatus"></span>
+    </div>
+    <div class="msg" id="videoMsg" style="margin-top:14px;color:var(--muted)"></div>
+    <div class="note">Flipping the switch (or a timer) saves straight to <b>config.json</b> and the site updates in about a minute — no download.</div>
+  </div>
+
+  <div class="card wide">
+    <div class="hd">
+      <div class="ttl">📰 News ticker <span class="tag live">live</span></div>
+    </div>
+    <div class="desc">The scrolling news bar at the top of the site. One item per block: <code>Title</code>, optional <code>Description</code>, <code>Link</code>, <code>Expires: YYYY-MM-DD</code>.</div>
+    <label class="fld" for="newsBox">news.txt</label>
+    <textarea id="newsBox" spellcheck="false"></textarea>
+    <div class="row">
+      <button class="btn" id="saveNews">Save news</button>
+      <span class="msg" id="newsMsg"></span>
+    </div>
+  </div>
+
+  <!-- ===================== TOOLS ===================== -->
+  <h2 class="sec">Manage</h2>
+  <div class="grid">
+    <a class="card linkcard" href="/jukebox-manager.html">
+      <div><div class="ttl">💿 Jukebox</div><div class="meta" id="songCount">songs…</div></div>
+      <span class="btn ghost">Open →</span>
+    </a>
+    <a class="card linkcard" href="/drum-map.html">
+      <div><div class="ttl">🥁 Drum kit</div><div class="meta">Edit the “my setup” map</div></div>
+      <span class="btn ghost">Open →</span>
+    </a>
+    <a class="card linkcard" href="/punkbc.html">
+      <div><div class="ttl">🎫 Shows</div><div class="meta">Punk BC listings</div></div>
+      <span class="btn ghost">Open →</span>
+    </a>
+    <a class="card linkcard" href="/razor-cut-tool.html">
+      <div><div class="ttl">✂️ Razor Cut</div><div class="meta">Split audio into clips</div></div>
+      <span class="btn ghost">Open →</span>
+    </a>
+  </div>
+
+  <!-- ===================== IDEAS ===================== -->
+  <h2 class="sec">Ideas — say which you want wired up</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="hd"><div class="ttl">🎆 Celebration mode</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
+      <div class="desc">One switch to fire the confetti/fireworks (España win, a release, NYE) instead of date-hardcoding it. <span class="tag idea">idea</span></div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">📢 Announcement banner</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
+      <div class="desc">A dismissible site-wide bar — “New single out Friday”, “On tour in Spain”. Toggle + custom text. <span class="tag idea">idea</span></div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🟢 Availability status</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
+      <div class="desc">Flip between “Available for sessions / lessons” and “Booked / on tour” — shown as a badge. <span class="tag idea">idea</span></div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">⭐ Featured video</div><span class="tag idea">idea</span></div>
+      <div class="desc">Pick the homepage player’s featured video from a dropdown instead of editing JSON.</div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🖼️ Hero photo</div><span class="tag idea">idea</span></div>
+      <div class="desc">Swap the homepage band photo by uploading a new one.</div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🎨 Accent colour</div><span class="tag idea">idea</span></div>
+      <div class="desc">Change the site’s red accent site-wide with a colour picker for seasonal looks.</div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🔗 Social links</div><span class="tag idea">idea</span></div>
+      <div class="desc">Edit the Instagram / TikTok / YouTube handles in one place.</div>
+    </div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🚧 Maintenance mode</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
+      <div class="desc">Show a “back soon” splash while you rework a page. <span class="tag idea">idea</span></div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:22px">
+    <b>How saving works:</b> switches commit straight to your GitHub repo via the API (using your token above), and GitHub Pages redeploys in ~1 minute. The “idea” cards are mockups; tell me which to make real and I’ll wire them up like the intro video.
+  </div>
+</div>
+
+<script>
+(function(){
+  const GH = { owner:'TaikoGames', repo:'MikiDrummerWebsite', branch:'main' };
+  const state = { showOverlay:'no', overlayUntil:'', news:'' };
+  const $ = id => document.getElementById(id);
+  const videoToggle=$('videoToggle'), newsBox=$('newsBox');
+
+  // ---------- GitHub API ----------
+  function token(){ return localStorage.getItem('gh_token')||''; }
+  function connected(){ return !!token(); }
+  function authHeaders(){ return {'Authorization':'Bearer '+token(),'Accept':'application/vnd.github+json','Content-Type':'application/json'}; }
+  function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
+  async function ghGet(path){
+    const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path+'?ref='+GH.branch,{headers:authHeaders(),cache:'no-store'});
+    if(r.status===404) return null;
+    if(!r.ok){ let m=''; try{m=(await r.json()).message||'';}catch(e){} throw new Error(r.status+(m?' '+m:'')); }
+    return r.json();
+  }
+  async function saveFile(path,content,message){
+    const cur=await ghGet(path);
+    const body={message:message,content:b64(content),branch:GH.branch};
+    if(cur&&cur.sha) body.sha=cur.sha;
+    const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path,{method:'PUT',headers:authHeaders(),body:JSON.stringify(body)});
+    if(!r.ok){ let m=''; try{m=(await r.json()).message||'';}catch(e){} throw new Error(r.status+(m?' '+m:'')); }
+    return r.json();
+  }
+  function msg(el,text,kind){ el.textContent=text; el.style.color = kind==='err'?'#ff8a7a' : kind==='ok'?'#7ee787' : 'var(--muted)'; }
+
+  // ---------- config helpers ----------
+  function configJson(){
+    const o={ showOverlay: state.showOverlay };
+    if(state.showOverlay==='yes' && state.overlayUntil) o.overlayUntil = state.overlayUntil;
+    return JSON.stringify(o, null, 2)+'\n';
+  }
+  function fmtWhen(iso){ try{ return new Date(iso).toLocaleString([], {weekday:'short', hour:'2-digit', minute:'2-digit'}); }catch(e){ return iso; } }
+  function updateAoStatus(){
+    const st=$('aoStatus');
+    if(state.showOverlay==='yes' && state.overlayUntil) st.textContent='→ off '+fmtWhen(state.overlayUntil);
+    else if(state.showOverlay==='yes') st.textContent='→ on until switched off';
+    else st.textContent='';
+  }
+  function clearChips(){ document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); }
+
+  async function commitConfig(reason){
+    const vm=$('videoMsg');
+    if(!connected()){ msg(vm,'Connect GitHub above first — nothing saved.','err'); return; }
+    msg(vm,'Saving…');
+    try{ await saveFile('config.json',configJson(),reason); msg(vm,'Saved ✓ — live in ~1 min','ok'); }
+    catch(e){ msg(vm,'Save failed: '+e.message,'err'); }
+  }
+
+  // ---------- connection UI ----------
+  function reflectConn(){
+    const on=connected();
+    $('ghTag').textContent=on?'connected':'not connected';
+    $('ghTag').className='tag'+(on?' live':'');
+    $('connText').textContent=on?'connected':'not connected';
+    $('connDot').style.background=on?'#7ee787':'#6b7280';
+  }
+  $('ghToken').value=token();
+  reflectConn();
+  $('ghSave').addEventListener('click',async()=>{
+    const t=$('ghToken').value.trim();
+    if(!t){ msg($('ghMsg'),'Paste your token first.','err'); return; }
+    localStorage.setItem('gh_token',t);
+    msg($('ghMsg'),'Checking access…');
+    try{ await ghGet('config.json'); msg($('ghMsg'),'Connected ✓ — switches now save live.','ok'); reflectConn(); }
+    catch(e){ msg($('ghMsg'),'Could not verify token: '+e.message,'err'); }
+  });
+
+  // ---------- load current state (public files, no token needed) ----------
+  fetch('config.json?_='+Date.now()).then(r=>r.json()).then(d=>{
+    state.showOverlay=(d.showOverlay||'no'); state.overlayUntil=(d.overlayUntil||'');
+    videoToggle.checked=state.showOverlay==='yes'; updateAoStatus();
+  }).catch(()=>{});
+  fetch('news.txt?_='+Date.now()).then(r=>r.text()).then(t=>{ state.news=t; newsBox.value=t; }).catch(()=>{});
+  fetch('playlist.json?_='+Date.now()).then(r=>r.json()).then(d=>{
+    const n=(d.songs||[]).length; $('songCount').textContent=n+' song'+(n===1?'':'s');
+  }).catch(()=>{ $('songCount').textContent='manage playlist'; });
+
+  // ---------- controls (commit straight to the repo) ----------
+  videoToggle.addEventListener('change',()=>{
+    state.showOverlay=videoToggle.checked?'yes':'no';
+    state.overlayUntil=''; clearChips(); updateAoStatus();
+    commitConfig('Intro video: '+state.showOverlay);
+  });
+  document.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      const hrs=+chip.dataset.hrs;
+      state.showOverlay='yes'; videoToggle.checked=true;
+      state.overlayUntil=new Date(Date.now()+hrs*3600000).toISOString();
+      clearChips(); chip.classList.add('active'); updateAoStatus();
+      commitConfig('Intro video on for '+hrs+'h');
+    });
+  });
+  $('saveNews').addEventListener('click',async()=>{
+    const nm=$('newsMsg');
+    if(!connected()){ msg(nm,'Connect GitHub above first.','err'); return; }
+    state.news=newsBox.value; msg(nm,'Saving…');
+    try{ await saveFile('news.txt',state.news,'Update news via admin'); msg(nm,'Saved ✓ — live in ~1 min','ok'); }
+    catch(e){ msg(nm,'Save failed: '+e.message,'err'); }
+  });
+})();
+</script>
+</body>
+</html>
