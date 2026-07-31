@@ -63,6 +63,9 @@
   .fv-row{display:flex;gap:14px;align-items:flex-end;margin-top:8px}
   .fv-thumb{width:132px;height:74px;border-radius:9px;object-fit:cover;background:#000;flex-shrink:0;border:1px solid var(--line)}
   @media(max-width:560px){.fv-row{flex-direction:column;align-items:stretch}.fv-thumb{width:100%;height:auto;aspect-ratio:16/9}}
+  .ph-ttl{font-size:13.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .ph-path{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted);font-weight:400}
+  .ph-preview{width:100%;height:200px;object-fit:cover;border-radius:12px;background:#000;border:1px solid var(--line);display:block;margin-bottom:10px}
   textarea{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;min-height:150px;resize:vertical;line-height:1.5}
 
   .btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#180203;border:none;border-radius:9px;padding:10px 16px;font-weight:800;font-size:13.5px;cursor:pointer;text-decoration:none}
@@ -165,11 +168,38 @@
     </div>
   </div>
 
+  <div class="card wide">
+    <div class="hd"><div class="ttl">🖼️ Photos <span class="tag live">live</span></div></div>
+    <div class="desc">Swap the main photos. Uploads are resized and saved straight to the site (they replace the existing image files, so every page using them updates).</div>
+    <div class="grid" style="margin-top:14px">
+      <div>
+        <div class="ph-ttl">Profile / hero <span class="ph-path">images/band.png</span></div>
+        <img class="ph-preview" id="phProfile" alt="" src="images/band.png">
+        <div class="row" style="margin-top:0">
+          <label class="btn ghost" for="fileProfile">Choose photo…</label>
+          <input type="file" id="fileProfile" accept="image/*" hidden>
+          <button class="btn" id="saveProfile" disabled>Save</button>
+          <span class="msg" id="profileMsg"></span>
+        </div>
+      </div>
+      <div>
+        <div class="ph-ttl">Drum photo <span class="ph-path">images/band2.png</span></div>
+        <img class="ph-preview" id="phDrum" alt="" src="images/band2.png">
+        <div class="row" style="margin-top:0">
+          <label class="btn ghost" for="fileDrum">Choose photo…</label>
+          <input type="file" id="fileDrum" accept="image/*" hidden>
+          <button class="btn" id="saveDrum" disabled>Save</button>
+          <span class="msg" id="drumMsg"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ===================== TOOLS ===================== -->
   <h2 class="sec">Manage</h2>
   <div class="grid">
     <a class="card linkcard" href="/jukebox-manager.html">
-      <div><div class="ttl">💿 Jukebox</div><div class="meta" id="songCount">songs…</div></div>
+      <div><div class="ttl">💿 Jukebox</div><div class="meta" id="songCount">songs…</div><div class="meta">add · remove · reorder · save live</div></div>
       <span class="btn ghost">Open →</span>
     </a>
     <a class="card linkcard" href="/drum-map.html">
@@ -200,14 +230,6 @@
     <div class="card">
       <div class="hd"><div class="ttl">🟢 Availability status</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
       <div class="desc">Flip between “Available for sessions / lessons” and “Booked / on tour” — shown as a badge. <span class="tag idea">idea</span></div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="ttl">⭐ Featured video</div><span class="tag idea">idea</span></div>
-      <div class="desc">Pick the homepage player’s featured video from a dropdown instead of editing JSON.</div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="ttl">🖼️ Hero photo</div><span class="tag idea">idea</span></div>
-      <div class="desc">Swap the homepage band photo by uploading a new one.</div>
     </div>
     <div class="card">
       <div class="hd"><div class="ttl">🎨 Accent colour</div><span class="tag idea">idea</span></div>
@@ -378,6 +400,49 @@
       msg(fm,'Saved ✓ — live in ~1 min','ok');
     } catch(e){ msg(fm,'Save failed: '+e.message,'err'); }
   });
+
+  // ---------- photos ----------
+  function resizeImage(file, maxPx, mime, q){
+    return new Promise((res,rej)=>{
+      if(!/^image\//.test(file.type)){ rej(new Error('Please choose an image.')); return; }
+      const im=new Image(), url=URL.createObjectURL(file);
+      im.onload=()=>{
+        let w=im.width,h=im.height; const mx=Math.max(w,h);
+        if(mx>maxPx){ const s=maxPx/mx; w=Math.round(w*s); h=Math.round(h*s); }
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        c.getContext('2d').drawImage(im,0,0,w,h);
+        URL.revokeObjectURL(url); res(c.toDataURL(mime,q));
+      };
+      im.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('Could not read that image.')); };
+      im.src=url;
+    });
+  }
+  async function saveBinary(path, base64, message){
+    const cur=await ghGet(path);
+    const body={ message, content:base64, branch:GH.branch };
+    if(cur&&cur.sha) body.sha=cur.sha;
+    const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path,{method:'PUT',headers:authHeaders(),body:JSON.stringify(body)});
+    if(!r.ok){ let m=''; try{m=(await r.json()).message||'';}catch(e){} throw new Error(r.status+(m?' '+m:'')); }
+    return r.json();
+  }
+  function wirePhoto(fileId, previewId, saveId, msgId, path){
+    const fileEl=$(fileId), prev=$(previewId), saveEl=$(saveId), m=$(msgId);
+    const mime = path.endsWith('.png') ? 'image/png' : 'image/jpeg';
+    let pending='';
+    fileEl.addEventListener('change',()=>{
+      const f=fileEl.files&&fileEl.files[0]; if(!f) return;
+      resizeImage(f,1200,mime,0.85).then(dataUrl=>{ pending=dataUrl.split(',')[1]; prev.src=dataUrl; saveEl.disabled=false; msg(m,'Ready — hit Save','ok'); }).catch(e=>msg(m,e.message,'err'));
+    });
+    saveEl.addEventListener('click',async()=>{
+      if(!connected()){ msg(m,'Connect GitHub above first.','err'); return; }
+      if(!pending){ msg(m,'Choose a photo first.','err'); return; }
+      msg(m,'Saving…');
+      try{ await saveBinary(path, pending, 'Update '+path+' via admin'); msg(m,'Saved ✓ — live in ~1 min','ok'); saveEl.disabled=true; }
+      catch(e){ msg(m,'Save failed: '+e.message,'err'); }
+    });
+  }
+  wirePhoto('fileProfile','phProfile','saveProfile','profileMsg','images/band.png');
+  wirePhoto('fileDrum','phDrum','saveDrum','drumMsg','images/band2.png');
 })();
 </script>
 </body>

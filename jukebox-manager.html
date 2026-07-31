@@ -160,14 +160,15 @@
     <div class="out">
         <textarea id="output" readonly aria-label="Generated playlist.json"></textarea>
         <div class="out-actions">
-            <button class="btn" id="copy">Copy JSON</button>
-            <button class="btn ghost" id="download">Download playlist.json</button>
+            <button class="btn" id="saveToSite">💾 Save to site</button>
+            <button class="btn ghost" id="copy">Copy JSON</button>
+            <button class="btn ghost" id="download">Download</button>
             <span class="msg" id="save-msg"></span>
         </div>
         <div class="hint">
-            <strong>To publish:</strong> save this as <code>playlist.json</code> in your site's repo
-            (on GitHub: open <code>playlist.json</code> → “Edit” → paste → commit), or download it and drag it
-            in — or just send the file to Claude and it'll push it live.
+            <strong>Save to site</strong> publishes the playlist live in ~1 min (uses the GitHub token you
+            connected in the <a href="/admin.html" style="color:var(--accent)">admin panel</a>). Or Copy / Download
+            the JSON to save it by hand.
         </div>
     </div>
 </div>
@@ -351,6 +352,35 @@
 
     // ---- save ----
     const saveMsg = document.getElementById('save-msg');
+
+    // ---- save straight to the site via GitHub (shares the admin panel's token) ----
+    const GH = { owner:'TaikoGames', repo:'MikiDrummerWebsite', branch:'main' };
+    const ghToken = () => localStorage.getItem('gh_token') || '';
+    const ghHeaders = () => ({ 'Authorization':'Bearer '+ghToken(), 'Accept':'application/vnd.github+json', 'Content-Type':'application/json' });
+    const toB64 = s => btoa(unescape(encodeURIComponent(s)));
+    async function ghGet(path){
+        const r = await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path+'?ref='+GH.branch, { headers: ghHeaders(), cache:'no-store' });
+        if (r.status === 404) return null;
+        if (!r.ok){ let m=''; try{ m=(await r.json()).message||''; }catch(e){} throw new Error(r.status+(m?' '+m:'')); }
+        return r.json();
+    }
+    async function ghSave(path, content, message){
+        const cur = await ghGet(path);
+        const body = { message, content: toB64(content), branch: GH.branch };
+        if (cur && cur.sha) body.sha = cur.sha;
+        const r = await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path, { method:'PUT', headers: ghHeaders(), body: JSON.stringify(body) });
+        if (!r.ok){ let m=''; try{ m=(await r.json()).message||''; }catch(e){} throw new Error(r.status+(m?' '+m:'')); }
+        return r.json();
+    }
+    document.getElementById('saveToSite').addEventListener('click', async () => {
+        if (!ghToken()){ saveMsg.textContent = 'Connect first — open the admin panel and paste your GitHub token.'; return; }
+        const btn = document.getElementById('saveToSite');
+        btn.disabled = true; const label = btn.textContent; btn.textContent = 'Saving…';
+        try { await ghSave('playlist.json', outputEl.value, 'Update playlist via jukebox manager'); saveMsg.textContent = 'Saved ✓ — live in ~1 min'; }
+        catch (e) { saveMsg.textContent = 'Save failed: ' + e.message; }
+        finally { btn.disabled = false; btn.textContent = label; }
+    });
+
     document.getElementById('copy').addEventListener('click', () => {
         outputEl.select();
         const flash = () => { saveMsg.textContent = 'Copied!'; setTimeout(() => saveMsg.textContent = '', 1600); };
