@@ -55,11 +55,14 @@
   .ao-status{font-size:12.5px;color:var(--gold);font-family:ui-monospace,Menlo,monospace;margin-left:2px}
 
   label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
-  input[type=text],input[type=url],textarea{
+  input[type=text],input[type=url],select,textarea{
     width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--ink);
     border-radius:9px;padding:11px 12px;font-family:inherit;font-size:13.5px
   }
-  input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  .fv-row{display:flex;gap:14px;align-items:flex-end;margin-top:8px}
+  .fv-thumb{width:132px;height:74px;border-radius:9px;object-fit:cover;background:#000;flex-shrink:0;border:1px solid var(--line)}
+  @media(max-width:560px){.fv-row{flex-direction:column;align-items:stretch}.fv-thumb{width:100%;height:auto;aspect-ratio:16/9}}
   textarea{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;min-height:150px;resize:vertical;line-height:1.5}
 
   .btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#180203;border:none;border-radius:9px;padding:10px 16px;font-weight:800;font-size:13.5px;cursor:pointer;text-decoration:none}
@@ -138,6 +141,30 @@
     </div>
   </div>
 
+  <div class="card wide">
+    <div class="hd">
+      <div class="ttl">⭐ Featured video <span class="tag live">live</span></div>
+    </div>
+    <div class="desc">The big video at the top of the Videos page. Pick one you already have, or paste a new YouTube link.</div>
+    <div class="fv-row">
+      <img class="fv-thumb" id="fvThumb" alt="">
+      <div style="flex:1;min-width:0">
+        <label class="fld" for="fvSelect">Featured video</label>
+        <select id="fvSelect"></select>
+      </div>
+    </div>
+    <div id="fvNew" hidden>
+      <label class="fld" for="fvLink">YouTube link or ID</label>
+      <input type="text" id="fvLink" placeholder="https://youtu.be/…  or  VIDEO_ID">
+      <label class="fld" for="fvTitle">Title</label>
+      <input type="text" id="fvTitle" placeholder="Song - Artist">
+    </div>
+    <div class="row">
+      <button class="btn" id="saveFeatured">Save featured video</button>
+      <span class="msg" id="fvMsg"></span>
+    </div>
+  </div>
+
   <!-- ===================== TOOLS ===================== -->
   <h2 class="sec">Manage</h2>
   <div class="grid">
@@ -213,6 +240,7 @@
   function connected(){ return !!token(); }
   function authHeaders(){ return {'Authorization':'Bearer '+token(),'Accept':'application/vnd.github+json','Content-Type':'application/json'}; }
   function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
+  function ytId(u){ if(!u) return ''; u=String(u).trim(); if(/^[A-Za-z0-9_-]{11}$/.test(u)) return u; const m=u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/); return m?m[1]:''; }
   async function ghGet(path){
     const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path+'?ref='+GH.branch,{headers:authHeaders(),cache:'no-store'});
     if(r.status===404) return null;
@@ -302,6 +330,53 @@
     state.news=newsBox.value; msg(nm,'Saving…');
     try{ await saveFile('news.txt',state.news,'Update news via admin'); msg(nm,'Saved ✓ — live in ~1 min','ok'); }
     catch(e){ msg(nm,'Save failed: '+e.message,'err'); }
+  });
+
+  // ---------- featured video ----------
+  const fvSelect=$('fvSelect'), fvThumb=$('fvThumb'), fvNew=$('fvNew'), fvLink=$('fvLink'), fvTitle=$('fvTitle');
+  let videos={ featured:null, sidebar:[] };
+  function thumbFor(id){ return id ? 'https://img.youtube.com/vi/'+id+'/hqdefault.jpg' : ''; }
+  function allVideos(){ const arr=[]; if(videos.featured) arr.push(videos.featured); (videos.sidebar||[]).forEach(v=>arr.push(v)); return arr; }
+  function onFvChange(){
+    const isNew=fvSelect.value==='__new__';
+    fvNew.hidden=!isNew;
+    fvThumb.src = isNew ? thumbFor(ytId(fvLink.value)) : thumbFor(fvSelect.value);
+  }
+  function renderFv(){
+    fvSelect.innerHTML='';
+    allVideos().forEach(v=>{ const o=document.createElement('option'); o.value=v.id; o.textContent=v.title||v.id; fvSelect.appendChild(o); });
+    const o=document.createElement('option'); o.value='__new__'; o.textContent='➕ New (paste a link)'; fvSelect.appendChild(o);
+    if(videos.featured) fvSelect.value=videos.featured.id;
+    onFvChange();
+  }
+  fvSelect.addEventListener('change',onFvChange);
+  fvLink.addEventListener('input',()=>{ fvThumb.src=thumbFor(ytId(fvLink.value)); });
+  fvThumb.addEventListener('error',()=>{ fvThumb.style.visibility='hidden'; });
+  fvThumb.addEventListener('load',()=>{ fvThumb.style.visibility='visible'; });
+  fetch('videos.json?_='+Date.now()).then(r=>r.json()).then(d=>{ videos={ featured:d.featured||null, sidebar:d.sidebar||[] }; renderFv(); }).catch(()=>{});
+
+  $('saveFeatured').addEventListener('click',async()=>{
+    const fm=$('fvMsg');
+    if(!connected()){ msg(fm,'Connect GitHub above first.','err'); return; }
+    let newFeatured, rest;
+    if(fvSelect.value==='__new__'){
+      const id=ytId(fvLink.value);
+      if(!id){ msg(fm,'Paste a valid YouTube link or 11-character ID.','err'); return; }
+      const t=fvTitle.value.trim();
+      newFeatured={ id, title: t||'Featured video' };
+      rest=allVideos().filter(v=>v.id!==id);
+    } else {
+      const id=fvSelect.value;
+      newFeatured=allVideos().find(v=>v.id===id);
+      rest=allVideos().filter(v=>v.id!==id);
+    }
+    const out={ featured:{ id:newFeatured.id, title:newFeatured.title }, sidebar:rest.map(v=>({ id:v.id, title:v.title })) };
+    msg(fm,'Saving…');
+    try{
+      await saveFile('videos.json', JSON.stringify(out,null,2)+'\n', 'Set featured video: '+newFeatured.title);
+      videos={ featured:out.featured, sidebar:out.sidebar }; renderFv(); fvLink.value=''; fvTitle.value='';
+      msg(fm,'Saved ✓ — live in ~1 min','ok');
+    } catch(e){ msg(fm,'Save failed: '+e.message,'err'); }
   });
 })();
 </script>
