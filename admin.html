@@ -47,6 +47,12 @@
   .switch input:checked + .track{background:var(--accent);border-color:var(--accent)}
   .switch input:checked + .track::before{transform:translateX(21px);background:#fff}
   .switch input:disabled + .track{opacity:.5}
+  .autooff{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .ao-label{font-size:12.5px;color:var(--muted)}
+  .chip{background:#1f1618;border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:7px 13px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#180203}
+  .ao-status{font-size:12.5px;color:var(--gold);font-family:ui-monospace,Menlo,monospace;margin-left:2px}
 
   label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
   input[type=text],input[type=url],textarea{
@@ -92,14 +98,21 @@
       <div class="ttl">🎬 Intro video <span class="tag live">live</span></div>
       <label class="switch"><input type="checkbox" id="videoToggle"><span class="track"></span></label>
     </div>
-    <div class="desc">When ON, visitors landing on the homepage see this video full-screen with a close button. Turn OFF for a normal homepage.</div>
-    <label class="fld" for="videoUrl">YouTube embed URL</label>
-    <input type="url" id="videoUrl" placeholder="https://www.youtube.com/embed/VIDEO_ID">
+    <div class="desc">When ON, visitors landing on the homepage see the intro video full-screen with a close button. Turn OFF for a normal homepage. The video itself is already set in the site config — this is just the on/off.</div>
+    <div class="autooff">
+      <span class="ao-label">Show for the next:</span>
+      <button class="chip" data-hrs="1">1h</button>
+      <button class="chip" data-hrs="3">3h</button>
+      <button class="chip" data-hrs="6">6h</button>
+      <button class="chip" data-hrs="12">12h</button>
+      <button class="chip" data-hrs="24">24h</button>
+      <span class="ao-status" id="aoStatus"></span>
+    </div>
     <div class="row">
-      <button class="btn" id="saveVideo">Save intro video</button>
+      <button class="btn" id="saveVideo">Save</button>
       <span class="msg" id="videoMsg"></span>
     </div>
-    <div class="note">Downloads <b>config.json</b> and <b>youtubeurl.json</b>. Drop them into the repo (or send to Claude) and it goes live.</div>
+    <div class="note">Downloads <b>config.json</b> with the on/off setting. Drop it into the repo (or send to Claude) and it goes live.</div>
   </div>
 
   <div class="card wide">
@@ -185,11 +198,10 @@
 
 <script>
 (function(){
-  const state = { showOverlay:'no', youtubeUrl:'', news:'' };
-  const orig = { showOverlay:'no', youtubeUrl:'', news:'' };
+  const state = { showOverlay:'no', overlayUntil:'', news:'' };
+  const orig = { showOverlay:'no', overlayUntil:'', news:'' };
 
   const videoToggle=document.getElementById('videoToggle');
-  const videoUrl=document.getElementById('videoUrl');
   const newsBox=document.getElementById('newsBox');
   const saveBar=document.getElementById('saveBar');
   const dirtyCount=document.getElementById('dirtyCount');
@@ -199,12 +211,23 @@
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
     document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
   }
-  function configJson(){ return JSON.stringify({ showOverlay: state.showOverlay }, null, 2)+'\n'; }
-  function youtubeJson(){ return JSON.stringify({ youtube_url: state.youtubeUrl }, null, 2)+'\n'; }
+  function configJson(){
+    const o={ showOverlay: state.showOverlay };
+    if(state.showOverlay==='yes' && state.overlayUntil) o.overlayUntil = state.overlayUntil;
+    return JSON.stringify(o, null, 2)+'\n';
+  }
+  function fmtWhen(iso){ try{ return new Date(iso).toLocaleString([], {weekday:'short', hour:'2-digit', minute:'2-digit'}); }catch(e){ return iso; } }
+  function updateAoStatus(){
+    const st=document.getElementById('aoStatus');
+    if(state.showOverlay==='yes' && state.overlayUntil) st.textContent='→ off '+fmtWhen(state.overlayUntil);
+    else if(state.showOverlay==='yes') st.textContent='→ on until switched off';
+    else st.textContent='';
+  }
+  function clearChips(){ document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); }
 
   function refreshDirty(){
     let n=0;
-    if(state.showOverlay!==orig.showOverlay || state.youtubeUrl!==orig.youtubeUrl) n++;
+    if(state.showOverlay!==orig.showOverlay || state.overlayUntil!==orig.overlayUntil) n++;
     if(state.news!==orig.news) n++;
     dirtyCount.textContent=n;
     saveBar.classList.toggle('show', n>0);
@@ -213,11 +236,9 @@
   // ---- load current state ----
   fetch('config.json?_='+Date.now()).then(r=>r.json()).then(d=>{
     state.showOverlay=orig.showOverlay=(d.showOverlay||'no');
+    state.overlayUntil=orig.overlayUntil=(d.overlayUntil||'');
     videoToggle.checked = state.showOverlay==='yes';
-  }).catch(()=>{});
-  fetch('youtubeurl.json?_='+Date.now()).then(r=>r.json()).then(d=>{
-    state.youtubeUrl=orig.youtubeUrl=(d.youtube_url||'');
-    videoUrl.value=state.youtubeUrl;
+    updateAoStatus();
   }).catch(()=>{});
   fetch('news.txt?_='+Date.now()).then(r=>r.text()).then(t=>{
     state.news=orig.news=t; newsBox.value=t;
@@ -227,15 +248,25 @@
   }).catch(()=>{ document.getElementById('songCount').textContent='manage playlist'; });
 
   // ---- wire controls ----
-  videoToggle.addEventListener('change',()=>{ state.showOverlay=videoToggle.checked?'yes':'no'; refreshDirty(); });
-  videoUrl.addEventListener('input',()=>{ state.youtubeUrl=videoUrl.value.trim(); refreshDirty(); });
+  videoToggle.addEventListener('change',()=>{
+    state.showOverlay=videoToggle.checked?'yes':'no';
+    state.overlayUntil=''; clearChips(); updateAoStatus(); refreshDirty();
+  });
+  document.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      const hrs=+chip.dataset.hrs;
+      state.showOverlay='yes'; videoToggle.checked=true;
+      state.overlayUntil=new Date(Date.now()+hrs*3600000).toISOString();
+      clearChips(); chip.classList.add('active');
+      updateAoStatus(); refreshDirty();
+    });
+  });
   newsBox.addEventListener('input',()=>{ state.news=newsBox.value; refreshDirty(); });
 
   document.getElementById('saveVideo').addEventListener('click',()=>{
     download('config.json',configJson());
-    setTimeout(()=>download('youtubeurl.json',youtubeJson()),350);
-    orig.showOverlay=state.showOverlay; orig.youtubeUrl=state.youtubeUrl; refreshDirty();
-    document.getElementById('videoMsg').textContent='Downloaded config.json + youtubeurl.json';
+    orig.showOverlay=state.showOverlay; orig.overlayUntil=state.overlayUntil; refreshDirty();
+    document.getElementById('videoMsg').textContent='Downloaded config.json';
     setTimeout(()=>document.getElementById('videoMsg').textContent='',2500);
   });
   document.getElementById('saveNews').addEventListener('click',()=>{
@@ -245,9 +276,9 @@
     setTimeout(()=>document.getElementById('newsMsg').textContent='',2500);
   });
   document.getElementById('downloadAll').addEventListener('click',()=>{
-    if(state.showOverlay!==orig.showOverlay || state.youtubeUrl!==orig.youtubeUrl){ download('config.json',configJson()); setTimeout(()=>download('youtubeurl.json',youtubeJson()),300); }
-    if(state.news!==orig.news){ setTimeout(()=>download('news.txt',state.news,'text/plain'),600); }
-    orig.showOverlay=state.showOverlay; orig.youtubeUrl=state.youtubeUrl; orig.news=state.news; refreshDirty();
+    if(state.showOverlay!==orig.showOverlay || state.overlayUntil!==orig.overlayUntil){ download('config.json',configJson()); }
+    if(state.news!==orig.news){ setTimeout(()=>download('news.txt',state.news,'text/plain'),400); }
+    orig.showOverlay=state.showOverlay; orig.overlayUntil=state.overlayUntil; orig.news=state.news; refreshDirty();
   });
 })();
 </script>
