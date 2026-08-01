@@ -134,18 +134,17 @@
   <div class="card wide">
     <div class="hd">
       <div class="ttl">🪧 Poster <span class="tag live">live</span></div>
-      <label class="switch"><input type="checkbox" id="posterToggle"><span class="track"></span></label>
     </div>
-    <div class="desc">When ON, a poster pops up full-screen (with a fade-in) the moment visitors arrive — a gig flyer, a release, an announcement — until they close it. Just paste an image link.</div>
-    <label class="fld" for="posterUrl">Image link</label>
+    <div class="desc">Paste an image link to pop a poster full-screen (with a fade-in) the moment visitors arrive — a gig flyer, a release. <b>Leave the field empty for no poster.</b></div>
+    <label class="fld" for="posterUrl">Image link <span style="color:var(--muted)">(empty = off)</span></label>
     <div class="fv-row">
       <img class="fv-thumb" id="posterThumb" alt="" style="object-fit:contain">
       <div style="flex:1;min-width:0">
         <input type="url" id="posterUrl" placeholder="https://…/poster.jpg">
-        <div class="row"><button class="btn" id="savePoster">Save poster link</button><span class="msg" id="posterMsg"></span></div>
+        <div class="row"><button class="btn" id="savePoster">Save poster</button><span class="msg" id="posterMsg"></span></div>
       </div>
     </div>
-    <div class="note">Any public image URL works (JPG, PNG, GIF — an animated GIF plays as it pops in).</div>
+    <div class="note">Any public image URL works (JPG, PNG, GIF — an animated GIF plays as it pops in). Clear the field and Save to turn the poster off.</div>
   </div>
 
   <div class="card wide">
@@ -270,7 +269,7 @@
 <script>
 (function(){
   const GH = { owner:'TaikoGames', repo:'MikiDrummerWebsite', branch:'main' };
-  const state = { showOverlay:'no', overlayUntil:'', showPoster:'no', posterUrl:'', news:'' };
+  const state = { showOverlay:'no', overlayUntil:'', posterUrl:'', news:'' };
   const $ = id => document.getElementById(id);
   const videoToggle=$('videoToggle'), newsBox=$('newsBox');
 
@@ -300,7 +299,6 @@
   function configJson(){
     const o={ showOverlay: state.showOverlay };
     if(state.showOverlay==='yes' && state.overlayUntil) o.overlayUntil = state.overlayUntil;
-    o.showPoster = state.showPoster;
     if(state.posterUrl) o.posterUrl = state.posterUrl;
     return JSON.stringify(o, null, 2)+'\n';
   }
@@ -343,9 +341,9 @@
   // ---------- load current state (public files, no token needed) ----------
   fetch('config.json?_='+Date.now()).then(r=>r.json()).then(d=>{
     state.showOverlay=(d.showOverlay||'no'); state.overlayUntil=(d.overlayUntil||'');
-    state.showPoster=(d.showPoster||'no'); state.posterUrl=(d.posterUrl||'');
+    state.posterUrl=(d.posterUrl||'');
     videoToggle.checked=state.showOverlay==='yes'; updateAoStatus();
-    posterToggle.checked=state.showPoster==='yes'; posterUrlEl.value=state.posterUrl; updatePosterPreview();
+    posterUrlEl.value=state.posterUrl; updatePosterPreview();
   }).catch(()=>{});
   fetch('news.txt?_='+Date.now()).then(r=>r.text()).then(t=>{ state.news=t; newsBox.value=t; }).catch(()=>{});
   fetch('playlist.json?_='+Date.now()).then(r=>r.json()).then(d=>{
@@ -368,18 +366,16 @@
     });
   });
 
-  // ---------- poster ----------
-  const posterToggle=$('posterToggle'), posterUrlEl=$('posterUrl'), posterThumb=$('posterThumb');
+  // ---------- poster (empty link = no poster) ----------
+  const posterUrlEl=$('posterUrl'), posterThumb=$('posterThumb');
   function updatePosterPreview(){ const u=posterUrlEl.value.trim(); if(u){ posterThumb.src=u; } else { posterThumb.removeAttribute('src'); posterThumb.style.visibility='hidden'; } }
   posterThumb.addEventListener('error',()=>{ posterThumb.style.visibility='hidden'; });
   posterThumb.addEventListener('load',()=>{ posterThumb.style.visibility='visible'; });
   posterUrlEl.addEventListener('input',()=>{ state.posterUrl=posterUrlEl.value.trim(); updatePosterPreview(); });
-  posterToggle.addEventListener('change',()=>{
-    if(posterToggle.checked && !posterUrlEl.value.trim()){ msg($('posterMsg'),'Paste an image link first, then flip it on.','err'); posterToggle.checked=false; return; }
-    state.showPoster=posterToggle.checked?'yes':'no';
-    commitConfigTo($('posterMsg'),'Poster: '+state.showPoster);
+  $('savePoster').addEventListener('click',()=>{
+    state.posterUrl=posterUrlEl.value.trim();
+    commitConfigTo($('posterMsg'), state.posterUrl ? 'Set poster' : 'Remove poster');
   });
-  $('savePoster').addEventListener('click',()=>{ state.posterUrl=posterUrlEl.value.trim(); commitConfigTo($('posterMsg'),'Update poster link'); });
   $('saveNews').addEventListener('click',async()=>{
     const nm=$('newsMsg');
     if(!connected()){ msg(nm,'Connect GitHub above first.','err'); return; }
