@@ -560,12 +560,14 @@
         <style>
           .poster-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:3000;align-items:center;justify-content:center;padding:20px;transition:opacity .45s ease}
           .poster-overlay.show{display:flex;animation:posterFade .5s ease}
-          .poster-overlay.fadeout{opacity:0}
-          .poster-inner{position:relative;max-width:min(92vw,520px);animation:posterPop .6s cubic-bezier(.2,.8,.2,1)}
+          .poster-overlay.closing{opacity:0}
+          .poster-inner{position:relative;max-width:min(92vw,520px);animation:posterIn .62s cubic-bezier(.34,1.56,.64,1) both}
+          .poster-overlay.closing .poster-inner{animation:posterOut .42s cubic-bezier(.4,0,1,.6) forwards}
           .poster-inner img{width:100%;height:auto;max-height:88vh;object-fit:contain;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.6);display:block}
           .poster-close{position:absolute;top:-14px;right:-14px;width:38px;height:38px;border-radius:50%;background:#111;color:#fff;border:2px solid #fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:20px;line-height:1}
           @keyframes posterFade{from{opacity:0}to{opacity:1}}
-          @keyframes posterPop{from{opacity:0;transform:scale(.85) translateY(24px)}to{opacity:1;transform:none}}
+          @keyframes posterIn{from{opacity:0;transform:translateX(90px) scale(.86)}to{opacity:1;transform:none}}
+          @keyframes posterOut{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-90px) scale(.86)}}
         </style>
 
         <script type="text/javascript">
@@ -587,14 +589,10 @@
                         var po = document.getElementById('posterOverlay');
                         document.getElementById('posterImg').src = data.posterUrl;
                         po.classList.add('show');
-                        // auto-dismiss after the configured seconds (default 15), fading out
+                        // auto-dismiss after the configured seconds (default 15)
                         var secs = parseInt(data.posterSeconds, 10);
                         if (!secs || secs < 1) secs = 15;
-                        setTimeout(function () {
-                            if (!po.classList.contains('show')) return;
-                            po.classList.add('fadeout');
-                            setTimeout(function () { po.classList.remove('show'); po.classList.remove('fadeout'); }, 450);
-                        }, secs * 1000);
+                        setTimeout(function () { closePoster(); }, secs * 1000);
                     }
                 })
                 .catch(error => console.error('Error fetching the configuration:', error));
@@ -604,11 +602,16 @@
                 document.querySelector('.live-overlay').style.display = "none";
             });
 
+            function closePoster(){
+                var po = document.getElementById('posterOverlay');
+                if(!po.classList.contains('show')) return;
+                po.classList.add('closing');
+                setTimeout(function(){ po.classList.remove('show'); po.classList.remove('closing'); }, 470);
+            }
             (function(){
                 var po = document.getElementById('posterOverlay');
-                function hidePoster(){ po.classList.remove('show'); }
-                document.getElementById('posterClose').addEventListener('click', function(e){ e.preventDefault(); hidePoster(); });
-                po.addEventListener('click', function(e){ if(e.target === po) hidePoster(); });
+                document.getElementById('posterClose').addEventListener('click', function(e){ e.preventDefault(); closePoster(); });
+                po.addEventListener('click', function(e){ if(e.target === po) closePoster(); });
             })();
         </script>
 
