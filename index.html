@@ -579,8 +579,8 @@
                     // auto-off: if an overlayUntil time is set and has passed, keep it hidden
                     if (on && data.overlayUntil) { on = new Date() < new Date(data.overlayUntil); }
                     toggleOverlay(on ? "yes" : "no");
-                    // poster: full-screen splash on arrival
-                    if (data.showPoster === "yes" && data.posterUrl) {
+                    // poster: full-screen splash on arrival (a link means on; empty means off)
+                    if (data.posterUrl) {
                         var po = document.getElementById('posterOverlay');
                         document.getElementById('posterImg').src = data.posterUrl;
                         po.classList.add('show');
