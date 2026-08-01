@@ -550,6 +550,23 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/custom.js"></script>
 
+        <!-- ===================== POSTER OVERLAY ===================== -->
+        <div class="poster-overlay" id="posterOverlay">
+          <div class="poster-inner">
+            <img id="posterImg" alt="Poster">
+            <a href="#" class="poster-close" id="posterClose" aria-label="Close">&times;</a>
+          </div>
+        </div>
+        <style>
+          .poster-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:3000;align-items:center;justify-content:center;padding:20px}
+          .poster-overlay.show{display:flex;animation:posterFade .5s ease}
+          .poster-inner{position:relative;max-width:min(92vw,520px);animation:posterPop .6s cubic-bezier(.2,.8,.2,1)}
+          .poster-inner img{width:100%;height:auto;max-height:88vh;object-fit:contain;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.6);display:block}
+          .poster-close{position:absolute;top:-14px;right:-14px;width:38px;height:38px;border-radius:50%;background:#111;color:#fff;border:2px solid #fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:20px;line-height:1}
+          @keyframes posterFade{from{opacity:0}to{opacity:1}}
+          @keyframes posterPop{from{opacity:0;transform:scale(.85) translateY(24px)}to{opacity:1;transform:none}}
+        </style>
+
         <script type="text/javascript">
             function toggleOverlay(showOverlay) {
                 var overlay = document.querySelector('.live-overlay');
@@ -562,6 +579,12 @@
                     // auto-off: if an overlayUntil time is set and has passed, keep it hidden
                     if (on && data.overlayUntil) { on = new Date() < new Date(data.overlayUntil); }
                     toggleOverlay(on ? "yes" : "no");
+                    // poster: full-screen splash on arrival
+                    if (data.showPoster === "yes" && data.posterUrl) {
+                        var po = document.getElementById('posterOverlay');
+                        document.getElementById('posterImg').src = data.posterUrl;
+                        po.classList.add('show');
+                    }
                 })
                 .catch(error => console.error('Error fetching the configuration:', error));
 
@@ -569,6 +592,13 @@
                 event.preventDefault();
                 document.querySelector('.live-overlay').style.display = "none";
             });
+
+            (function(){
+                var po = document.getElementById('posterOverlay');
+                function hidePoster(){ po.classList.remove('show'); }
+                document.getElementById('posterClose').addEventListener('click', function(e){ e.preventDefault(); hidePoster(); });
+                po.addEventListener('click', function(e){ if(e.target === po) hidePoster(); });
+            })();
         </script>
 
         <style media="screen">
