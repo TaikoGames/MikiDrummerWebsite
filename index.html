@@ -580,7 +580,9 @@
                     if (on && data.overlayUntil) { on = new Date() < new Date(data.overlayUntil); }
                     toggleOverlay(on ? "yes" : "no");
                     // poster: full-screen splash on arrival (a link means on; empty means off)
-                    if (data.posterUrl) {
+                    var showPoster = !!data.posterUrl;
+                    if (showPoster && data.posterUntil) { showPoster = new Date() < new Date(data.posterUntil); }
+                    if (showPoster) {
                         var po = document.getElementById('posterOverlay');
                         document.getElementById('posterImg').src = data.posterUrl;
                         po.classList.add('show');
