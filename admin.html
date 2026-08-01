@@ -49,9 +49,9 @@
   .switch input:disabled + .track{opacity:.5}
   .autooff{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px}
   .ao-label{font-size:12.5px;color:var(--muted)}
-  .chip{background:#1f1618;border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:7px 13px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
-  .chip:hover{border-color:var(--accent);color:var(--accent)}
-  .chip.active{background:var(--accent);border-color:var(--accent);color:#180203}
+  .chip,.pchip{background:#1f1618;border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:7px 13px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
+  .chip:hover,.pchip:hover{border-color:var(--accent);color:var(--accent)}
+  .chip.active,.pchip.active{background:var(--accent);border-color:var(--accent);color:#180203}
   .ao-status{font-size:12.5px;color:var(--gold);font-family:ui-monospace,Menlo,monospace;margin-left:2px}
 
   label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
@@ -144,7 +144,17 @@
         <div class="row"><button class="btn" id="savePoster">Save poster</button><span class="msg" id="posterMsg"></span></div>
       </div>
     </div>
-    <div class="note">Any public image URL works (JPG, PNG, GIF — an animated GIF plays as it pops in). Clear the field and Save to turn the poster off.</div>
+    <div class="autooff">
+      <span class="ao-label">Auto-remove after:</span>
+      <button class="pchip" data-days="1">1d</button>
+      <button class="pchip" data-days="3">3d</button>
+      <button class="pchip" data-days="7">7d</button>
+      <button class="pchip" data-days="14">14d</button>
+      <button class="pchip" data-days="30">30d</button>
+      <button class="pchip" data-days="0">No expiry</button>
+      <span class="ao-status" id="posterAo"></span>
+    </div>
+    <div class="note">Any public image URL works (JPG, PNG, GIF — an animated GIF plays as it pops in). Clear the field and Save to turn the poster off; pick a day count to auto-remove it.</div>
   </div>
 
   <div class="card wide">
@@ -269,7 +279,7 @@
 <script>
 (function(){
   const GH = { owner:'TaikoGames', repo:'MikiDrummerWebsite', branch:'main' };
-  const state = { showOverlay:'no', overlayUntil:'', posterUrl:'', news:'' };
+  const state = { showOverlay:'no', overlayUntil:'', posterUrl:'', posterUntil:'', news:'' };
   const $ = id => document.getElementById(id);
   const videoToggle=$('videoToggle'), newsBox=$('newsBox');
 
@@ -299,7 +309,7 @@
   function configJson(){
     const o={ showOverlay: state.showOverlay };
     if(state.showOverlay==='yes' && state.overlayUntil) o.overlayUntil = state.overlayUntil;
-    if(state.posterUrl) o.posterUrl = state.posterUrl;
+    if(state.posterUrl){ o.posterUrl = state.posterUrl; if(state.posterUntil) o.posterUntil = state.posterUntil; }
     return JSON.stringify(o, null, 2)+'\n';
   }
   function fmtWhen(iso){ try{ return new Date(iso).toLocaleString([], {weekday:'short', hour:'2-digit', minute:'2-digit'}); }catch(e){ return iso; } }
@@ -341,9 +351,9 @@
   // ---------- load current state (public files, no token needed) ----------
   fetch('config.json?_='+Date.now()).then(r=>r.json()).then(d=>{
     state.showOverlay=(d.showOverlay||'no'); state.overlayUntil=(d.overlayUntil||'');
-    state.posterUrl=(d.posterUrl||'');
+    state.posterUrl=(d.posterUrl||''); state.posterUntil=(d.posterUntil||'');
     videoToggle.checked=state.showOverlay==='yes'; updateAoStatus();
-    posterUrlEl.value=state.posterUrl; updatePosterPreview();
+    posterUrlEl.value=state.posterUrl; updatePosterPreview(); updatePosterAo();
   }).catch(()=>{});
   fetch('news.txt?_='+Date.now()).then(r=>r.text()).then(t=>{ state.news=t; newsBox.value=t; }).catch(()=>{});
   fetch('playlist.json?_='+Date.now()).then(r=>r.json()).then(d=>{
@@ -371,10 +381,30 @@
   function updatePosterPreview(){ const u=posterUrlEl.value.trim(); if(u){ posterThumb.src=u; } else { posterThumb.removeAttribute('src'); posterThumb.style.visibility='hidden'; } }
   posterThumb.addEventListener('error',()=>{ posterThumb.style.visibility='hidden'; });
   posterThumb.addEventListener('load',()=>{ posterThumb.style.visibility='visible'; });
-  posterUrlEl.addEventListener('input',()=>{ state.posterUrl=posterUrlEl.value.trim(); updatePosterPreview(); });
+  function clearPChips(){ document.querySelectorAll('.pchip').forEach(c=>c.classList.remove('active')); }
+  function fmtDay(iso){ try{ return new Date(iso).toLocaleDateString([], {month:'short', day:'numeric'}); }catch(e){ return iso; } }
+  function updatePosterAo(){
+    const st=$('posterAo');
+    if(state.posterUrl && state.posterUntil) st.textContent='→ removes '+fmtDay(state.posterUntil);
+    else if(state.posterUrl) st.textContent='→ stays until removed';
+    else st.textContent='';
+  }
+  posterUrlEl.addEventListener('input',()=>{ state.posterUrl=posterUrlEl.value.trim(); updatePosterPreview(); updatePosterAo(); });
   $('savePoster').addEventListener('click',()=>{
     state.posterUrl=posterUrlEl.value.trim();
+    if(!state.posterUrl) state.posterUntil='';
+    clearPChips(); updatePosterAo();
     commitConfigTo($('posterMsg'), state.posterUrl ? 'Set poster' : 'Remove poster');
+  });
+  document.querySelectorAll('.pchip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      state.posterUrl=posterUrlEl.value.trim();
+      if(!state.posterUrl){ msg($('posterMsg'),'Paste a poster link first.','err'); return; }
+      const days=+chip.dataset.days;
+      state.posterUntil = days>0 ? new Date(Date.now()+days*86400000).toISOString() : '';
+      clearPChips(); chip.classList.add('active'); updatePosterAo();
+      commitConfigTo($('posterMsg'), days>0 ? ('Poster for '+days+'d') : 'Poster (no expiry)');
+    });
   });
   $('saveNews').addEventListener('click',async()=>{
     const nm=$('newsMsg');
