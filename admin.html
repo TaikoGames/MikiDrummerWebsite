@@ -154,6 +154,11 @@
       <button class="pchip" data-days="0">No expiry</button>
       <span class="ao-status" id="posterAo"></span>
     </div>
+    <div class="autooff">
+      <span class="ao-label">Show for</span>
+      <input type="number" id="posterSecs" min="1" max="600" value="15" style="width:90px">
+      <span class="ao-label">seconds each visit, then it fades out.</span>
+    </div>
     <div class="note">Any public image URL works (JPG, PNG, GIF — an animated GIF plays as it pops in). Clear the field and Save to turn the poster off; pick a day count to auto-remove it.</div>
   </div>
 
@@ -279,7 +284,7 @@
 <script>
 (function(){
   const GH = { owner:'TaikoGames', repo:'MikiDrummerWebsite', branch:'main' };
-  const state = { showOverlay:'no', overlayUntil:'', posterUrl:'', posterUntil:'', news:'' };
+  const state = { showOverlay:'no', overlayUntil:'', posterUrl:'', posterUntil:'', posterSeconds:15, news:'' };
   const $ = id => document.getElementById(id);
   const videoToggle=$('videoToggle'), newsBox=$('newsBox');
 
@@ -314,7 +319,7 @@
   function configJson(){
     const o={ showOverlay: state.showOverlay };
     if(state.showOverlay==='yes' && state.overlayUntil) o.overlayUntil = state.overlayUntil;
-    if(state.posterUrl){ o.posterUrl = state.posterUrl; if(state.posterUntil) o.posterUntil = state.posterUntil; }
+    if(state.posterUrl){ o.posterUrl = state.posterUrl; o.posterSeconds = state.posterSeconds; if(state.posterUntil) o.posterUntil = state.posterUntil; }
     return JSON.stringify(o, null, 2)+'\n';
   }
   function fmtWhen(iso){ try{ return new Date(iso).toLocaleString([], {weekday:'short', hour:'2-digit', minute:'2-digit'}); }catch(e){ return iso; } }
@@ -356,9 +361,9 @@
   // ---------- load current state (public files, no token needed) ----------
   fetch('config.json?_='+Date.now()).then(r=>r.json()).then(d=>{
     state.showOverlay=(d.showOverlay||'no'); state.overlayUntil=(d.overlayUntil||'');
-    state.posterUrl=(d.posterUrl||''); state.posterUntil=(d.posterUntil||'');
+    state.posterUrl=(d.posterUrl||''); state.posterUntil=(d.posterUntil||''); state.posterSeconds=(d.posterSeconds||15);
     videoToggle.checked=state.showOverlay==='yes'; updateAoStatus();
-    posterUrlEl.value=state.posterUrl; updatePosterPreview(); updatePosterAo();
+    posterUrlEl.value=state.posterUrl; posterSecs.value=state.posterSeconds; updatePosterPreview(); updatePosterAo();
   }).catch(()=>{});
   fetch('news.txt?_='+Date.now()).then(r=>r.text()).then(t=>{ state.news=t; newsBox.value=t; }).catch(()=>{});
   fetch('playlist.json?_='+Date.now()).then(r=>r.json()).then(d=>{
@@ -382,7 +387,8 @@
   });
 
   // ---------- poster (empty link = no poster) ----------
-  const posterUrlEl=$('posterUrl'), posterThumb=$('posterThumb');
+  const posterUrlEl=$('posterUrl'), posterThumb=$('posterThumb'), posterSecs=$('posterSecs');
+  posterSecs.addEventListener('input',()=>{ let v=parseInt(posterSecs.value,10); if(!v||v<1)v=15; if(v>600)v=600; state.posterSeconds=v; });
   function updatePosterPreview(){ const u=posterUrlEl.value.trim(); if(u){ posterThumb.src=u; } else { posterThumb.removeAttribute('src'); posterThumb.style.visibility='hidden'; } }
   posterThumb.addEventListener('error',()=>{ posterThumb.style.visibility='hidden'; });
   posterThumb.addEventListener('load',()=>{ posterThumb.style.visibility='visible'; });
