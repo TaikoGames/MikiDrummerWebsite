@@ -304,6 +304,11 @@
     return r.json();
   }
   function msg(el,text,kind){ el.textContent=text; el.style.color = kind==='err'?'#ff8a7a' : kind==='ok'?'#7ee787' : 'var(--muted)'; }
+  function download(name,text,type){
+    const blob=new Blob([text],{type:type||'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  }
 
   // ---------- config helpers ----------
   function configJson(){
@@ -325,7 +330,7 @@
     if(!connected()){ msg(el,'Connect GitHub above first — nothing saved.','err'); return; }
     msg(el,'Saving…');
     try{ await saveFile('config.json',configJson(),reason); msg(el,'Saved ✓ — live in ~1 min','ok'); }
-    catch(e){ msg(el,'Save failed: '+e.message,'err'); }
+    catch(e){ download('config.json',configJson()); msg(el,'Token couldn’t save ('+e.message+') — downloaded config.json instead. Commit it or send it to Claude.','err'); }
   }
   function commitConfig(reason){ return commitConfigTo($('videoMsg'), reason); }
 
@@ -411,7 +416,7 @@
     if(!connected()){ msg(nm,'Connect GitHub above first.','err'); return; }
     state.news=newsBox.value; msg(nm,'Saving…');
     try{ await saveFile('news.txt',state.news,'Update news via admin'); msg(nm,'Saved ✓ — live in ~1 min','ok'); }
-    catch(e){ msg(nm,'Save failed: '+e.message,'err'); }
+    catch(e){ download('news.txt',state.news,'text/plain'); msg(nm,'Token couldn’t save ('+e.message+') — downloaded news.txt instead.','err'); }
   });
 
   // ---------- featured video ----------
@@ -458,7 +463,7 @@
       await saveFile('videos.json', JSON.stringify(out,null,2)+'\n', 'Set featured video: '+newFeatured.title);
       videos={ featured:out.featured, sidebar:out.sidebar }; renderFv(); fvLink.value=''; fvTitle.value='';
       msg(fm,'Saved ✓ — live in ~1 min','ok');
-    } catch(e){ msg(fm,'Save failed: '+e.message,'err'); }
+    } catch(e){ download('videos.json', JSON.stringify(out,null,2)+'\n'); msg(fm,'Token couldn’t save ('+e.message+') — downloaded videos.json instead.','err'); }
   });
 
   // ---------- photos ----------
