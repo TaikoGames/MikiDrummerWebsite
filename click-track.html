@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Click Track — Metronome & Guide-Track Maker | Miki Drummer</title>
+<meta name="description" content="A free online metronome and click-track maker — set the tempo, time signature and subdivision, play it live, and download a WAV click track. Runs in your browser.">
+<link rel="canonical" href="https://www.mikidrummer.ca/click-track.html">
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --bg:#12100b; --panel:#1b1710; --panel-2:#241f15; --line:#332b1d;
+    --ink:#f3ede1; --muted:#a99e88; --amber:#f4b400; --amber-deep:#7a5c07; --red:#e2523b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 70% at 50% -10%,#2a2110 0%,transparent 55%),var(--bg);
+    color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    min-height:100vh;padding:22px 16px 70px;-webkit-tap-highlight-color:transparent;
+  }
+  .mono{font-family:ui-monospace,"SFMono-Regular",Menlo,"Space Mono",monospace}
+  .wrap{max-width:640px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .eyebrow{font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber)}
+  h1{font-size:30px;letter-spacing:-.01em;margin:4px 0}
+  .lead{color:var(--muted);font-size:14px;margin-bottom:20px}
+  .back{color:var(--muted);font-size:13px;text-decoration:none}
+  .back:hover{color:var(--amber)}
+
+  .stage{background:linear-gradient(180deg,var(--panel),#151109);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 26px 60px rgba(0,0,0,.5)}
+
+  /* BPM */
+  .bpm{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:6px}
+  .bpm .round{width:52px;height:52px;border-radius:50%;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:26px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center}
+  .bpm .round:hover{border-color:var(--amber);color:var(--amber)}
+  .bpm .val{font-family:ui-monospace,monospace;font-size:64px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--amber);min-width:150px;text-align:center;line-height:1}
+  .bpm-unit{text-align:center;color:var(--muted);font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:14px}
+  input[type=range]{width:100%;accent-color:var(--amber);height:30px}
+  .tap{display:block;margin:10px auto 0;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:9px 18px;font:600 13px inherit;cursor:pointer}
+  .tap:hover{border-color:var(--amber);color:var(--amber)}
+
+  /* beat dots */
+  .beats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px 0 8px;min-height:26px}
+  .dot{width:16px;height:16px;border-radius:50%;background:#3a3120;transition:transform .05s,background .05s}
+  .dot.on{background:var(--amber);transform:scale(1.35)}
+  .dot.accent.on{background:#fff;box-shadow:0 0 14px var(--amber)}
+
+  /* controls */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  .ctl{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+  .ctl label{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;font-family:ui-monospace,monospace}
+  .seg{display:flex;gap:6px;flex-wrap:wrap}
+  .seg button{flex:1;min-width:38px;background:#17130c;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px 4px;font:700 13px inherit;cursor:pointer}
+  .seg button.on{background:var(--amber);border-color:var(--amber);color:#181203}
+  .row2{display:flex;gap:8px;align-items:center}
+  select{width:100%;background:#17130c;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px 10px;font:inherit;font-size:14px}
+  .sig-x{color:var(--muted);font-weight:700}
+
+  .play{width:100%;margin-top:18px;background:var(--amber);color:#181203;border:none;border-radius:12px;padding:16px;font:800 17px inherit;letter-spacing:.02em;cursor:pointer}
+  .play:hover{filter:brightness(1.06)}
+  .play.playing{background:var(--red);color:#fff}
+
+  .dl{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .dl h2{font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-family:ui-monospace,monospace}
+  .dl-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .dl-row .len{display:flex;align-items:center;gap:8px}
+  .dl-row input[type=number]{width:74px;background:#17130c;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px;font:inherit;font-size:15px}
+  .btn{background:var(--amber);color:#181203;border:none;border-radius:9px;padding:11px 18px;font:800 14px inherit;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--amber);color:var(--amber)}
+  .dl .msg{font-size:12.5px;color:var(--muted);margin-top:10px;min-height:15px}
+
+  .cli{margin-top:16px;font-size:12.5px;color:var(--muted);background:rgba(0,0,0,.25);border-left:3px solid var(--amber);padding:11px 13px;border-radius:6px;line-height:1.55}
+  .cli a{color:var(--amber)}
+  footer{margin-top:26px;text-align:center;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><span class="eyebrow">Miki Drummer · Tools</span><h1>Click Track</h1></div>
+    <a class="back" href="/bands.html">← Tools</a>
+  </div>
+  <p class="lead">A metronome you can play, and a click track you can keep. Set it, hit play, and download a WAV to practice or track to. Runs entirely in your browser.</p>
+
+  <div class="stage">
+    <div class="bpm">
+      <button class="round" id="minus" aria-label="Slower">−</button>
+      <div class="val" id="bpmVal">120</div>
+      <button class="round" id="plus" aria-label="Faster">+</button>
+    </div>
+    <div class="bpm-unit">BPM</div>
+    <input type="range" id="bpm" min="40" max="260" value="120" step="1" aria-label="Tempo">
+    <button class="tap" id="tap">Tap tempo</button>
+
+    <div class="beats" id="beats"></div>
+
+    <button class="play" id="play">▶ Play</button>
+
+    <div class="grid">
+      <div class="ctl">
+        <label>Time signature</label>
+        <div class="row2">
+          <select id="sigNum" aria-label="Beats per bar">
+            <option>2</option><option>3</option><option selected>4</option><option>5</option>
+            <option>6</option><option>7</option><option>9</option><option>12</option>
+          </select>
+          <span class="sig-x">/</span>
+          <select id="sigDen" aria-label="Beat value">
+            <option selected>4</option><option>8</option>
+          </select>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Subdivision</label>
+        <div class="seg" id="subdiv">
+          <button data-v="1" class="on">♩</button>
+          <button data-v="2">♪♪</button>
+          <button data-v="3">3</button>
+          <button data-v="4">4</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Accent beat 1</label>
+        <div class="seg" id="accent">
+          <button data-v="1" class="on">On</button>
+          <button data-v="0">Off</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Volume</label>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+      </div>
+    </div>
+  </div>
+
+  <div class="dl">
+    <h2>Download a click track</h2>
+    <div class="dl-row">
+      <span class="len">Length <input type="number" id="bars" min="1" max="512" value="16"> bars</span>
+      <button class="btn" id="download">⬇ Download WAV</button>
+      <button class="btn ghost" id="previewLen">≈ length</button>
+    </div>
+    <div class="msg" id="dlMsg"></div>
+  </div>
+
+  <div class="cli">
+    Prefer the command line? The same generator as a tiny Python script (no installs):
+    <a href="/clicktrack.py" download>download clicktrack.py</a> — then e.g.
+    <span class="mono">python clicktrack.py --bpm 120 --bars 16</span>.
+  </div>
+
+  <footer>Made for practice. <span class="mono">mikidrummer.ca</span></footer>
+</div>
+
+<script>
+(function(){
+  var state = { bpm:120, num:4, den:4, subdiv:1, accent:true, vol:0.8 };
+
+  var $ = function(id){ return document.getElementById(id); };
+  var bpmVal=$('bpmVal'), bpmSlider=$('bpm'), beatsEl=$('beats'), playBtn=$('play'),
+      barsEl=$('bars'), dlMsg=$('dlMsg');
+
+  // ---------- beat dots ----------
+  function renderDots(){
+    beatsEl.innerHTML='';
+    for(var i=0;i<state.num;i++){
+      var d=document.createElement('div');
+      d.className='dot'+(i===0?' accent':'');
+      beatsEl.appendChild(d);
+    }
+  }
+  function flashDot(beat){
+    var dots=beatsEl.children;
+    for(var i=0;i<dots.length;i++) dots[i].classList.remove('on');
+    if(dots[beat]) dots[beat].classList.add('on');
+  }
+
+  // ---------- tempo controls ----------
+  function setBpm(v){
+    v=Math.max(40,Math.min(260,Math.round(v)));
+    state.bpm=v; bpmVal.textContent=v; bpmSlider.value=v;
+  }
+  bpmSlider.addEventListener('input',function(){ setBpm(+bpmSlider.value); });
+  $('plus').addEventListener('click',function(){ setBpm(state.bpm+1); });
+  $('minus').addEventListener('click',function(){ setBpm(state.bpm-1); });
+
+  // tap tempo
+  var taps=[];
+  $('tap').addEventListener('click',function(){
+    var now=performance.now();
+    taps=taps.filter(function(t){ return now-t<2500; });
+    taps.push(now);
+    if(taps.length>=2){
+      var sum=0; for(var i=1;i<taps.length;i++) sum+=taps[i]-taps[i-1];
+      var avg=sum/(taps.length-1);
+      setBpm(60000/avg);
+    }
+  });
+
+  // segmented controls
+  function seg(id,key,cast){
+    var box=$(id);
+    box.addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b) return;
+      [].forEach.call(box.children,function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      state[key]=cast(b.dataset.v);
+    });
+  }
+  seg('subdiv','subdiv',Number);
+  seg('accent','accent',function(v){ return v==='1'; });
+
+  $('sigNum').addEventListener('change',function(){ state.num=+this.value; renderDots(); });
+  $('sigDen').addEventListener('change',function(){ state.den=+this.value; });
+  $('vol').addEventListener('input',function(){ state.vol=+this.value; });
+
+  // ---------- live metronome (Web Audio, lookahead scheduler) ----------
+  var actx=null, playing=false, step=0, nextTime=0, timer=null, viz=[];
+  var LOOK=25, AHEAD=0.12;
+  function stepSec(){ return (60/state.bpm)/state.subdiv; }
+  function tick(freq,peak,dur,time){
+    var o=actx.createOscillator(), g=actx.createGain();
+    o.type='sine'; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,time);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002,peak*state.vol),time+0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001,time+dur);
+    o.connect(g).connect(actx.destination); o.start(time); o.stop(time+dur+0.03);
+  }
+  function schedule(){
+    while(nextTime < actx.currentTime + AHEAD){
+      var beatIndex=Math.floor(step/state.subdiv);
+      var onBeat=(step%state.subdiv===0);
+      var barStart=(beatIndex%state.num===0);
+      if(onBeat&&barStart&&state.accent) tick(1600,0.95,0.05,nextTime);
+      else if(onBeat) tick(1000,0.6,0.045,nextTime);
+      else tick(1300,0.3,0.026,nextTime);
+      if(onBeat) viz.push({beat:beatIndex%state.num,t:nextTime});
+      nextTime+=stepSec(); step++;
+    }
+    timer=setTimeout(schedule,LOOK);
+  }
+  function drawViz(){
+    if(!playing) return;
+    var now=actx.currentTime;
+    while(viz.length && viz[0].t<=now){ flashDot(viz.shift().beat); }
+    requestAnimationFrame(drawViz);
+  }
+  function start(){
+    if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+    playing=true; step=0; viz=[]; nextTime=actx.currentTime+0.06;
+    schedule(); drawViz();
+    playBtn.textContent='■ Stop'; playBtn.classList.add('playing');
+  }
+  function stop(){
+    playing=false; clearTimeout(timer);
+    playBtn.textContent='▶ Play'; playBtn.classList.remove('playing');
+    var dots=beatsEl.children; for(var i=0;i<dots.length;i++) dots[i].classList.remove('on');
+  }
+  playBtn.addEventListener('click',function(){ playing?stop():start(); });
+  window.addEventListener('keydown',function(e){ if(e.code==='Space'){ e.preventDefault(); playing?stop():start(); } });
+
+  // ---------- WAV export ----------
+  function blip(freq,ms,amp,sr){
+    var n=Math.floor(sr*ms/1000), a=new Float32Array(n);
+    for(var i=0;i<n;i++){ var t=i/sr; a[i]=amp*Math.exp(-t*42)*Math.sin(2*Math.PI*freq*t); }
+    return a;
+  }
+  function buildBuffer(bars){
+    var sr=44100, ss=(60/state.bpm)/state.subdiv;
+    var totalSteps=Math.round(state.num*bars*state.subdiv);
+    var total=Math.ceil(sr*(totalSteps*ss+0.25));
+    var buf=new Float32Array(total);
+    var acc=blip(1600,45,0.95,sr), bt=blip(1000,40,0.6,sr), sub=blip(1300,22,0.28,sr);
+    for(var s=0;s<totalSteps;s++){
+      var pos=Math.floor(s*ss*sr), bi=Math.floor(s/state.subdiv);
+      var onBeat=(s%state.subdiv===0), barStart=(bi%state.num===0);
+      var c = (onBeat&&barStart&&state.accent)?acc:(onBeat?bt:sub);
+      for(var i=0;i<c.length;i++){ if(pos+i<total) buf[pos+i]+=c[i]*state.vol; }
+    }
+    return {buf:buf,sr:sr,dur:total/sr};
+  }
+  function wavBlob(buf,sr){
+    var len=buf.length, ab=new ArrayBuffer(44+len*2), v=new DataView(ab);
+    function str(o,s){ for(var i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); }
+    str(0,'RIFF'); v.setUint32(4,36+len*2,true); str(8,'WAVE'); str(12,'fmt ');
+    v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+    v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+    str(36,'data'); v.setUint32(40,len*2,true);
+    var off=44; for(var i=0;i<len;i++){ var x=Math.max(-1,Math.min(1,buf[i])); v.setInt16(off,x<0?x*0x8000:x*0x7FFF,true); off+=2; }
+    return new Blob([ab],{type:'audio/wav'});
+  }
+  function fmtLen(sec){ var m=Math.floor(sec/60), s=Math.round(sec%60); return m+':'+(s<10?'0':'')+s; }
+  $('previewLen').addEventListener('click',function(){
+    var bars=Math.max(1,Math.min(512,+barsEl.value||16));
+    var barSec=(60/state.bpm)*state.num;
+    dlMsg.textContent='≈ '+fmtLen(bars*barSec)+' at '+state.bpm+' BPM · '+state.num+'/'+state.den;
+  });
+  $('download').addEventListener('click',function(){
+    var bars=Math.max(1,Math.min(512,+barsEl.value||16));
+    dlMsg.textContent='Rendering…';
+    setTimeout(function(){
+      var r=buildBuffer(bars), blob=wavBlob(r.buf,r.sr);
+      var a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download='click_'+state.bpm+'bpm_'+state.num+'-'+state.den+(state.subdiv>1?'_'+state.subdiv+'x':'')+'.wav';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); },2000);
+      dlMsg.textContent='Saved '+a.download+' — '+fmtLen(r.dur)+'.';
+    },30);
+  });
+
+  renderDots(); setBpm(120);
+})();
+</script>
+</body>
+</html>

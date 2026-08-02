@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — This page melted | Miki Drummer</title>
+<meta name="robots" content="noindex, follow">
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --stone-950:#0f1012; --stone-900:#16181b; --stone-800:#1e2124;
+    --stone-700:#2b2f34; --stone-400:#7d848d; --stone-300:#a6adb6;
+    --stone-100:#e9ebee; --molten:#e8672a; --edge:#2b2f34;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(120% 90% at 50% 0%,rgba(232,103,42,0.12),transparent 60%),var(--stone-950);
+    color:var(--stone-100);
+    font-family:"Helvetica Neue",system-ui,Arial,sans-serif;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:40px 22px;min-height:100%;
+  }
+  .logo{width:150px;max-width:60%;height:auto;margin-bottom:30px;transform-origin:top center;animation:melt 3.4s ease-in-out infinite}
+  @keyframes melt{
+    0%,100%{transform:scaleY(1) translateY(0);filter:none}
+    50%{transform:scaleY(.94) translateY(4px);filter:drop-shadow(0 10px 12px rgba(232,103,42,.35))}
+  }
+  .code{
+    font-family:"Arial Black","Helvetica Neue",system-ui,sans-serif;
+    font-size:clamp(78px,22vw,150px);line-height:.9;letter-spacing:-.03em;
+    color:var(--molten);text-shadow:0 8px 40px rgba(232,103,42,.25);
+  }
+  .eyebrow{font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--molten);font-weight:700;margin:18px 0 10px}
+  h1{font-size:clamp(22px,5vw,30px);margin-bottom:14px}
+  p.msg{color:var(--stone-300);font-size:17px;max-width:52ch;line-height:1.6;margin:0 auto}
+  .links{margin-top:34px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  a.btn{
+    display:inline-block;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:700;
+    text-decoration:none;border:1px solid var(--edge);color:var(--stone-100);background:var(--stone-900);
+  }
+  a.btn.primary{background:var(--molten);border-color:var(--molten);color:#160b05}
+  a.btn:hover{border-color:var(--molten);color:var(--molten)}
+  a.btn.primary:hover{filter:brightness(1.07);color:#160b05}
+  .stick{color:var(--stone-400);font-size:13px;margin-top:36px}
+</style>
+</head>
+<body>
+  <img class="logo" src="/images/brand.png" alt="Miki Drummer">
+  <div class="code">404</div>
+  <div class="eyebrow">Page not found</div>
+  <h1>This page melted like a popsicle 🍦</h1>
+  <p class="msg">Left it out in the Ibiza sun and now it's a puddle. The link you followed is gone, misspelled, or never existed — but the beat goes on.</p>
+  <div class="links">
+    <a class="btn primary" href="/index.html">Back to the kit</a>
+    <a class="btn" href="/bands.html">Bands &amp; Tools</a>
+  </div>
+  <p class="stick">🥁 mikidrummer.ca · still keeping time</p>
+</body>
+</html>
