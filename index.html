@@ -619,5 +619,18 @@
             .live-overlay { display: none; }
         </style>
 
+        <!-- ===================== DISCREET ADMIN ACCESS ===================== -->
+        <a href="/admin.html" id="mikiAdminDot" aria-label="Admin panel" title="Admin">⚙</a>
+        <style>
+          #mikiAdminDot{
+            position:fixed; right:12px; bottom:12px; z-index:4000;
+            width:34px; height:34px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            background:rgba(0,0,0,.35); color:#7a7a7a; text-decoration:none;
+            font-size:16px; line-height:1; opacity:.22; transition:opacity .2s, color .2s;
+          }
+          #mikiAdminDot:hover, #mikiAdminDot:active{ opacity:1; color:#e8372a; }
+        </style>
+
     </body>
 </html>
