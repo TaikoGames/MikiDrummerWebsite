@@ -372,23 +372,71 @@
   }
   function stopConfetti(){ if(raf){ cancelAnimationFrame(raf); raf=null; } ctx.clearRect(0,0,W,H); }
 
-  // ---------- crash sound (Web Audio, synthesized) ----------
-  var actx=null;
+  // ---------- celebration sound (Web Audio, synthesized drum fill + crash) ----------
+  var actx=null, master=null;
+  function ac(){
+    if(!actx){
+      actx=new (window.AudioContext||window.webkitAudioContext)();
+      master=actx.createGain(); master.gain.value=0.9; master.connect(actx.destination);
+    }
+    if(actx.state==='suspended') actx.resume();
+    return actx;
+  }
+  function noiseBuf(dur){
+    var sr=actx.sampleRate, n=Math.floor(sr*dur), b=actx.createBuffer(1,n,sr), d=b.getChannelData(0);
+    for(var i=0;i<n;i++) d[i]=Math.random()*2-1;
+    return b;
+  }
+  function adsr(node,t,peak,atk,dec){
+    var g=actx.createGain();
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(peak,t+atk);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+atk+dec);
+    node.connect(g); g.connect(master); return g;
+  }
+  function tom(t,freq){
+    var o=actx.createOscillator(); o.type='sine';
+    o.frequency.setValueAtTime(freq,t);
+    o.frequency.exponentialRampToValueAtTime(freq*0.55,t+0.18);
+    adsr(o,t,0.5,0.004,0.22); o.start(t); o.stop(t+0.34);
+    // a touch of attack noise for stick definition
+    var s=actx.createBufferSource(); s.buffer=noiseBuf(0.05);
+    var hp=actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=2500;
+    s.connect(hp); adsr(hp,t,0.12,0.002,0.04); s.start(t); s.stop(t+0.08);
+  }
+  function kick(t){
+    var o=actx.createOscillator(); o.type='sine';
+    o.frequency.setValueAtTime(165,t);
+    o.frequency.exponentialRampToValueAtTime(46,t+0.12);
+    adsr(o,t,0.95,0.004,0.34); o.start(t); o.stop(t+0.42);
+  }
+  function snare(t){
+    var s=actx.createBufferSource(); s.buffer=noiseBuf(0.3);
+    var hp=actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=1700;
+    s.connect(hp); adsr(hp,t,0.5,0.003,0.19); s.start(t); s.stop(t+0.34);
+    var o=actx.createOscillator(); o.type='triangle'; o.frequency.value=190;
+    adsr(o,t,0.32,0.003,0.11); o.start(t); o.stop(t+0.2);
+  }
+  function crashHit(t,dur){
+    var s=actx.createBufferSource(); s.buffer=noiseBuf(dur);
+    var hp=actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=3800;
+    var bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=9000; bp.Q.value=0.6;
+    var g=actx.createGain();
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.62,t+0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    s.connect(hp); hp.connect(bp); bp.connect(g); g.connect(master);
+    s.start(t); s.stop(t+dur+0.05);
+  }
   function crash(){
     try{
-      if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
-      if(actx.state==='suspended') actx.resume();
-      var dur=1.4, sr=actx.sampleRate, n=Math.floor(sr*dur);
-      var buf=actx.createBuffer(1,n,sr), d=buf.getChannelData(0);
-      for(var i=0;i<n;i++){ d[i]=(Math.random()*2-1)*Math.pow(1-i/n,1.6); }
-      var src=actx.createBufferSource(); src.buffer=buf;
-      var hp=actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=5000;
-      var g=actx.createGain();
-      g.gain.setValueAtTime(0.0001,actx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.5,actx.currentTime+0.005);
-      g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+dur);
-      src.connect(hp).connect(g).connect(actx.destination);
-      src.start();
+      ac();
+      var t=actx.currentTime+0.03;
+      // quick descending tom fill…
+      tom(t,240); tom(t+0.11,190); tom(t+0.22,150);
+      // …into the big finish: kick + snare + crash as one hit
+      var hit=t+0.36;
+      kick(hit); snare(hit); crashHit(hit,1.9);
     }catch(e){}
   }
 })();
