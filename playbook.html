@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>The Stage Playbook — Miki Drummer</title>
+<link rel="icon" href="favicon.ico">
+</head>
+<body>
+<style>
+  :root{
+    --ink:#141110;
+    --panel:#1c1817;
+    --panel-2:#241f1d;
+    --paper:#efe7db;
+    --muted:#8d847a;
+    --amber:#ffb02e;
+    --amber-deep:#7a4d0e;
+    --red:#e23b2e;
+    --hair:rgba(255,255,255,.09);
+    --hair-strong:rgba(255,255,255,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:
+      radial-gradient(120% 70% at 50% -10%, #241a12 0%, transparent 55%),
+      var(--ink);
+    color:var(--paper);
+    font-family:system-ui,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.5;
+    padding:20px 16px 70px;
+  }
+  .wrap{max-width:1000px;margin:0 auto}
+  .display{font-family:Impact,"Haettenschweiler","Franklin Gothic Bold","Arial Narrow",sans-serif;font-weight:400;letter-spacing:.01em;text-transform:uppercase;line-height:.92}
+  .mono{font-family:"Space Mono",ui-monospace,"SFMono-Regular",Menlo,"Courier New",monospace}
+
+  /* ---------- laminate header ---------- */
+  .lam{
+    position:relative;
+    background:linear-gradient(#211c1a,#171312);
+    border:1px solid var(--hair-strong);
+    border-radius:16px;
+    padding:30px 26px 26px;
+    overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,.5);
+  }
+  .lam::before{ /* lanyard slot */
+    content:"";position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    width:74px;height:11px;border-radius:6px;background:#0d0a09;border:1px solid var(--hair-strong);
+  }
+  .lam::after{ /* stage-light wash */
+    content:"";position:absolute;right:-60px;top:-80px;width:320px;height:320px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,176,46,.16),transparent 65%);pointer-events:none;
+  }
+  .kicker{color:var(--amber);font-size:12px;letter-spacing:.32em;margin:14px 0 10px}
+  .lam h1{font-size:clamp(38px,9vw,74px);color:var(--paper)}
+  .lam h1 .b{color:var(--amber)}
+  .lam .sub{color:var(--muted);font-size:15px;max-width:60ch;margin-top:12px}
+  .tape{
+    display:inline-block;margin-top:16px;background:var(--amber);color:#20160a;
+    font-size:12px;letter-spacing:.18em;font-weight:800;text-transform:uppercase;
+    padding:7px 14px;border-radius:3px;transform:rotate(-1.4deg);
+    font-family:"Space Mono",ui-monospace,monospace;
+  }
+
+  /* ---------- section ---------- */
+  section{margin-top:40px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--hair);padding-bottom:10px;margin-bottom:20px;flex-wrap:wrap}
+  .sec-head h2{font-size:clamp(24px,5vw,36px);color:var(--paper)}
+  .sec-head .num{font-family:"Space Mono",monospace;color:var(--amber);font-size:13px;letter-spacing:.2em}
+  .sec-head .hint{margin-left:auto;color:var(--muted);font-size:13px}
+
+  .cat-label{
+    font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--muted);margin:22px 0 12px;display:flex;align-items:center;gap:10px;
+  }
+  .cat-label::after{content:"";flex:1;height:1px;background:var(--hair)}
+  .cat-label.stop{color:var(--red)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+  .sig{
+    position:relative;background:var(--panel);border:1px solid var(--hair);
+    border-radius:12px;padding:16px 16px 15px;overflow:hidden;
+  }
+  .sig::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber)}
+  .sig.stop::before{background:var(--red)}
+  .sig .glyph{font-size:34px;line-height:1;filter:saturate(1.05)}
+  .sig .name{font-family:Impact,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.02em;font-size:22px;margin:10px 0 8px;color:var(--paper)}
+  .sig .row{display:flex;gap:8px;font-size:13.5px;margin-top:6px}
+  .sig .row .k{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.12em;color:var(--amber);flex:0 0 46px;padding-top:2px}
+  .sig.stop .row .k{color:var(--red)}
+  .sig .row .v{color:#d8cec2}
+  .sig .row .v.mean{color:var(--paper);font-weight:600}
+
+  /* ---------- dress code ---------- */
+  .dress{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .col{background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:18px 16px}
+  .col h3{font-family:Impact,"Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:.03em;font-size:20px;margin-bottom:4px}
+  .col .cap{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .col.yes h3{color:var(--amber)} .col.no h3{color:var(--red)}
+  .col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+  .col li{display:flex;gap:10px;font-size:14px;color:#ddd3c7;line-height:1.4}
+  .col li .m{flex:0 0 auto;font-weight:800;font-family:"Space Mono",monospace}
+  .col.yes li .m{color:var(--amber)} .col.no li .m{color:var(--red)}
+
+  footer{margin-top:40px;border-top:1px solid var(--hair);padding-top:16px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  footer b{color:var(--paper)}
+
+  @media (max-width:720px){ .dress{grid-template-columns:1fr} }
+
+  @media (prefers-reduced-motion:no-preference){
+    .sig,.col{animation:rise .5s both}
+    .sig{animation-delay:calc(var(--i,0)*40ms)}
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+
+<div class="wrap">
+
+  <header class="lam">
+    <p class="kicker mono">MIKIDRUMMER.CA · BAND OPS</p>
+    <h1 class="display">The Stage <span class="b">Playbook</span></h1>
+    <p class="sub">Two things every set needs and nobody rehearses: how we talk to each other when it's too loud to talk, and what we show up in. Pull this up before doors.</p>
+    <span class="tape">When in doubt — watch the drummer 🥁</span>
+  </header>
+
+  <!-- ===================== SIGNALS ===================== -->
+  <section>
+    <div class="sec-head">
+      <span class="num mono">01</span>
+      <h2 class="display">Stage Signals</h2>
+      <span class="hint">Hand cues to run the song mid-song — no talking required.</span>
+    </div>
+
+    <p class="cat-label">Structure — where the song goes next</p>
+    <div class="grid">
+      <div class="sig" style="--i:0"><div class="glyph">🔁</div><div class="name">Around Again</div>
+        <div class="row"><span class="k">DO</span><span class="v">Index finger circling in the air.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">Repeat this part — one more time.</span></div></div>
+      <div class="sig" style="--i:1"><div class="glyph">⏭️</div><div class="name">Next</div>
+        <div class="row"><span class="k">DO</span><span class="v">Jab a finger forward, toward the crowd.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">Move on — into the next section.</span></div></div>
+      <div class="sig" style="--i:2"><div class="glyph">🔝</div><div class="name">From the Top</div>
+        <div class="row"><span class="k">DO</span><span class="v">Tap the top of your head.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">Back to the top of the song.</span></div></div>
+      <div class="sig" style="--i:3"><div class="glyph">✊</div><div class="name">Big Ending</div>
+        <div class="row"><span class="k">DO</span><span class="v">Raise a fist, then punch it down on the hit.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">Last one — stop together on the stab.</span></div></div>
+    </div>
+
+    <p class="cat-label">Dynamics — how big it gets</p>
+    <div class="grid">
+      <div class="sig" style="--i:0"><div class="glyph">🤫</div><div class="name">Bring It Down</div>
+        <div class="row"><span class="k">DO</span><span class="v">Flat palm, press it down slowly.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">Pull back — quieter, tighter.</span></div></div>
+      <div class="sig" style="--i:1"><div class="glyph">📢</div><div class="name">Lift It</div>
+        <div class="row"><span class="k">DO</span><span class="v">Palm up, raise it toward the ceiling.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">Build — louder, bigger, open up.</span></div></div>
+    </div>
+
+    <p class="cat-label">Cues — heads up</p>
+    <div class="grid">
+      <div class="sig" style="--i:0"><div class="glyph">👀</div><div class="name">Watch Me</div>
+        <div class="row"><span class="k">DO</span><span class="v">Two fingers to your eyes, then point at them.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">Eyes up — a cue is coming.</span></div></div>
+      <div class="sig" style="--i:1"><div class="glyph">🤘</div><div class="name">You're Up</div>
+        <div class="row"><span class="k">DO</span><span class="v">Point straight at the player.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">Your solo — take it.</span></div></div>
+      <div class="sig" style="--i:2"><div class="glyph">🥁</div><div class="name">Count It In</div>
+        <div class="row"><span class="k">DO</span><span class="v">Four stick clicks, or count on fingers.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">I'll bring us in — come in together.</span></div></div>
+    </div>
+
+    <p class="cat-label stop">Stop — the only one that overrides everything</p>
+    <div class="grid">
+      <div class="sig stop" style="--i:0"><div class="glyph">✂️</div><div class="name">Cut</div>
+        <div class="row"><span class="k">DO</span><span class="v">Slice a flat hand across your throat.</span></div>
+        <div class="row"><span class="k">MEANS</span><span class="v mean">Dead stop — end it now, no tail.</span></div></div>
+    </div>
+  </section>
+
+  <!-- ===================== DRESS CODE ===================== -->
+  <section>
+    <div class="sec-head">
+      <span class="num mono">02</span>
+      <h2 class="display">Dress Code</h2>
+      <span class="hint">We're one band on stage — look like it.</span>
+    </div>
+
+    <div class="dress">
+      <div class="col yes">
+        <h3>Always</h3>
+        <div class="cap mono">non-negotiable</div>
+        <ul>
+          <li><span class="m">✓</span><span>Head-to-toe black (or close). Hides sweat, beer, and mistakes.</span></li>
+          <li><span class="m">✓</span><span>Closed shoes you can stomp in — boots or beat-up sneakers.</span></li>
+          <li><span class="m">✓</span><span>Something you can thrash in. Nothing that rides up or tears.</span></li>
+          <li><span class="m">✓</span><span>Earplugs. They count as gear.</span></li>
+        </ul>
+      </div>
+      <div class="col yes">
+        <h3>Show Night</h3>
+        <div class="cap mono">nice touches</div>
+        <ul>
+          <li><span class="m">✓</span><span>One band tee — someone else's band, never our own.</span></li>
+          <li><span class="m">✓</span><span>A layer you don't mind losing to the pit or the stage lights.</span></li>
+          <li><span class="m">✓</span><span>IEMs / batteries charged, sticks and spares in the bag.</span></li>
+          <li><span class="m">✓</span><span>A little stage presence — this is a show, not a rehearsal.</span></li>
+        </ul>
+      </div>
+      <div class="col no">
+        <h3>Never</h3>
+        <div class="cap mono">leave it home</div>
+        <ul>
+          <li><span class="m">✕</span><span>Flip-flops, sandals, anything open-toed near a cymbal stand.</span></li>
+          <li><span class="m">✕</span><span>Our own merch on stage — you're not a fan tonight.</span></li>
+          <li><span class="m">✕</span><span>Bright white that's grey by song three.</span></li>
+          <li><span class="m">✕</span><span>Loose jewelry that snags a strap, a stand, or a snare.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Tape it inside the case lid. <b>Signals beat shouting.</b></span>
+    <span class="mono">v1 · print or screenshot</span>
+  </footer>
+
+</div>
+</body>
+</html>
