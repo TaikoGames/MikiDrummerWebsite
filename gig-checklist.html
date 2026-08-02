@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drummer's Gig Checklist — What to Pack for Every Show | Miki Drummer</title>
+<meta name="description" content="A free interactive gig checklist for drummers. Pick your show type — breakables only, full kit, festival fly date, studio session or rehearsal — and tick off what to pack: snare, cymbals, kick pedal, sticks, IEMs and more. Never forget your gear again.">
+<meta name="keywords" content="drummer gig checklist, drummer packing list, what to pack drums, drummer breakables list, backline breakables, drum gear checklist, cymbals snare pedal sticks IEM, festival drummer checklist, studio drum session checklist, drummer show prep, Miki drummer">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.mikidrummer.ca/gig-checklist.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mikidrummer.ca/gig-checklist.html">
+<meta property="og:title" content="Drummer's Gig Checklist — What to Pack for Every Show">
+<meta property="og:description" content="Pick your show type and tick off your gear — breakables, full kit, festival, studio or rehearsal. Never leave the snare behind again.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Drummer's Gig Checklist — What to Pack for Every Show">
+<meta name="twitter:description" content="An interactive packing checklist for drummers. Breakables, full kit, festival, studio or rehearsal.">
+<link rel="icon" href="favicon.ico">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Drummer's Gig Checklist",
+  "url": "https://www.mikidrummer.ca/gig-checklist.html",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any (web browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" },
+  "description": "An interactive packing checklist for drummers. Choose a show type and check off the gear you need — breakables, full kit, festival fly date, studio session or rehearsal.",
+  "creator": { "@type": "Person", "name": "Miki", "url": "https://www.mikidrummer.ca/" }
+}
+</script>
+<style>
+  :root{
+    --stone-950:#0f1012; --stone-900:#16181b; --stone-850:#1a1d20; --stone-800:#1e2124;
+    --stone-700:#2b2f34; --stone-600:#3a3f45; --stone-400:#7d848d; --stone-300:#a6adb6;
+    --stone-100:#e9ebee; --molten:#e8672a; --molten-soft:#f0894f; --amber:#f4b400;
+    --green:#3fbf6a; --edge:#2b2f34;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:radial-gradient(120% 80% at 50% -5%,rgba(232,103,42,0.12),transparent 55%),var(--stone-950);
+    color:var(--stone-100);
+    font-family:"Helvetica Neue",system-ui,Arial,sans-serif;
+    min-height:100vh;padding:26px 18px 90px;-webkit-tap-highlight-color:transparent;
+  }
+  .mono{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace}
+  .wrap{max-width:680px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:4px}
+  .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--molten);font-weight:700}
+  .back{color:var(--stone-400);font-size:13px;text-decoration:none;white-space:nowrap}
+  .back:hover{color:var(--molten)}
+  h1{font-family:"Arial Black","Helvetica Neue",system-ui,sans-serif;font-size:clamp(30px,7vw,44px);letter-spacing:-.02em;margin:6px 0 10px;line-height:1.02}
+  .lead{color:var(--stone-300);font-size:17px;line-height:1.6;max-width:60ch}
+
+  .seo{color:var(--stone-400);font-size:14px;line-height:1.7;margin:16px 0 26px;max-width:66ch}
+  .seo b{color:var(--stone-300);font-weight:600}
+
+  h2.step{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone-400);margin:26px 0 12px;font-family:ui-monospace,monospace}
+
+  /* show picker */
+  .picker{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  .show{
+    text-align:left;background:var(--stone-900);border:1px solid var(--edge);border-radius:14px;
+    padding:14px 15px;cursor:pointer;transition:border-color .15s,background .15s,transform .05s;color:inherit;
+  }
+  .show:hover{border-color:var(--stone-600)}
+  .show.on{border-color:var(--molten);background:linear-gradient(180deg,rgba(232,103,42,.14),rgba(232,103,42,.04))}
+  .show .ico{font-size:22px;line-height:1;margin-bottom:8px}
+  .show .name{font-weight:700;font-size:15px;margin-bottom:3px}
+  .show .sub{font-size:12px;color:var(--stone-400);line-height:1.35}
+
+  /* board */
+  .board{margin-top:24px;background:linear-gradient(180deg,var(--stone-900),var(--stone-850));border:1px solid var(--edge);border-radius:18px;padding:20px 20px 22px;box-shadow:0 24px 60px rgba(0,0,0,.45);display:none}
+  .board.show{display:block}
+  .board-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+  .board-title{font-weight:800;font-size:19px}
+  .board-tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--molten);border:1px solid rgba(232,103,42,.4);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .board-blurb{color:var(--stone-400);font-size:14px;line-height:1.55;margin-bottom:16px}
+
+  .progress{height:10px;background:var(--stone-800);border-radius:999px;overflow:hidden;margin-bottom:8px}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--molten),var(--amber));border-radius:999px;transition:width .35s cubic-bezier(.2,.9,.25,1)}
+  .count{font-size:13px;color:var(--stone-400);margin-bottom:18px}
+  .count b{color:var(--stone-100)}
+
+  .group{margin-bottom:16px}
+  .group h3{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone-400);margin-bottom:8px;font-family:ui-monospace,monospace}
+  .item{
+    display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid var(--edge);border-radius:11px;
+    background:var(--stone-850);cursor:pointer;user-select:none;margin-bottom:8px;transition:background .12s,border-color .12s;
+  }
+  .item:hover{border-color:var(--stone-600)}
+  .item.done{background:rgba(63,191,106,.08);border-color:rgba(63,191,106,.4)}
+  .box{
+    flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--stone-600);
+    display:flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s,transform .12s;
+  }
+  .item.done .box{background:var(--green);border-color:var(--green);transform:scale(1)}
+  .box svg{width:14px;height:14px;stroke:#0c1a10;stroke-width:3.4;fill:none;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .2s ease .02s}
+  .item.done .box svg{stroke-dashoffset:0}
+  .item .label{font-size:15.5px;line-height:1.3;transition:color .12s}
+  .item.done .label{color:var(--stone-400);text-decoration:line-through;text-decoration-color:rgba(63,191,106,.6)}
+
+  .board-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+  .btn{background:transparent;border:1px solid var(--edge);color:var(--stone-300);border-radius:10px;padding:10px 16px;font:700 13px inherit;cursor:pointer}
+  .btn:hover{border-color:var(--molten);color:var(--molten)}
+  .sound-toggle{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--stone-400);cursor:pointer}
+  .sound-toggle input{accent-color:var(--molten);width:16px;height:16px}
+
+  .hint{color:var(--stone-500,#5b626b);color:var(--stone-400);font-size:13px;margin-top:22px;text-align:center}
+
+  footer{margin-top:34px;text-align:center;color:var(--stone-400);font-size:12px}
+  footer a{color:var(--stone-300)}
+
+  /* celebration */
+  #celebrate{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;padding:24px;
+    background:radial-gradient(120% 90% at 50% 30%,rgba(232,103,42,.22),rgba(15,16,18,.9) 70%);backdrop-filter:blur(3px)}
+  #celebrate.show{display:flex;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  #confetti{position:fixed;inset:0;pointer-events:none;z-index:61}
+  .celebrate-card{position:relative;z-index:62;text-align:center;max-width:440px}
+  .celebrate-card .rock{font-size:64px;line-height:1;margin-bottom:10px;animation:pop .5s cubic-bezier(.2,1.5,.4,1)}
+  @keyframes pop{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+  .celebrate-card h2{font-family:"Arial Black",system-ui,sans-serif;font-size:clamp(34px,9vw,54px);line-height:1;
+    letter-spacing:-.02em;background:linear-gradient(90deg,var(--amber),var(--molten));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:12px}
+  .celebrate-card p{color:var(--stone-100);font-size:17px;line-height:1.55;margin-bottom:24px}
+  .celebrate-card .done-btn{background:var(--molten);color:#160b05;border:none;border-radius:12px;padding:14px 30px;font:800 16px inherit;cursor:pointer}
+  .celebrate-card .done-btn:hover{filter:brightness(1.08)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <span class="eyebrow">Miki Drummer · Tools</span>
+    <a class="back" href="/bands.html">← Tools</a>
+  </div>
+  <h1>The Drummer's Gig Checklist</h1>
+  <p class="lead">Pick the kind of show, tick off your gear, and don't leave the snare in the garage again. Tick the last box and it's time to rock. 🤘</p>
+
+  <p class="seo">
+    Every drummer has done it once — rolled up to the venue and realized the <b>kick pedal</b> is still by the front door.
+    This interactive packing list has your back for every kind of gig: a <b>breakables-only</b> night on a backline kit
+    (just <b>cymbals, snare, pedal, sticks and IEMs</b>), a <b>full-kit</b> bar show, a <b>festival fly date</b>,
+    a <b>studio session</b>, or a <b>rehearsal</b>. Pick a show type below and your checklist appears — your progress is
+    saved in this browser, so you can start packing and pick up right where you left off.
+  </p>
+
+  <h2 class="step">Step 1 — What kind of show?</h2>
+  <div class="picker" id="picker"></div>
+
+  <div class="board" id="board">
+    <div class="board-head">
+      <div class="board-title" id="boardTitle"></div>
+      <div class="board-tag" id="boardTag"></div>
+    </div>
+    <p class="board-blurb" id="boardBlurb"></p>
+    <div class="progress"><div class="progress-fill" id="fill"></div></div>
+    <div class="count" id="count"></div>
+    <div id="list"></div>
+    <div class="board-actions">
+      <button class="btn" id="reset">Reset list</button>
+      <button class="btn" id="checkAll">Check all</button>
+      <label class="sound-toggle"><input type="checkbox" id="soundOn" checked> Sound</label>
+    </div>
+  </div>
+
+  <p class="hint" id="hint">Tip: your ticks are remembered on this device until you reset.</p>
+
+  <footer>Pack smart, hit hard. <span class="mono">mikidrummer.ca</span></footer>
+</div>
+
+<canvas id="confetti"></canvas>
+<div id="celebrate">
+  <div class="celebrate-card">
+    <div class="rock">🤘</div>
+    <h2>READY TO ROCK</h2>
+    <p id="celebrateMsg">Everything's packed. Go make it loud.</p>
+    <button class="done-btn" id="celebrateClose">Let's go</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var SHOWS = {
+    breakables: {
+      ico:"🥁", name:"Breakables only", tag:"Backline kit provided",
+      blurb:"The house or backline kit is already on stage — you just bring what's yours and what wears out.",
+      groups:[
+        { name:"Breakables", items:["Snare drum","Cymbals — hats, crashes, ride","Kick pedal","Hi-hat clutch + felts & sleeves"] },
+        { name:"Sticks", items:["Drumsticks + 2 spare pairs"] },
+        { name:"Ears & tech", items:["In-ear monitors (IEM)","Drum key"] },
+        { name:"Comfort", items:["Throne — if the venue's is sketchy"] }
+      ]
+    },
+    full: {
+      ico:"🛻", name:"Full kit", tag:"Your whole setup",
+      blurb:"Headliner or your own show — the entire kit is coming with you. Load in, load out, forget nothing.",
+      groups:[
+        { name:"Shells", items:["Bass drum","Rack tom(s)","Floor tom","Snare drum"] },
+        { name:"Hardware", items:["Kick pedal","Hi-hat stand","Snare stand","Cymbal stands","Throne","Drum rug / mat"] },
+        { name:"Cymbals", items:["Hi-hats","Crashes","Ride"] },
+        { name:"Sticks & tuning", items:["Drumsticks + spares","Drum key","Moongel / muffling","Spare drum head"] },
+        { name:"Ears & tech", items:["IEMs / monitor mix","Gaff tape"] }
+      ]
+    },
+    festival: {
+      ico:"🎪", name:"Festival / fly date", tag:"Backline provided",
+      blurb:"Fast changeover, shared backline, tight stage times. Travel light but bring the essentials that make it feel like home.",
+      groups:[
+        { name:"Bring", items:["Snare drum","Cymbals in a padded bag","Pedals — kick + hi-hat","Drumsticks + spares"] },
+        { name:"Tech", items:["IEMs + molds","Drum key","Gaff tape"] },
+        { name:"Paperwork", items:["Stage plot + input list","Backline rider confirmed"] }
+      ]
+    },
+    studio: {
+      ico:"🎙️", name:"Studio session", tag:"Recording day",
+      blurb:"Tone is everything and takes cost time. Show up with options, fresh heads and a tuning kit.",
+      groups:[
+        { name:"Drums", items:["Fresh heads, tuned","Extra snare option","Muffling — moongel, tape, wallet"] },
+        { name:"Cymbals", items:["Cymbal selection","Spare hi-hats"] },
+        { name:"Sticks", items:["Sticks, brushes, rods & mallets"] },
+        { name:"Tech", items:["Click / IEM","Drum key + tuning kit","Spare heads"] }
+      ]
+    },
+    rehearsal: {
+      ico:"🔁", name:"Rehearsal", tag:"Practice room",
+      blurb:"Low stakes, high reps. Grab the few things that make the session count.",
+      groups:[
+        { name:"Bring", items:["Drumsticks","Snare + pedal (if needed)","Practice pad"] },
+        { name:"Tech", items:["IEM / headphones","Metronome / click"] },
+        { name:"Notes", items:["Setlist / chart notes","Water"] }
+      ]
+    }
+  };
+
+  var $ = function(id){ return document.getElementById(id); };
+  var picker=$('picker'), board=$('board'), listEl=$('list'), fill=$('fill'), countEl=$('count');
+  var current=null;
+  var CHECK_SVG='<svg viewBox="0 0 20 20"><path d="M4 10.5 L8.5 15 L16 5"/></svg>';
+
+  // ---------- build picker ----------
+  Object.keys(SHOWS).forEach(function(key){
+    var s=SHOWS[key];
+    var b=document.createElement('button');
+    b.className='show'; b.dataset.key=key;
+    b.innerHTML='<div class="ico">'+s.ico+'</div><div class="name">'+s.name+'</div><div class="sub">'+s.tag+'</div>';
+    b.addEventListener('click',function(){ selectShow(key); });
+    picker.appendChild(b);
+  });
+
+  function storeKey(key){ return 'drumChecklist:'+key; }
+  function loadChecked(key){
+    try{ return JSON.parse(localStorage.getItem(storeKey(key))||'[]'); }catch(e){ return []; }
+  }
+  function saveChecked(key,arr){
+    try{ localStorage.setItem(storeKey(key),JSON.stringify(arr)); }catch(e){}
+  }
+
+  function itemId(gi,ii){ return gi+'.'+ii; }
+
+  function selectShow(key){
+    current=key;
+    [].forEach.call(picker.children,function(b){ b.classList.toggle('on',b.dataset.key===key); });
+    var s=SHOWS[key];
+    $('boardTitle').textContent=s.name;
+    $('boardTag').textContent=s.tag;
+    $('boardBlurb').textContent=s.blurb;
+
+    var checked=loadChecked(key);
+    listEl.innerHTML='';
+    s.groups.forEach(function(g,gi){
+      var gEl=document.createElement('div'); gEl.className='group';
+      gEl.innerHTML='<h3>'+g.name+'</h3>';
+      g.items.forEach(function(text,ii){
+        var id=itemId(gi,ii);
+        var row=document.createElement('div');
+        row.className='item'+(checked.indexOf(id)>-1?' done':'');
+        row.dataset.id=id;
+        row.innerHTML='<span class="box">'+CHECK_SVG+'</span><span class="label">'+text+'</span>';
+        row.addEventListener('click',function(){ toggle(row); });
+        gEl.appendChild(row);
+      });
+      listEl.appendChild(gEl);
+    });
+    board.classList.add('show');
+    updateProgress(false);
+    board.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  function currentChecked(){
+    var out=[];
+    [].forEach.call(listEl.querySelectorAll('.item.done'),function(el){ out.push(el.dataset.id); });
+    return out;
+  }
+  function totalItems(){ return listEl.querySelectorAll('.item').length; }
+
+  function toggle(row){
+    row.classList.toggle('done');
+    saveChecked(current,currentChecked());
+    updateProgress(true);
+  }
+
+  function updateProgress(fromAction){
+    var total=totalItems(), done=currentChecked().length;
+    var pct= total? Math.round(done/total*100):0;
+    fill.style.width=pct+'%';
+    countEl.innerHTML='<b>'+done+'</b> of <b>'+total+'</b> packed'+(done===total&&total>0?' — you\'re set! 🤘':'');
+    if(fromAction && total>0 && done===total){ celebrate(); }
+  }
+
+  $('reset').addEventListener('click',function(){
+    if(!current) return;
+    saveChecked(current,[]);
+    [].forEach.call(listEl.querySelectorAll('.item'),function(el){ el.classList.remove('done'); });
+    updateProgress(false);
+  });
+  $('checkAll').addEventListener('click',function(){
+    if(!current) return;
+    [].forEach.call(listEl.querySelectorAll('.item'),function(el){ el.classList.add('done'); });
+    saveChecked(current,currentChecked());
+    updateProgress(true);
+  });
+
+  // ---------- celebration ----------
+  var overlay=$('celebrate');
+  var MSGS=[
+    "Everything's packed. Go make it loud.",
+    "Kit's covered. Now go hit hard.",
+    "Nothing left behind. Time to rock.",
+    "Fully loaded. Break a stick out there.",
+    "That's the list. Give 'em the downbeat. 🥁"
+  ];
+  function celebrate(){
+    $('celebrateMsg').textContent=MSGS[Math.floor(Math.random()*MSGS.length)];
+    overlay.classList.add('show');
+    runConfetti();
+    if($('soundOn').checked) crash();
+  }
+  $('celebrateClose').addEventListener('click',function(){ overlay.classList.remove('show'); stopConfetti(); });
+  overlay.addEventListener('click',function(e){ if(e.target===overlay){ overlay.classList.remove('show'); stopConfetti(); } });
+
+  // ---------- confetti (canvas, no libs) ----------
+  var cv=$('confetti'), ctx=cv.getContext('2d'), parts=[], raf=null, W=0,H=0;
+  var COLORS=['#e8672a','#f4b400','#ffffff','#3fbf6a','#f0894f','#e2523b'];
+  function size(){ W=cv.width=innerWidth; H=cv.height=innerHeight; }
+  addEventListener('resize',size); size();
+  function runConfetti(){
+    parts=[];
+    for(var i=0;i<160;i++){
+      parts.push({
+        x:Math.random()*W, y:-20-Math.random()*H*0.4,
+        r:4+Math.random()*6, c:COLORS[(Math.random()*COLORS.length)|0],
+        vx:(Math.random()-0.5)*3, vy:2.5+Math.random()*3.5,
+        rot:Math.random()*6.28, vr:(Math.random()-0.5)*0.3, life:0
+      });
+    }
+    if(!raf) tick();
+  }
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    var alive=false;
+    for(var i=0;i<parts.length;i++){
+      var p=parts[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.04; p.rot+=p.vr; p.life++;
+      if(p.y<H+20) alive=true;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.c; ctx.globalAlpha=Math.max(0,1-p.life/260);
+      ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6); ctx.restore();
+    }
+    if(alive){ raf=requestAnimationFrame(tick); }
+    else { raf=null; ctx.clearRect(0,0,W,H); }
+  }
+  function stopConfetti(){ if(raf){ cancelAnimationFrame(raf); raf=null; } ctx.clearRect(0,0,W,H); }
+
+  // ---------- crash sound (Web Audio, synthesized) ----------
+  var actx=null;
+  function crash(){
+    try{
+      if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+      if(actx.state==='suspended') actx.resume();
+      var dur=1.4, sr=actx.sampleRate, n=Math.floor(sr*dur);
+      var buf=actx.createBuffer(1,n,sr), d=buf.getChannelData(0);
+      for(var i=0;i<n;i++){ d[i]=(Math.random()*2-1)*Math.pow(1-i/n,1.6); }
+      var src=actx.createBufferSource(); src.buffer=buf;
+      var hp=actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=5000;
+      var g=actx.createGain();
+      g.gain.setValueAtTime(0.0001,actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.5,actx.currentTime+0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+dur);
+      src.connect(hp).connect(g).connect(actx.destination);
+      src.start();
+    }catch(e){}
+  }
+})();
+</script>
+</body>
+</html>
