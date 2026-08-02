@@ -561,13 +561,13 @@
           .poster-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:3000;align-items:center;justify-content:center;padding:20px;transition:opacity .45s ease}
           .poster-overlay.show{display:flex;animation:posterFade .5s ease}
           .poster-overlay.closing{opacity:0}
-          .poster-inner{position:relative;max-width:min(92vw,520px);animation:posterIn .62s cubic-bezier(.34,1.56,.64,1) both}
-          .poster-overlay.closing .poster-inner{animation:posterOut .42s cubic-bezier(.4,0,1,.6) forwards}
+          .poster-inner{position:relative;max-width:min(92vw,520px);transform-origin:center center;animation:posterIn .85s cubic-bezier(.15,.85,.25,1) both}
+          .poster-overlay.closing .poster-inner{animation:posterOut .6s cubic-bezier(.55,0,.9,.35) forwards}
           .poster-inner img{width:100%;height:auto;max-height:88vh;object-fit:contain;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.6);display:block}
           .poster-close{position:absolute;top:-14px;right:-14px;width:38px;height:38px;border-radius:50%;background:#111;color:#fff;border:2px solid #fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:20px;line-height:1}
           @keyframes posterFade{from{opacity:0}to{opacity:1}}
-          @keyframes posterIn{from{opacity:0;transform:translateX(90px) scale(.86)}to{opacity:1;transform:none}}
-          @keyframes posterOut{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-90px) scale(.86)}}
+          @keyframes posterIn{from{opacity:0;transform:scale(.04) rotate(720deg)}55%{opacity:1}to{opacity:1;transform:scale(1) rotate(0deg)}}
+          @keyframes posterOut{from{opacity:1;transform:scale(1) rotate(0deg)}to{opacity:0;transform:scale(.04) rotate(-720deg)}}
         </style>
 
         <script type="text/javascript">
@@ -606,7 +606,7 @@
                 var po = document.getElementById('posterOverlay');
                 if(!po.classList.contains('show')) return;
                 po.classList.add('closing');
-                setTimeout(function(){ po.classList.remove('show'); po.classList.remove('closing'); }, 470);
+                setTimeout(function(){ po.classList.remove('show'); po.classList.remove('closing'); }, 640);
             }
             (function(){
                 var po = document.getElementById('posterOverlay');
