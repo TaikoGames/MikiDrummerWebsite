@@ -126,6 +126,16 @@
     .shot.feature { aspect-ratio: 2 / 1; }
     .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .grid3 .shot { aspect-ratio: 1 / 1; }
+    .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .grid2 .shot { aspect-ratio: 4 / 5; }
+    /* Instagram-style photo filters — set via data-filter on .gallery (admin-controlled) */
+    .gallery[data-filter="warm"]  .shot img { filter: contrast(1.08) saturate(1.3) brightness(1.03); }
+    .gallery[data-filter="punch"] .shot img { filter: contrast(1.26) saturate(1.38) brightness(1.02); }
+    .gallery[data-filter="faded"] .shot img { filter: contrast(0.9) saturate(0.88) brightness(1.09) sepia(0.08); }
+    .gallery[data-filter="cool"]  .shot img { filter: contrast(1.06) saturate(1.12) brightness(1.03) hue-rotate(-8deg); }
+    .gallery[data-filter="mono"]  .shot img { filter: grayscale(1) contrast(1.14) brightness(1.02); }
+    .gallery[data-filter="vivid"] .shot img { filter: contrast(1.14) saturate(1.55); }
+    .gallery[data-filter="none"]  .shot img { filter: none; }
     .note { margin-top: 18px; font-size: 13px; color: var(--stone-400); }
     .media-actions { margin-top: 26px; }
     .dl-btn-media {
@@ -302,7 +312,11 @@
 <section id="media">
     <div class="wrap">
         <div class="sec-head"><h2 class="display">Media</h2></div>
-        <div class="gallery">
+        <div class="gallery" data-filter="warm">
+            <div class="grid2">
+                <figure class="shot"><img src="images/granite/live-07.jpg" alt="Granite live — vocalist and drummer on stage in Vancouver" loading="lazy"></figure>
+                <figure class="shot"><img src="images/granite/live-08.jpg" alt="Granite live — full band and crowd at a Vancouver show" loading="lazy"></figure>
+            </div>
             <figure class="shot feature"><img src="images/granite/feature.jpg" alt="Granite vocalist live" loading="lazy"></figure>
             <div class="grid3">
                 <figure class="shot"><img src="images/granite/live-01.jpg" alt="Granite live" loading="lazy"></figure>
@@ -370,11 +384,19 @@
 <script>
     document.getElementById('pdfBtn').addEventListener('click', function () { window.print(); });
 
+    // Apply the admin-chosen Instagram-style filter to the gallery photos.
+    fetch('config.json?_=' + Date.now()).then(function (r) { return r.json(); }).then(function (d) {
+        if (d && d.graniteFilter) {
+            var g = document.querySelector('.gallery');
+            if (g) g.setAttribute('data-filter', d.graniteFilter);
+        }
+    }).catch(function () {});
+
     document.getElementById('dlAllBtn').addEventListener('click', async function () {
         const btn = this, orig = btn.textContent;
         if (typeof JSZip === 'undefined') { window.location.href = 'images/granite/'; return; }
         btn.disabled = true; btn.textContent = 'Preparing…';
-        const files = ['logo.png','logo-black.png','hero.jpg','feature.jpg','live-01.jpg','live-02.jpg','live-03.jpg','live-04.jpg','live-05.jpg','live-06.jpg'];
+        const files = ['logo.png','logo-black.png','hero.jpg','feature.jpg','live-01.jpg','live-02.jpg','live-03.jpg','live-04.jpg','live-05.jpg','live-06.jpg','live-07.jpg','live-08.jpg'];
         const zip = new JSZip(), folder = zip.folder('granite-press-photos');
         let added = 0;
         await Promise.all(files.map(async function (f) {
