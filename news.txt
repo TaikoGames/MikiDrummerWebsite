@@ -1,10 +1,7 @@
-Title: ¡Campeones! España Wins the World Cup 🇪🇸🏆
-Expires: 2026-08-03
-
-Title: Granite LIVE @ Lana Lou's 🇨🇦
-Description: August 2 — Vancouver
-Link: https://gigpit.ca/shows/event:uLufE7bQzXc
-Expires: 2026-08-03
+Title: Lift the Anchor @ The Portside Pub 🎸
+Description: Aug 20 — "A Jungle of Jingles" w/ Magnetiq, easy.feat & Brooke and the Afterglow · Doors 8PM, Vancouver
+Link: https://www.mikidrummer.ca/lift-the-anchor-epk.html
+Expires: 2026-08-21
 
 Title: New Video Out Now!
 Description: Check it on YouTube
