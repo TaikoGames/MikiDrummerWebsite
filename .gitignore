@@ -3,3 +3,7 @@
 
 # Generated scratch report (the .html dashboard is published to the site)
 link-report.md
+
+# Backup archives — never commit (a 90MB .rar once bloated this repo)
+*.rar
+*.7z
