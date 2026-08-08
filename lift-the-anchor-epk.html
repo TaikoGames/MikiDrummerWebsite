@@ -269,8 +269,7 @@
     <img class="hero-photo" src="images/lift-the-anchor/hero.jpg" alt="Lift the Anchor performing live" onerror="this.onerror=null;this.src='https://picsum.photos/seed/lifttheanchor/1600/1000?grayscale'">
     <div class="wrap">
         <div class="kicker"><span class="line"></span><span class="eyebrow">Electronic Press Kit</span></div>
-        <img class="hero-logo" src="images/lift-the-anchor/logo.png" alt="Lift the Anchor — Vancouver punk rock band" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='block'">
-        <h1 id="logo-fallback" class="display" style="display:none;font-size:clamp(44px,9vw,96px);margin:0 0 16px">Lift the Anchor</h1>
+        <h1 id="logo-fallback" class="display" style="font-size:clamp(44px,9vw,96px);margin:0 0 16px">Lift the Anchor</h1>
         <p class="tag">Melodic Vancouver punk rock about fresh starts, loud guitars, and never looking back.</p>
         <div class="meta">
             <span class="chip"><b>Genre</b> — Punk Rock</span>
@@ -304,11 +303,6 @@
         <div class="sec-head"><h2 class="display">Media</h2></div>
         <div class="gallery">
             <figure class="shot feature"><img src="images/lift-the-anchor/feature.jpg" alt="Lift the Anchor live" loading="lazy" onerror="this.closest('.shot').remove()"></figure>
-            <div class="grid3">
-                <figure class="shot"><img src="images/lift-the-anchor/live-01.jpg" alt="Lift the Anchor live" loading="lazy" onerror="this.closest('.shot').remove()"></figure>
-                <figure class="shot"><img src="images/lift-the-anchor/live-02.jpg" alt="Lift the Anchor live" loading="lazy" onerror="this.closest('.shot').remove()"></figure>
-                <figure class="shot"><img src="images/lift-the-anchor/live-03.jpg" alt="Lift the Anchor live" loading="lazy" onerror="this.closest('.shot').remove()"></figure>
-            </div>
         </div>
         <p class="note">Photos coming soon · hi-res versions available on request.</p>
         <div class="videos" style="margin-top:28px">
@@ -350,7 +344,7 @@
 </section>
 
 <footer>
-    <img class="mk" src="images/lift-the-anchor/logo.png" alt="Lift the Anchor" onerror="this.outerHTML='<div style=\'font-family:Arial Black,sans-serif;letter-spacing:0.2em;color:#a6adb6;font-size:15px;margin-bottom:10px\'>LIFT THE ANCHOR</div>'">
+    <div style="font-family:Arial Black,sans-serif;letter-spacing:0.2em;color:#a6adb6;font-size:15px;margin-bottom:10px">LIFT THE ANCHOR</div>
     Vancouver · Electronic Press Kit
 </footer>
 
@@ -362,7 +356,7 @@
         const btn = this, orig = btn.textContent;
         if (typeof JSZip === 'undefined') { window.location.href = 'images/lift-the-anchor/'; return; }
         btn.disabled = true; btn.textContent = 'Preparing…';
-        const files = ['logo.png','logo-black.png','hero.jpg','feature.jpg','live-01.jpg','live-02.jpg','live-03.jpg'];
+        const files = ['hero.jpg','feature.jpg'];
         const zip = new JSZip(), folder = zip.folder('lift-the-anchor-press-photos');
         let added = 0;
         await Promise.all(files.map(async function (f) {
