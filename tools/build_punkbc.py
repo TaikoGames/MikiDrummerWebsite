@@ -53,6 +53,8 @@ VENUE_LINK = {
     "The Pearl": "https://thepearlvancouver.com",
     "Astoria": "https://theastoria.ca",
     "The Astoria": "https://theastoria.ca",
+    "Red Gate": "https://redgate.tv",
+    "Red Gate Arts Society": "https://redgate.tv",
 }
 
 # Venue → street address for structured data (public venue addresses).
@@ -66,6 +68,8 @@ VENUE_ADDRESS = {
     "Commodore Ballroom": "868 Granville St",
     "The Pearl": "881 Granville St",
     "Capital Ballroom": "858 Yates St",
+    "Red Gate": "1965 Main St",
+    "Red Gate Arts Society": "1965 Main St",
 }
 
 
