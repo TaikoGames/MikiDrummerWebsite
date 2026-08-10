@@ -704,6 +704,7 @@
 
   function toggle(row){
     row.classList.toggle('done');
+    if(row.classList.contains('done') && $('soundOn').checked) tick();
     saveChecked(current,currentChecked());
     updateProgress(true);
   }
@@ -835,6 +836,22 @@
     g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
     s.connect(hp); hp.connect(bp); bp.connect(g); g.connect(master);
     s.start(t); s.stop(t+dur+0.05);
+  }
+  // a tiny stick click — one per item ticked off
+  function tick(){
+    try{
+      ac();
+      var t=actx.currentTime+0.001;
+      // short bandpassed noise: stick on the hoop
+      var s=actx.createBufferSource(); s.buffer=noiseBuf(0.03);
+      var bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2600; bp.Q.value=1.1;
+      s.connect(bp); adsr(bp,t,0.22,0.001,0.03); s.start(t); s.stop(t+0.06);
+      // a hint of pitch so it reads as a click, not a hiss
+      var o=actx.createOscillator(); o.type='triangle';
+      o.frequency.setValueAtTime(1250,t);
+      o.frequency.exponentialRampToValueAtTime(760,t+0.035);
+      adsr(o,t,0.10,0.001,0.035); o.start(t); o.stop(t+0.06);
+    }catch(e){}
   }
   function crash(){
     try{
