@@ -55,6 +55,8 @@ VENUE_LINK = {
     "The Astoria": "https://theastoria.ca",
     "Red Gate": "https://redgate.tv",
     "Red Gate Arts Society": "https://redgate.tv",
+    "Portside Pub": "https://theportsidepub.com",
+    "The Portside Pub": "https://theportsidepub.com",
 }
 
 # Venue → street address for structured data (public venue addresses).
@@ -70,6 +72,8 @@ VENUE_ADDRESS = {
     "Capital Ballroom": "858 Yates St",
     "Red Gate": "1965 Main St",
     "Red Gate Arts Society": "1965 Main St",
+    "Portside Pub": "7 Alexander St",
+    "The Portside Pub": "7 Alexander St",
 }
 
 
