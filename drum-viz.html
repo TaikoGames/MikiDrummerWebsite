@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drum Trigger Visualiser — Kit Lights Up As You Play | Miki Drummer</title>
+<meta name="description" content="A free drum kit visualiser: hit a pad or a drum and that piece lights up on screen. Drives off MIDI or a live audio feed, with a transparent or green-screen background for overlaying on drum cam videos.">
+<meta name="keywords" content="drum visualiser, drum kit overlay, MIDI drum visualizer, drum cam overlay, OBS drum overlay, e-kit visualiser, drum notation animation, drummer YouTube overlay">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.mikidrummer.ca/drum-viz.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mikidrummer.ca/drum-viz.html">
+<meta property="og:title" content="Drum Trigger Visualiser — the kit lights up as you play">
+<meta property="og:description" content="Hit a pad, that drum flashes on screen. MIDI or audio driven, with a transparent background for drum cam overlays.">
+<meta property="og:locale" content="en_CA">
+<meta property="og:site_name" content="Miki Drummer">
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --stone-950:#0b0c0e; --stone-900:#131518; --stone-850:#171a1d; --stone-800:#1e2124;
+    --stone-700:#2b2f34; --stone-600:#3a3f45; --stone-400:#7d848d; --stone-300:#a6adb6;
+    --stone-100:#e9ebee; --molten:#e8672a; --amber:#f4b400; --green:#3fbf6a; --edge:#2b2f34;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--stone-950);color:var(--stone-100);
+    font-family:"Helvetica Neue",system-ui,Arial,sans-serif;
+    min-height:100vh;padding:22px 18px 70px;-webkit-tap-highlight-color:transparent}
+  .mono{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace}
+  .wrap{max-width:1180px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--molten);font-weight:700}
+  .back{color:var(--stone-400);font-size:13px;text-decoration:none}
+  .back:hover{color:var(--molten)}
+  h1{font-family:"Arial Black","Helvetica Neue",system-ui,sans-serif;
+     font-size:clamp(25px,5vw,40px);letter-spacing:-.02em;margin:6px 0 8px;line-height:1.03}
+  .lead{color:var(--stone-300);font-size:15.5px;line-height:1.6;max-width:72ch}
+
+  .grid{display:grid;gap:20px;margin-top:22px}
+  @media(min-width:980px){ .grid{grid-template-columns:minmax(0,1fr) 350px;align-items:start} }
+
+  .stage{position:relative;border:1px solid var(--edge);border-radius:16px;overflow:hidden;line-height:0;
+         background:
+           linear-gradient(45deg,#1a1c1f 25%,transparent 25%,transparent 75%,#1a1c1f 75%),
+           linear-gradient(45deg,#1a1c1f 25%,transparent 25%,transparent 75%,#1a1c1f 75%) 10px 10px,
+           #141618;
+         background-size:20px 20px}
+  .stage canvas{width:100%;height:auto;display:block}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:11px 12px;
+       background:var(--stone-900);border-top:1px solid var(--edge);line-height:1.4}
+
+  .card{background:var(--stone-900);border:1px solid var(--edge);border-radius:14px;padding:16px}
+  .card + .card{margin-top:14px}
+  .card h2{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-400);
+           margin-bottom:11px;font-family:ui-monospace,monospace}
+
+  label.fld{display:block;font-size:12px;color:var(--stone-400);margin:9px 0 5px}
+  select{width:100%;background:var(--stone-850);color:var(--stone-100);border:1px solid var(--edge);
+    border-radius:9px;padding:9px 11px;font-size:14px;font-family:inherit}
+  select:focus{outline:none;border-color:var(--molten)}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--edge);background:var(--stone-850);
+    color:var(--stone-100);border-radius:100px;padding:9px 15px;font-size:13.5px;font-weight:600;
+    cursor:pointer;font-family:inherit;text-decoration:none;transition:border-color .15s,background .15s}
+  .btn:hover{border-color:var(--stone-600)}
+  .btn.primary{background:var(--molten);color:#180a03;border-color:var(--molten)}
+  .btn.on{border-color:var(--green);color:var(--green)}
+  .btn.mini{padding:5px 10px;font-size:11.5px}
+  .btn.learning{border-color:var(--amber);color:var(--amber)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+  .status{font-size:12.5px;color:var(--stone-400);margin-top:9px;line-height:1.5}
+  .status b{color:var(--stone-100)}
+  .status.ok{color:var(--green)} .status.warn{color:var(--amber)} .status.err{color:#ff7a6b}
+
+  .piece{display:flex;align-items:center;gap:9px;border:1px solid var(--edge);border-radius:10px;
+         padding:8px 10px;margin-bottom:7px;background:var(--stone-850)}
+  .piece .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .piece .nm{font-size:13.5px;font-weight:700;flex:1}
+  .piece .note{font-family:ui-monospace,monospace;font-size:11.5px;color:var(--stone-400);
+               background:#0d0f11;border:1px solid var(--edge);border-radius:6px;padding:3px 7px}
+  .piece.flash{border-color:var(--molten)}
+
+  .hint{font-size:12px;color:var(--stone-400);line-height:1.65;margin-top:11px}
+  .hint code{background:var(--stone-850);border:1px solid var(--edge);border-radius:5px;padding:1px 5px;font-size:11.5px}
+
+  /* clean mode: just the kit, for screen capture / OBS */
+  body.clean{padding:0;background:#000;overflow:hidden}
+  body.clean .wrap{max-width:none}
+  body.clean .hideable{display:none !important}
+  body.clean .grid{display:block;margin:0}
+  body.clean .stage{border:none;border-radius:0;height:100vh;display:flex;align-items:center;
+                    justify-content:center;background:#000}
+  body.clean .stage canvas{width:auto;height:100vh;max-width:100vw}
+  body.clean .bar{display:none}
+  body.clean.bg-green .stage{background:#00b140}
+  body.clean.bg-transparent .stage{background:transparent}
+  body.clean.bg-transparent{background:transparent}
+  .escnote{display:none;position:fixed;left:50%;bottom:14px;transform:translateX(-50%);
+    color:#4c5055;font-size:11px;letter-spacing:.16em;text-transform:uppercase;z-index:5}
+  body.clean .escnote{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top hideable">
+    <span class="eyebrow">Miki Drummer · Tools</span>
+    <a class="back" href="/bands.html#tools">← Tools</a>
+  </div>
+  <h1 class="hideable">Drum Trigger Visualiser</h1>
+  <p class="lead hideable">
+    Your kit on screen, lighting up as you play — hit the snare, the snare flashes. Drive it from an
+    e-kit or triggers over <b>MIDI</b>, or from a live <b>audio</b> feed. Set the background to green or
+    transparent and drop it over drum cam footage.
+  </p>
+
+  <div class="grid">
+    <div>
+      <div class="stage" id="stage">
+        <canvas id="kit" width="1280" height="720"></canvas>
+      </div>
+      <div class="bar hideable">
+        <button class="btn primary" id="midiBtn">🎹 Connect MIDI</button>
+        <button class="btn" id="audioBtn">🎤 Use audio</button>
+        <button class="btn" id="cleanBtn">⛶ Clean mode</button>
+        <span class="status mono" id="fps" style="margin-left:auto"></span>
+      </div>
+      <p class="hint hideable">
+        Tap the canvas or press keys to test: <code>space</code> kick · <code>s</code> snare ·
+        <code>h</code> hats · <code>t</code>/<code>y</code> toms · <code>f</code> floor ·
+        <code>c</code> crash · <code>r</code> ride. <b>Clean mode</b> hides everything but the kit —
+        <code>Esc</code> to come back.
+      </p>
+    </div>
+
+    <div class="hideable">
+      <div class="card">
+        <h2>Input</h2>
+        <div class="status" id="inStatus">Nothing connected — keyboard and clicks still work.</div>
+        <label class="fld" for="midiSel">MIDI device</label>
+        <select id="midiSel"><option value="">— connect MIDI first —</option></select>
+        <label class="fld" for="audioSrc">Audio → pieces</label>
+        <select id="audioSrc">
+          <option value="bands">Split main feed into low / mid / high</option>
+          <option value="channels">One channel per piece (splitter)</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <h2>Look</h2>
+        <label class="fld" for="bgSel">Background</label>
+        <select id="bgSel">
+          <option value="theme">Dark (site theme)</option>
+          <option value="black">Solid black</option>
+          <option value="green">Green screen (#00b140)</option>
+          <option value="transparent">Transparent (OBS browser source)</option>
+        </select>
+        <label class="fld" for="sizeSel">Canvas size</label>
+        <select id="sizeSel">
+          <option value="1280x720">1280 × 720 — 16:9</option>
+          <option value="1920x1080">1920 × 1080 — 16:9 HD</option>
+          <option value="1080x1080">1080 × 1080 — square</option>
+          <option value="1080x1920">1080 × 1920 — vertical / Shorts</option>
+        </select>
+        <label class="fld"><input type="checkbox" id="showLabels" checked> Show piece names</label>
+        <label class="fld"><input type="checkbox" id="showRings" checked> Hit rings</label>
+      </div>
+
+      <div class="card">
+        <h2>Pieces — tap Learn, then hit it</h2>
+        <div id="pieces"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px">
+          <button class="btn" id="saveBtn">Save setup</button>
+          <button class="btn" id="resetBtn">Reset</button>
+        </div>
+        <p class="hint">
+          Layout comes from <code>drum-setup.json</code> — the same kit as the
+          <a href="/drum-map.html" style="color:var(--molten)">drum map</a>, so editing it there moves
+          the pieces here too. Notes default to the General MIDI drum map.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="escnote">Esc to exit clean mode</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var STORE = 'drumViz:v1';
+
+  // General MIDI drum notes, per piece type.
+  var GM = {
+    kick:[35,36], snare:[37,38,40], hihat:[42,44,46], tomHigh:[48,50],
+    tomMid:[45,47], floorTom:[41,43], crash:[49,57], ride:[51,53,59],
+    china:[52], splash:[55]
+  };
+  var KEYS = { ' ':'kick', b:'kick', s:'snare', h:'hihat', t:'tomHigh', y:'tomMid',
+               f:'floorTom', c:'crash', r:'ride' };
+  var CYMBALS = { hihat:1, crash:1, ride:1, china:1, splash:1 };
+  var COLOR = { kick:'#e8672a', snare:'#f4b400', hihat:'#7ee7c7', tomHigh:'#ff8f5e',
+                tomMid:'#ff8f5e', floorTom:'#ff6a3d', crash:'#9fc4ff', ride:'#8ab6ff',
+                china:'#c9a7ff', splash:'#7ee7c7' };
+
+  // Fallback kit if drum-setup.json can't be read.
+  var FALLBACK = [
+    { type:'kick', label:'Kick', fx:0.50, fy:0.70, fr:0.075 },
+    { type:'snare', label:'Snare', fx:0.43, fy:0.55, fr:0.048 },
+    { type:'hihat', label:'Hi-Hat', fx:0.34, fy:0.57, fr:0.042 },
+    { type:'tomHigh', label:'Tom', fx:0.50, fy:0.38, fr:0.044 },
+    { type:'floorTom', label:'Floor', fx:0.64, fy:0.60, fr:0.058 },
+    { type:'crash', label:'Crash', fx:0.36, fy:0.33, fr:0.052 },
+    { type:'ride', label:'Ride', fx:0.65, fy:0.34, fr:0.062 }
+  ];
+
+  var pieces = [];      // {type,label,fx,fy,fr,notes[],level,ring,src}
+  var cv = $('kit'), ctx = cv.getContext('2d');
+
+  function setStatus(msg, cls){
+    var el=$('inStatus'); el.className='status'+(cls?' '+cls:''); el.innerHTML=msg;
+  }
+
+  // ------------------------------------------------------------- kit loading
+  function buildPieces(list){
+    pieces = list.map(function(p){
+      return { type:p.type, label:p.label||p.type, fx:p.fx, fy:p.fy, fr:p.fr,
+               notes:(GM[p.type]||[]).slice(), level:0, ring:-1, src:'off' };
+    });
+    applySaved();
+    renderPieceList();
+    draw();
+  }
+
+  fetch('/drum-setup.json', {cache:'no-store'})
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(d){ buildPieces((d.pieces&&d.pieces.length)?d.pieces:FALLBACK); })
+    .catch(function(){ buildPieces(FALLBACK); });
+
+  // ------------------------------------------------------------- drawing
+  function bgFill(){
+    var mode = $('bgSel').value;
+    if(mode==='black') return '#000000';
+    if(mode==='green') return '#00b140';
+    if(mode==='theme') return '#101215';
+    return null; // transparent
+  }
+
+  // The kit coordinates come from drum-setup.json, which was laid out for the
+  // drum map's square stage. Scale and centre them so the kit fills whatever
+  // canvas shape is picked (16:9, square, vertical) instead of sitting in the middle.
+  function fitKit(W,H){
+    if(!pieces.length) return { s:Math.min(W,H), x:function(v){return v*W;}, y:function(v){return v*H;} };
+    var minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+    pieces.forEach(function(p){
+      var ry = CYMBALS[p.type] ? p.fr*0.42 : p.fr;
+      if(p.fx-p.fr<minX) minX=p.fx-p.fr;
+      if(p.fx+p.fr>maxX) maxX=p.fx+p.fr;
+      if(p.fy-ry<minY) minY=p.fy-ry;
+      if(p.fy+ry>maxY) maxY=p.fy+ry;
+    });
+    maxY += 0.055;                                  // room for the labels
+    var bw=Math.max(1e-6,maxX-minX), bh=Math.max(1e-6,maxY-minY);
+    var k = Math.min(W*0.94/bw, H*0.90/bh);         // uniform, so the kit keeps its shape
+    var offX = (W - bw*k)/2 - minX*k;
+    var offY = (H - bh*k)/2 - minY*k;
+    return { s:k, x:function(v){ return v*k+offX; }, y:function(v){ return v*k+offY; } };
+  }
+
+  function draw(){
+    var W=cv.width, H=cv.height;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,W,H);
+    var bg = bgFill();
+    if(bg){ ctx.fillStyle=bg; ctx.fillRect(0,0,W,H); }
+
+    var labels = $('showLabels').checked, rings = $('showRings').checked;
+    var fit = fitKit(W,H), S = fit.s;
+
+    pieces.forEach(function(p){
+      var x=fit.x(p.fx), y=fit.y(p.fy), r=p.fr*S;
+      var isCym = !!CYMBALS[p.type];
+      var col = COLOR[p.type] || '#e8672a';
+      var lvl = p.level;
+
+      ctx.save();
+      ctx.translate(x,y);
+      if(isCym) ctx.scale(1,0.42);
+
+      // idle body
+      ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+      ctx.fillStyle = isCym ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.06)';
+      ctx.fill();
+      ctx.lineWidth = Math.max(1.5, r*0.055);
+      ctx.strokeStyle = 'rgba(255,255,255,0.20)';
+      ctx.stroke();
+
+      // lit state
+      if(lvl > 0.002){
+        var g = ctx.createRadialGradient(0,0,0,0,0,r);
+        g.addColorStop(0, hexA(col, 0.95*lvl));
+        g.addColorStop(0.65, hexA(col, 0.55*lvl));
+        g.addColorStop(1, hexA(col, 0.10*lvl));
+        ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+        ctx.fillStyle=g; ctx.fill();
+        ctx.lineWidth = Math.max(2, r*0.09);
+        ctx.strokeStyle = hexA(col, Math.min(1,lvl+0.25));
+        ctx.shadowColor = col; ctx.shadowBlur = r*0.9*lvl;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      // expanding hit ring
+      if(rings && p.ring>=0 && p.ring<1){
+        var rr = r*(1+p.ring*0.85);
+        ctx.beginPath(); ctx.arc(0,0,rr,0,Math.PI*2);
+        ctx.lineWidth = Math.max(1.5, r*0.05);
+        ctx.strokeStyle = hexA(col, (1-p.ring)*0.75);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      if(labels){
+        ctx.font = '600 '+Math.round(S*0.021)+'px "Helvetica Neue",system-ui,Arial,sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillStyle = lvl>0.15 ? hexA(col,1) : 'rgba(255,255,255,0.5)';
+        var dy = isCym ? r*0.42+S*0.032 : r+S*0.032;
+        ctx.fillText(p.label.toUpperCase(), x, y+dy);
+      }
+    });
+  }
+
+  function hexA(hex,a){
+    var m=/^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
+    if(!m) return 'rgba(232,103,42,'+a.toFixed(3)+')';
+    return 'rgba('+parseInt(m[1],16)+','+parseInt(m[2],16)+','+parseInt(m[3],16)+','+a.toFixed(3)+')';
+  }
+
+  // ------------------------------------------------------------- hits
+  function hit(p, vel){
+    if(!p) return;
+    vel = Math.max(0.15, Math.min(1, vel||1));
+    p.level = Math.max(p.level, vel);
+    p.ring = 0;
+    var row = $('row_'+p.type);
+    if(row){ row.classList.add('flash'); setTimeout(function(){ row.classList.remove('flash'); }, 110); }
+  }
+  function pieceByNote(note){
+    for(var i=0;i<pieces.length;i++) if(pieces[i].notes.indexOf(note)>=0) return pieces[i];
+    return null;
+  }
+  function pieceByType(t){
+    for(var i=0;i<pieces.length;i++) if(pieces[i].type===t) return pieces[i];
+    return null;
+  }
+
+  var last = performance.now(), fAcc=0, fN=0;
+  function loop(){
+    var now=performance.now(), dt=Math.min(0.1,(now-last)/1000); last=now;
+    for(var i=0;i<pieces.length;i++){
+      var p=pieces[i];
+      if(p.level>0) p.level = p.level * Math.exp(-dt/0.14);
+      if(p.level<0.002) p.level=0;
+      if(p.ring>=0){ p.ring += dt/0.34; if(p.ring>=1) p.ring=-1; }
+    }
+    if(audioOn) pollAudio();
+    draw();
+    fAcc+=dt; fN++;
+    if(fAcc>=0.5){ $('fps').textContent = Math.round(fN/fAcc)+' fps'; fAcc=0; fN=0; }
+    requestAnimationFrame(loop);
+  }
+
+  // ------------------------------------------------------------- MIDI
+  var midiAccess=null, learn=null;
+  function connectMIDI(){
+    if(!navigator.requestMIDIAccess){
+      setStatus('This browser has no Web MIDI. Use Chrome or Edge on desktop, or drive it from audio instead.','err');
+      return;
+    }
+    navigator.requestMIDIAccess().then(function(acc){
+      midiAccess = acc;
+      var sel=$('midiSel'); sel.innerHTML='';
+      var n=0;
+      acc.inputs.forEach(function(inp){
+        var o=document.createElement('option'); o.value=inp.id; o.textContent=inp.name||('Input '+(++n));
+        sel.appendChild(o);
+        inp.onmidimessage = onMIDI;
+      });
+      if(!sel.options.length){
+        sel.innerHTML='<option value="">no MIDI inputs found</option>';
+        setStatus('MIDI is on, but no inputs are connected. Plug the module in and press Connect again.','warn');
+      } else {
+        setStatus('MIDI connected — <b>'+sel.options.length+'</b> input(s). Hit a pad.','ok');
+        $('midiBtn').classList.add('on');
+      }
+      acc.onstatechange = function(){ /* device plugged/unplugged */ };
+    }).catch(function(e){
+      setStatus('MIDI was refused: <b>'+(e&&e.message?e.message:e)+'</b>','err');
+    });
+  }
+  function onMIDI(ev){
+    var d=ev.data, status=d[0]&0xf0, note=d[1], vel=d[2];
+    if(status!==0x90 || !vel) return;              // note-on only
+    if(learn){
+      var p=learn.piece;
+      if(p.notes.indexOf(note)<0) p.notes.push(note);
+      learn.btn.classList.remove('learning'); learn.btn.textContent='Learn';
+      setStatus('<b>'+p.label+'</b> ← MIDI note <b>'+note+'</b>.','ok');
+      learn=null; renderPieceList(); return;
+    }
+    hit(pieceByNote(note), vel/127);
+  }
+
+  // ------------------------------------------------------------- audio
+  var actx=null, stream=null, srcNode=null, analysers=null, audioOn=false, abuf=null, armed={};
+  function connectAudio(){
+    if(audioOn){ stopAudio(); return; }
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:{ideal:8}}})
+    .then(function(s){
+      stream=s;
+      actx=new (window.AudioContext||window.webkitAudioContext)();
+      srcNode=actx.createMediaStreamSource(s);
+      var got=(s.getAudioTracks()[0].getSettings()||{}).channelCount || srcNode.channelCount || 2;
+      analysers={};
+      if($('audioSrc').value==='channels' && got>2){
+        var sp=actx.createChannelSplitter(got);
+        srcNode.connect(sp);
+        pieces.forEach(function(p,i){
+          if(i<got){ var a=mkA(); sp.connect(a,i); analysers[p.type]=a; p.src='ch'+i; }
+        });
+        setStatus('Audio on — <b>'+got+' channels</b>, one per piece in order.','ok');
+      } else {
+        var lo=flt('lowpass',130), md=flt('bandpass',900,0.8), hi=flt('highpass',5000);
+        analysers.low=mkA(); analysers.mid=mkA(); analysers.high=mkA();
+        srcNode.connect(lo); lo.connect(analysers.low);
+        srcNode.connect(md); md.connect(analysers.mid);
+        srcNode.connect(hi); hi.connect(analysers.high);
+        pieces.forEach(function(p){
+          p.src = p.type==='kick' ? 'low' : CYMBALS[p.type] ? 'high' : 'mid';
+        });
+        setStatus('Audio on — main feed split into low / mid / high ('+got+' ch in).','ok');
+      }
+      audioOn=true; $('audioBtn').classList.add('on');
+    })
+    .catch(function(e){ setStatus('Could not open audio: <b>'+(e&&e.message?e.message:e)+'</b>','err'); });
+  }
+  function stopAudio(){
+    audioOn=false; $('audioBtn').classList.remove('on');
+    if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; }
+    if(actx){ actx.close(); actx=null; }
+    analysers=null; setStatus('Audio stopped.');
+  }
+  function mkA(){ var a=actx.createAnalyser(); a.fftSize=1024; a.smoothingTimeConstant=0; return a; }
+  function flt(type,f,q){ var b=actx.createBiquadFilter(); b.type=type; b.frequency.value=f; if(q)b.Q.value=q; return b; }
+  function rms(a){
+    if(!abuf||abuf.length!==a.fftSize) abuf=new Float32Array(a.fftSize);
+    a.getFloatTimeDomainData(abuf);
+    var s=0; for(var i=0;i<abuf.length;i++) s+=abuf[i]*abuf[i];
+    return Math.sqrt(s/abuf.length);
+  }
+  // rising-edge onset detection so a sustained note doesn't hold the light on
+  function pollAudio(){
+    if(!analysers) return;
+    pieces.forEach(function(p){
+      var a = analysers[p.src] || analysers[p.type];
+      if(!a) return;
+      var v = rms(a)*5;
+      var was = armed[p.type]||0;
+      if(v > 0.18 && v > was*1.35) hit(p, Math.min(1,v));
+      armed[p.type] = Math.max(v, was*0.86);
+    });
+  }
+
+  // ------------------------------------------------------------- piece list UI
+  function renderPieceList(){
+    var host=$('pieces'); if(!host) return;
+    host.innerHTML='';
+    pieces.forEach(function(p){
+      var d=document.createElement('div');
+      d.className='piece'; d.id='row_'+p.type;
+      d.innerHTML='<span class="dot" style="background:'+(COLOR[p.type]||'#e8672a')+'"></span>'
+        +'<span class="nm">'+p.label+'</span>'
+        +'<span class="note">'+(p.notes.length?p.notes.join(' · '):'—')+'</span>'
+        +'<button class="btn mini" id="ln_'+p.type+'">Learn</button>';
+      host.appendChild(d);
+      var btn=$('ln_'+p.type);
+      btn.addEventListener('click', function(){
+        if(!midiAccess){ setStatus('Connect MIDI first, then Learn.','warn'); return; }
+        if(learn){ learn.btn.classList.remove('learning'); learn.btn.textContent='Learn'; }
+        p.notes=[];                       // relearn from scratch
+        learn={piece:p, btn:btn};
+        btn.classList.add('learning'); btn.textContent='Hit it…';
+        setStatus('Listening for <b>'+p.label+'</b> — hit the pad.','warn');
+        renderPieceListNotesOnly();
+      });
+      d.addEventListener('click', function(e){ if(e.target===btn) return; hit(p,1); });
+    });
+  }
+  function renderPieceListNotesOnly(){
+    pieces.forEach(function(p){
+      var row=$('row_'+p.type); if(!row) return;
+      row.querySelector('.note').textContent = p.notes.length?p.notes.join(' · '):'—';
+    });
+  }
+
+  // ------------------------------------------------------------- persistence
+  function save(){
+    try{
+      localStorage.setItem(STORE, JSON.stringify({
+        notes: pieces.map(function(p){ return {type:p.type, notes:p.notes}; }),
+        bg:$('bgSel').value, size:$('sizeSel').value,
+        labels:$('showLabels').checked, rings:$('showRings').checked
+      }));
+      setStatus('Setup saved on this device.','ok');
+    }catch(e){}
+  }
+  function applySaved(){
+    try{
+      var s=JSON.parse(localStorage.getItem(STORE)||'null'); if(!s) return;
+      (s.notes||[]).forEach(function(n){
+        var p=pieceByType(n.type); if(p&&n.notes) p.notes=n.notes;
+      });
+      if(s.bg) $('bgSel').value=s.bg;
+      if(s.size){ $('sizeSel').value=s.size; applySize(); }
+      if(typeof s.labels==='boolean') $('showLabels').checked=s.labels;
+      if(typeof s.rings==='boolean') $('showRings').checked=s.rings;
+      applyBg();
+    }catch(e){}
+  }
+  function reset(){
+    try{ localStorage.removeItem(STORE); }catch(e){}
+    pieces.forEach(function(p){ p.notes=(GM[p.type]||[]).slice(); });
+    renderPieceList(); setStatus('Back to the General MIDI defaults.');
+  }
+
+  // ------------------------------------------------------------- look + modes
+  function applySize(){
+    var wh=$('sizeSel').value.split('x');
+    cv.width=parseInt(wh[0],10); cv.height=parseInt(wh[1],10);
+    draw();
+  }
+  function applyBg(){
+    document.body.classList.remove('bg-green','bg-transparent');
+    var v=$('bgSel').value;
+    if(v==='green') document.body.classList.add('bg-green');
+    if(v==='transparent') document.body.classList.add('bg-transparent');
+    draw();
+  }
+  function enterClean(){
+    document.body.classList.add('clean');
+    if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function(){});
+  }
+  function exitClean(){
+    document.body.classList.remove('clean');
+    if(document.fullscreenElement&&document.exitFullscreen) document.exitFullscreen().catch(function(){});
+  }
+
+  // ------------------------------------------------------------- wiring
+  $('midiBtn').addEventListener('click', connectMIDI);
+  $('audioBtn').addEventListener('click', connectAudio);
+  $('cleanBtn').addEventListener('click', enterClean);
+  $('bgSel').addEventListener('change', applyBg);
+  $('sizeSel').addEventListener('change', applySize);
+  $('showLabels').addEventListener('change', draw);
+  $('showRings').addEventListener('change', draw);
+  $('saveBtn').addEventListener('click', save);
+  $('resetBtn').addEventListener('click', reset);
+  $('midiSel').addEventListener('change', function(){
+    if(!midiAccess) return;
+    var id=$('midiSel').value;
+    midiAccess.inputs.forEach(function(inp){ inp.onmidimessage = (!id||inp.id===id) ? onMIDI : null; });
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ exitClean(); return; }
+    var t=KEYS[e.key.toLowerCase()];
+    if(t){ e.preventDefault(); hit(pieceByType(t), 1); }
+  });
+  cv.addEventListener('pointerdown', function(e){
+    var r=cv.getBoundingClientRect();
+    var px=(e.clientX-r.left)/r.width*cv.width, py=(e.clientY-r.top)/r.height*cv.height;
+    var fit=fitKit(cv.width,cv.height);
+    var best=null, bd=1e9, bestR=0;
+    pieces.forEach(function(p){
+      var cx=fit.x(p.fx), cy=fit.y(p.fy), rad=p.fr*fit.s;
+      var dy=(py-cy)/(CYMBALS[p.type]?0.42:1);
+      var d=Math.sqrt((px-cx)*(px-cx)+dy*dy);
+      if(d<bd){ bd=d; best=p; bestR=rad; }
+    });
+    if(best && bd < bestR*1.6) hit(best,1);
+  });
+
+  applyBg();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

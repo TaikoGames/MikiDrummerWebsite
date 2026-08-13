@@ -39,6 +39,12 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://www.mikidrummer.ca/drum-viz.html</loc>
+    <lastmod>2026-08-13</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://www.mikidrummer.ca/click-track.html</loc>
     <lastmod>2026-08-02</lastmod>
     <priority>0.7</priority>
