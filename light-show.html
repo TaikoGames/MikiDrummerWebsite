@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Light Show — GRANITE | Miki Drummer</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --stone-950:#0b0c0e; --stone-900:#131518; --stone-850:#171a1d; --stone-800:#1e2124;
+    --stone-700:#2b2f34; --stone-600:#3a3f45; --stone-400:#7d848d; --stone-300:#a6adb6;
+    --stone-100:#e9ebee; --molten:#e8672a; --amber:#f4b400; --green:#3fbf6a; --edge:#2b2f34;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--stone-950); color:var(--stone-100);
+    font-family:"Helvetica Neue",system-ui,Arial,sans-serif;
+    min-height:100vh; padding:22px 18px 70px; -webkit-tap-highlight-color:transparent;
+  }
+  .mono{font-family:ui-monospace,"SFMono-Regular",Menlo,monospace}
+  .wrap{max-width:1120px;margin:0 auto}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--molten);font-weight:700}
+  .back{color:var(--stone-400);font-size:13px;text-decoration:none}
+  .back:hover{color:var(--molten)}
+  h1{font-family:"Arial Black","Helvetica Neue",system-ui,sans-serif;
+     font-size:clamp(26px,5vw,40px);letter-spacing:-.02em;margin:6px 0 8px;line-height:1.03}
+  .lead{color:var(--stone-300);font-size:15.5px;line-height:1.6;max-width:70ch}
+
+  .grid{display:grid;gap:20px;margin-top:22px}
+  @media(min-width:960px){ .grid{grid-template-columns:minmax(0,1fr) 380px;align-items:start} }
+
+  /* ---- stage ---- */
+  .stage{position:relative;border:1px solid var(--edge);border-radius:16px;overflow:hidden;
+         background:#000;line-height:0}
+  .stage canvas{width:100%;height:auto;display:block}
+  .stage-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+             padding:11px 12px;background:var(--stone-900);border-top:1px solid var(--edge);line-height:1.4}
+
+  .card{background:var(--stone-900);border:1px solid var(--edge);border-radius:14px;padding:16px 16px 18px}
+  .card + .card{margin-top:16px}
+  .card h2{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-400);
+           margin-bottom:12px;font-family:ui-monospace,monospace}
+
+  label.fld{display:block;font-size:12px;color:var(--stone-400);margin:10px 0 5px}
+  select,input[type=text],input[type=number]{
+    width:100%;background:var(--stone-850);color:var(--stone-100);border:1px solid var(--edge);
+    border-radius:9px;padding:9px 11px;font-size:14px;font-family:inherit}
+  select:focus,input:focus{outline:none;border-color:var(--molten)}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--edge);
+       background:var(--stone-850);color:var(--stone-100);border-radius:100px;
+       padding:9px 16px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;
+       transition:border-color .15s,background .15s}
+  .btn:hover{border-color:var(--stone-600)}
+  .btn.primary{background:var(--molten);color:#180a03;border-color:var(--molten)}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.on{border-color:var(--green);color:var(--green)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+  .status{font-size:12.5px;color:var(--stone-400);margin-top:10px;line-height:1.5}
+  .status b{color:var(--stone-100)}
+  .status.warn{color:var(--amber)}
+  .status.err{color:#ff7a6b}
+  .status.ok{color:var(--green)}
+
+  /* ---- per-zone rows ---- */
+  .zone{border:1px solid var(--edge);border-radius:11px;padding:11px 12px;margin-bottom:9px;
+        background:var(--stone-850)}
+  .zone-head{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+  .swatch{width:13px;height:13px;border-radius:4px;flex:none;box-shadow:0 0 9px currentColor}
+  .zone-name{font-size:13.5px;font-weight:700;flex:1}
+  .zone-src{width:auto;flex:none;font-size:12px;padding:5px 8px}
+  .meter{height:7px;background:#0a0b0c;border-radius:99px;overflow:hidden;margin-top:7px}
+  .meter i{display:block;height:100%;width:0%;border-radius:99px;
+           background:linear-gradient(90deg,var(--molten),var(--amber));transition:width .05s linear}
+  .knobs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+  .knob{font-size:11px;color:var(--stone-400)}
+  .knob input{width:100%;margin-top:3px}
+  input[type=range]{accent-color:var(--molten)}
+
+  .btn.mini{padding:5px 11px;font-size:11.5px;border-radius:100px}
+  .btn.learning{border-color:var(--amber);color:var(--amber)}
+
+  .inrow{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+  .inrow .n{font-family:ui-monospace,monospace;font-size:11px;color:var(--stone-400);
+            width:26px;flex:none;text-align:right}
+  .inrow .meter{flex:1;margin-top:0}
+  .inrow.hot .n{color:var(--green)}
+
+  .hint{font-size:12px;color:var(--stone-400);line-height:1.65;margin-top:12px}
+  .hint code{background:var(--stone-850);border:1px solid var(--edge);border-radius:5px;
+             padding:1px 5px;font-size:11.5px}
+
+  /* ---- show mode ---- */
+  body.showmode{padding:0;background:#000;overflow:hidden;cursor:none}
+  body.showmode .wrap{max-width:none}
+  body.showmode .hideable{display:none !important}
+  body.showmode .grid{display:block;margin:0;gap:0}
+  body.showmode .stage{border:none;border-radius:0;height:100vh;display:flex;
+                       align-items:center;justify-content:center;background:#000}
+  body.showmode .stage canvas{width:auto;height:100vh;max-width:100vw;object-fit:contain}
+  body.showmode .stage-bar{display:none}
+  .escnote{display:none;position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
+           color:#55595e;font-size:11px;letter-spacing:.16em;text-transform:uppercase;z-index:5}
+  body.showmode .escnote{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top hideable">
+    <span class="eyebrow">Miki Drummer · Private</span>
+    <a class="back" href="/admin.html">← Admin</a>
+  </div>
+  <h1 class="hideable">GRANITE Light Show</h1>
+  <p class="lead hideable">
+    Feeds the Behringer's outputs into the artwork: each output drives its own lights on the image, live.
+    Plug the mixer in over USB, pick it below, map outputs to zones, then hit <b>Show mode</b> and put it on the projector.
+  </p>
+
+  <div class="grid">
+
+    <!-- ================= stage ================= -->
+    <div>
+      <div class="stage">
+        <canvas id="stage" width="1121" height="1121"></canvas>
+        <div class="stage-bar hideable">
+          <button class="btn primary" id="startBtn">▶ Start audio</button>
+          <button class="btn" id="showBtn" disabled>⛶ Show mode</button>
+          <button class="btn" id="testBtn">🎛 Test pattern</button>
+          <span class="status mono" id="fpsOut" style="margin-left:auto"></span>
+        </div>
+      </div>
+      <p class="hint hideable">
+        <b>Show mode</b> goes fullscreen and hides everything but the artwork — <code>Esc</code> or click to come back.
+        Nothing is uploaded and no audio is played back; the page only reads levels.
+      </p>
+      <p class="hint hideable">
+        <b>Getting all the channels through:</b> the browser decides how many it hands over, not the mixer.
+        Use <b>Chrome or Edge on desktop</b>, put the interface in its multichannel USB mode
+        (X-Air/XR18 → 18 in, X32 → 32 in) and pick the matching count above. Safari and Firefox
+        generally cap at a stereo pair. If only 2 arrive, the page falls back to splitting the main
+        outs into Low/Mid/High so the lights still move — the status line tells you which you got.
+        On Windows, check the device's channel count in <code>Sound → Recording → Properties</code> too;
+        Chrome won't offer more than Windows exposes.
+      </p>
+    </div>
+
+    <!-- ================= controls ================= -->
+    <div class="hideable">
+
+      <div class="card">
+        <h2>1 · Audio input</h2>
+        <label class="fld" for="devSel">Input device</label>
+        <select id="devSel"><option value="">— press Start to list devices —</option></select>
+
+        <label class="fld" for="chanReq">Channels to request</label>
+        <select id="chanReq">
+          <option value="2">2 — main L/R</option>
+          <option value="4">4</option>
+          <option value="6">6</option>
+          <option value="8">8</option>
+          <option value="16">16</option>
+          <option value="18">18 — XR18 / X-Air</option>
+          <option value="32">32 — X32</option>
+        </select>
+
+        <div class="status" id="audioStatus">Not started.</div>
+
+        <div id="inputsWrap" style="display:none;margin-top:14px">
+          <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone-400);
+                      font-family:ui-monospace,monospace;margin-bottom:8px">Live inputs</div>
+          <div id="inputs"></div>
+          <p class="hint" style="margin-top:8px">
+            Hit each drum and watch which number jumps — that's how you find what landed where.
+            Then use <b>Learn</b> on a zone and hit it again to map it.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>2 · Sources → zones</h2>
+        <div id="zones"></div>
+        <div class="knobs" style="grid-template-columns:1fr 1fr;margin-top:12px">
+          <button class="btn" id="saveBtn">Save setup</button>
+          <button class="btn" id="resetBtn">Reset</button>
+        </div>
+        <p class="hint">
+          Levels are peak-following with a fast attack and adjustable decay, so the lights punch on transients
+          and fall away like a real rig. <b>Gain</b> scales the input, <b>Floor</b> ignores everything below it
+          (set it just above the room noise during soundcheck).
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="escnote">Esc / click to exit show mode</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  // ---------------------------------------------------------------- zones
+  // Coordinates are normalised to the 1:1 artwork, so they hold at any size.
+  // shape: ellipse blooms composited with 'lighter' over the base image.
+  var ZONES = [
+    { id:'city',    name:'City lights',   color:'#ff9a3c', x:0.50, y:0.775, rx:0.52, ry:0.17, src:'low',  gain:1.25, floor:0.05, decay:0.16, max:1.00 },
+    { id:'pyramid', name:'Pyramid',       color:'#ffd08a', x:0.50, y:0.470, rx:0.22, ry:0.13, src:'mid',  gain:1.15, floor:0.06, decay:0.10, max:0.95 },
+    { id:'chasm',   name:'Chasm fire',    color:'#ff6a2a', x:0.495,y:0.945, rx:0.11, ry:0.055,src:'low',  gain:1.40, floor:0.06, decay:0.13, max:1.00 },
+    { id:'sky',     name:'Sky / nebula',  color:'#7ea8ff', x:0.50, y:0.150, rx:0.62, ry:0.20, src:'high', gain:1.30, floor:0.04, decay:0.22, max:0.80 },
+    { id:'moonL',   name:'Left planet',   color:'#9fc4ff', x:0.085,y:0.290, rx:0.085,ry:0.085,src:'high', gain:1.20, floor:0.05, decay:0.18, max:0.85 },
+    { id:'moonR',   name:'Right planet',  color:'#9fc4ff', x:0.740,y:0.305, rx:0.080,ry:0.080,src:'mid',  gain:1.20, floor:0.05, decay:0.18, max:0.85 },
+    { id:'logo',    name:'GRANITE logo',  color:'#ffffff', x:0.480,y:0.200, rx:0.46, ry:0.095,src:'mid',  gain:1.10, floor:0.10, decay:0.08, max:0.70 }
+  ];
+  var DEFAULTS = JSON.parse(JSON.stringify(ZONES));
+  var STORE = 'graniteLightShow:v1';
+
+  // ---------------------------------------------------------------- canvas
+  var cv = $('stage'), ctx = cv.getContext('2d');
+  var art = new Image();
+  var artReady = false;
+  art.onload = function(){ artReady = true; cv.width = art.naturalWidth; cv.height = art.naturalHeight; draw(); };
+  art.onerror = function(){ setStatus('audioStatus','Artwork failed to load — check /images/granite/cosmos-artwork.jpg','err'); };
+  art.src = '/images/granite/cosmos-artwork.jpg';
+
+  function hexToRgb(h){
+    var m = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(h);
+    return m ? [parseInt(m[1],16),parseInt(m[2],16),parseInt(m[3],16)] : [255,255,255];
+  }
+
+  function draw(){
+    var W = cv.width, H = cv.height;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0,0,W,H);
+    if(artReady) ctx.drawImage(art,0,0,W,H);
+    else { ctx.fillStyle = '#0b0c0e'; ctx.fillRect(0,0,W,H); }
+
+    ctx.globalCompositeOperation = 'lighter';
+    for(var i=0;i<ZONES.length;i++){
+      var z = ZONES[i], v = z.level || 0;
+      if(v <= 0.004) continue;
+      var cx = z.x*W, cy = z.y*H, rx = z.rx*W, ry = z.ry*H;
+      var rgb = hexToRgb(z.color);
+      var a = Math.min(1, v) * (z.max==null?1:z.max);
+
+      ctx.save();
+      ctx.translate(cx,cy);
+      ctx.scale(1, ry/rx);
+      var g = ctx.createRadialGradient(0,0,0,0,0,rx);
+      g.addColorStop(0,   'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+(a*0.85).toFixed(4)+')');
+      g.addColorStop(0.45,'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+(a*0.34).toFixed(4)+')');
+      g.addColorStop(1,   'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(0,0,rx,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  // ---------------------------------------------------------------- audio
+  var actx=null, stream=null, srcNode=null, splitter=null;
+  var chanAnalysers=[];      // one per hardware channel
+  var bandAnalysers={};      // low / mid / high, from a downmix
+  var running=false, testing=false;
+  var buf=null;
+
+  function setStatus(id,msg,cls){
+    var el=$(id); el.className='status'+(cls?' '+cls:''); el.innerHTML=msg;
+  }
+
+  function rms(an){
+    if(!buf || buf.length!==an.fftSize) buf = new Float32Array(an.fftSize);
+    an.getFloatTimeDomainData(buf);
+    var s=0;
+    for(var i=0;i<buf.length;i++){ s += buf[i]*buf[i]; }
+    return Math.sqrt(s/buf.length);
+  }
+
+  function mkAnalyser(){
+    var a = actx.createAnalyser();
+    a.fftSize = 1024;
+    a.smoothingTimeConstant = 0;   // we do our own envelope
+    return a;
+  }
+
+  function bandFilter(type,freq,q){
+    var f = actx.createBiquadFilter();
+    f.type = type; f.frequency.value = freq; if(q) f.Q.value = q;
+    return f;
+  }
+
+  async function listDevices(){
+    var devs = await navigator.mediaDevices.enumerateDevices();
+    var ins = devs.filter(function(d){ return d.kind==='audioinput'; });
+    var sel = $('devSel'); sel.innerHTML='';
+    ins.forEach(function(d,i){
+      var o=document.createElement('option');
+      o.value=d.deviceId; o.textContent=d.label||('Input '+(i+1));
+      sel.appendChild(o);
+    });
+    // pre-select anything that looks like the mixer
+    var guess = ins.find(function(d){ return /behringer|x-?air|xr\d|x32|umc|uphoria/i.test(d.label||''); });
+    if(guess) sel.value = guess.deviceId;
+    return ins;
+  }
+
+  async function start(){
+    try{
+      setStatus('audioStatus','Requesting microphone access…');
+      // initial permission prompt so device labels become readable
+      var pre = await navigator.mediaDevices.getUserMedia({audio:true});
+      pre.getTracks().forEach(function(t){ t.stop(); });
+      await listDevices();
+
+      var want = parseInt($('chanReq').value,10) || 2;
+      var id = $('devSel').value;
+      var constraints = { audio:{
+        channelCount:{ ideal: want },
+        echoCancellation:false, noiseSuppression:false, autoGainControl:false
+      }};
+      if(id) constraints.audio.deviceId = { exact: id };
+
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+      actx = new (window.AudioContext||window.webkitAudioContext)();
+      if(actx.state==='suspended') await actx.resume();
+      srcNode = actx.createMediaStreamSource(stream);
+
+      var got = srcNode.channelCount || 2;
+      var settings = (stream.getAudioTracks()[0] && stream.getAudioTracks()[0].getSettings()) || {};
+      if(settings.channelCount) got = settings.channelCount;
+
+      // per-channel analysers
+      chanAnalysers = [];
+      splitter = actx.createChannelSplitter(got);
+      srcNode.connect(splitter);
+      for(var c=0;c<got;c++){
+        var a = mkAnalyser();
+        splitter.connect(a, c);
+        chanAnalysers.push(a);
+      }
+
+      // band analysers off a mono-ish sum, so band mode works on any interface
+      var lo = bandFilter('lowpass',140), mid = bandFilter('bandpass',1100,0.9), hi = bandFilter('highpass',4200);
+      bandAnalysers = { low:mkAnalyser(), mid:mkAnalyser(), high:mkAnalyser() };
+      srcNode.connect(lo); lo.connect(bandAnalysers.low);
+      srcNode.connect(mid); mid.connect(bandAnalysers.mid);
+      srcNode.connect(hi); hi.connect(bandAnalysers.high);
+
+      running = true; testing = false;
+      $('startBtn').textContent = '■ Stop audio';
+      $('startBtn').classList.add('on');
+      $('showBtn').disabled = false;
+      rebuildZoneUI(got);
+
+      buildInputMeters(got);
+      if(got > 2 && !localStorage.getItem(STORE)) autoMap(got);
+
+      var note = got > 2
+        ? 'Reading <b>'+got+' discrete channels</b> from the mixer.'
+        : 'Asked for <b>'+want+'</b> but the browser only opened <b>'+got+'</b>. '
+          + 'Frequency bands (Low/Mid/High) are mapped instead so it still works off the main outs — '
+          + 'see the note under the artwork if you expected per-channel.';
+      setStatus('audioStatus', note + ' Sample rate '+actx.sampleRate+' Hz.', got>2?'ok':'warn');
+      loop();
+    }catch(err){
+      setStatus('audioStatus','Could not open the input: <b>'+(err && err.message ? err.message : err)+'</b>', 'err');
+    }
+  }
+
+  function stop(){
+    running=false;
+    if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream=null; }
+    if(actx){ actx.close(); actx=null; }
+    chanAnalysers=[]; bandAnalysers={};
+    $('startBtn').textContent='▶ Start audio';
+    $('startBtn').classList.remove('on');
+    $('showBtn').disabled = true;
+    setStatus('audioStatus','Stopped.');
+    ZONES.forEach(function(z){ z.level=0; });
+    draw();
+  }
+
+  // ------------------------------------------------- live input meters + learn
+  function buildInputMeters(n){
+    var host = $('inputs'); host.innerHTML='';
+    for(var c=0;c<n;c++){
+      var r=document.createElement('div');
+      r.className='inrow'; r.id='in_'+c;
+      r.innerHTML='<span class="n">'+(c+1)+'</span><div class="meter"><i id="im_'+c+'"></i></div>';
+      host.appendChild(r);
+    }
+    $('inputsWrap').style.display = n ? 'block' : 'none';
+  }
+
+  // With a splitter feeding discrete channels, seed a sensible drum-first map.
+  var AUTOMAP = ['city','pyramid','chasm','sky','moonL','moonR','logo'];
+  function autoMap(nChan){
+    AUTOMAP.forEach(function(zid, i){
+      if(i >= nChan) return;
+      var z = ZONES.find(function(q){ return q.id===zid; });
+      if(z) z.src = String(i);
+    });
+  }
+
+  // "Learn": arm a zone, hit the drum, loudest channel wins.
+  var learn = null;   // {zone, endsAt, peak:[]}
+  function startLearn(z, btn){
+    if(!running){ setStatus('audioStatus','Start audio before using Learn.','warn'); return; }
+    learn = { zone:z, endsAt: performance.now()+3000, peak:new Array(chanAnalysers.length).fill(0), btn:btn };
+    btn.classList.add('learning');
+  }
+  function tickLearn(now){
+    if(!learn) return;
+    for(var c=0;c<chanAnalysers.length;c++){
+      var v = rms(chanAnalysers[c]);
+      if(v > learn.peak[c]) learn.peak[c] = v;
+    }
+    var left = Math.max(0, learn.endsAt-now);
+    learn.btn.textContent = 'Listening ' + (left/1000).toFixed(1) + 's';
+    if(left > 0) return;
+
+    var best=-1, bestV=0;
+    for(var i=0;i<learn.peak.length;i++){ if(learn.peak[i] > bestV){ bestV=learn.peak[i]; best=i; } }
+    learn.btn.classList.remove('learning');
+    learn.btn.textContent = 'Learn';
+    if(best>=0 && bestV > 0.004){
+      learn.zone.src = String(best);
+      var sel = $('s_'+learn.zone.id); if(sel) sel.value = String(best);
+      setStatus('audioStatus','<b>'+learn.zone.name+'</b> → channel <b>'+(best+1)+'</b>.','ok');
+    } else {
+      setStatus('audioStatus','Heard nothing on any channel — check the splitter feed and try again.','warn');
+    }
+    learn = null;
+  }
+
+  // ---------------------------------------------------------------- level source
+  function readSource(src){
+    if(src==='off') return 0;
+    if(src==='low'||src==='mid'||src==='high'){
+      return bandAnalysers[src] ? rms(bandAnalysers[src]) : 0;
+    }
+    var n = parseInt(src,10);
+    if(!isNaN(n) && chanAnalysers[n]) return rms(chanAnalysers[n]);
+    return 0;
+  }
+
+  // test pattern: sweeps the zones so you can aim the projector with no audio
+  var testT = 0;
+  function readTest(i){
+    var phase = testT - i*0.55;
+    var v = Math.sin(phase)*0.5+0.5;
+    return Math.pow(v, 3) * 0.9;
+  }
+
+  var lastFrame = performance.now(), fpsAcc = 0, fpsN = 0;
+  function loop(){
+    if(!running && !testing) return;
+    var now = performance.now(), dt = Math.min(0.1,(now-lastFrame)/1000); lastFrame = now;
+    if(testing) testT += dt*2.2;
+
+    // live per-channel meters (and Learn, which listens on the same reads)
+    if(running){
+      for(var c=0;c<chanAnalysers.length;c++){
+        var cv2 = rms(chanAnalysers[c]) * 4;
+        var im = $('im_'+c);
+        if(im) im.style.width = Math.min(100, cv2*100).toFixed(1)+'%';
+        var row = $('in_'+c);
+        if(row) row.classList.toggle('hot', cv2 > 0.12);
+      }
+      tickLearn(now);
+    }
+
+    for(var i=0;i<ZONES.length;i++){
+      var z = ZONES[i];
+      var raw = testing ? readTest(i) : readSource(z.src);
+      // floor + gain, then a fast-attack / slow-release envelope
+      var v = raw <= z.floor ? 0 : (raw - z.floor)/(1-z.floor);
+      v = Math.min(1.6, v * (z.gain*4));         // *4: RMS of real programme material is small
+      var prev = z.level||0;
+      z.level = v > prev ? v : prev + (v-prev)*Math.min(1, dt/Math.max(0.02,z.decay));
+      var bar = $('m_'+z.id);
+      if(bar) bar.style.width = Math.min(100, z.level*100).toFixed(1)+'%';
+    }
+    draw();
+
+    fpsAcc += dt; fpsN++;
+    if(fpsAcc >= 0.5){ $('fpsOut').textContent = Math.round(fpsN/fpsAcc)+' fps'; fpsAcc=0; fpsN=0; }
+    requestAnimationFrame(loop);
+  }
+
+  // ---------------------------------------------------------------- zone UI
+  function srcOptions(nChan){
+    var out = '<option value="off">— off —</option>'
+            + '<option value="low">Band · Low (kick/bass)</option>'
+            + '<option value="mid">Band · Mid (snare/gtr)</option>'
+            + '<option value="high">Band · High (cymbals)</option>';
+    for(var c=0;c<nChan;c++) out += '<option value="'+c+'">Channel '+(c+1)+'</option>';
+    return out;
+  }
+
+  function rebuildZoneUI(nChan){
+    var host = $('zones'); host.innerHTML='';
+    ZONES.forEach(function(z){
+      var d = document.createElement('div');
+      d.className='zone';
+      d.innerHTML =
+        '<div class="zone-head">'
+        +  '<span class="swatch" style="background:'+z.color+';color:'+z.color+'"></span>'
+        +  '<span class="zone-name">'+z.name+'</span>'
+        +  '<select class="zone-src" id="s_'+z.id+'">'+srcOptions(nChan)+'</select>'
+        +  '<button class="btn mini" id="l_'+z.id+'">Learn</button>'
+        + '</div>'
+        + '<div class="meter"><i id="m_'+z.id+'"></i></div>'
+        + '<div class="knobs">'
+        +  '<div class="knob">Gain <input type="range" id="g_'+z.id+'" min="0.1" max="4" step="0.05" value="'+z.gain+'"></div>'
+        +  '<div class="knob">Floor <input type="range" id="f_'+z.id+'" min="0" max="0.4" step="0.005" value="'+z.floor+'"></div>'
+        +  '<div class="knob">Decay <input type="range" id="d_'+z.id+'" min="0.02" max="1.2" step="0.01" value="'+z.decay+'"></div>'
+        +  '<div class="knob">Max <input type="range" id="x_'+z.id+'" min="0.1" max="1" step="0.05" value="'+z.max+'"></div>'
+        + '</div>';
+      host.appendChild(d);
+
+      var sel = $('s_'+z.id); sel.value = z.src;
+      sel.addEventListener('change', function(){ z.src = sel.value; });
+      $('g_'+z.id).addEventListener('input', function(e){ z.gain = parseFloat(e.target.value); });
+      $('f_'+z.id).addEventListener('input', function(e){ z.floor = parseFloat(e.target.value); });
+      $('d_'+z.id).addEventListener('input', function(e){ z.decay = parseFloat(e.target.value); });
+      $('x_'+z.id).addEventListener('input', function(e){ z.max = parseFloat(e.target.value); });
+      var lb = $('l_'+z.id);
+      lb.addEventListener('click', function(){ startLearn(z, lb); });
+    });
+  }
+
+  // ---------------------------------------------------------------- persistence
+  function save(){
+    try{
+      var slim = ZONES.map(function(z){
+        return {id:z.id,src:z.src,gain:z.gain,floor:z.floor,decay:z.decay,max:z.max};
+      });
+      localStorage.setItem(STORE, JSON.stringify(slim));
+      setStatus('audioStatus','Setup saved on this device.','ok');
+    }catch(e){}
+  }
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORE); if(!raw) return;
+      JSON.parse(raw).forEach(function(s){
+        var z = ZONES.find(function(q){ return q.id===s.id; });
+        if(z){ z.src=s.src; z.gain=s.gain; z.floor=s.floor; z.decay=s.decay; z.max=s.max; }
+      });
+    }catch(e){}
+  }
+  function reset(){
+    ZONES.forEach(function(z){
+      var d = DEFAULTS.find(function(q){ return q.id===z.id; });
+      if(d){ z.src=d.src; z.gain=d.gain; z.floor=d.floor; z.decay=d.decay; z.max=d.max; }
+    });
+    try{ localStorage.removeItem(STORE); }catch(e){}
+    rebuildZoneUI(chanAnalysers.length||2);
+    setStatus('audioStatus','Back to defaults.');
+  }
+
+  // ---------------------------------------------------------------- show mode
+  function enterShow(){
+    document.body.classList.add('showmode');
+    if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function(){});
+  }
+  function exitShow(){
+    document.body.classList.remove('showmode');
+    if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function(){});
+  }
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') exitShow(); });
+  document.addEventListener('click', function(e){
+    if(document.body.classList.contains('showmode')) exitShow();
+  });
+
+  // ---------------------------------------------------------------- wiring
+  $('startBtn').addEventListener('click', function(){ running ? stop() : start(); });
+  $('showBtn').addEventListener('click', function(e){ e.stopPropagation(); enterShow(); });
+  $('testBtn').addEventListener('click', function(){
+    testing = !testing;
+    $('testBtn').classList.toggle('on', testing);
+    $('showBtn').disabled = !(testing || running);
+    if(testing){ lastFrame = performance.now(); loop(); }
+    else if(!running){ ZONES.forEach(function(z){ z.level=0; }); draw(); }
+  });
+  $('saveBtn').addEventListener('click', save);
+  $('resetBtn').addEventListener('click', reset);
+  $('chanReq').addEventListener('change', function(){
+    if(running){ setStatus('audioStatus','Channel count changed — stop and start again to apply.','warn'); }
+  });
+
+  load();
+  rebuildZoneUI(2);
+  draw();
+})();
+</script>
+</body>
+</html>
