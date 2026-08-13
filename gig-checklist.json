@@ -1,0 +1,192 @@
+{
+  "_comment": "Source of truth for the drummer gig checklist. Run tools/build_gig_checklist.py after editing to regenerate the static reference lists and the inline SHOWS data in gig-checklist.html.",
+  "shows": {
+    "breakables": {
+      "ico": "🥁",
+      "name": "Breakables only",
+      "tag": "Backline kit provided",
+      "blurb": "The house or backline kit is already on stage — you just bring what's yours and what wears out.",
+      "groups": [
+        {
+          "name": "Breakables",
+          "items": [
+            "Snare drum",
+            "Cymbals — hats, crashes, ride",
+            "Kick pedal",
+            "Hi-hat clutch + felts & sleeves"
+          ]
+        },
+        {
+          "name": "Sticks",
+          "items": [
+            "Drumsticks + 2 spare pairs"
+          ]
+        },
+        {
+          "name": "Ears & tech",
+          "items": [
+            "In-ear monitors (IEM)",
+            "Drum key"
+          ]
+        },
+        {
+          "name": "Comfort",
+          "items": [
+            "Throne — if the venue's is sketchy"
+          ]
+        }
+      ]
+    },
+    "full": {
+      "ico": "🛻",
+      "name": "Full kit",
+      "tag": "Your whole setup",
+      "blurb": "Headliner or your own show — the entire kit is coming with you. Load in, load out, forget nothing.",
+      "groups": [
+        {
+          "name": "Shells",
+          "items": [
+            "Bass drum",
+            "Rack tom(s)",
+            "Floor tom",
+            "Snare drum"
+          ]
+        },
+        {
+          "name": "Hardware",
+          "items": [
+            "Kick pedal",
+            "Hi-hat stand",
+            "Snare stand",
+            "Cymbal stands",
+            "Throne",
+            "Drum rug / mat"
+          ]
+        },
+        {
+          "name": "Cymbals",
+          "items": [
+            "Hi-hats",
+            "Crashes",
+            "Ride"
+          ]
+        },
+        {
+          "name": "Sticks & tuning",
+          "items": [
+            "Drumsticks + spares",
+            "Drum key",
+            "Moongel / muffling",
+            "Spare drum head"
+          ]
+        },
+        {
+          "name": "Ears & tech",
+          "items": [
+            "IEMs / monitor mix",
+            "Gaff tape"
+          ]
+        }
+      ]
+    },
+    "festival": {
+      "ico": "🎪",
+      "name": "Festival / fly date",
+      "tag": "Backline provided",
+      "blurb": "Fast changeover, shared backline, tight stage times. Travel light but bring the essentials that make it feel like home.",
+      "groups": [
+        {
+          "name": "Bring",
+          "items": [
+            "Snare drum",
+            "Cymbals in a padded bag",
+            "Pedals — kick + hi-hat",
+            "Drumsticks + spares"
+          ]
+        },
+        {
+          "name": "Tech",
+          "items": [
+            "IEMs + molds",
+            "Drum key",
+            "Gaff tape"
+          ]
+        },
+        {
+          "name": "Paperwork",
+          "items": [
+            "Stage plot + input list",
+            "Backline rider confirmed"
+          ]
+        }
+      ]
+    },
+    "studio": {
+      "ico": "🎙️",
+      "name": "Studio session",
+      "tag": "Recording day",
+      "blurb": "Tone is everything and takes cost time. Show up with options, fresh heads and a tuning kit.",
+      "groups": [
+        {
+          "name": "Drums",
+          "items": [
+            "Fresh heads, tuned",
+            "Extra snare option",
+            "Muffling — moongel, tape, wallet"
+          ]
+        },
+        {
+          "name": "Cymbals",
+          "items": [
+            "Cymbal selection",
+            "Spare hi-hats"
+          ]
+        },
+        {
+          "name": "Sticks",
+          "items": [
+            "Sticks, brushes, rods & mallets"
+          ]
+        },
+        {
+          "name": "Tech",
+          "items": [
+            "Click / IEM",
+            "Drum key + tuning kit",
+            "Spare heads"
+          ]
+        }
+      ]
+    },
+    "rehearsal": {
+      "ico": "🔁",
+      "name": "Rehearsal",
+      "tag": "Practice room",
+      "blurb": "Low stakes, high reps. Grab the few things that make the session count.",
+      "groups": [
+        {
+          "name": "Bring",
+          "items": [
+            "Drumsticks",
+            "Snare + pedal (if needed)",
+            "Practice pad"
+          ]
+        },
+        {
+          "name": "Tech",
+          "items": [
+            "IEM / headphones",
+            "Metronome / click"
+          ]
+        },
+        {
+          "name": "Notes",
+          "items": [
+            "Setlist / chart notes",
+            "Water"
+          ]
+        }
+      ]
+    }
+  }
+}
