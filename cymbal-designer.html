@@ -62,8 +62,16 @@
   .btn.primary{background:var(--molten);color:#180a03;border-color:var(--molten)}
   .btn.on{border-color:var(--molten);color:var(--molten);background:rgba(232,103,42,.10)}
 
-  .seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
   .seg .btn{justify-content:center;padding:9px 6px;font-size:12.5px}
+
+  .stamprow{display:flex;gap:10px;align-items:center;margin-top:10px}
+  .stampprev{width:62px;height:62px;flex:none;border:1px solid var(--edge);border-radius:10px;
+    background:#0d0f11 repeating-conic-gradient(#16191c 0% 25%, #0d0f11 0% 50%) 50%/14px 14px;
+    object-fit:contain;padding:4px}
+  .stampbtns{display:flex;flex-direction:column;gap:6px;flex:1}
+  .file{position:relative;overflow:hidden;display:inline-flex}
+  .file input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 
   .saved{list-style:none;margin-top:10px;max-height:260px;overflow-y:auto}
   .saved li{display:flex;align-items:center;gap:8px;border:1px solid var(--edge);
@@ -127,6 +135,7 @@
           <button class="btn on" id="tEngrave">⛏ Engrave</button>
           <button class="btn" id="tPaint">🎨 Paint</button>
           <button class="btn" id="tErase">🧽 Erase</button>
+          <button class="btn" id="tStamp">🔖 Stamp</button>
         </div>
 
         <label class="fld">Brush size <span class="val" id="vSize">14</span></label>
@@ -138,6 +147,26 @@
         <div id="paintOnly" style="display:none">
           <label class="fld">Paint colour</label>
           <div class="swatches" id="swatches"></div>
+        </div>
+
+        <div id="stampOnly" style="display:none">
+          <label class="fld">Stamp image</label>
+          <div class="stamprow">
+            <img class="stampprev" id="stampPrev" alt="Current stamp">
+            <div class="stampbtns">
+              <button class="btn" id="useLogo">Use my logo</button>
+              <span class="file"><button class="btn" type="button">Upload image…</button>
+                <input type="file" id="stampFile" accept="image/*"></span>
+            </div>
+          </div>
+          <label class="fld">Stamp size <span class="val" id="vStamp">180</span></label>
+          <input type="range" id="stampSize" min="40" max="420" step="5" value="180">
+          <label class="fld" for="stampStyle">Stamp as</label>
+          <select id="stampStyle">
+            <option value="engrave" selected>Engraved — etched silhouette</option>
+            <option value="paint">Painted — full colour</option>
+          </select>
+          <p class="hint">Click the cymbal to place it. Symmetry repeats it around the bell, rotated to match.</p>
         </div>
       </div>
 
@@ -353,6 +382,89 @@
     });
   }
 
+  // ---------------------------------------------------------------- stamp
+  var stampImg = null;
+
+  function trimTransparent(img){
+    // the logo PNG carries a wide transparent margin; without trimming it the
+    // stamp lands offset from where you clicked and looks smaller than the slider says
+    var c = document.createElement('canvas');
+    c.width = img.naturalWidth || img.width; c.height = img.naturalHeight || img.height;
+    var x = c.getContext('2d');
+    x.drawImage(img, 0, 0);
+    var d;
+    try { d = x.getImageData(0,0,c.width,c.height).data; }
+    catch(e){ return c; }                       // tainted (cross-origin) — use as-is
+    var minx=c.width, miny=c.height, maxx=-1, maxy=-1;
+    for(var yy=0; yy<c.height; yy++){
+      for(var xx=0; xx<c.width; xx++){
+        if(d[(yy*c.width+xx)*4+3] > 8){
+          if(xx<minx)minx=xx; if(xx>maxx)maxx=xx;
+          if(yy<miny)miny=yy; if(yy>maxy)maxy=yy;
+        }
+      }
+    }
+    if(maxx < 0) return c;
+    var t = document.createElement('canvas');
+    t.width = maxx-minx+1; t.height = maxy-miny+1;
+    t.getContext('2d').drawImage(c, minx, miny, t.width, t.height, 0, 0, t.width, t.height);
+    return t;
+  }
+
+  function setStamp(src, label){
+    var im = new Image();
+    im.onload = function(){
+      stampImg = trimTransparent(im);
+      $('stampPrev').src = stampImg.toDataURL('image/png');
+      if(label) setStatus(label, 'ok');
+    };
+    im.onerror = function(){ setStatus('Could not read that image.'); };
+    im.src = src;
+  }
+
+  function silhouette(src, w, h, grey){
+    // alpha becomes the cut: anywhere the image is opaque, engrave it
+    var c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h));
+    var x = c.getContext('2d');
+    x.drawImage(src, 0, 0, c.width, c.height);
+    x.globalCompositeOperation = 'source-in';
+    x.fillStyle = grey;
+    x.fillRect(0, 0, c.width, c.height);
+    return c;
+  }
+
+  function stampAt(px, py){
+    if(!stampImg){ setStatus('Pick a stamp image first.'); return; }
+    var n = symCount();
+    if(n === 8) n = 8;                       // stamps repeat by rotation only —
+    var mirrorless = true;                   // mirroring would render logos backwards
+    var w = parseInt($('stampSize').value, 10);
+    var h = w * stampImg.height / stampImg.width;
+    var strength = parseInt($('strength').value, 10)/100;
+    var engraved = $('stampStyle').value === 'engrave';
+
+    var src = stampImg, target = pctx;
+    if(engraved){
+      var v = Math.round(255*(1 - 0.75*strength));
+      src = silhouette(stampImg, w, h, 'rgb('+v+','+v+','+v+')');
+      target = ectx;
+      ectx.globalAlpha = 1;
+    } else {
+      pctx.globalAlpha = strength;
+    }
+    target.globalCompositeOperation = 'source-over';
+
+    for(var i=0;i<n;i++){
+      var a = Math.PI*2*i/n;
+      target.save();
+      target.translate(CX, CY); target.rotate(a); target.translate(-CX, -CY);
+      target.drawImage(src, px - w/2, py - h/2, w, h);
+      target.restore();
+    }
+    [ectx, pctx].forEach(function(c){ c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; });
+  }
+
   function pushHistory(){
     history.push({ e: ectx.getImageData(0,0,S,S), p: pctx.getImageData(0,0,S,S) });
     if(history.length > HIST_MAX) history.shift();
@@ -370,8 +482,12 @@
 
   cv.addEventListener('pointerdown', function(e){
     var p = pos(e); if(!inside(p)) return;
-    cv.setPointerCapture(e.pointerId);
     pushHistory();
+    if(tool === 'stamp'){                     // a stamp is one placement, not a drag
+      stampAt(p.x, p.y); render(); save();
+      return;
+    }
+    cv.setPointerCapture(e.pointerId);
     drawing = true; lastX = p.x; lastY = p.y;
     strokeSeg(p.x, p.y, p.x+0.01, p.y+0.01);
     render();
@@ -397,11 +513,27 @@
     $('tEngrave').classList.toggle('on', t === 'engrave');
     $('tPaint').classList.toggle('on', t === 'paint');
     $('tErase').classList.toggle('on', t === 'erase');
+    $('tStamp').classList.toggle('on', t === 'stamp');
     $('paintOnly').style.display = t === 'paint' ? 'block' : 'none';
+    $('stampOnly').style.display = t === 'stamp' ? 'block' : 'none';
+    cv.style.cursor = t === 'stamp' ? 'copy' : 'crosshair';
   }
   $('tEngrave').addEventListener('click', function(){ setTool('engrave'); });
   $('tPaint').addEventListener('click', function(){ setTool('paint'); });
   $('tErase').addEventListener('click', function(){ setTool('erase'); });
+  $('tStamp').addEventListener('click', function(){ setTool('stamp'); });
+
+  $('useLogo').addEventListener('click', function(){ setStamp('/images/brand.png', 'Logo loaded.'); });
+  $('stampSize').addEventListener('input', function(){ $('vStamp').textContent = $('stampSize').value; });
+  $('stampFile').addEventListener('change', function(e){
+    var f = e.target.files && e.target.files[0];
+    if(!f) return;
+    if(!/^image\//.test(f.type)){ setStatus('That file is not an image.'); return; }
+    var fr = new FileReader();
+    fr.onload = function(){ setStamp(fr.result, 'Loaded ' + f.name); };
+    fr.onerror = function(){ setStatus('Could not read that file.'); };
+    fr.readAsDataURL(f);
+  });
 
   SWATCHES.forEach(function(c, i){
     var b = document.createElement('div');
@@ -559,6 +691,7 @@
   });
 
   setTool('engrave');
+  setStamp('/images/brand.png');        // the logo is the default stamp
   load();
   drawBase();
   render();
