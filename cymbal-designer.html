@@ -133,12 +133,21 @@
       <div class="bar">
         <button class="btn" id="undo">↶ Undo</button>
         <button class="btn" id="clear">Clear art</button>
-        <button class="btn primary" id="save">⬇ Download PNG</button>
+        <button class="btn primary" id="save">⬇ Cymbal PNG</button>
+        <button class="btn" id="saveArtPng">⬇ Artwork PNG</button>
+        <button class="btn" id="saveArtSvg">⬇ Artwork SVG</button>
         <span class="status" id="status" style="margin-left:auto"></span>
       </div>
       <p class="hint">
         Drag on the cymbal to draw. Everything happens in your browser — nothing is uploaded.
         Your design is kept on this device, so you can close the tab and come back to it.
+      </p>
+      <p class="hint">
+        <b>Cymbal PNG</b> is the full mock-up. <b>Artwork PNG</b> is just your marks on a
+        transparent background — paint keeps its colours, engraving comes out as solid dark.
+        <b>Artwork SVG</b> is real vector paths, so it scales cleanly and can be handed to
+        someone who cuts or prints. Stamped images stay as embedded pictures inside the SVG,
+        since a photo can't be turned into paths.
       </p>
     </div>
 
@@ -257,11 +266,23 @@
   var layers = [], active = 0, layerSeq = 0;
   var engrave, ectx, paint, pctx;
 
+  // Every layer keeps a vector record of its ops alongside the raster surfaces.
+  // The canvases are what you see; `vec` is what makes a real SVG export possible.
   function makeLayer(name){
     var e = document.createElement('canvas'); e.width = e.height = S;
     var p = document.createElement('canvas'); p.width = p.height = S;
     return { id:'L'+(++layerSeq), name: name || ('Layer ' + (layers.length+1)),
-             visible:true, e:e, ectx:e.getContext('2d'), p:p, pctx:p.getContext('2d') };
+             visible:true, e:e, ectx:e.getContext('2d'), p:p, pctx:p.getContext('2d'),
+             vec: [] };
+  }
+
+  // Stamp images are interned so four copies of the same logo store one PNG.
+  var stampBank = {}, bankSeq = 0;
+  function internStamp(dataURL){
+    for(var k in stampBank){ if(stampBank[k] === dataURL) return k; }
+    var id = 's' + (++bankSeq);
+    stampBank[id] = dataURL;
+    return id;
   }
   function syncActive(){
     var L = layers[active];
@@ -507,6 +528,9 @@
       target.drawImage(src, px - w/2, py - h/2, w, h);
       target.restore();
     }
+    layers[active].vec.push({ op:'stamp', bank: internStamp(stampImg.toDataURL('image/png')),
+      x: px - w/2, y: py - h/2, w: w, h: h, n: n,
+      engraved: engraved, alpha: engraved ? 1 : strength });
     [ectx, pctx].forEach(function(c){ c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; });
   }
 
@@ -514,7 +538,8 @@
   // snapshot would be 2 canvases per layer per stroke.
   function pushHistory(){
     var L = layers[active];
-    history.push({ id: L.id, e: L.ectx.getImageData(0,0,S,S), p: L.pctx.getImageData(0,0,S,S) });
+    history.push({ id: L.id, e: L.ectx.getImageData(0,0,S,S), p: L.pctx.getImageData(0,0,S,S),
+                   vlen: L.vec.length });
     if(history.length > HIST_MAX) history.shift();
   }
 
@@ -597,7 +622,33 @@
     if(addLayer()) { render(); save(); setStatus('Added ' + layers[active].name, 'ok'); }
   });
 
-  var drawing = false, lastX = 0, lastY = 0;
+  var drawing = false, lastX = 0, lastY = 0, curVec = null;
+
+  // Capture the settings at stroke start — they can't change mid-stroke, and the
+  // SVG needs them per stroke rather than whatever the sliders read at export time.
+  function beginVec(x, y){
+    var n = symCount(), mirror = false;
+    if(n === 8){ n = 4; mirror = true; }
+    curVec = {
+      op: tool === 'erase' ? 'erase' : 'stroke',
+      tool: tool,
+      pts: [[Math.round(x*10)/10, Math.round(y*10)/10]],
+      w: parseInt($('size').value, 10),
+      alpha: parseInt($('strength').value, 10)/100,
+      color: tool === 'paint' ? color : '#111111',
+      n: n, mirror: mirror
+    };
+  }
+  function pushVecPoint(x, y){
+    if(!curVec) return;
+    var p = [Math.round(x*10)/10, Math.round(y*10)/10];
+    var last = curVec.pts[curVec.pts.length-1];
+    if(last[0] !== p[0] || last[1] !== p[1]) curVec.pts.push(p);
+  }
+  function endVec(){
+    if(curVec && curVec.pts.length) layers[active].vec.push(curVec);
+    curVec = null;
+  }
   function pos(e){
     var r = cv.getBoundingClientRect();
     return { x:(e.clientX-r.left)/r.width*S, y:(e.clientY-r.top)/r.height*S };
@@ -616,6 +667,7 @@
     }
     cv.setPointerCapture(e.pointerId);
     drawing = true; lastX = p.x; lastY = p.y;
+    beginVec(p.x, p.y);
     strokeSeg(p.x, p.y, p.x+0.01, p.y+0.01);
     render();
   });
@@ -623,12 +675,13 @@
     if(!drawing) return;
     var p = pos(e);
     strokeSeg(lastX, lastY, p.x, p.y);
+    pushVecPoint(p.x, p.y);
     lastX = p.x; lastY = p.y;
     render();
   });
   function endStroke(){
     if(!drawing) return;
-    drawing = false; render(); save();
+    drawing = false; endVec(); render(); save();
   }
   cv.addEventListener('pointerup', endStroke);
   cv.addEventListener('pointercancel', endStroke);
@@ -686,12 +739,137 @@
     var L = layers.find(function(x){ return x.id === h.id; });
     if(!L){ setStatus('That layer is gone.'); return; }   // deleted since the snapshot
     L.ectx.putImageData(h.e,0,0); L.pctx.putImageData(h.p,0,0);
+    if(typeof h.vlen === 'number') L.vec.length = Math.min(L.vec.length, h.vlen);
     render(); save();
   });
   $('clear').addEventListener('click', function(){
     pushHistory();
     ectx.clearRect(0,0,S,S); pctx.clearRect(0,0,S,S);
+    layers[active].vec.length = 0;
     render(); save(); setStatus('Cleared ' + layers[active].name + '.');
+  });
+
+  // ---------------------------------------------------------------- export
+  function baseName(){
+    return 'cymbal-' + $('type').value + 'in-' + $('finish').value;
+  }
+  function download(name, href){
+    var a = document.createElement('a');
+    a.download = name; a.href = href;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  // Artwork only, on transparency: paint keeps its colours, engraving comes out
+  // as solid dark marks — which is what's useful to hand to a printer or cutter.
+  function artworkCanvas(){
+    var c = document.createElement('canvas'); c.width = c.height = S;
+    var x = c.getContext('2d');
+    x.save();
+    x.beginPath(); x.arc(CX,CY,R,0,Math.PI*2); x.clip();
+    layers.forEach(function(L){
+      if(!L.visible) return;
+      var t = document.createElement('canvas'); t.width = t.height = S;
+      var tx = t.getContext('2d');
+      tx.drawImage(L.e, 0, 0);
+      tx.globalCompositeOperation = 'source-in';
+      tx.fillStyle = '#111111';
+      tx.fillRect(0, 0, S, S);
+      x.drawImage(t, 0, 0);
+      x.drawImage(L.p, 0, 0);
+    });
+    x.restore();
+    return c;
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+  function pathD(pts){
+    if(pts.length === 1) return 'M' + pts[0][0] + ' ' + pts[0][1] + 'l0.01 0.01';
+    return 'M' + pts.map(function(p){ return p[0] + ' ' + p[1]; }).join('L');
+  }
+  // wrap one element in its symmetry copies
+  function symWrap(op, inner){
+    var out = '';
+    for(var i=0;i<(op.n||1);i++){
+      var a = 360*i/(op.n||1);
+      var t = 'rotate(' + a.toFixed(3) + ' ' + CX + ' ' + CY + ')';
+      out += '<g transform="' + t + '">' + inner + '</g>';
+      if(op.mirror){
+        out += '<g transform="' + t + ' translate(0 ' + (2*CY) + ') scale(1 -1)">' + inner + '</g>';
+      }
+    }
+    return out;
+  }
+  function opSvg(op){
+    if(op.op === 'stamp'){
+      var href = stampBank[op.bank];
+      if(!href) return '';
+      var img = '<image href="' + href + '" x="' + op.x.toFixed(1) + '" y="' + op.y.toFixed(1) +
+                '" width="' + op.w.toFixed(1) + '" height="' + op.h.toFixed(1) + '"' +
+                (op.engraved ? ' style="filter:url(#cut)"' : '') +
+                (op.alpha < 1 ? ' opacity="' + op.alpha.toFixed(2) + '"' : '') + '/>';
+      return symWrap({n: op.n, mirror: false}, img);
+    }
+    var stroke = '<path d="' + pathD(op.pts) + '" fill="none" stroke="' + esc(op.color) +
+                 '" stroke-width="' + op.w + '" stroke-linecap="round" stroke-linejoin="round"' +
+                 (op.alpha < 1 ? ' opacity="' + op.alpha.toFixed(2) + '"' : '') + '/>';
+    return symWrap(op, stroke);
+  }
+
+  function artworkSVG(){
+    var defs = [], body = [], maskId = 0;
+    // engraved stamps are silhouettes in the raster render; mirror that in SVG
+    defs.push('<filter id="cut"><feColorMatrix type="matrix" values="' +
+              '0 0 0 0 0.07  0 0 0 0 0.07  0 0 0 0 0.07  0 0 0 1 0"/></filter>');
+
+    layers.forEach(function(L){
+      if(!L.visible || !L.vec.length) return;
+      var wrapped = '', pending = '';
+      L.vec.forEach(function(op){
+        if(op.op === 'erase'){
+          // an erase only affects what was already there, so everything so far
+          // gets nested inside a mask and later ops sit outside it
+          maskId++;
+          var mid = 'mask' + maskId;
+          var cut = '<path d="' + pathD(op.pts) + '" fill="none" stroke="black" stroke-width="' +
+                    op.w + '" stroke-linecap="round" stroke-linejoin="round"' +
+                    (op.alpha < 1 ? ' opacity="' + op.alpha.toFixed(2) + '"' : '') + '/>';
+          defs.push('<mask id="' + mid + '" maskUnits="userSpaceOnUse" x="0" y="0" width="' + S +
+                    '" height="' + S + '"><rect x="0" y="0" width="' + S + '" height="' + S +
+                    '" fill="white"/>' + symWrap(op, cut) + '</mask>');
+          wrapped = '<g mask="url(#' + mid + ')">' + wrapped + pending + '</g>';
+          pending = '';
+        } else {
+          pending += opSvg(op);
+        }
+      });
+      body.push('<g id="' + esc(L.name.replace(/[^\w-]+/g,'_')) + '">' + wrapped + pending + '</g>');
+    });
+
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+      '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+      'width="' + S + '" height="' + S + '" viewBox="0 0 ' + S + ' ' + S + '">\n' +
+      '<title>' + esc($('type').value) + '&quot; cymbal artwork</title>\n' +
+      '<defs>' + defs.join('') + '</defs>\n' +
+      '<clipPath id="disc"><circle cx="' + CX + '" cy="' + CY + '" r="' + R + '"/></clipPath>\n' +
+      '<g clip-path="url(#disc)">\n' + body.join('\n') + '\n</g>\n</svg>\n';
+  }
+
+  $('saveArtPng').addEventListener('click', function(){
+    download(baseName() + '-artwork.png', artworkCanvas().toDataURL('image/png'));
+    setStatus('Saved artwork PNG', 'ok');
+  });
+  $('saveArtSvg').addEventListener('click', function(){
+    var hasVec = layers.some(function(L){ return L.visible && L.vec.length; });
+    if(!hasVec){ setStatus('Nothing to export as vector yet.'); return; }
+    var blob = new Blob([artworkSVG()], {type:'image/svg+xml'});
+    var url = URL.createObjectURL(blob);
+    download(baseName() + '-artwork.svg', url);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+    setStatus('Saved artwork SVG', 'ok');
   });
 
   $('save').addEventListener('click', function(){
@@ -712,7 +890,7 @@
   // ---------------------------------------------------------------- persistence
   function serializeLayers(){
     return layers.map(function(L){
-      return { name:L.name, visible:L.visible,
+      return { name:L.name, visible:L.visible, vec:L.vec,
                e:L.e.toDataURL('image/png'), p:L.p.toDataURL('image/png') };
     });
   }
@@ -725,6 +903,7 @@
     arr.forEach(function(s){
       var L = makeLayer(s.name);
       L.visible = s.visible !== false;
+      L.vec = s.vec || [];
       layers.push(L);
       ['e','p'].forEach(function(k){
         if(!s[k]) return;
@@ -746,7 +925,7 @@
   function save(){
     try{
       localStorage.setItem(STORE, JSON.stringify({
-        layers: serializeLayers(), active: active,
+        layers: serializeLayers(), active: active, bank: stampBank,
         finish: $('finish').value, type: $('type').value,
         lathe: $('lathe').checked, hammer: $('hammer').checked,
         sym: $('sym').value, size: $('size').value, strength: $('strength').value
@@ -765,6 +944,7 @@
       if(s.size){ $('size').value = s.size; $('vSize').textContent = s.size; }
       if(s.strength){ $('strength').value = s.strength; $('vStr').textContent = s.strength + '%'; }
       if(typeof s.active === 'number') active = s.active;
+      if(s.bank){ stampBank = s.bank; bankSeq = Object.keys(stampBank).length; }
       if(s.layers){ restoreLayers(s.layers, render); return; }
       // pre-layers save: fold the old single engrave/paint pair into one layer
       if(s.e || s.p) restoreLayers([{ name:'Layer 1', visible:true, e:s.e, p:s.p }], render);
@@ -809,7 +989,7 @@
     var list = library();
     var entry = {
       id: 'd' + Date.now(), name: name, ts: Date.now(),
-      layers: serializeLayers(),
+      layers: serializeLayers(), bank: stampBank,
       finish: $('finish').value, type: $('type').value,
       lathe: $('lathe').checked, hammer: $('hammer').checked
     };
@@ -837,6 +1017,7 @@
       if(typeof d.hammer === 'boolean') $('hammer').checked = d.hammer;
       drawBase();
       history.length = 0;                       // snapshots belong to the old stack
+      if(d.bank){ stampBank = d.bank; bankSeq = Object.keys(stampBank).length; }
       var stack = d.layers || [{ name:'Layer 1', visible:true, e:d.e, p:d.p }];
       active = 0;
       restoreLayers(stack, function(){ render(); save(); });
