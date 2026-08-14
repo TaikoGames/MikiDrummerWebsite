@@ -62,8 +62,21 @@
   .btn.primary{background:var(--molten);color:#180a03;border-color:var(--molten)}
   .btn.on{border-color:var(--molten);color:var(--molten);background:rgba(232,103,42,.10)}
 
-  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .seg .btn{justify-content:center}
+  .seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+  .seg .btn{justify-content:center;padding:9px 6px;font-size:12.5px}
+
+  .saved{list-style:none;margin-top:10px;max-height:260px;overflow-y:auto}
+  .saved li{display:flex;align-items:center;gap:8px;border:1px solid var(--edge);
+    background:var(--stone-850);border-radius:9px;padding:8px 10px;margin-bottom:7px}
+  .saved .nm{flex:1;min-width:0;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .saved .dt{font-family:ui-monospace,monospace;font-size:10.5px;color:var(--stone-400)}
+  .saved .mini{border:1px solid var(--edge);background:var(--stone-900);color:var(--stone-100);
+    border-radius:100px;padding:4px 10px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit}
+  .saved .mini:hover{border-color:var(--molten);color:var(--molten)}
+  .saved .del:hover{border-color:#ff7a6b;color:#ff7a6b}
+  .empty{font-size:12.5px;color:var(--stone-400);padding:6px 0}
+  .namerow{display:flex;gap:8px;margin-top:9px}
+  .namerow input{flex:1}
 
   .swatches{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
   .sw{width:26px;height:26px;border-radius:7px;border:2px solid transparent;cursor:pointer}
@@ -113,6 +126,7 @@
         <div class="seg">
           <button class="btn on" id="tEngrave">⛏ Engrave</button>
           <button class="btn" id="tPaint">🎨 Paint</button>
+          <button class="btn" id="tErase">🧽 Erase</button>
         </div>
 
         <label class="fld">Brush size <span class="val" id="vSize">14</span></label>
@@ -160,6 +174,16 @@
         </select>
         <label class="fld"><input type="checkbox" id="lathe" checked> Lathe grooves</label>
         <label class="fld"><input type="checkbox" id="hammer" checked> Hammer marks</label>
+      </div>
+
+      <div class="card">
+        <h2>Saved designs</h2>
+        <div class="namerow">
+          <input type="text" id="dname" placeholder="Design name" maxlength="40">
+          <button class="btn primary" id="saveDesign">Save</button>
+        </div>
+        <ul class="saved" id="savedList"></ul>
+        <p class="hint">Saved on this device only — clearing your browser data clears them. Download the PNG for anything you want to keep for good.</p>
       </div>
     </div>
   </div>
@@ -283,36 +307,50 @@
     var size = parseInt($('size').value,10);
     var strength = parseInt($('strength').value,10)/100;
 
-    var target, style;
+    // the eraser works on both layers at once, so it lifts engraving and paint alike
+    var targets;
     if(tool === 'engrave'){
-      target = ectx;
       // grey level: darker = deeper cut. multiply blend does the work.
       var v = Math.round(255*(1 - 0.75*strength));
-      style = 'rgb('+v+','+v+','+v+')';
       ectx.globalCompositeOperation = 'source-over';
-    } else {
-      target = pctx;
-      style = color;
-      pctx.globalAlpha = strength;
+      ectx.globalAlpha = 1;
+      ectx.strokeStyle = 'rgb('+v+','+v+','+v+')';
+      targets = [ectx];
+    } else if(tool === 'paint'){
       pctx.globalCompositeOperation = 'source-over';
+      pctx.globalAlpha = strength;
+      pctx.strokeStyle = color;
+      targets = [pctx];
+    } else {                                   // erase
+      [ectx, pctx].forEach(function(c){
+        c.globalCompositeOperation = 'destination-out';
+        c.globalAlpha = strength;
+        c.strokeStyle = 'rgba(0,0,0,1)';
+      });
+      targets = [ectx, pctx];
     }
-    target.strokeStyle = style;
-    target.lineWidth = size;
-    target.lineCap = 'round';
-    target.lineJoin = 'round';
 
-    for(var i=0;i<n;i++){
-      var a = Math.PI*2*i/n;
-      target.save();
-      target.translate(CX,CY); target.rotate(a); target.translate(-CX,-CY);
-      target.beginPath(); target.moveTo(x0,y0); target.lineTo(x1,y1); target.stroke();
-      if(mirror){
-        target.translate(CX,CY); target.scale(1,-1); target.translate(-CX,-CY);
+    targets.forEach(function(target){
+      target.lineWidth = size;
+      target.lineCap = 'round';
+      target.lineJoin = 'round';
+      for(var i=0;i<n;i++){
+        var a = Math.PI*2*i/n;
+        target.save();
+        target.translate(CX,CY); target.rotate(a); target.translate(-CX,-CY);
         target.beginPath(); target.moveTo(x0,y0); target.lineTo(x1,y1); target.stroke();
+        if(mirror){
+          target.translate(CX,CY); target.scale(1,-1); target.translate(-CX,-CY);
+          target.beginPath(); target.moveTo(x0,y0); target.lineTo(x1,y1); target.stroke();
+        }
+        target.restore();
       }
-      target.restore();
-    }
-    if(tool === 'paint') pctx.globalAlpha = 1;
+    });
+    // leave both contexts in a clean state for whatever draws next
+    [ectx, pctx].forEach(function(c){
+      c.globalCompositeOperation = 'source-over';
+      c.globalAlpha = 1;
+    });
   }
 
   function pushHistory(){
@@ -358,10 +396,12 @@
     tool = t;
     $('tEngrave').classList.toggle('on', t === 'engrave');
     $('tPaint').classList.toggle('on', t === 'paint');
+    $('tErase').classList.toggle('on', t === 'erase');
     $('paintOnly').style.display = t === 'paint' ? 'block' : 'none';
   }
   $('tEngrave').addEventListener('click', function(){ setTool('engrave'); });
   $('tPaint').addEventListener('click', function(){ setTool('paint'); });
+  $('tErase').addEventListener('click', function(){ setTool('erase'); });
 
   SWATCHES.forEach(function(c, i){
     var b = document.createElement('div');
@@ -437,10 +477,92 @@
     }catch(err){}
   }
 
+  // ---------------------------------------------------------------- saved designs
+  var LIB = 'cymbalDesigner:library';
+
+  function library(){
+    try{ return JSON.parse(localStorage.getItem(LIB) || '[]'); }catch(e){ return []; }
+  }
+  function writeLibrary(list){
+    localStorage.setItem(LIB, JSON.stringify(list));       // may throw on quota
+  }
+  function renderLibrary(){
+    var list = library(), ul = $('savedList');
+    ul.innerHTML = '';
+    if(!list.length){
+      ul.innerHTML = '<li class="empty" style="border:none;background:none;padding:4px 0">No saved designs yet.</li>';
+      return;
+    }
+    list.slice().reverse().forEach(function(d){
+      var li = document.createElement('li');
+      var when = new Date(d.ts);
+      li.innerHTML = '<span class="nm">' + escapeHtml(d.name) + '</span>'
+        + '<span class="dt">' + (when.getMonth()+1) + '/' + when.getDate() + '</span>'
+        + '<button class="mini" data-load="' + d.id + '">Load</button>'
+        + '<button class="mini del" data-del="' + d.id + '" title="Delete">✕</button>';
+      ul.appendChild(li);
+    });
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  $('saveDesign').addEventListener('click', function(){
+    var name = ($('dname').value || '').trim();
+    if(!name){ setStatus('Give the design a name first.'); $('dname').focus(); return; }
+    var list = library();
+    var entry = {
+      id: 'd' + Date.now(), name: name, ts: Date.now(),
+      e: engrave.toDataURL('image/png'), p: paint.toDataURL('image/png'),
+      finish: $('finish').value, type: $('type').value,
+      lathe: $('lathe').checked, hammer: $('hammer').checked
+    };
+    // same name overwrites, so re-saving a work in progress doesn't pile up copies
+    var i = list.findIndex(function(d){ return d.name.toLowerCase() === name.toLowerCase(); });
+    if(i >= 0) list[i] = entry; else list.push(entry);
+    try{
+      writeLibrary(list);
+      renderLibrary();
+      setStatus('Saved "' + name + '"', 'ok');
+    }catch(err){
+      setStatus('Out of browser storage — delete a saved design and try again.');
+    }
+  });
+
+  $('savedList').addEventListener('click', function(e){
+    var loadId = e.target.getAttribute && e.target.getAttribute('data-load');
+    var delId  = e.target.getAttribute && e.target.getAttribute('data-del');
+    if(loadId){
+      var d = library().find(function(x){ return x.id === loadId; });
+      if(!d) return;
+      pushHistory();
+      if(d.finish) $('finish').value = d.finish;
+      if(d.type) $('type').value = d.type;
+      if(typeof d.lathe === 'boolean') $('lathe').checked = d.lathe;
+      if(typeof d.hammer === 'boolean') $('hammer').checked = d.hammer;
+      ectx.clearRect(0,0,S,S); pctx.clearRect(0,0,S,S);
+      drawBase();
+      var todo = 0, done = function(){ if(--todo <= 0){ render(); save(); } };
+      if(d.e){ todo++; var ie = new Image(); ie.onload = function(){ ectx.drawImage(ie,0,0); done(); }; ie.src = d.e; }
+      if(d.p){ todo++; var ip = new Image(); ip.onload = function(){ pctx.drawImage(ip,0,0); done(); }; ip.src = d.p; }
+      if(!todo) { render(); save(); }
+      $('dname').value = d.name;
+      setStatus('Loaded "' + d.name + '"', 'ok');
+    }
+    if(delId){
+      writeLibrary(library().filter(function(x){ return x.id !== delId; }));
+      renderLibrary();
+      setStatus('Deleted.');
+    }
+  });
+
   setTool('engrave');
   load();
   drawBase();
   render();
+  renderLibrary();
 })();
 </script>
 </body>
