@@ -83,6 +83,20 @@
   .saved .mini:hover{border-color:var(--molten);color:var(--molten)}
   .saved .del:hover{border-color:#ff7a6b;color:#ff7a6b}
   .empty{font-size:12.5px;color:var(--stone-400);padding:6px 0}
+
+  .layers{list-style:none;margin-top:9px}
+  .layers li{display:flex;align-items:center;gap:6px;border:1px solid var(--edge);
+    background:var(--stone-850);border-radius:9px;padding:6px 8px;margin-bottom:6px;cursor:pointer}
+  .layers li.active{border-color:var(--molten);background:rgba(232,103,42,.09)}
+  .layers .eye{background:none;border:none;color:var(--stone-300);cursor:pointer;
+    font-size:14px;padding:2px 3px;line-height:1}
+  .layers li.hidden .lname{opacity:.42;text-decoration:line-through}
+  .lname{flex:1;min-width:0;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    background:none;border:none;color:inherit;font-family:inherit;padding:2px}
+  .lname:focus{outline:1px solid var(--molten);border-radius:4px}
+  .layers .mv{background:none;border:none;color:var(--stone-400);cursor:pointer;font-size:12px;padding:2px 3px}
+  .layers .mv:hover{color:var(--molten)}
+  .layers .rm:hover{color:#ff7a6b}
   .namerow{display:flex;gap:8px;margin-top:9px}
   .namerow input{flex:1}
 
@@ -171,6 +185,13 @@
       </div>
 
       <div class="card">
+        <h2>Layers</h2>
+        <button class="btn" id="addLayer" style="width:100%;justify-content:center">+ Add layer</button>
+        <ul class="layers" id="layerList"></ul>
+        <p class="hint">Drawing goes on the selected layer. Top of the list sits on top of the cymbal.</p>
+      </div>
+
+      <div class="card">
         <h2>Symmetry</h2>
         <label class="fld" for="sym">Repeat around the bell</label>
         <select id="sym">
@@ -228,11 +249,31 @@
   var S = cv.width;                       // square canvas
   var CX = S/2, CY = S/2, R = S*0.47;     // cymbal centre + radius
 
-  // two art layers, kept separate so engraving and paint can be lit differently
-  var engrave = document.createElement('canvas'); engrave.width = engrave.height = S;
-  var ectx = engrave.getContext('2d');
-  var paint = document.createElement('canvas'); paint.width = paint.height = S;
-  var pctx = paint.getContext('2d');
+  // Layer stack. Each layer carries its own engrave and paint surfaces, kept
+  // separate so the two can be lit differently when composited. `engrave`,
+  // `ectx`, `paint`, `pctx` always point at the selected layer, so the drawing
+  // code doesn't need to know layers exist.
+  var LAYER_MAX = 8;
+  var layers = [], active = 0, layerSeq = 0;
+  var engrave, ectx, paint, pctx;
+
+  function makeLayer(name){
+    var e = document.createElement('canvas'); e.width = e.height = S;
+    var p = document.createElement('canvas'); p.width = p.height = S;
+    return { id:'L'+(++layerSeq), name: name || ('Layer ' + (layers.length+1)),
+             visible:true, e:e, ectx:e.getContext('2d'), p:p, pctx:p.getContext('2d') };
+  }
+  function syncActive(){
+    var L = layers[active];
+    engrave = L.e; ectx = L.ectx; paint = L.p; pctx = L.pctx;
+  }
+  function addLayer(name){
+    if(layers.length >= LAYER_MAX){ setStatus('Maximum ' + LAYER_MAX + ' layers.'); return null; }
+    var L = makeLayer(name);
+    layers.push(L); active = layers.length - 1;
+    syncActive(); renderLayers();
+    return L;
+  }
 
   var base = document.createElement('canvas'); base.width = base.height = S;
   var bctx = base.getContext('2d');
@@ -313,17 +354,21 @@
     ctx.save();
     ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.clip();
 
-    // engraving: a cut groove reads as a dark channel with a bright lip above it
+    // bottom of the list is drawn first, so the top row sits on top
     var off = Math.max(1, S/900*2);
-    ctx.globalAlpha = 0.55;
-    ctx.globalCompositeOperation = 'lighter';
-    ctx.drawImage(engrave, -off, -off);          // lit lip
-    ctx.globalAlpha = 1.0;
-    ctx.globalCompositeOperation = 'multiply';
-    ctx.drawImage(engrave, 0, 0);                // the cut itself
-    ctx.globalCompositeOperation = 'source-over';
-
-    ctx.drawImage(paint, 0, 0);                  // paint sits on the surface
+    for(var i=0;i<layers.length;i++){
+      var L = layers[i];
+      if(!L.visible) continue;
+      // engraving: a cut groove reads as a dark channel with a bright lip above it
+      ctx.globalAlpha = 0.55;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.drawImage(L.e, -off, -off);            // lit lip
+      ctx.globalAlpha = 1.0;
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.drawImage(L.e, 0, 0);                  // the cut itself
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.drawImage(L.p, 0, 0);                  // paint sits on the surface
+    }
     ctx.restore();
   }
 
@@ -465,10 +510,92 @@
     [ectx, pctx].forEach(function(c){ c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; });
   }
 
+  // Undo snapshots the layer being drawn on, not the whole stack — a full-stack
+  // snapshot would be 2 canvases per layer per stroke.
   function pushHistory(){
-    history.push({ e: ectx.getImageData(0,0,S,S), p: pctx.getImageData(0,0,S,S) });
+    var L = layers[active];
+    history.push({ id: L.id, e: L.ectx.getImageData(0,0,S,S), p: L.pctx.getImageData(0,0,S,S) });
     if(history.length > HIST_MAX) history.shift();
   }
+
+  // ---------------------------------------------------------------- layer ui
+  // Selecting only re-styles the existing rows. Rebuilding the list here would
+  // destroy the name input the moment it takes focus, losing the rename.
+  function markActive(){
+    var rows = $('layerList').children;
+    for(var i=0;i<rows.length;i++){
+      var idx = layers.length-1-i;                  // list is topmost-first
+      rows[i].classList.toggle('active', idx === active);
+    }
+  }
+
+  function renderLayers(){
+    var ul = $('layerList'); ul.innerHTML = '';
+    for(var i = layers.length-1; i >= 0; i--){          // topmost first
+      (function(L, idx){
+        var li = document.createElement('li');
+        li.className = (idx === active ? 'active ' : '') + (L.visible ? '' : 'hidden');
+        li.addEventListener('click', function(e){
+          if(e.target.closest('button') || e.target.tagName === 'INPUT') return;
+          active = idx; syncActive(); markActive();
+        });
+
+        var eye = document.createElement('button');
+        eye.className = 'eye'; eye.type = 'button';
+        eye.textContent = L.visible ? '👁' : '🚫';
+        eye.title = L.visible ? 'Hide layer' : 'Show layer';
+        eye.addEventListener('click', function(){ L.visible = !L.visible; renderLayers(); render(); save(); });
+        li.appendChild(eye);
+
+        var nm = document.createElement('input');
+        nm.className = 'lname'; nm.value = L.name; nm.maxLength = 28;
+        nm.addEventListener('change', function(){ L.name = nm.value.trim() || L.name; save(); });
+        nm.addEventListener('focus', function(){
+          if(idx !== active){ active = idx; syncActive(); markActive(); }
+        });
+        li.appendChild(nm);
+
+        var up = document.createElement('button');
+        up.className = 'mv'; up.type = 'button'; up.textContent = '▲'; up.title = 'Move up';
+        up.disabled = idx === layers.length-1;
+        up.addEventListener('click', function(){ moveLayer(idx, idx+1); });
+        li.appendChild(up);
+
+        var dn = document.createElement('button');
+        dn.className = 'mv'; dn.type = 'button'; dn.textContent = '▼'; dn.title = 'Move down';
+        dn.disabled = idx === 0;
+        dn.addEventListener('click', function(){ moveLayer(idx, idx-1); });
+        li.appendChild(dn);
+
+        var rm = document.createElement('button');
+        rm.className = 'mv rm'; rm.type = 'button'; rm.textContent = '✕'; rm.title = 'Delete layer';
+        rm.addEventListener('click', function(){
+          if(layers.length === 1){ setStatus('Keep at least one layer.'); return; }
+          if(!confirm('Delete "' + L.name + '"? This cannot be undone.')) return;
+          layers.splice(idx, 1);
+          if(active >= layers.length) active = layers.length-1;
+          syncActive(); renderLayers(); render(); save();
+        });
+        li.appendChild(rm);
+
+        ul.appendChild(li);
+      })(layers[i], i);
+    }
+  }
+
+  function moveLayer(from, to){
+    if(to < 0 || to >= layers.length) return;
+    var L = layers.splice(from,1)[0];
+    layers.splice(to,0,L);
+    if(active === from) active = to;
+    else if(from < active && to >= active) active--;
+    else if(from > active && to <= active) active++;
+    syncActive(); renderLayers(); render(); save();
+  }
+
+  $('addLayer').addEventListener('click', function(){
+    if(addLayer()) { render(); save(); setStatus('Added ' + layers[active].name, 'ok'); }
+  });
 
   var drawing = false, lastX = 0, lastY = 0;
   function pos(e){
@@ -556,13 +683,15 @@
 
   $('undo').addEventListener('click', function(){
     var h = history.pop(); if(!h) { setStatus('Nothing to undo.'); return; }
-    ectx.putImageData(h.e,0,0); pctx.putImageData(h.p,0,0);
+    var L = layers.find(function(x){ return x.id === h.id; });
+    if(!L){ setStatus('That layer is gone.'); return; }   // deleted since the snapshot
+    L.ectx.putImageData(h.e,0,0); L.pctx.putImageData(h.p,0,0);
     render(); save();
   });
   $('clear').addEventListener('click', function(){
     pushHistory();
     ectx.clearRect(0,0,S,S); pctx.clearRect(0,0,S,S);
-    render(); save(); setStatus('Artwork cleared.');
+    render(); save(); setStatus('Cleared ' + layers[active].name + '.');
   });
 
   $('save').addEventListener('click', function(){
@@ -581,11 +710,43 @@
   }
 
   // ---------------------------------------------------------------- persistence
+  function serializeLayers(){
+    return layers.map(function(L){
+      return { name:L.name, visible:L.visible,
+               e:L.e.toDataURL('image/png'), p:L.p.toDataURL('image/png') };
+    });
+  }
+  // Rebuilds the stack from serialized layers. Async, because each surface is a
+  // PNG that has to decode before it can be drawn.
+  function restoreLayers(arr, then){
+    layers = []; layerSeq = 0;
+    if(!arr || !arr.length){ layers = [makeLayer('Layer 1')]; active = 0; syncActive(); renderLayers(); if(then) then(); return; }
+    var pending = 0, finished = false;
+    arr.forEach(function(s){
+      var L = makeLayer(s.name);
+      L.visible = s.visible !== false;
+      layers.push(L);
+      ['e','p'].forEach(function(k){
+        if(!s[k]) return;
+        pending++;
+        var im = new Image();
+        im.onload = im.onerror = function(){
+          if(im.width) L[k === 'e' ? 'ectx' : 'pctx'].drawImage(im,0,0);
+          if(--pending <= 0 && finished && then) then();
+        };
+        im.src = s[k];
+      });
+    });
+    active = Math.min(active, layers.length-1);
+    syncActive(); renderLayers();
+    finished = true;
+    if(pending <= 0 && then) then();
+  }
+
   function save(){
     try{
       localStorage.setItem(STORE, JSON.stringify({
-        e: engrave.toDataURL('image/png'),
-        p: paint.toDataURL('image/png'),
+        layers: serializeLayers(), active: active,
         finish: $('finish').value, type: $('type').value,
         lathe: $('lathe').checked, hammer: $('hammer').checked,
         sym: $('sym').value, size: $('size').value, strength: $('strength').value
@@ -603,9 +764,10 @@
       if(s.sym) $('sym').value = s.sym;
       if(s.size){ $('size').value = s.size; $('vSize').textContent = s.size; }
       if(s.strength){ $('strength').value = s.strength; $('vStr').textContent = s.strength + '%'; }
-      var todo = 0, done = function(){ if(--todo <= 0) render(); };
-      if(s.e){ todo++; var ie = new Image(); ie.onload = function(){ ectx.drawImage(ie,0,0); done(); }; ie.src = s.e; }
-      if(s.p){ todo++; var ip = new Image(); ip.onload = function(){ pctx.drawImage(ip,0,0); done(); }; ip.src = s.p; }
+      if(typeof s.active === 'number') active = s.active;
+      if(s.layers){ restoreLayers(s.layers, render); return; }
+      // pre-layers save: fold the old single engrave/paint pair into one layer
+      if(s.e || s.p) restoreLayers([{ name:'Layer 1', visible:true, e:s.e, p:s.p }], render);
     }catch(err){}
   }
 
@@ -647,7 +809,7 @@
     var list = library();
     var entry = {
       id: 'd' + Date.now(), name: name, ts: Date.now(),
-      e: engrave.toDataURL('image/png'), p: paint.toDataURL('image/png'),
+      layers: serializeLayers(),
       finish: $('finish').value, type: $('type').value,
       lathe: $('lathe').checked, hammer: $('hammer').checked
     };
@@ -669,17 +831,15 @@
     if(loadId){
       var d = library().find(function(x){ return x.id === loadId; });
       if(!d) return;
-      pushHistory();
       if(d.finish) $('finish').value = d.finish;
       if(d.type) $('type').value = d.type;
       if(typeof d.lathe === 'boolean') $('lathe').checked = d.lathe;
       if(typeof d.hammer === 'boolean') $('hammer').checked = d.hammer;
-      ectx.clearRect(0,0,S,S); pctx.clearRect(0,0,S,S);
       drawBase();
-      var todo = 0, done = function(){ if(--todo <= 0){ render(); save(); } };
-      if(d.e){ todo++; var ie = new Image(); ie.onload = function(){ ectx.drawImage(ie,0,0); done(); }; ie.src = d.e; }
-      if(d.p){ todo++; var ip = new Image(); ip.onload = function(){ pctx.drawImage(ip,0,0); done(); }; ip.src = d.p; }
-      if(!todo) { render(); save(); }
+      history.length = 0;                       // snapshots belong to the old stack
+      var stack = d.layers || [{ name:'Layer 1', visible:true, e:d.e, p:d.p }];
+      active = 0;
+      restoreLayers(stack, function(){ render(); save(); });
       $('dname').value = d.name;
       setStatus('Loaded "' + d.name + '"', 'ok');
     }
@@ -692,7 +852,8 @@
 
   setTool('engrave');
   setStamp('/images/brand.png');        // the logo is the default stamp
-  load();
+  layers = [makeLayer('Layer 1')]; active = 0; syncActive(); renderLayers();
+  load();                              // may replace the stack from a saved session
   drawBase();
   render();
   renderLibrary();
