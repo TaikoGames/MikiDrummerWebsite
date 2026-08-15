@@ -7,3 +7,6 @@ link-report.md
 # Backup archives — never commit (a 90MB .rar once bloated this repo)
 *.rar
 *.7z
+
+# Python bytecode from tools/
+__pycache__/
