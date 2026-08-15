@@ -13,9 +13,13 @@ Two detection paths:
                            changes their page.
 
 config.json keys this touches:
-  liveNow     "yes" / "no"  – last detected state, always written
-  liveAuto    "yes" / "no"  – when yes, this script drives showOverlay
-  showOverlay "yes" / "no"  – only changed while liveAuto is yes
+  liveNow           "yes" / "no"  – last detected state, always written
+  liveAuto          "yes" / "no"  – when yes, this script drives showOverlay
+  showOverlay       "yes" / "no"  – only changed while liveAuto is yes and no
+                                    manual hold is in force
+  overlayManual     "on"/"off"/"" – the admin switch used by hand; while set and
+                                    unexpired, automatic changes stand down
+  overlayManualUntil ISO-8601      – when that hold lapses back to automatic
 
 Usage:  python3 tools/check_live.py [--self-test]
 """
@@ -100,14 +104,34 @@ def live_via_scrape(cid: str) -> bool | None:
     return parse_live(html)
 
 
-def timer_running(cfg: dict, now: str | None = None) -> bool:
-    """True while a manual 'show for the next N hours' timer is still going."""
-    until = (cfg.get("overlayUntil") or "").strip()
-    if not until or cfg.get("showOverlay") != "yes":
+def _future(stamp: str, now: str | None = None) -> bool:
+    """True when an ISO-8601 UTC timestamp is still ahead of now."""
+    stamp = (stamp or "").strip()
+    if not stamp:
         return False
     now = now or datetime.now(timezone.utc).isoformat()
     # both are ISO-8601 UTC strings, so comparing the text is enough
-    return until.replace("Z", "+00:00") > now
+    return stamp.replace("Z", "+00:00") > now
+
+
+def timer_running(cfg: dict, now: str | None = None) -> bool:
+    """True while a manual 'show for the next N hours' timer is still going."""
+    if cfg.get("showOverlay") != "yes":
+        return False
+    return _future(cfg.get("overlayUntil"), now)
+
+
+def manual_hold(cfg: dict, now: str | None = None) -> bool:
+    """True while someone has taken the overlay off automatic from admin.
+
+    Detection is the convenience; the switch in admin is the guarantee. When it
+    is used it wins outright — on or off — so a stream the checker misses can
+    still be put on screen by hand. The hold carries its own expiry so a
+    forgotten override drifts back to automatic instead of sticking forever.
+    """
+    if cfg.get("overlayManual") not in ("on", "off"):
+        return False
+    return _future(cfg.get("overlayManualUntil"), now)
 
 
 def apply(is_live: bool, now: str | None = None) -> bool:
@@ -116,15 +140,18 @@ def apply(is_live: bool, now: str | None = None) -> bool:
     before = json.dumps(cfg, sort_keys=True)
 
     cfg["liveNow"] = "yes" if is_live else "no"
-    if cfg.get("liveAuto") == "yes":
+    held = manual_hold(cfg, now) or timer_running(cfg, now)
+    if cfg.get("liveAuto") == "yes" and not held:
         if is_live:
             cfg["showOverlay"] = "yes"
-            # a manual timer would otherwise fight the automatic switch
+            # a stale timer would otherwise switch it off mid-stream
             cfg["overlayUntil"] = ""
-        elif not timer_running(cfg, now):
-            # a running "show for the next N hours" timer set from admin wins —
-            # switching it off underneath would be a nasty surprise
+        else:
             cfg["showOverlay"] = "no"
+        # an expired hold is spent — drop it so the file says what is true
+        if cfg.get("overlayManual"):
+            cfg["overlayManual"] = ""
+            cfg["overlayManualUntil"] = ""
 
     if json.dumps(cfg, sort_keys=True) == before:
         return False
@@ -160,6 +187,19 @@ def self_test() -> int:
     ]
     for cfg, want, label in timers:
         got = timer_running(cfg, NOW)
+        ok = got == want
+        bad += not ok
+        print(f"  [{'ok' if ok else 'FAIL'}] {label}: expected {want}, got {got}")
+
+    holds = [
+        ({"overlayManual": "on", "overlayManualUntil": "2026-08-16T00:00:00.000Z"}, True, "forced on, still held"),
+        ({"overlayManual": "off", "overlayManualUntil": "2026-08-16T00:00:00.000Z"}, True, "forced off, still held"),
+        ({"overlayManual": "on", "overlayManualUntil": "2026-08-15T06:00:00.000Z"}, False, "hold expired"),
+        ({"overlayManual": "", "overlayManualUntil": ""}, False, "no hold"),
+        ({"overlayManual": "on"}, False, "hold with no expiry is not a hold"),
+    ]
+    for cfg, want, label in holds:
+        got = manual_hold(cfg, NOW)
         ok = got == want
         bad += not ok
         print(f"  [{'ok' if ok else 'FAIL'}] {label}: expected {want}, got {got}")

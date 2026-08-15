@@ -168,10 +168,12 @@
       <span class="ao-label">Auto: follow my live stream</span>
       <label class="switch"><input type="checkbox" id="liveAuto"><span class="track"></span></label>
       <span class="ao-status" id="liveAutoStatus"></span>
+      <button class="chip" id="backToAuto" style="display:none">Back to auto</button>
     </div>
     <div class="msg" id="videoMsg" style="margin-top:14px;color:var(--muted)"></div>
     <div class="note">Flipping the switch (or a timer) saves straight to <b>config.json</b> and the site updates in about a minute — no download.<br>
-      With <b>Auto</b> on, a check runs on GitHub every 5 minutes: the moment your YouTube channel goes live the overlay turns itself on, and when the stream ends it turns itself off. Scheduled checks queue on shared runners, so allow roughly 5–15 minutes either way — the switch above still works instantly if you need it on right now (though the next check will take it back over).</div>
+      With <b>Auto</b> on, a check runs on GitHub every 5 minutes: the moment your YouTube channel goes live the overlay turns itself on, and when the stream ends it turns itself off. Scheduled checks queue on shared runners, so allow roughly 5–15 minutes either way.<br>
+      <b>The switch above always wins.</b> If a stream is running and the overlay hasn't come on — or it's on and you want it gone — just flip it: that holds for 12 hours and the automatic check stands down until then. Press <b>Back to auto</b> (or wait it out) to hand control back.</div>
   </div>
 
   <div class="card wide">
@@ -364,7 +366,8 @@
 <script>
 (function(){
   const GH = { owner:'TaikoGames', repo:'MikiDrummerWebsite', branch:'main' };
-  const state = { showOverlay:'no', overlayUntil:'', posterUrl:'', posterUntil:'', posterSeconds:15, news:'', graniteFilter:'warm', liveAuto:'no', liveNow:'no' };
+  const state = { showOverlay:'no', overlayUntil:'', posterUrl:'', posterUntil:'', posterSeconds:15, news:'', graniteFilter:'warm', liveAuto:'no', liveNow:'no', overlayManual:'', overlayManualUntil:'' };
+  const HOLD_HOURS = 12;   // how long a switch flipped by hand keeps auto out
   const GFX = { none:'none', warm:'contrast(1.08) saturate(1.3) brightness(1.03)', punch:'contrast(1.26) saturate(1.38) brightness(1.02)', faded:'contrast(.9) saturate(.88) brightness(1.09) sepia(.08)', cool:'contrast(1.06) saturate(1.12) brightness(1.03) hue-rotate(-8deg)', mono:'grayscale(1) contrast(1.14) brightness(1.02)', vivid:'contrast(1.14) saturate(1.55)' };
   const $ = id => document.getElementById(id);
   const videoToggle=$('videoToggle'), newsBox=$('newsBox');
@@ -420,6 +423,10 @@
     o.liveAuto = state.liveAuto;
     // written by the live check on GitHub — keep it so saving from here doesn't wipe it
     o.liveNow = state.liveNow;
+    if(state.overlayManual && state.overlayManualUntil){
+      o.overlayManual = state.overlayManual;
+      o.overlayManualUntil = state.overlayManualUntil;
+    }
     return JSON.stringify(o, null, 2)+'\n';
   }
   function fmtWhen(iso){ try{ return new Date(iso).toLocaleString([], {weekday:'short', hour:'2-digit', minute:'2-digit'}); }catch(e){ return iso; } }
@@ -430,11 +437,28 @@
     else st.textContent='';
   }
   function clearChips(){ document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); }
+  function holding(){
+    if(state.overlayManual!=='on' && state.overlayManual!=='off') return false;
+    return !!state.overlayManualUntil && new Date(state.overlayManualUntil) > new Date();
+  }
   function updateLiveStatus(){
-    const st=$('liveAutoStatus');
+    const st=$('liveAutoStatus'), back=$('backToAuto');
+    back.style.display = (state.liveAuto==='yes' && holding()) ? '' : 'none';
     if(state.liveAuto!=='yes'){ st.textContent='off — the switch above is yours alone'; return; }
+    if(holding()){
+      st.textContent='held '+state.overlayManual+' by hand — auto resumes '+fmtWhen(state.overlayManualUntil);
+      return;
+    }
     st.textContent = state.liveNow==='yes' ? '● streaming now — overlay on' : 'watching the channel — last check: not live';
   }
+  // The detector is a convenience; this switch is the guarantee. Using it by
+  // hand parks the automatic check for a while so a missed stream can still be
+  // put on screen — and so it can't be yanked back off two minutes later.
+  function takeManual(on){
+    state.overlayManual = on ? 'on' : 'off';
+    state.overlayManualUntil = new Date(Date.now()+HOLD_HOURS*3600000).toISOString();
+  }
+  function releaseManual(){ state.overlayManual=''; state.overlayManualUntil=''; }
 
   async function commitConfigTo(el, reason){
     if(!connected()){ msg(el,'Connect GitHub above first — nothing saved.','err'); return; }
@@ -482,6 +506,7 @@
     state.posterUrl=(d.posterUrl||''); state.posterUntil=(d.posterUntil||''); state.posterSeconds=(d.posterSeconds||15);
     state.graniteFilter=(d.graniteFilter||'warm');
     state.liveAuto=(d.liveAuto||'no'); state.liveNow=(d.liveNow||'no');
+    state.overlayManual=(d.overlayManual||''); state.overlayManualUntil=(d.overlayManualUntil||'');
     videoToggle.checked=state.showOverlay==='yes'; updateAoStatus();
     $('liveAuto').checked=state.liveAuto==='yes'; updateLiveStatus();
     posterUrlEl.value=state.posterUrl; posterSecs.value=state.posterSeconds; updatePosterPreview(); updatePosterAo();
@@ -496,19 +521,26 @@
   videoToggle.addEventListener('change',()=>{
     state.showOverlay=videoToggle.checked?'yes':'no';
     state.overlayUntil=''; clearChips(); updateAoStatus();
-    commitConfig('Intro video: '+state.showOverlay);
+    takeManual(videoToggle.checked); updateLiveStatus();
+    commitConfig('Intro video: '+state.showOverlay+(state.liveAuto==='yes'?' (manual, auto paused '+HOLD_HOURS+'h)':''));
+  });
+  $('backToAuto').addEventListener('click',()=>{
+    releaseManual(); updateLiveStatus();
+    commitConfig('Intro video: back to auto');
   });
   $('liveAuto').addEventListener('change',()=>{
     state.liveAuto=$('liveAuto').checked?'yes':'no';
     updateLiveStatus();
     commitConfig('Live auto-detect: '+state.liveAuto);
   });
-  document.querySelectorAll('.chip').forEach(chip=>{
+  document.querySelectorAll('.chip[data-hrs]').forEach(chip=>{
     chip.addEventListener('click',()=>{
       const hrs=+chip.dataset.hrs;
       state.showOverlay='yes'; videoToggle.checked=true;
       state.overlayUntil=new Date(Date.now()+hrs*3600000).toISOString();
-      clearChips(); chip.classList.add('active'); updateAoStatus();
+      // a timer is a manual decision too: hold auto off for exactly its length
+      state.overlayManual='on'; state.overlayManualUntil=state.overlayUntil;
+      clearChips(); chip.classList.add('active'); updateAoStatus(); updateLiveStatus();
       commitConfig('Intro video on for '+hrs+'h');
     });
   });
