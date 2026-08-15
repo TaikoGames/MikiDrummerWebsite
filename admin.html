@@ -115,15 +115,33 @@
     </div>
   </div>
 
+  <!-- ===================== QUICK TOOLS ===================== -->
+  <div class="row" style="margin:0 0 20px;gap:9px">
+    <a class="btn ghost" href="/cymbal-designer.html">🥁 Cymbal Designer</a>
+    <a class="btn ghost" href="/drum-viz.html">🎛 Drum Visualiser</a>
+    <a class="btn ghost" href="/gig-checklist.html">✅ Gig Checklist</a>
+    <a class="btn ghost" href="/click-track.html">🎚 Click Track</a>
+    <a class="btn ghost" href="/punkbc.html">🎫 Shows</a>
+  </div>
+
   <!-- ===================== CONNECT ===================== -->
   <div class="card wide" id="ghCard">
     <div class="hd"><div class="ttl">🔑 Connection <span class="tag" id="ghTag">not connected</span></div></div>
-    <div class="desc">Paste a GitHub token (fine-grained, scoped to <b>this repo</b>, permission <b>Contents: read &amp; write</b>) so switches save straight to the site. It's stored only in this browser — never in the page.</div>
+    <div class="desc">
+      Paste a GitHub token so switches save straight to the site. It's stored only in this browser — never in the page.<br><br>
+      <b>Easiest:</b> a <b>classic</b> token with just the <b>public_repo</b> scope — use the button below, the scope is
+      pre-ticked. This repo is public and owned by the <b>TaikoGames organisation</b>, and classic tokens work on org
+      repos as long as you have write access.<br>
+      <b>Fine-grained tokens</b> also work, but for an org repo they need more setup: resource owner set to
+      <b>TaikoGames</b> (not your personal account), this repository selected, <b>Contents: Read and write</b>, and the
+      org must allow fine-grained tokens — an owner may have to approve it. If yours 404s, that's almost always why.
+    </div>
     <label class="fld" for="ghToken">GitHub token</label>
     <div class="row" style="margin-top:0">
-      <input type="password" id="ghToken" placeholder="github_pat_…" autocomplete="off" style="flex:1;min-width:200px">
+      <input type="password" id="ghToken" placeholder="ghp_… or github_pat_…" autocomplete="off" style="flex:1;min-width:200px">
       <button class="btn" id="ghSave">Connect</button>
-      <a class="btn ghost" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Get a token ↗</a>
+      <a class="btn ghost" href="https://github.com/settings/tokens/new?scopes=public_repo&amp;description=Miki%20site%20admin" target="_blank" rel="noopener">Get a classic token ↗</a>
+      <a class="btn ghost" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained ↗</a>
     </div>
     <div class="msg" id="ghMsg" style="color:var(--muted)"></div>
   </div>
@@ -360,10 +378,12 @@
   // GitHub answers 404 rather than 403 when a token can't see a repo, so a bare
   // "404 Not Found" here almost always means token access, not a missing file.
   function tokenHelp(){
-    return 'the token cannot reach ' + GH.owner + '/' + GH.repo + '. Check that it is a '
-         + 'fine-grained token whose resource owner is ' + GH.owner + ', that this repository '
-         + 'is selected under Repository access, that Repository permissions include '
-         + 'Contents: Read and write, and that it has not expired.';
+    return 'this token cannot write to ' + GH.owner + '/' + GH.repo + '. '
+         + GH.owner + ' is an organisation, which fine-grained tokens treat strictly: the token\'s '
+         + 'resource owner must be ' + GH.owner + ' (not your personal account), this repository must be '
+         + 'selected, permissions must include Contents: Read and write, and the org must allow '
+         + 'fine-grained tokens — an owner may need to approve it. The quicker route is a classic token '
+         + 'with the public_repo scope; use the "Get a classic token" button above.';
   }
   async function saveFile(path,content,message){
     const cur=await ghGet(path);
