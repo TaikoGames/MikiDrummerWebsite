@@ -579,30 +579,67 @@
                 var overlay = document.querySelector('.live-overlay');
                 overlay.style.display = showOverlay === "yes" ? "flex" : "none";
             }
-            fetch('config.json?_=' + Date.now())
-                .then(response => response.json())
-                .then(data => {
-                    var on = data.showOverlay === "yes";
-                    // auto-off: if an overlayUntil time is set and has passed, keep it hidden
-                    if (on && data.overlayUntil) { on = new Date() < new Date(data.overlayUntil); }
-                    toggleOverlay(on ? "yes" : "no");
-                    // poster: full-screen splash on arrival (a link means on; empty means off)
-                    var showPoster = !!data.posterUrl;
-                    if (showPoster && data.posterUntil) { showPoster = new Date() < new Date(data.posterUntil); }
-                    if (showPoster) {
-                        var po = document.getElementById('posterOverlay');
-                        document.getElementById('posterImg').src = data.posterUrl;
-                        po.classList.add('show');
-                        // auto-dismiss after the configured seconds (default 15)
-                        var secs = parseInt(data.posterSeconds, 10);
-                        if (!secs || secs < 1) secs = 15;
-                        setTimeout(function () { closePoster(); }, secs * 1000);
-                    }
-                })
-                .catch(error => console.error('Error fetching the configuration:', error));
+
+            // The overlay state can change while someone is sitting on the page —
+            // a GitHub Action flips it when a stream starts or ends — so re-read
+            // config.json every minute instead of only on load.
+            var overlayOn = false;       // what the config last said
+            var overlayDismissed = false; // this visitor closed it; respect that until it goes off
+            var posterDone = false;       // the splash is an arrival thing, once per visit
+
+            function setOverlay(on) {
+                if (!on) { overlayDismissed = false; }        // a fresh stream may re-open it
+                var show = on && !overlayDismissed;
+                if (on && !overlayOn) {
+                    // the live_stream embed decides what to play when it loads, so a
+                    // frame loaded while offline has to be reloaded to pick up the stream
+                    var f = document.getElementById('youtubeFrame');
+                    if (f && f.src) { f.src = f.src; }
+                }
+                overlayOn = on;
+                toggleOverlay(show ? "yes" : "no");
+            }
+
+            function applyConfig(data) {
+                var on = data.showOverlay === "yes";
+                // auto-off: if an overlayUntil time is set and has passed, keep it hidden
+                if (on && data.overlayUntil) { on = new Date() < new Date(data.overlayUntil); }
+                setOverlay(on);
+                // poster: full-screen splash on arrival (a link means on; empty means off)
+                if (posterDone) return;
+                var showPoster = !!data.posterUrl;
+                if (showPoster && data.posterUntil) { showPoster = new Date() < new Date(data.posterUntil); }
+                if (showPoster) {
+                    posterDone = true;
+                    var po = document.getElementById('posterOverlay');
+                    document.getElementById('posterImg').src = data.posterUrl;
+                    po.classList.add('show');
+                    // auto-dismiss after the configured seconds (default 15)
+                    var secs = parseInt(data.posterSeconds, 10);
+                    if (!secs || secs < 1) secs = 15;
+                    setTimeout(function () { closePoster(); }, secs * 1000);
+                }
+            }
+
+            function readConfig() {
+                return fetch('config.json?_=' + Date.now())
+                    .then(response => response.json())
+                    .then(applyConfig)
+                    .catch(error => console.error('Error fetching the configuration:', error));
+            }
+
+            readConfig();
+            setInterval(function () {
+                if (document.hidden) return;   // no point polling a background tab
+                readConfig();
+            }, 60000);
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) readConfig();
+            });
 
             document.querySelector('.close-overlay').addEventListener('click', function(event) {
                 event.preventDefault();
+                overlayDismissed = true;
                 document.querySelector('.live-overlay').style.display = "none";
             });
 

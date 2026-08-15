@@ -1,0 +1,61 @@
+name: YouTube live check
+
+# Polls the channel and flips the homepage overlay while a stream is running.
+# Only does anything when config.json has "liveAuto": "yes".
+#
+# GitHub's minimum schedule is every 5 minutes, and scheduled runs are queued on
+# shared runners — they are often several minutes late and can be skipped when
+# GitHub is busy. Treat this as "the overlay follows the stream within roughly
+# 5-15 minutes", not as instant. The manual switch in admin still works and is
+# the thing to use if you need it on right now.
+#
+# GitHub also disables scheduled workflows in a repository that has seen no
+# human activity for 60 days (its own commits don't count). If the overlay ever
+# stops following the stream, check the Actions tab for a "this workflow was
+# disabled" banner and press enable.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# A late run must not stack on top of a newer one and re-commit stale state.
+concurrency:
+  group: live-check
+  cancel-in-progress: true
+
+jobs:
+  live-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Check live status
+        env:
+          # Optional. Without it the script reads the channel's /live page,
+          # which needs no key and has no quota.
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python tools/check_live.py
+
+      - name: Commit if the state changed
+        run: |
+          if [ -z "$(git status --porcelain config.json)" ]; then
+            echo "no change"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add config.json
+          git commit -m "Live check: $(python -c "import json;print(json.load(open('config.json')).get('liveNow'))")"
+          # a run that started before someone used the admin page can land on a
+          # stale base, so rebase onto whatever is there now rather than failing
+          git pull --rebase --autostash origin main
+          git push
