@@ -357,12 +357,25 @@
     if(!r.ok){ let m=''; try{m=(await r.json()).message||'';}catch(e){} throw new Error(r.status+(m?' '+m:'')); }
     return r.json();
   }
+  // GitHub answers 404 rather than 403 when a token can't see a repo, so a bare
+  // "404 Not Found" here almost always means token access, not a missing file.
+  function tokenHelp(){
+    return 'the token cannot reach ' + GH.owner + '/' + GH.repo + '. Check that it is a '
+         + 'fine-grained token whose resource owner is ' + GH.owner + ', that this repository '
+         + 'is selected under Repository access, that Repository permissions include '
+         + 'Contents: Read and write, and that it has not expired.';
+  }
   async function saveFile(path,content,message){
     const cur=await ghGet(path);
     const body={message:message,content:b64(content),branch:GH.branch};
     if(cur&&cur.sha) body.sha=cur.sha;
     const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path,{method:'PUT',headers:authHeaders(),body:JSON.stringify(body)});
-    if(!r.ok){ let m=''; try{m=(await r.json()).message||'';}catch(e){} throw new Error(r.status+(m?' '+m:'')); }
+    if(!r.ok){
+      if(r.status===404) throw new Error(tokenHelp());
+      if(r.status===401) throw new Error('the token was rejected — it may be expired or mistyped');
+      if(r.status===409) throw new Error('the file changed on GitHub since this page loaded — reload and try again');
+      let m=''; try{m=(await r.json()).message||'';}catch(e){} throw new Error(r.status+(m?' '+m:''));
+    }
     return r.json();
   }
   function msg(el,text,kind){ el.textContent=text; el.style.color = kind==='err'?'#ff8a7a' : kind==='ok'?'#7ee787' : 'var(--muted)'; }
@@ -412,7 +425,20 @@
     if(!t){ msg($('ghMsg'),'Paste your token first.','err'); return; }
     localStorage.setItem('gh_token',t);
     msg($('ghMsg'),'Checking access…');
-    try{ await ghGet('config.json'); msg($('ghMsg'),'Connected ✓ — switches now save live.','ok'); reflectConn(); }
+    // Check the repo itself, not a file inside it: ghGet() returns null on 404,
+    // so a token with no access to this repo used to report "Connected ✓" and
+    // only fail later when a switch tried to save.
+    try{
+      const r = await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo, {headers:authHeaders(), cache:'no-store'});
+      if(r.status===401){ throw new Error('the token was rejected — it may be expired or mistyped'); }
+      if(r.status===404){ throw new Error(tokenHelp()); }
+      if(!r.ok){ let m=''; try{ m=(await r.json()).message||''; }catch(e){} throw new Error(r.status+(m?' '+m:'')); }
+      const info = await r.json();
+      if(info.permissions && info.permissions.push === false){
+        throw new Error('this token can read the repo but not write to it — it needs Contents: Read and write');
+      }
+      msg($('ghMsg'),'Connected ✓ — switches now save live.','ok'); reflectConn();
+    }
     catch(e){ msg($('ghMsg'),'Could not verify token: '+e.message,'err'); }
   });
 
