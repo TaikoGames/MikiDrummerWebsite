@@ -28,6 +28,7 @@ import re
 import sys
 import urllib.request
 import urllib.error
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -99,17 +100,31 @@ def live_via_scrape(cid: str) -> bool | None:
     return parse_live(html)
 
 
-def apply(is_live: bool) -> bool:
+def timer_running(cfg: dict, now: str | None = None) -> bool:
+    """True while a manual 'show for the next N hours' timer is still going."""
+    until = (cfg.get("overlayUntil") or "").strip()
+    if not until or cfg.get("showOverlay") != "yes":
+        return False
+    now = now or datetime.now(timezone.utc).isoformat()
+    # both are ISO-8601 UTC strings, so comparing the text is enough
+    return until.replace("Z", "+00:00") > now
+
+
+def apply(is_live: bool, now: str | None = None) -> bool:
     """Write the state into config.json. Returns True if the file changed."""
     cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
     before = json.dumps(cfg, sort_keys=True)
 
     cfg["liveNow"] = "yes" if is_live else "no"
     if cfg.get("liveAuto") == "yes":
-        cfg["showOverlay"] = "yes" if is_live else "no"
-        # a manual timer would otherwise fight the automatic switch
         if is_live:
+            cfg["showOverlay"] = "yes"
+            # a manual timer would otherwise fight the automatic switch
             cfg["overlayUntil"] = ""
+        elif not timer_running(cfg, now):
+            # a running "show for the next N hours" timer set from admin wins —
+            # switching it off underneath would be a nasty surprise
+            cfg["showOverlay"] = "no"
 
     if json.dumps(cfg, sort_keys=True) == before:
         return False
@@ -135,6 +150,20 @@ def self_test() -> int:
         ok = got == want
         bad += not ok
         print(f"  [{'ok' if ok else 'FAIL'}] {label}: expected {want}, got {got}")
+
+    NOW = "2026-08-15T12:00:00+00:00"
+    timers = [
+        ({"showOverlay": "yes", "overlayUntil": "2026-08-15T18:00:00.000Z"}, True, "timer still running"),
+        ({"showOverlay": "yes", "overlayUntil": "2026-08-15T06:00:00.000Z"}, False, "timer expired"),
+        ({"showOverlay": "yes"}, False, "on with no timer"),
+        ({"showOverlay": "no", "overlayUntil": "2026-08-15T18:00:00.000Z"}, False, "off with a stale timer"),
+    ]
+    for cfg, want, label in timers:
+        got = timer_running(cfg, NOW)
+        ok = got == want
+        bad += not ok
+        print(f"  [{'ok' if ok else 'FAIL'}] {label}: expected {want}, got {got}")
+
     print("self-test:", "passed" if not bad else f"{bad} failure(s)")
     return 1 if bad else 0
 
