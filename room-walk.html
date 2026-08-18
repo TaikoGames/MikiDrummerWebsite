@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- private: a scan of a real room, not for search engines -->
+<meta name="robots" content="noindex, nofollow">
+<title>Room walk-through — Miki Drummer</title>
+<style>
+  :root{
+    --bg:#0b0c0f; --panel:rgba(14,16,20,.86); --line:rgba(255,255,255,.14);
+    --ink:#e9ecf1; --muted:#98a0ad; --accent:#e8372a; --ok:#7ee787;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+    font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-text-size-adjust:100%}
+  canvas{display:block;width:100%;height:100%;touch-action:none}
+  #app{position:fixed;inset:0}
+
+  /* ---------- loading ---------- */
+  #load{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;background:var(--bg);z-index:60;text-align:center;padding:24px}
+  #load h1{margin:0;font-size:19px;letter-spacing:.2px}
+  #load p{margin:0;color:var(--muted);max-width:34ch}
+  .bar{width:min(320px,72vw);height:6px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+  .bar i{display:block;height:100%;width:0%;background:var(--accent);transition:width .18s linear}
+  #loadPct{color:var(--muted);font-variant-numeric:tabular-nums}
+  #loadErr{color:#ff8a7a;max-width:44ch;display:none}
+
+  /* ---------- click-to-enter ---------- */
+  #enter{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+    background:rgba(5,6,8,.62);backdrop-filter:blur(3px);cursor:pointer;text-align:center;padding:24px}
+  #enter .box{max-width:420px}
+  #enter b{display:block;font-size:22px;margin-bottom:8px}
+  #enter span{color:var(--muted)}
+  kbd{display:inline-block;min-width:22px;padding:2px 6px;margin:0 1px;border-radius:5px;
+    border:1px solid var(--line);border-bottom-width:2px;background:rgba(255,255,255,.06);
+    font:600 12px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace}
+
+  /* ---------- hud ---------- */
+  /* above #enter, so the settings and help are reachable before you click in */
+  #hud{position:fixed;top:calc(12px + env(safe-area-inset-top));left:12px;z-index:55;
+    max-width:min(330px,calc(100vw - 24px))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  .hd{display:flex;align-items:center;gap:10px;padding:10px 12px}
+  .hd b{font-size:14px}
+  .hd .sp{flex:1}
+  .ico{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.05);
+    color:var(--ink);cursor:pointer;font-size:14px;line-height:1;display:grid;place-items:center;padding:0}
+  .ico:hover{background:rgba(255,255,255,.12)}
+  .ico[aria-pressed="true"]{border-color:var(--accent);color:#fff;background:rgba(232,55,42,.28)}
+  #panel{display:none;padding:0 12px 12px}
+  #panel.open{display:block}
+  .row{display:flex;align-items:center;gap:10px;margin:9px 0}
+  .row label{flex:0 0 92px;color:var(--muted);font-size:12px}
+  .row input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+  .row output{flex:0 0 52px;text-align:right;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+  .toggles{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .tg{padding:6px 10px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.05);
+    color:var(--ink);font-size:12px;cursor:pointer}
+  .tg[aria-pressed="true"]{border-color:var(--accent);background:rgba(232,55,42,.28)}
+  .keys{padding:0 12px 12px;color:var(--muted);font-size:12px;line-height:1.9}
+  .keys .k{color:var(--ink)}
+  #note{padding:0 12px 12px;color:var(--muted);font-size:11.5px;display:none}
+
+  /* ---------- crosshair + readout ---------- */
+  #cross{position:fixed;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;z-index:15;
+    pointer-events:none;opacity:.75;display:none}
+  #cross:before,#cross:after{content:"";position:absolute;background:#fff;box-shadow:0 0 3px rgba(0,0,0,.9)}
+  #cross:before{left:6px;top:0;width:2px;height:14px}
+  #cross:after{top:6px;left:0;height:2px;width:14px}
+  #stat{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:20;
+    padding:7px 10px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  #stat b{color:var(--ink);font-weight:600}
+
+  /* ---------- touch ---------- */
+  #stick{position:fixed;left:calc(18px + env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom));
+    width:124px;height:124px;border-radius:50%;border:1px solid var(--line);background:rgba(10,12,16,.5);
+    z-index:25;display:none;touch-action:none}
+  #stick i{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;
+    background:rgba(255,255,255,.22);border:1px solid var(--line)}
+  #jump{position:fixed;right:calc(18px + env(safe-area-inset-right));bottom:calc(64px + env(safe-area-inset-bottom));
+    width:64px;height:64px;border-radius:50%;border:1px solid var(--line);background:rgba(10,12,16,.5);
+    color:var(--ink);z-index:25;display:none;font-size:12px}
+  @media (max-width:560px){ #hud{max-width:calc(100vw - 24px)} .row label{flex-basis:78px} }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<div id="cross"></div>
+
+<div id="hud">
+  <div class="card">
+    <div class="hd">
+      <b>Room walk-through</b>
+      <span class="sp"></span>
+      <button class="ico" id="btnKeys" title="Controls" aria-pressed="false">?</button>
+      <button class="ico" id="btnPanel" title="Settings" aria-pressed="false">⚙</button>
+      <button class="ico" id="btnFull" title="Fullscreen">⛶</button>
+    </div>
+    <div class="keys" id="keys" style="display:none">
+      <span class="k"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span> walk &nbsp;·&nbsp;
+      <span class="k">mouse</span> look<br>
+      <span class="k"><kbd>Shift</kbd></span> run &nbsp;·&nbsp;
+      <span class="k"><kbd>Space</kbd></span> jump &nbsp;·&nbsp;
+      <span class="k"><kbd>Esc</kbd></span> release the mouse<br>
+      <span class="k"><kbd>R</kbd></span> back to the start &nbsp;·&nbsp;
+      <span class="k"><kbd>C</kbd></span> collision &nbsp;·&nbsp;
+      <span class="k"><kbd>F</kbd></span> fly
+    </div>
+    <div id="panel">
+      <div class="row"><label for="sScale">Room scale</label><input type="range" id="sScale" min="0.6" max="4" step="0.05"><output id="oScale"></output></div>
+      <div class="row"><label for="sEye">Eye height</label><input type="range" id="sEye" min="1" max="2.1" step="0.01"><output id="oEye"></output></div>
+      <div class="row"><label for="sSpeed">Walk speed</label><input type="range" id="sSpeed" min="0.6" max="6" step="0.1"><output id="oSpeed"></output></div>
+      <div class="row"><label for="sSens">Look speed</label><input type="range" id="sSens" min="0.3" max="2.5" step="0.05"><output id="oSens"></output></div>
+      <div class="row"><label for="sBright">Brightness</label><input type="range" id="sBright" min="0.4" max="2.2" step="0.05"><output id="oBright"></output></div>
+      <div class="toggles">
+        <button class="tg" id="tCollide" aria-pressed="true">Collision</button>
+        <button class="tg" id="tFly" aria-pressed="false">Fly</button>
+        <button class="tg" id="tShade" aria-pressed="false">Shaded</button>
+        <button class="tg" id="tReset">Back to start</button>
+      </div>
+      <div id="note"></div>
+    </div>
+  </div>
+</div>
+
+<div id="stat"></div>
+<div id="stick"><i></i></div>
+<button id="jump">jump</button>
+
+<div id="enter"><div class="box">
+  <b>Click to walk</b>
+  <span id="enterHint"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move, mouse to look, <kbd>Esc</kbd> to let go.</span>
+</div></div>
+
+<div id="load">
+  <h1>Loading the room</h1>
+  <div class="bar"><i id="loadBar"></i></div>
+  <div id="loadPct">0%</div>
+  <p id="loadMsg">3.4 MB scan — first visit is the slow one, after that it comes from cache.</p>
+  <p id="loadErr"></p>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from './vendor/three/libs/meshopt_decoder.module.js';
+
+const MODEL = 'models/room-scan.glb';
+const $ = id => document.getElementById(id);
+
+/* ------------------------------------------------------------------ *
+ * Settings. Everything the player has a physical size for is in metres
+ * and converted into model units through `scale`, so the sliders never
+ * touch the mesh or the collision grid — they just change how big the
+ * walker is relative to the scan.
+ * ------------------------------------------------------------------ */
+const DEF = { scale:1.8, eye:1.62, speed:2.6, sens:1, bright:1.15,
+              collide:true, fly:false, shaded:false };
+const CFG = Object.assign({}, DEF, load());
+function load(){ try{ return JSON.parse(localStorage.getItem('roomWalk')||'{}'); }catch(e){ return {}; } }
+function save(){ try{ localStorage.setItem('roomWalk', JSON.stringify(CFG)); }catch(e){} }
+
+const PLAYER = { height:1.75, radius:0.30, step:0.42, jump:4.2, gravity:16 };
+const u = () => 1 / CFG.scale;          // model units per real metre
+
+/* ---------------------------- scene ---------------------------- */
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+$('app').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0c0f);
+const camera = new THREE.PerspectiveCamera(66, 1, 0.01, 500);
+const hemi = new THREE.HemisphereLight(0xffffff, 0x555560, 2.0);
+const dir = new THREE.DirectionalLight(0xffffff, 1.0); dir.position.set(2, 5, 2);
+let room = null, bbox = null, grid = null, spawn = new THREE.Vector3();
+const bakedMats = new Map(), shadedMats = new Map();
+
+function resize(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+/* --------------------------- loading --------------------------- */
+const loader = new GLTFLoader();
+loader.setMeshoptDecoder(MeshoptDecoder);
+loader.load(MODEL, onLoaded, (e) => {
+  if (!e.lengthComputable) return;
+  const pct = Math.round(e.loaded / e.total * 100);
+  $('loadBar').style.width = pct + '%'; $('loadPct').textContent = pct + '%';
+}, (err) => {
+  $('loadMsg').style.display = 'none';
+  $('loadErr').style.display = 'block';
+  $('loadErr').textContent = 'The scan did not load: ' + (err && err.message ? err.message : err) +
+    '. If this page was opened straight off the disk, it needs a web server — modules and .glb files ' +
+    'will not load over file://.';
+});
+
+function onLoaded(gltf){
+  room = gltf.scene;
+  room.traverse(o => {
+    if (!o.isMesh) return;
+    const std = o.material;
+    shadedMats.set(o, std);
+    // Photogrammetry arrives with its lighting already baked into the texture,
+    // so unlit is the honest look — shading it a second time only muddies it.
+    const basic = new THREE.MeshBasicMaterial({ map: std.map, side: THREE.DoubleSide });
+    bakedMats.set(o, basic);
+    o.material = basic;
+    o.frustumCulled = false;
+  });
+  scene.add(room);
+
+  bbox = new THREE.Box3().setFromObject(room);
+  // sit the scan on y=0 and centre it on the origin, so "up" is unambiguous
+  const c = bbox.getCenter(new THREE.Vector3());
+  room.position.x -= c.x; room.position.z -= c.z; room.position.y -= bbox.min.y;
+  room.updateMatrixWorld(true);
+  bbox = new THREE.Box3().setFromObject(room);
+
+  $('loadPct').textContent = 'building collision…';
+  buildCollision().then(() => {
+    spawn.copy(findSpawn());
+    resetPlayer();
+    applyCfg();
+    $('load').style.display = 'none';
+    // on a touch screen there is no pointer to lock, so there is nothing to
+    // click into — the stick and drag-to-look are live straight away
+    $('enter').style.display = coarse ? 'none' : 'flex';
+    $('cross').style.display = coarse ? 'block' : 'none';
+    tick();
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ * Collision.
+ *
+ * A raycast against a quarter-million loose triangles is far too slow to
+ * do several times a frame, so the mesh is burned once into a voxel grid:
+ * every triangle stamps the cells it touches, and from then on walking is
+ * a handful of array lookups. It also copes with scan noise — holes and
+ * stray specks — better than surface raycasts do, which matters here
+ * because a phone scan is not a watertight model.
+ * ------------------------------------------------------------------ */
+function buildCollision(){
+  const size = bbox.getSize(new THREE.Vector3());
+  const cell = Math.max(size.x, size.z) / 96;         // ~4 cm of model space
+  const nx = Math.ceil(size.x / cell) + 2,
+        ny = Math.ceil(size.y / cell) + 2,
+        nz = Math.ceil(size.z / cell) + 2;
+  const org = new THREE.Vector3(bbox.min.x - cell, bbox.min.y - cell, bbox.min.z - cell);
+  const data = new Uint8Array(nx * ny * nz);
+  grid = { cell, nx, ny, nz, org, data, groundY: bbox.min.y };
+
+  const meshes = [];
+  room.traverse(o => { if (o.isMesh) meshes.push(o); });
+
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(),
+        p = new THREE.Vector3();
+
+  function mark(x, y, z){
+    const ix = (x - org.x) / cell | 0, iy = (y - org.y) / cell | 0, iz = (z - org.z) / cell | 0;
+    if (ix < 0 || iy < 0 || iz < 0 || ix >= nx || iy >= ny || iz >= nz) return;
+    data[(iy * nz + iz) * nx + ix] = 1;
+  }
+  function stamp(){
+    // sample the triangle densely enough that no cell it crosses is missed
+    const e = Math.max(a.distanceTo(b), b.distanceTo(c), c.distanceTo(a));
+    const n = Math.min(8, Math.max(1, Math.ceil(e / (cell * 0.7))));
+    for (let i = 0; i <= n; i++){
+      for (let j = 0; j <= n - i; j++){
+        const w0 = i / n, w1 = j / n, w2 = 1 - w0 - w1;
+        p.set(a.x*w0 + b.x*w1 + c.x*w2, a.y*w0 + b.y*w1 + c.y*w2, a.z*w0 + b.z*w1 + c.z*w2);
+        mark(p.x, p.y, p.z);
+      }
+    }
+  }
+
+  // chunked so the browser keeps painting the progress bar
+  let mi = 0, ti = 0;
+  return new Promise(resolve => {
+    function chunk(){
+      const t0 = performance.now();
+      while (mi < meshes.length){
+        const m = meshes[mi], g = m.geometry, pos = g.attributes.position, idx = g.index;
+        const count = idx ? idx.count : pos.count;
+        while (ti < count){
+          const i0 = idx ? idx.getX(ti) : ti, i1 = idx ? idx.getX(ti+1) : ti+1, i2 = idx ? idx.getX(ti+2) : ti+2;
+          a.fromBufferAttribute(pos, i0).applyMatrix4(m.matrixWorld);
+          b.fromBufferAttribute(pos, i1).applyMatrix4(m.matrixWorld);
+          c.fromBufferAttribute(pos, i2).applyMatrix4(m.matrixWorld);
+          stamp();
+          ti += 3;
+          if ((ti & 4095) === 0 && performance.now() - t0 > 24){
+            $('loadBar').style.width = Math.round(ti / count * 100) + '%';
+            return requestAnimationFrame(chunk);
+          }
+        }
+        mi++; ti = 0;
+      }
+      grid.groundY = findGround();
+      computeInside();
+      addFloorPlane();
+      resolve();
+    }
+    requestAnimationFrame(chunk);
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ * A phone scan of a room captures the walls and the clutter but only
+ * patches of the floor — you are holding the camera at chest height and
+ * pointing it outwards. Left as-is, every hole in the floor is a pit the
+ * walker cannot cross, and the room becomes a maze of islands.
+ *
+ * So: find the height where most of the low geometry sits — that is the
+ * real floor — and lay a flat plane there for the walker to stand on and
+ * for the eye to land on where the scan is see-through.
+ * ------------------------------------------------------------------ */
+function findGround(){
+  const { nx, ny, nz, cell, org, data } = grid;
+  const upto = Math.max(2, Math.floor(ny * 0.35));
+  let bestIy = 1, bestN = -1;
+  for (let iy = 0; iy < upto; iy++){
+    let n = 0;
+    for (let iz = 0; iz < nz; iz++)
+      for (let ix = 0; ix < nx; ix++) if (data[(iy * nz + iz) * nx + ix]) n++;
+    if (n > bestN){ bestN = n; bestIy = iy; }
+  }
+  return org.y + (bestIy + 1) * cell;
+}
+function addFloorPlane(){
+  const size = bbox.getSize(new THREE.Vector3());
+  const c = bbox.getCenter(new THREE.Vector3());
+  const mk = (y, color, flip) => {
+    const plane = new THREE.Mesh(
+      new THREE.PlaneGeometry(size.x * 1.6, size.z * 1.6),
+      new THREE.MeshBasicMaterial({ color, side:THREE.DoubleSide }));
+    plane.rotation.x = flip ? Math.PI / 2 : -Math.PI / 2;
+    plane.position.set(c.x, y, c.z);
+    plane.renderOrder = -1;
+    scene.add(plane);
+    return plane;
+  };
+  mk(grid.groundY - grid.cell * 0.4, 0x14161b, false);
+  // the capture has no ceiling, so above the walls is open sky — a lid keeps it
+  // reading as a room instead of a model sitting in the dark
+  mk(bbox.max.y + grid.cell, 0x0e1014, true);
+}
+
+const solid = (ix, iy, iz) =>
+  ix >= 0 && iy >= 0 && iz >= 0 && ix < grid.nx && iy < grid.ny && iz < grid.nz &&
+  grid.data[(iy * grid.nz + iz) * grid.nx + ix] === 1;
+
+const cx = x => (x - grid.org.x) / grid.cell | 0;
+const cy = y => (y - grid.org.y) / grid.cell | 0;
+const cz = z => (z - grid.org.z) / grid.cell | 0;
+
+/** Height of the surface a walker at (x,z) would stand on, or null for a hole. */
+function floorAt(x, z, feetY){
+  const ix = cx(x), iz = cz(z);
+  if (ix < 0 || iz < 0 || ix >= grid.nx || iz >= grid.nz) return null;
+  const top = cy(feetY + PLAYER.step * u());
+  const low = cy(grid.groundY);                    // never hunt below the room floor
+  for (let iy = Math.min(top, grid.ny - 1); iy >= Math.max(low, 0); iy--){
+    if (solid(ix, iy, iz)) return grid.org.y + (iy + 1) * grid.cell;
+  }
+  // nothing captured here — the scan's missing floor, so fall back to the plane
+  return grid.groundY <= feetY + PLAYER.step * u() ? grid.groundY : null;
+}
+
+/** Is the walker's body in the wall at this spot? */
+function bodyBlocked(x, feetY, z){
+  const r = PLAYER.radius * u(), cell = grid.cell;
+  const yLo = cy(feetY + PLAYER.step * u() + cell * 0.5);
+  // The capture stops in a ragged fringe where the phone lost the wall, and
+  // that fringe leans inwards. Testing a full-height body against it would
+  // have you barred from your own room by scan noise over your head, so the
+  // top of the capture is left out of the body check.
+  const rim = grid.groundY + 0.82 * (bbox.max.y - grid.groundY);
+  const yHi = cy(Math.min(feetY + PLAYER.height * u(), rim));
+  const steps = Math.max(1, Math.ceil(r / cell));
+  for (let iy = yLo; iy <= yHi; iy++){
+    for (let dx = -steps; dx <= steps; dx++){
+      for (let dz = -steps; dz <= steps; dz++){
+        if (dx*dx + dz*dz > steps*steps) continue;
+        if (solid(cx(x) + dx, iy, cz(z) + dz)) return true;
+      }
+    }
+  }
+  return false;
+}
+
+/* ------------------------------------------------------------------ *
+ * Inside vs outside.
+ *
+ * The scan is a hollow shell of a room, sitting in a much larger empty
+ * bounding box. The emptiest, most inviting-looking space in that box is
+ * the void *around* the room — so "stand where there is most room" drops
+ * you outside, staring at the back of a wall, and nothing stops you
+ * wandering off into it.
+ *
+ * There is no ceiling to test against, so enclosure is judged the way you
+ * would judge it standing there: look around, and if walls answer in
+ * almost every direction, you are indoors. A doorway or the one wall the
+ * scan missed can leave a gap or two, hence "almost".
+ * ------------------------------------------------------------------ */
+let insideMask = null;
+function computeInside(){
+  const { nx, nz, ny, cell, org, data } = grid;
+  const lowTop = Math.min(ny - 1, Math.ceil((grid.groundY - org.y) / cell + 0.5 * (bbox.max.y - bbox.min.y) / cell));
+
+  // Anything the scan caught near floor level — floor, rugs, furniture feet,
+  // the bottom of the walls — marks ground the room actually occupies.
+  const floorSeen = new Uint8Array(nx * nz);
+  for (let iz = 0; iz < nz; iz++)
+    for (let ix = 0; ix < nx; ix++)
+      for (let iy = 0; iy <= lowTop; iy++)
+        if (data[(iy * nz + iz) * nx + ix]){ floorSeen[iz * nx + ix] = 1; break; }
+
+  // A phone scan leaves holes in that floor. A hole ringed by captured floor is
+  // still part of the room, so fill it in: from a cell inside the room you meet
+  // scanned ground whichever way you look; from the void outside you do not.
+  const DIRS = [];
+  for (let i = 0; i < 16; i++) DIRS.push([Math.cos(i / 16 * Math.PI * 2), Math.sin(i / 16 * Math.PI * 2)]);
+  const mask = Uint8Array.from(floorSeen);
+  for (let iz = 0; iz < nz; iz++){
+    for (let ix = 0; ix < nx; ix++){
+      if (floorSeen[iz * nx + ix]) continue;
+      let closed = 0;
+      for (const [dx, dz] of DIRS){
+        for (let t = 1; ; t++){
+          const jx = Math.round(ix + dx * t), jz = Math.round(iz + dz * t);
+          if (jx < 0 || jz < 0 || jx >= nx || jz >= nz) break;      // escaped: open air that way
+          if (floorSeen[jz * nx + jx]){ closed++; break; }
+        }
+      }
+      if (closed >= 14) mask[iz * nx + ix] = 1;
+    }
+  }
+  insideMask = mask;
+  grid.colSeen = floorSeen;
+}
+const isInside = (x, z) => {
+  if (!insideMask) return true;
+  const ix = cx(x), iz = cz(z);
+  if (ix < 0 || iz < 0 || ix >= grid.nx || iz >= grid.nz) return false;
+  return insideMask[iz * grid.nx + ix] === 1;
+};
+
+/**
+ * Where to start. Not the middle of the bounding box — in this scan that is
+ * nose-first into the furniture. Build a floor plan of where a body actually
+ * fits indoors, then stand on the spot furthest from anything solid.
+ */
+function findSpawn(){
+  const { nx, nz, cell, org } = grid;
+  const h = bbox.max.y - bbox.min.y;
+  const open = new Float32Array(nx * nz);       // 0 = solid, big = far from anything
+  const floorY = new Float32Array(nx * nz);
+  for (let iz = 0; iz < nz; iz++){
+    for (let ix = 0; ix < nx; ix++){
+      const x = org.x + (ix + 0.5) * cell, z = org.z + (iz + 0.5) * cell;
+      // look for ground from knee height, not from above — a scan that caught
+      // the ceiling would otherwise hand back the ceiling as the floor
+      const f = floorAt(x, z, bbox.min.y + 0.3 * h);
+      const ok = isInside(x, z) && f !== null && !bodyBlocked(x, f, z);
+      open[iz * nx + ix] = ok ? 1e9 : 0;
+      floorY[iz * nx + ix] = ok ? f : 0;
+    }
+  }
+  // chamfer distance transform: two sweeps give every open cell its distance
+  // to the nearest wall, close enough for picking a roomy spot
+  const at = (ix, iz) => (ix < 0 || iz < 0 || ix >= nx || iz >= nz) ? 0 : open[iz * nx + ix];
+  for (let iz = 0; iz < nz; iz++) for (let ix = 0; ix < nx; ix++){
+    if (!open[iz * nx + ix]) continue;
+    open[iz * nx + ix] = Math.min(open[iz * nx + ix], at(ix-1, iz) + 1, at(ix, iz-1) + 1,
+                                  at(ix-1, iz-1) + 1.41, at(ix+1, iz-1) + 1.41);
+  }
+  for (let iz = nz - 1; iz >= 0; iz--) for (let ix = nx - 1; ix >= 0; ix--){
+    if (!open[iz * nx + ix]) continue;
+    open[iz * nx + ix] = Math.min(open[iz * nx + ix], at(ix+1, iz) + 1, at(ix, iz+1) + 1,
+                                  at(ix+1, iz+1) + 1.41, at(ix-1, iz+1) + 1.41);
+  }
+  const c = bbox.getCenter(new THREE.Vector3());
+  let best = null, bestScore = -Infinity;
+  for (let iz = 0; iz < nz; iz++) for (let ix = 0; ix < nx; ix++){
+    const d = open[iz * nx + ix];
+    if (!d) continue;
+    const x = org.x + (ix + 0.5) * cell, z = org.z + (iz + 0.5) * cell;
+    // clearance first, then break ties towards the middle of the room
+    const score = d - 0.02 * Math.hypot(x - c.x, z - c.z) / cell;
+    if (score > bestScore){ bestScore = score; best = new THREE.Vector3(x, floorY[iz * nx + ix], z); }
+  }
+  return best || new THREE.Vector3(c.x, grid.groundY, c.z);
+}
+
+/**
+ * Which way to face. Room to walk is half of it; the other half is having
+ * something to look at — this scan has an open side where the capture simply
+ * stops, and opening on a wall of black is a poor welcome.
+ */
+function bestYaw(pos){
+  let bestA = 0, bestScore = -1;
+  for (let i = 0; i < 16; i++){
+    const a = i / 16 * Math.PI * 2;
+    const sx = -Math.sin(a), sz = -Math.cos(a);           // the camera's forward
+    let d = 0;
+    for (let t = grid.cell * 2; t < 6; t += grid.cell * 2){
+      if (!walkable(pos.x + sx * t, pos.z + sz * t, pos.y)) break;
+      d = t;
+    }
+    let sees = false;
+    for (let t = grid.cell * 2; t < 6 && !sees; t += grid.cell){
+      const ix = cx(pos.x + sx * t), iz = cz(pos.z + sz * t);
+      if (ix < 0 || iz < 0 || ix >= grid.nx || iz >= grid.nz) break;
+      if (grid.colSeen && grid.colSeen[iz * grid.nx + ix]) sees = true;
+    }
+    const score = d * (sees ? 1 : 0.3);
+    if (score > bestScore){ bestScore = score; bestA = a; }
+  }
+  return bestA;
+}
+
+/* --------------------------- the walker --------------------------- */
+const player = { pos:new THREE.Vector3(), vy:0, ground:true, yaw:0, pitch:0 };
+function resetPlayer(){
+  player.pos.copy(spawn); player.vy = 0; player.ground = true;
+  player.pitch = 0;
+  player.yaw = bestYaw(player.pos);
+  syncCamera();
+}
+function syncCamera(){
+  camera.position.set(player.pos.x, player.pos.y + CFG.eye * u(), player.pos.z);
+  camera.quaternion.setFromEuler(new THREE.Euler(player.pitch, player.yaw, 0, 'YXZ'));
+}
+
+const keys = new Set();
+addEventListener('keydown', e => {
+  if (e.code === 'Tab') return;
+  keys.add(e.code);
+  if (e.code === 'KeyR'){ resetPlayer(); flash('back to the start'); }
+  if (e.code === 'KeyC'){ setCollide(!CFG.collide); }
+  if (e.code === 'KeyF'){ setFly(!CFG.fly); }
+  if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
+});
+addEventListener('keyup', e => keys.delete(e.code));
+addEventListener('blur', () => keys.clear());
+
+/* look: pointer lock on desktop, drag anywhere on touch */
+const canvas = renderer.domElement;
+const coarse = matchMedia('(pointer:coarse)').matches;
+function lookBy(dx, dy){
+  const s = 0.0022 * CFG.sens;
+  player.yaw -= dx * s;
+  player.pitch = Math.max(-1.5, Math.min(1.5, player.pitch - dy * s));
+}
+if (!coarse){
+  $('enter').addEventListener('click', () => canvas.requestPointerLock());
+  canvas.addEventListener('click', () => { if (!document.pointerLockElement) canvas.requestPointerLock(); });
+  document.addEventListener('pointerlockchange', () => {
+    const on = document.pointerLockElement === canvas;
+    $('enter').style.display = on ? 'none' : 'flex';
+    $('cross').style.display = on ? 'block' : 'none';
+  });
+  document.addEventListener('mousemove', e => {
+    if (document.pointerLockElement === canvas) lookBy(e.movementX, e.movementY);
+  });
+} else {
+  $('enter').style.display = 'none';
+  $('stick').style.display = 'block';
+  $('jump').style.display = 'block';
+  $('enterHint').innerHTML = 'Drag to look, the stick walks.';
+  let lookId = null, lx = 0, ly = 0;
+  canvas.addEventListener('pointerdown', e => { lookId = e.pointerId; lx = e.clientX; ly = e.clientY; });
+  canvas.addEventListener('pointermove', e => {
+    if (e.pointerId !== lookId) return;
+    lookBy((e.clientX - lx) * 1.6, (e.clientY - ly) * 1.6);
+    lx = e.clientX; ly = e.clientY;
+  });
+  const drop = e => { if (e.pointerId === lookId) lookId = null; };
+  canvas.addEventListener('pointerup', drop); canvas.addEventListener('pointercancel', drop);
+
+  const stick = $('stick'), nub = stick.querySelector('i');
+  let sid = null; const move = { x:0, y:0 };
+  stick.addEventListener('pointerdown', e => { sid = e.pointerId; stick.setPointerCapture(sid); drag(e); });
+  stick.addEventListener('pointermove', e => { if (e.pointerId === sid) drag(e); });
+  const end = e => { if (e.pointerId !== sid) return; sid = null; move.x = move.y = 0; nub.style.transform = ''; };
+  stick.addEventListener('pointerup', end); stick.addEventListener('pointercancel', end);
+  function drag(e){
+    const r = stick.getBoundingClientRect();
+    let dx = e.clientX - (r.left + r.width/2), dy = e.clientY - (r.top + r.height/2);
+    const max = r.width/2 - 12, len = Math.hypot(dx, dy) || 1;
+    if (len > max){ dx *= max/len; dy *= max/len; }
+    nub.style.transform = `translate(${dx}px,${dy}px)`;
+    move.x = dx / max; move.y = dy / max;
+  }
+  $('jump').addEventListener('pointerdown', () => { if (player.ground){ player.vy = PLAYER.jump * u(); player.ground = false; } });
+  window.__touchMove = move;
+}
+
+/* --------------------------- update loop --------------------------- */
+let last = performance.now(), fps = 0, frames = 0, fpsAt = last;
+function tick(){
+  requestAnimationFrame(tick);
+  const now = performance.now();
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+
+  step(dt);
+  syncCamera();
+  renderer.render(scene, camera);
+
+  frames++;
+  if (now - fpsAt > 500){ fps = Math.round(frames * 1000 / (now - fpsAt)); frames = 0; fpsAt = now; readout(); }
+}
+
+function step(dt){
+  // ---- what the player is asking for ----
+  let fwd = 0, side = 0;
+  if (keys.has('KeyW') || keys.has('ArrowUp')) fwd += 1;
+  if (keys.has('KeyS') || keys.has('ArrowDown')) fwd -= 1;
+  if (keys.has('KeyA') || keys.has('ArrowLeft')) side -= 1;
+  if (keys.has('KeyD') || keys.has('ArrowRight')) side += 1;
+  const tm = window.__touchMove;
+  if (tm){ side += tm.x; fwd -= tm.y; }
+  const len = Math.hypot(fwd, side);
+  if (len > 1){ fwd /= len; side /= len; }
+
+  const run = keys.has('ShiftLeft') || keys.has('ShiftRight') ? 1.9 : 1;
+  const v = CFG.speed * run * u() * dt;
+  const sin = Math.sin(player.yaw), cos = Math.cos(player.yaw);
+  let dx = (side * cos - fwd * sin) * v;
+  let dz = (-side * sin - fwd * cos) * v;
+
+  if (CFG.fly){
+    const up = (keys.has('Space') ? 1 : 0) - (keys.has('KeyQ') || keys.has('ControlLeft') ? 1 : 0);
+    const flat = Math.cos(player.pitch);
+    player.pos.x += dx * flat; player.pos.z += dz * flat;
+    // looking up and pressing forward should climb
+    player.pos.y += up * CFG.speed * run * u() * dt + Math.sin(player.pitch) * fwd * v;
+    player.vy = 0; player.ground = false;
+    return;
+  }
+
+  // ---- gravity ----
+  if (keys.has('Space') && player.ground){ player.vy = PLAYER.jump * u(); player.ground = false; }
+  player.vy -= PLAYER.gravity * u() * dt;
+  let feet = player.pos.y + player.vy * dt;
+
+  if (CFG.collide){
+    const ground = floorAt(player.pos.x, player.pos.z, feet);
+    if (ground !== null && feet <= ground){ feet = ground; player.vy = 0; player.ground = true; }
+    else player.ground = false;
+  } else {
+    if (feet <= bbox.min.y){ feet = bbox.min.y; player.vy = 0; player.ground = true; }
+  }
+  player.pos.y = feet;
+
+  // ---- horizontal, with sliding along whatever it hits ----
+  if (!CFG.collide){
+    player.pos.x += dx; player.pos.z += dz;
+  } else if (dx || dz){
+    if (!walkable(player.pos.x + dx, player.pos.z + dz, feet)){
+      // try each axis on its own so a glancing hit slides instead of stopping dead
+      const okX = walkable(player.pos.x + dx, player.pos.z, feet);
+      const okZ = walkable(player.pos.x, player.pos.z + dz, feet);
+      if (okX && !okZ) dz = 0;
+      else if (okZ && !okX) dx = 0;
+      else { dx = 0; dz = 0; }
+    }
+    player.pos.x += dx; player.pos.z += dz;
+    // step up onto whatever we just walked into the base of
+    const f = floorAt(player.pos.x, player.pos.z, player.pos.y);
+    if (f !== null && f > player.pos.y && f - player.pos.y <= PLAYER.step * u()){
+      player.pos.y = f; player.vy = 0; player.ground = true;
+    }
+  }
+
+  // a hole in the scan floor, or fly mode switched off mid-air, must not drop you forever
+  if (player.pos.y < bbox.min.y - 3 * u()){ resetPlayer(); flash('fell out of the scan — back to the start'); }
+}
+
+/** Can the walker stand at (x,z)? Needs a floor, a body-sized gap, and to be indoors. */
+function walkable(x, z, feetY){
+  if (!isInside(x, z)) return false;
+  if (floorAt(x, z, feetY + PLAYER.step * u()) === null) return false;
+  return !bodyBlocked(x, feetY, z);
+}
+
+/* ------------------------------- UI ------------------------------- */
+function readout(){
+  const m = CFG.scale;
+  $('stat').innerHTML = `<b>${fps}</b> fps · ${(bbox.max.x-bbox.min.x)*m|0}×${(bbox.max.z-bbox.min.z)*m|0} m room` +
+    (CFG.collide ? '' : ' · <b>no collision</b>') + (CFG.fly ? ' · <b>flying</b>' : '');
+}
+let flashT = 0;
+function flash(text){
+  const n = $('note'); n.textContent = text; n.style.display = 'block';
+  $('panel').classList.add('open'); $('btnPanel').setAttribute('aria-pressed','true');
+  clearTimeout(flashT); flashT = setTimeout(() => { n.style.display = 'none'; }, 2600);
+}
+
+function applyCfg(){
+  $('sScale').value = CFG.scale; $('oScale').textContent = CFG.scale.toFixed(2) + '×';
+  $('sEye').value = CFG.eye;     $('oEye').textContent = CFG.eye.toFixed(2) + ' m';
+  $('sSpeed').value = CFG.speed; $('oSpeed').textContent = CFG.speed.toFixed(1) + ' m/s';
+  $('sSens').value = CFG.sens;   $('oSens').textContent = CFG.sens.toFixed(2) + '×';
+  $('sBright').value = CFG.bright; $('oBright').textContent = CFG.bright.toFixed(2) + '×';
+  $('tCollide').setAttribute('aria-pressed', String(CFG.collide));
+  $('tFly').setAttribute('aria-pressed', String(CFG.fly));
+  $('tShade').setAttribute('aria-pressed', String(CFG.shaded));
+  applyLight();
+  readout(); save();
+}
+function applyLight(){
+  if (!room) return;
+  const g = CFG.bright;
+  room.traverse(o => {
+    if (!o.isMesh) return;
+    o.material = CFG.shaded ? shadedMats.get(o) : bakedMats.get(o);
+    if (o.material.color) o.material.color.setScalar(CFG.shaded ? 1 : g);
+    if (CFG.shaded && o.material.emissiveIntensity !== undefined) o.material.envMapIntensity = g;
+  });
+  if (CFG.shaded){ hemi.intensity = 2.0 * g; dir.intensity = 1.0 * g; scene.add(hemi); scene.add(dir); }
+  else { scene.remove(hemi); scene.remove(dir); }
+}
+function setCollide(on){ CFG.collide = on; applyCfg(); flash(on ? 'collision on' : 'collision off — walk through anything'); }
+function setFly(on){ CFG.fly = on; if (!on) player.vy = 0; applyCfg(); flash(on ? 'flying — Space up, Q down' : 'walking'); }
+
+$('btnPanel').addEventListener('click', () => {
+  const open = $('panel').classList.toggle('open');
+  $('btnPanel').setAttribute('aria-pressed', String(open));
+});
+$('btnKeys').addEventListener('click', () => {
+  const k = $('keys'), show = k.style.display === 'none';
+  k.style.display = show ? 'block' : 'none';
+  $('btnKeys').setAttribute('aria-pressed', String(show));
+});
+$('btnFull').addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen?.();
+});
+const bind = (id, key) => $(id).addEventListener('input', e => { CFG[key] = +e.target.value; applyCfg(); });
+bind('sScale','scale'); bind('sEye','eye'); bind('sSpeed','speed'); bind('sSens','sens'); bind('sBright','bright');
+$('tCollide').addEventListener('click', () => setCollide(!CFG.collide));
+$('tFly').addEventListener('click', () => setFly(!CFG.fly));
+$('tShade').addEventListener('click', () => { CFG.shaded = !CFG.shaded; applyCfg(); });
+$('tReset').addEventListener('click', () => { resetPlayer(); flash('back to the start'); });
+
+// hooks for the automated check
+window.__walk = { player, isInside, floorAt: (x,z,y) => floorAt(x,z,y), bodyBlocked, walkable,
+                  step, bbox: () => bbox, grid: () => grid, cfg: CFG, spawn: () => spawn,
+                  keys, camera, u };
+</script>
+</body>
+</html>
