@@ -117,6 +117,7 @@
       <div class="row"><label for="sEye">Eye height</label><input type="range" id="sEye" min="1" max="2.1" step="0.01"><output id="oEye"></output></div>
       <div class="row"><label for="sSpeed">Walk speed</label><input type="range" id="sSpeed" min="0.6" max="6" step="0.1"><output id="oSpeed"></output></div>
       <div class="row"><label for="sSens">Look speed</label><input type="range" id="sSens" min="0.3" max="2.5" step="0.05"><output id="oSens"></output></div>
+      <div class="row"><label for="sFloor">Floor level</label><input type="range" id="sFloor" min="-0.6" max="0.4" step="0.01"><output id="oFloor"></output></div>
       <div class="row"><label for="sBright">Brightness</label><input type="range" id="sBright" min="0.4" max="2.2" step="0.05"><output id="oBright"></output></div>
       <div class="toggles">
         <button class="tg" id="tCollide" aria-pressed="true">Collision</button>
@@ -164,14 +165,20 @@ const $ = id => document.getElementById(id);
  * touch the mesh or the collision grid — they just change how big the
  * walker is relative to the scan.
  * ------------------------------------------------------------------ */
-const DEF = { scale:1.8, eye:1.62, speed:2.6, sens:1, bright:1.15,
+const DEF = { scale:1.8, eye:1.62, speed:2.6, sens:1, bright:1.15, floorAdj:-0.10,
               collide:true, fly:false, shaded:false };
 const CFG = Object.assign({}, DEF, load());
 function load(){ try{ return JSON.parse(localStorage.getItem('roomWalk')||'{}'); }catch(e){ return {}; } }
 function save(){ try{ localStorage.setItem('roomWalk', JSON.stringify(CFG)); }catch(e){} }
 
-const PLAYER = { height:1.75, radius:0.30, step:0.42, jump:4.2, gravity:16 };
+/* step: a kerb, not a boost. At 40 cm you climb the clutter one pile at a time
+   and end up strolling along the tops of the furniture. */
+const PLAYER = { height:1.75, radius:0.30, step:0.26, jump:4.2, gravity:16 };
 const u = () => 1 / CFG.scale;          // model units per real metre
+/* Where the floor sits. Found from the scan, then trimmed by hand: a capture
+   has no datum, and the difference between standing on the concrete and
+   standing on the junk beside it is a few centimetres nobody can guess. */
+const standY = () => grid.groundY + CFG.floorAdj * u();
 
 /* ---------------------------- scene ---------------------------- */
 const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
@@ -184,7 +191,7 @@ scene.background = new THREE.Color(0x0b0c0f);
 const camera = new THREE.PerspectiveCamera(66, 1, 0.01, 500);
 const hemi = new THREE.HemisphereLight(0xffffff, 0x555560, 2.0);
 const dir = new THREE.DirectionalLight(0xffffff, 1.0); dir.position.set(2, 5, 2);
-let room = null, bbox = null, grid = null, spawn = new THREE.Vector3();
+let room = null, bbox = null, grid = null, spawn = new THREE.Vector3(), floorPlane = null;
 const bakedMats = new Map(), shadedMats = new Map();
 
 function resize(){
@@ -333,14 +340,20 @@ function buildCollision(){
 function findGround(){
   const { nx, ny, nz, cell, org, data } = grid;
   const upto = Math.max(2, Math.floor(ny * 0.35));
-  let bestIy = 1, bestN = -1;
+  const count = [];
   for (let iy = 0; iy < upto; iy++){
     let n = 0;
     for (let iz = 0; iz < nz; iz++)
       for (let ix = 0; ix < nx; ix++) if (data[(iy * nz + iz) * nx + ix]) n++;
-    if (n > bestN){ bestN = n; bestIy = iy; }
+    count.push(n);
   }
-  return org.y + (bestIy + 1) * cell;
+  // The busiest low layer is not the floor — it is a hand's width above it,
+  // where the rug and the junk along the skirting live. Take the lowest layer
+  // that still has real substance instead, so you stand on the floor itself.
+  const peak = Math.max(...count);
+  let iy = count.findIndex(n => n >= peak * 0.35);
+  if (iy < 0) iy = 0;
+  return org.y + iy * cell;
 }
 function addFloorPlane(){
   const size = bbox.getSize(new THREE.Vector3());
@@ -355,7 +368,7 @@ function addFloorPlane(){
     scene.add(plane);
     return plane;
   };
-  mk(grid.groundY - grid.cell * 0.4, 0x14161b, false);
+  floorPlane = mk(standY() - grid.cell * 0.4, 0x14161b, false);
   // the capture has no ceiling, so above the walls is open sky — a lid keeps it
   // reading as a room instead of a model sitting in the dark
   mk(bbox.max.y + grid.cell, 0x0e1014, true);
@@ -373,25 +386,41 @@ const cz = z => (z - grid.org.z) / grid.cell | 0;
 function floorAt(x, z, feetY){
   const ix = cx(x), iz = cz(z);
   if (ix < 0 || iz < 0 || ix >= grid.nx || iz >= grid.nz) return null;
-  const top = cy(feetY + PLAYER.step * u());
-  const low = cy(grid.groundY);                    // never hunt below the room floor
+  // the hand trim applies to every surface, not just the fallback plane, so the
+  // slider lowers the whole walk rather than only the parts the scan missed
+  const adj = CFG.floorAdj * u();
+  const ground = grid.groundY;
+  const top = cy(feetY - adj + PLAYER.step * u());
+  const low = cy(ground);                          // never hunt below the room floor
   for (let iy = Math.min(top, grid.ny - 1); iy >= Math.max(low, 0); iy--){
-    if (solid(ix, iy, iz)) return grid.org.y + (iy + 1) * grid.cell;
+    if (!solid(ix, iy, iz)) continue;
+    // A scan is full of speckle — a stray voxel is not something you stand on.
+    // Only a surface with neighbours counts, or you bob over invisible bumps.
+    const support = solid(ix-1, iy, iz) + solid(ix+1, iy, iz) +
+                    solid(ix, iy, iz-1) + solid(ix, iy, iz+1);
+    if (support < 2) continue;
+    const y = grid.org.y + (iy + 1) * grid.cell;
+    // and anything shin-deep is the floor's own roughness — rugs, cables, the
+    // scan's own lumpiness — rather than a step up onto something
+    return (y - ground < 0.20 * u() ? ground : y) + adj;
   }
   // nothing captured here — the scan's missing floor, so fall back to the plane
-  return grid.groundY <= feetY + PLAYER.step * u() ? grid.groundY : null;
+  return ground + adj <= feetY + PLAYER.step * u() ? ground + adj : null;
 }
 
 /** Is the walker's body in the wall at this spot? */
 function bodyBlocked(x, feetY, z){
   const r = PLAYER.radius * u(), cell = grid.cell;
-  const yLo = cy(feetY + PLAYER.step * u() + cell * 0.5);
+  // measured against the scan's own floor: the hand trim decides how low you
+  // ride, it does not shrink the doorways you can get through
+  const feet = feetY - CFG.floorAdj * u();
+  const yLo = cy(feet + PLAYER.step * u() + cell * 0.5);
   // The capture stops in a ragged fringe where the phone lost the wall, and
   // that fringe leans inwards. Testing a full-height body against it would
   // have you barred from your own room by scan noise over your head, so the
   // top of the capture is left out of the body check.
   const rim = grid.groundY + 0.82 * (bbox.max.y - grid.groundY);
-  const yHi = cy(Math.min(feetY + PLAYER.height * u(), rim));
+  const yHi = cy(Math.min(feet + PLAYER.height * u(), rim));
   const steps = Math.max(1, Math.ceil(r / cell));
   for (let iy = yLo; iy <= yHi; iy++){
     for (let dx = -steps; dx <= steps; dx++){
@@ -505,7 +534,7 @@ function findSpawn(){
     const score = d - 0.02 * Math.hypot(x - c.x, z - c.z) / cell;
     if (score > bestScore){ bestScore = score; best = new THREE.Vector3(x, floorY[iz * nx + ix], z); }
   }
-  return best || new THREE.Vector3(c.x, grid.groundY, c.z);
+  return best || new THREE.Vector3(c.x, standY(), c.z);
 }
 
 /**
@@ -665,7 +694,7 @@ function step(dt){
     if (ground !== null && feet <= ground){ feet = ground; player.vy = 0; player.ground = true; }
     else player.ground = false;
   } else {
-    if (feet <= bbox.min.y){ feet = bbox.min.y; player.vy = 0; player.ground = true; }
+    if (feet <= standY()){ feet = standY(); player.vy = 0; player.ground = true; }
   }
   player.pos.y = feet;
 
@@ -690,7 +719,7 @@ function step(dt){
   }
 
   // a hole in the scan floor, or fly mode switched off mid-air, must not drop you forever
-  if (player.pos.y < bbox.min.y - 3 * u()){ resetPlayer(); flash('fell out of the scan — back to the start'); }
+  if (player.pos.y < standY() - 3 * u()){ resetPlayer(); flash('fell out of the scan — back to the start'); }
 }
 
 /** Can the walker stand at (x,z)? Needs a floor, a body-sized gap, and to be indoors. */
@@ -718,7 +747,10 @@ function applyCfg(){
   $('sEye').value = CFG.eye;     $('oEye').textContent = CFG.eye.toFixed(2) + ' m';
   $('sSpeed').value = CFG.speed; $('oSpeed').textContent = CFG.speed.toFixed(1) + ' m/s';
   $('sSens').value = CFG.sens;   $('oSens').textContent = CFG.sens.toFixed(2) + '×';
+  $('sFloor').value = CFG.floorAdj;
+  $('oFloor').textContent = (CFG.floorAdj >= 0 ? '+' : '') + Math.round(CFG.floorAdj * 100) + ' cm';
   $('sBright').value = CFG.bright; $('oBright').textContent = CFG.bright.toFixed(2) + '×';
+  if (floorPlane) floorPlane.position.y = standY() - grid.cell * 0.4;
   $('tCollide').setAttribute('aria-pressed', String(CFG.collide));
   $('tFly').setAttribute('aria-pressed', String(CFG.fly));
   $('tShade').setAttribute('aria-pressed', String(CFG.shaded));
@@ -754,7 +786,8 @@ $('btnFull').addEventListener('click', () => {
   else document.documentElement.requestFullscreen?.();
 });
 const bind = (id, key) => $(id).addEventListener('input', e => { CFG[key] = +e.target.value; applyCfg(); });
-bind('sScale','scale'); bind('sEye','eye'); bind('sSpeed','speed'); bind('sSens','sens'); bind('sBright','bright');
+bind('sScale','scale'); bind('sEye','eye'); bind('sSpeed','speed'); bind('sSens','sens');
+bind('sBright','bright'); bind('sFloor','floorAdj');
 $('tCollide').addEventListener('click', () => setCollide(!CFG.collide));
 $('tFly').addEventListener('click', () => setFly(!CFG.fly));
 $('tShade').addEventListener('click', () => { CFG.shaded = !CFG.shaded; applyCfg(); });
