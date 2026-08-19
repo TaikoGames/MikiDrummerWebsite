@@ -1,0 +1,62 @@
+name: Punk BC shows refresh
+
+# Bakes the shows sheet into punkbc.html once a day.
+#
+# The board fetches the sheet in the browser, but a search engine runs no
+# JavaScript — it only sees what is in the HTML. Without this the static copy
+# ages until the page is listing shows that already happened, which is both a
+# bad look and something Google drops from its event results.
+#
+# 13:10 UTC is ~6am in Vancouver, so the board is current before anyone is
+# looking for tonight's show. Scheduled runs queue on shared runners and are
+# often a few minutes late, which does not matter for a daily job.
+on:
+  schedule:
+    - cron: "10 13 * * *"
+  workflow_dispatch:
+  # rebuild whenever the show data or the builder itself changes
+  push:
+    branches: [main]
+    paths:
+      - punkbc-shows.json
+      - tools/build_punkbc.py
+      - tools/refresh_punkbc.py
+
+permissions:
+  contents: write
+
+concurrency:
+  group: punkbc-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Check the parsing still holds
+        run: python tools/refresh_punkbc.py --self-test
+
+      - name: Pull the sheet and re-bake the board
+        run: python tools/refresh_punkbc.py
+
+      - name: Commit if the board changed
+        run: |
+          if [ -z "$(git status --porcelain punkbc.html punkbc-shows.json sitemap.xml)" ]; then
+            echo "no change"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add punkbc.html punkbc-shows.json sitemap.xml
+          git commit -m "Punk BC: refresh shows board ($(python -c "import json;print(len(json.load(open('punkbc-shows.json'))['shows']))") upcoming)"
+          # someone may have pushed while this ran; rebase rather than fail
+          git pull --rebase --autostash origin main
+          git push

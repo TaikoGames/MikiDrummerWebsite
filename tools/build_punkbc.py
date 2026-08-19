@@ -168,6 +168,14 @@ def build_events_jsonld(shows: list[dict]) -> str:
 
 
 def build_show_cards(shows: list[dict]) -> str:
+    if not shows:
+        # matches the client's empty state, so a no-JS visitor and a crawler see
+        # a real message rather than a blank grid
+        return ('      <div class="empty-state">\n'
+                '        <div class="emoji">\U0001f3b8</div>\n'
+                '        <p>No upcoming shows listed right now.<br>'
+                'Be the first to submit one!</p>\n'
+                '      </div>')
     cards = []
     for s in shows:
         band = html.escape(s["band"])
@@ -338,9 +346,11 @@ def main() -> None:
     shows = [s for s in shows if s.get("band") and s.get("date")]
     shows.sort(key=lambda s: s["date"])
     today = datetime.now(_TZ).date().isoformat() if _TZ else datetime.utcnow().date().isoformat()
-    # keep only shows today or later (mirrors the client filter)
-    upcoming = [s for s in shows if s["date"] >= today]
-    shows = upcoming or shows
+    # keep only shows today or later (mirrors the client filter). An empty board
+    # is the honest answer when nothing is coming up: baking last month's dates
+    # back in would leave the page advertising shows that already happened, and
+    # Google drops expired events from its results anyway.
+    shows = [s for s in shows if s["date"] >= today]
 
     text = PAGE.read_text(encoding="utf-8")
     text = replace_region(

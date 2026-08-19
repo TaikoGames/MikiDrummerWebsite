@@ -1059,6 +1059,13 @@
   ]
   /* SHOWS-SEED:END */
 
+  // Dates are compared as plain YYYY-MM-DD strings, so "today" has to be today
+  // in Vancouver — not in UTC. After 5pm local the UTC date has already rolled
+  // over, and tonight's show would drop off the board while the doors are open.
+  function todayInBC() {
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Vancouver' })
+  }
+
   let allShows = []
   let activeCity = 'all'
 
@@ -1066,7 +1073,7 @@
     document.getElementById('api-setup').style.display = 'none'
     document.getElementById('app').style.display = 'block'
     // Show seed data immediately, then try to fetch live sheet
-    const today = new Date().toISOString().split('T')[0]
+    const today = todayInBC()
     allShows = SEED_SHOWS.filter(r => r['Date'] >= today)
     renderCityTabs()
     renderShows()
@@ -1112,6 +1119,27 @@
     }).filter(r => r['Band / Artist'])
   }
 
+  // The sheet used to replace the baked-in list outright, so any show added
+  // straight to punkbc-shows.json — the copy search engines actually read —
+  // disappeared the moment the sheet loaded. Merge the two instead, keyed on
+  // band + date + venue, with the sheet winning wherever it has something to say.
+  function showKey(r) {
+    return [(r['Band / Artist'] || '').trim().toLowerCase(),
+            (r['Date'] || '').trim(),
+            (r['Venue'] || '').trim().toLowerCase()].join('|')
+  }
+  function mergeShows(seed, sheet) {
+    const byKey = new Map()
+    for (const r of seed) byKey.set(showKey(r), Object.assign({}, r))
+    for (const r of sheet) {
+      const k = showKey(r), have = byKey.get(k)
+      if (!have) { byKey.set(k, r); continue }
+      // a blank cell in the sheet must not wipe a value that is already there
+      for (const [field, value] of Object.entries(r)) if (value) have[field] = value
+    }
+    return [...byKey.values()]
+  }
+
   async function fetchShows() {
     const proxies = [
       t => CSV_URL + '&t=' + t,
@@ -1125,8 +1153,10 @@
         const text = await res.text()
         if (!text.includes('Band') && !text.includes(',')) continue
         const rows = parseCSV(text)
-        const today = new Date().toISOString().split('T')[0]
-        const upcoming = rows.filter(r => r['Date'] >= today).sort((a, b) => a['Date'].localeCompare(b['Date']))
+        const today = todayInBC()
+        const upcoming = mergeShows(SEED_SHOWS, rows)
+          .filter(r => (r['Date'] || '') >= today)
+          .sort((a, b) => (a['Date'] || '').localeCompare(b['Date'] || ''))
         if (upcoming.length > 0) {
           allShows = upcoming
           document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString()
