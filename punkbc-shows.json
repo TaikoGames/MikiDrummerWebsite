@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Live & Learn",
-      "date": "2026-08-18",
-      "time": "20:00",
-      "venue": "Red Gate",
-      "city": "Vancouver",
-      "price": "$20",
-      "ticket": "https://redgate.tv",
-      "genre": "",
-      "notes": "With The Wave Birds, Among Legends, Cursed Words",
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0uhzn2sjSzOUBSrbQM9A5ayXTEAJIZEyz1400q8JZHw&s"
-    },
-    {
       "band": "Lift the Anchor",
       "date": "2026-08-20",
       "time": "20:00",
