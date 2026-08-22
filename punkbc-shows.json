@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Ghost Hearts / Dead Authors",
-      "date": "2026-08-21",
-      "time": "",
-      "venue": "Bully's Studios",
-      "city": "New Westminster",
-      "price": "",
-      "ticket": "https://www.bullysstudios.ca/event-details/ghost-hearts-with-dead-authors",
-      "genre": "Rock",
-      "notes": "",
-      "image": ""
-    },
-    {
       "band": "Silkworm",
       "date": "2026-08-23",
       "time": "19:00",
@@ -36,6 +24,18 @@
       "genre": "Deathcore",
       "notes": "With Ingested, Larcenia Roe, Bayonet Dismemberment. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Angelmaker_-_2025074_205307_2025-03-15_Heidelberg_Deathfest_-_Sven_-_5DS_R_-_0270_-_5DSR4789.jpg?width=500"
+    },
+    {
+      "band": "Twisted Teens",
+      "date": "2026-08-29",
+      "time": "19:30",
+      "venue": "Biltmore Cabaret",
+      "city": "Vancouver",
+      "price": "$22.50 adv",
+      "ticket": "https://biltmorecabaret.com",
+      "genre": "Punk",
+      "notes": "Doors 7pm. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
       "band": "Lift the Anchor",
@@ -422,6 +422,18 @@
       "image": "https://lastfm.freetls.fastly.net/i/u/300x300/49b19b8c582ae0c3419af66d26d22ad5"
     },
     {
+      "band": "The Dillinger Escape Plan",
+      "date": "2026-10-26",
+      "time": "19:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "From $68",
+      "ticket": "https://www.commodoreballroom.com/shows",
+      "genre": "Mathcore",
+      "notes": "Final Calculating Infinity shows. With Squid Pisser, XCOMM",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Dillinger_Escape_Plan_Furnace_Fest_2025_Birmingham_Alabama_3.png?width=300"
+    },
+    {
       "band": "Sabbat",
       "date": "2026-10-31",
       "time": "19:00",
@@ -444,6 +456,30 @@
       "genre": "Punk",
       "notes": "Halloween show",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+    },
+    {
+      "band": "Exhumed",
+      "date": "2026-11-09",
+      "time": "18:30",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$28 adv",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Death Metal",
+      "notes": "With Jarhead Fertilizer, Savage Master, Molder. 19+",
+      "image": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84f7d3dcb488936e0ea2a6c59e"
+    },
+    {
+      "band": "Ride For Revenge",
+      "date": "2026-11-11",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$70 adv",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Black Metal",
+      "notes": "With Hellwitch, Tsalal, Devouring Void. 19+",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXR6RwKfR9ZZBbs7wvXvKyuk_kB67D-s7CQ2g_4XCdlLnZUVIkDCpalQf8&s=10"
     },
     {
       "band": "Blasphamagoatachrist",
@@ -480,6 +516,18 @@
       "genre": "Punk",
       "notes": "",
       "image": "https://lastfm.freetls.fastly.net/i/u/300x300/07449b45cb96703b275d98124e5dc196"
+    },
+    {
+      "band": "Arch Enemy",
+      "date": "2026-11-14",
+      "time": "17:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "From $73",
+      "ticket": "https://www.commodoreballroom.com/shows",
+      "genre": "Melodic Death Metal",
+      "notes": "Wrath Across North America tour. With The Black Dahlia Murder, Septicflesh, Crypta, Thrown Into Exile",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Arch_Enemy_since_2026_collage.jpg?width=500"
     },
     {
       "band": "Metal Church",
