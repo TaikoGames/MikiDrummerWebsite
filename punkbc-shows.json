@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Silkworm",
-      "date": "2026-08-23",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Post-Hardcore",
-      "notes": "",
-      "image": "https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg"
-    },
-    {
       "band": "Angelmaker",
       "date": "2026-08-28",
       "time": "18:00",
@@ -96,6 +84,18 @@
       "genre": "Punk",
       "notes": "",
       "image": "https://assets.exclaim.ca/image/upload/v1703988208/prop7.jpg"
+    },
+    {
+      "band": "Satanic Surfers",
+      "date": "2026-09-09",
+      "time": "19:00",
+      "venue": "lucky Bar",
+      "city": "Victoria, BC",
+      "price": "",
+      "ticket": "https://www.eventbrite.ca/e/satanic-surfers-for-i-am-with-brutal-youth-blackout-tickets-1992489936035",
+      "genre": "Punk",
+      "notes": "",
+      "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1188031941%2F376658818745%2F1%2Foriginal.20260701-200933?crop=focalpoint&fit=crop&w=940&auto=format%2Ccompress&q=75&sharp=10&fp-x=0.494&fp-y=0.014&s=79c2703d3585726112e5c672817ff5bb"
     },
     {
       "band": "Anciients",
