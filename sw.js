@@ -10,7 +10,7 @@
  * The point of it is those two working in a rehearsal room with no signal.
  */
 
-const CACHE = 'miki-tools-v2';
+const CACHE = 'miki-tools-v3';
 
 // Everything the tools need to run with the network switched off.
 const SHELL = [
@@ -30,9 +30,19 @@ const SHELL = [
   '/images/click-icon-maskable.png',
   '/images/click-icon-180.png',
 
-  '/js/pwa.js',
+  '/js/install.js',
 ];
 const OWNED = new Set(SHELL);
+
+// Files we write ourselves and will change again: never trust the cached copy
+// while there is a network to ask.
+const FRESH_FIRST = [
+  '/razor-cut-tool.html',
+  '/click-track.html',
+  '/js/install.js',
+  '/razor.webmanifest',
+  '/click-track.webmanifest',
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -60,8 +70,14 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;      // never touch other hosts
   if (!OWNED.has(url.pathname)) return;                 // not ours: hands off
 
-  // The page itself: newest wins when there is a network, cache when there is not.
-  if (url.pathname.endsWith('.html')) {
+  // Our own code — pages, the install script, the manifests — is served
+  // newest-first, falling back to cache when there is no network.
+  //
+  // Learned the hard way: the install script used to be cache-first like the
+  // libraries, so when its contents changed every browser that had already
+  // been here kept running the old copy, with no way to notice. Only genuinely
+  // immutable things (a pinned library version, an icon) get to be cache-first.
+  if (FRESH_FIRST.some((path) => url.pathname === path)) {
     event.respondWith(
       fetch(req)
         .then((res) => {
@@ -76,7 +92,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Pinned library versions and icons: cache first, they do not change under us.
+  // Pinned library versions and icons: cache first, these really do not change.
   event.respondWith(
     caches.match(req).then((hit) => hit || fetch(req).then((res) => {
       if (res && res.ok) {

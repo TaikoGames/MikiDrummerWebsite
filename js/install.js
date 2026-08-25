@@ -12,7 +12,7 @@
  * always there: it installs directly when the browser offers a prompt, and
  * otherwise says where the option lives in that particular browser's menus.
  *
- * Usage: <script src="/js/pwa.js" defer></script> plus, somewhere near the top
+ * Usage: <script src="/js/install.js" defer></script> plus, somewhere near the top
  * of the page:
  *   <button id="installBtn" hidden>Install</button>
  *   <p id="installHow" hidden></p>
@@ -23,6 +23,16 @@
       navigator.serviceWorker.register('/sw.js').catch(function () {
         /* private windows and file:// have no service workers — the tool still works */
       });
+    });
+
+    // When a new worker takes over it may already have handed this page the
+    // previous version of the code. Reload once — guarded, or a worker that
+    // claims on every load would spin the page forever.
+    var reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (reloaded) return;
+      reloaded = true;
+      window.location.reload();
     });
   }
 
