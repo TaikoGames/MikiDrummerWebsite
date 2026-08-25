@@ -1,4 +1,4 @@
-/* Service worker for Razor Cut.
+/* Service worker for the practice tools — Razor Cut and the click track.
  *
  * A service worker registered from the site root controls every page on the
  * domain, which is not what we want here: the homepage reads config.json to
@@ -7,12 +7,12 @@
  * to a strict allowlist — anything not on it is left completely alone, with no
  * respondWith call, so the browser fetches it exactly as it always would.
  *
- * The point of it is Razor Cut working in a rehearsal room with no signal.
+ * The point of it is those two working in a rehearsal room with no signal.
  */
 
-const CACHE = 'razor-cut-v1';
+const CACHE = 'miki-tools-v2';
 
-// Everything the tool needs to run with the network switched off.
+// Everything the tools need to run with the network switched off.
 const SHELL = [
   '/razor-cut-tool.html',
   '/vendor/jszip/jszip.min.js',
@@ -22,6 +22,15 @@ const SHELL = [
   '/images/razor-icon-512.png',
   '/images/razor-icon-maskable.png',
   '/images/razor-icon-180.png',
+
+  '/click-track.html',
+  '/click-track.webmanifest',
+  '/images/click-icon-192.png',
+  '/images/click-icon-512.png',
+  '/images/click-icon-maskable.png',
+  '/images/click-icon-180.png',
+
+  '/js/pwa.js',
 ];
 const OWNED = new Set(SHELL);
 
@@ -62,7 +71,7 @@ self.addEventListener('fetch', (event) => {
           }
           return res;
         })
-        .catch(() => caches.match(req).then((hit) => hit || caches.match('/razor-cut-tool.html')))
+        .catch(() => caches.match(req))
     );
     return;
   }

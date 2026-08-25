@@ -12,6 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Razor Cut">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="/js/pwa.js" defer></script>
 <script src="vendor/jszip/jszip.min.js"></script>
 <script src="vendor/lamejs/lame.min.js"></script>
 <style>
@@ -368,10 +369,10 @@
 
 <footer>
   runs entirely on-device · no audio leaves your phone
-  <div id="installRow" style="display:none;margin-top:12px;">
+  <div id="installRow" hidden style="margin-top:12px;">
     <button class="btn-secondary" id="installBtn" style="max-width:260px;margin:0 auto;">Install on this device</button>
   </div>
-  <div id="iosHint" style="display:none;margin-top:12px;line-height:1.6;">
+  <div id="iosHint" hidden style="margin-top:12px;line-height:1.6;">
     To keep it on your phone: <b>Share</b> → <b>Add to Home Screen</b>.<br>It works with no signal after that.
   </div>
 </footer>
@@ -1089,45 +1090,6 @@ window.addEventListener('resize', () => {
   }
 });
 
-/* ── keep it on the phone ──────────────────────────────────────────────────
-   The whole tool already runs on-device; the only thing standing between it
-   and a rehearsal room with no signal is the download of the page itself. The
-   service worker caches that, so it opens whether or not there is a bar of
-   reception, and installing it puts it on the home screen like an app. */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      /* private windows and file:// have no service workers — the tool still works */
-    });
-  });
-}
-
-let installPrompt = null;
-const installRow = document.getElementById('installRow');
-const installBtn = document.getElementById('installBtn');
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  installPrompt = e;
-  installRow.style.display = 'block';
-});
-installBtn.addEventListener('click', async () => {
-  if (!installPrompt) return;
-  installBtn.disabled = true;
-  installPrompt.prompt();
-  await installPrompt.userChoice;
-  installPrompt = null;
-  installRow.style.display = 'none';
-});
-window.addEventListener('appinstalled', () => { installRow.style.display = 'none'; });
-
-// iOS never fires beforeinstallprompt — it wants Share → Add to Home Screen,
-// so say so rather than showing a button that cannot work.
-(function () {
-  const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  if (iOS && !standalone) document.getElementById('iosHint').style.display = 'block';
-})();
 </script>
 </body>
 </html>

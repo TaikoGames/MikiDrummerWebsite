@@ -7,6 +7,13 @@
 <meta name="description" content="A free online metronome and click-track maker — set the tempo, time signature and subdivision, play it live, and download a WAV click track. Runs in your browser.">
 <link rel="canonical" href="https://www.mikidrummer.ca/click-track.html">
 <link rel="icon" href="favicon.ico">
+<link rel="manifest" href="/click-track.webmanifest">
+<meta name="theme-color" content="#12100b">
+<link rel="apple-touch-icon" href="/images/click-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Click Track">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="/js/pwa.js" defer></script>
 <style>
   :root{
     --bg:#12100b; --panel:#1b1710; --panel-2:#241f15; --line:#332b1d;
@@ -74,6 +81,13 @@
   .cli{margin-top:16px;font-size:12.5px;color:var(--muted);background:rgba(0,0,0,.25);border-left:3px solid var(--amber);padding:11px 13px;border-radius:6px;line-height:1.55}
   .cli a{color:var(--amber)}
   footer{margin-top:26px;text-align:center;color:var(--muted);font-size:12px}
+  .install{
+    background:transparent;border:1px solid var(--line);color:var(--ink);
+    font:inherit;font-size:14px;font-weight:600;border-radius:10px;
+    padding:12px 18px;cursor:pointer;
+  }
+  .install:hover{border-color:var(--amber);color:var(--amber)}
+  .installNote{color:var(--muted);font-size:11.5px;line-height:1.6;margin-top:8px}
 </style>
 </head>
 <body>
@@ -149,6 +163,14 @@
     Prefer the command line? The same generator as a tiny Python script (no installs):
     <a href="/clicktrack.py" download>download clicktrack.py</a> — then e.g.
     <span class="mono">python clicktrack.py --bpm 120 --bars 16</span>.
+  </div>
+
+  <div id="installRow" hidden style="margin-top:22px;text-align:center">
+    <button id="installBtn" class="install">Install on this device</button>
+    <p class="installNote">Keeps working with no signal — handy in a rehearsal room.</p>
+  </div>
+  <div id="iosHint" hidden class="installNote" style="margin-top:22px;text-align:center">
+    To keep it on your phone: <b>Share</b> → <b>Add to Home Screen</b>.<br>It works with no signal after that.
   </div>
 
   <footer>Made for practice. <span class="mono">mikidrummer.ca</span></footer>
