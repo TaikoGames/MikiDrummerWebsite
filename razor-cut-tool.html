@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Razor Cut — Silence Splitter</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+<script src="vendor/jszip/jszip.min.js"></script>
+<script src="vendor/lamejs/lame.min.js"></script>
 <style>
   :root{
     --bg:#0D0F0D;
@@ -202,7 +202,7 @@
   .clip .meta{flex:1;min-width:0;}
   .clip .len{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
   .clip audio{width:100%;height:32px;margin-top:4px;}
-  .clip a.dl{
+  .clip a.dl, .clip button.sh{
     color:var(--green);
     text-decoration:none;
     font-size:12px;
@@ -212,6 +212,14 @@
     padding:6px 10px;
     white-space:nowrap;
   }
+  .clip button.sh{
+    background:transparent;
+    cursor:pointer;
+    display:none;            /* only shown where the browser can share files */
+  }
+  .clip button.sh:active{background:rgba(255,255,255,.06);}
+  .clip .acts{display:flex;gap:6px;align-items:center;}
+  .allacts{display:flex;gap:8px;flex-wrap:wrap;}
   footer{
     text-align:center;
     color:var(--muted);
@@ -318,7 +326,10 @@
     <h2>Clips</h2>
     <p class="count" id="clipCount"></p>
     <div id="clipList"></div>
-    <button class="btn-secondary" id="zipBtn">Download all as .zip</button>
+    <div class="allacts">
+      <button class="btn-secondary" id="shareAllBtn" style="display:none">Share all</button>
+      <button class="btn-secondary" id="zipBtn">Download all as .zip</button>
+    </div>
   </div>
 
 </main>
@@ -344,6 +355,7 @@ const resultsPanel = document.getElementById('resultsPanel');
 const clipList = document.getElementById('clipList');
 const clipCount = document.getElementById('clipCount');
 const zipBtn = document.getElementById('zipBtn');
+const shareAllBtn = document.getElementById('shareAllBtn');
 const t0El = document.getElementById('t0');
 const tEndEl = document.getElementById('tEnd');
 
@@ -745,10 +757,19 @@ processBtn.addEventListener('click', async () => {
         <div class="len">${formatTime(durSec)}</div>
         <audio controls src="${url}"></audio>
       </div>
-      <a class="dl" href="${url}" download="${name}">save</a>
+      <div class="acts">
+        <button class="sh" type="button" title="Send this clip to WhatsApp, Messages, anywhere">share</button>
+        <a class="dl" href="${url}" download="${name}">save</a>
+      </div>
     `;
+    const shareBtn = row.querySelector('button.sh');
+    if (canShareFiles()) {
+      shareBtn.style.display = 'inline-block';
+      shareBtn.addEventListener('click', () => shareFiles([{ blob, name }], shareBtn, 'clip ' + (i + 1)));
+    }
     clipList.appendChild(row);
   }
+  shareAllBtn.style.display = canShareFiles() ? 'inline-block' : 'none';
   clipCount.textContent = `${currentSegments.length} clip${currentSegments.length===1?'':'s'} from ${formatTime(currentBuffer.duration)} of audio`;
   resultsPanel.style.display = 'block';
   statusEl.textContent = 'Done. Adjust sliders and re-run any time.';
@@ -757,8 +778,79 @@ processBtn.addEventListener('click', async () => {
   resultsPanel.scrollIntoView({ behavior:'smooth', block:'start' });
 });
 
+/* ── sharing ───────────────────────────────────────────────────────────────
+   A clip only exists as a blob in this tab, so a link to it is meaningless to
+   anyone else — WhatsApp has to be handed the actual file. That is the Web
+   Share API with a files payload: on a phone it opens the normal share sheet
+   with WhatsApp, Messages and the rest in it. Desktop browsers mostly cannot
+   do it, so the buttons stay hidden there and "save" remains the way out. */
+function canShareFiles(){
+  try {
+    const probe = new File([new Blob([1])], 'probe.mp3', { type: 'audio/mpeg' });
+    return !!(navigator.canShare && navigator.canShare({ files: [probe] }));
+  } catch (e) { return false; }
+}
+
+function toFile({ blob, name }){
+  return new File([blob], name, { type: blob.type || 'application/octet-stream' });
+}
+
+async function shareFiles(items, btn, label){
+  const files = items.map(toFile);
+  const was = btn ? btn.textContent : '';
+  try {
+    if (!navigator.canShare || !navigator.canShare({ files })) throw new Error('unsupported');
+    await navigator.share({ files, title: label, text: label + ' — cut with Razor Cut' });
+    if (btn){ btn.textContent = 'sent'; setTimeout(() => { btn.textContent = was; }, 1600); }
+  } catch (e) {
+    // the user backing out of the share sheet is not a failure
+    if (e && e.name === 'AbortError') return;
+    if (btn){ btn.textContent = 'saved'; setTimeout(() => { btn.textContent = was; }, 2200); }
+    for (const item of items) saveBlob(item.blob, item.name);
+    statusEl.textContent = 'This browser cannot hand files to other apps — saved to your downloads instead, attach it from there.';
+  }
+}
+
+function saveBlob(blob, name){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+shareAllBtn.addEventListener('click', async () => {
+  if (!currentBlobs.length) return;
+  const files = currentBlobs.map(toFile);
+  // a handful of clips go over as audio; a pile of them is better as one zip,
+  // and some share targets refuse more than a couple of files anyway
+  let ok = false;
+  try { ok = currentBlobs.length <= 4 && navigator.canShare && navigator.canShare({ files }); } catch (e) { ok = false; }
+  if (ok) return shareFiles(currentBlobs, shareAllBtn, currentFileBase + ' clips');
+
+  if (typeof JSZip === 'undefined'){
+    // no zipper, so hand over what we can rather than failing outright
+    statusEl.textContent = 'Zip library did not load — sharing the clips one by one instead.';
+    return shareFiles(currentBlobs, shareAllBtn, currentFileBase + ' clips');
+  }
+  const was = shareAllBtn.textContent;
+  shareAllBtn.textContent = 'Zipping…';
+  const zip = new JSZip();
+  for (const { blob, name } of currentBlobs) zip.file(name, blob);
+  const content = await zip.generateAsync({ type: 'blob' });
+  shareAllBtn.textContent = was;
+  await shareFiles([{ blob: content, name: currentFileBase + '_split.zip' }], shareAllBtn,
+                   currentBlobs.length + ' clips');
+});
+
 zipBtn.addEventListener('click', async () => {
   if (!currentBlobs.length) return;
+  if (typeof JSZip === 'undefined'){
+    // saving each clip beats a dead button and a console error
+    statusEl.textContent = 'Zip library did not load — saving the clips one by one instead.';
+    for (const { blob, name } of currentBlobs) saveBlob(blob, name);
+    return;
+  }
   zipBtn.disabled = true;
   zipBtn.textContent = 'Zipping…';
   const zip = new JSZip();
