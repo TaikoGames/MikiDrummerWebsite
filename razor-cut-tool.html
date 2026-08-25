@@ -24,6 +24,7 @@
     --amber:#FFB627;
     --text:#EDEDED;
     --muted:#8A9186;
+    --red:#e2523b;
   }
   *{box-sizing:border-box;}
   body{
@@ -230,6 +231,11 @@
   .clip .acts{display:flex;gap:6px;align-items:center;}
   .allacts{display:flex;gap:8px;flex-wrap:wrap;}
   .hint{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 0 0;}
+  .preview{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--amber);
+    margin:10px 0 0;line-height:1.5;
+  }
+  .preview b{color:var(--text);}
   .headTop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
   .install{
     background:transparent;border:1px solid var(--line);color:var(--text);
@@ -365,7 +371,9 @@
     <div class="legend">
       <span><i class="swatch" style="background:var(--green);"></i>waveform</span>
       <span><i class="swatch" style="background:var(--amber);"></i>cut point</span>
+      <span><i class="swatch" style="background:var(--red);"></i>silence threshold</span>
     </div>
+    <p class="preview" id="previewOut">Move the sliders — the cuts update as you go.</p>
   </div>
 
   <div class="panel results" id="resultsPanel" style="display:none;">
@@ -404,6 +412,7 @@ const threshVal = document.getElementById('threshVal');
 const gapVal = document.getElementById('gapVal');
 const clipVal = document.getElementById('clipVal');
 const wavePanel = document.getElementById('wavePanel');
+const previewOut = document.getElementById('previewOut');
 const waveCanvas = document.getElementById('wave');
 const resultsPanel = document.getElementById('resultsPanel');
 const clipList = document.getElementById('clipList');
@@ -443,11 +452,14 @@ function setTrim(mode) {
   trimOffBtn.classList.toggle('active', mode === 'off');
   trimOnBtn.classList.toggle('active', mode === 'on');
   padWrap.style.display = mode === 'on' ? 'block' : 'none';
+  schedulePreview();
   if (currentBuffer && currentSegments.length) processBtn.click();
 }
 trimOffBtn.addEventListener('click', () => setTrim('off'));
 trimOnBtn.addEventListener('click', () => setTrim('on'));
-padSlider.addEventListener('input', () => padVal.textContent = padSlider.value + ' ms');
+padSlider.addEventListener('input', () => {
+  padVal.textContent = padSlider.value + ' ms'; schedulePreview();
+});
 padSlider.addEventListener('change', () => {
   if (currentBuffer && currentSegments.length) processBtn.click();
 });
@@ -512,9 +524,9 @@ async function loadDecodedBuffer(arrayBuf, labelName) {
   processBtn.disabled = false;
   processBtn.textContent = 'Find cuts & split';
   envelopeCache = computeEnvelope(currentBuffer);
-  drawWave(envelopeCache, []);
   wavePanel.style.display = 'block';
   resultsPanel.style.display = 'none';
+  renderPreview();                       // show the cuts before anything is cut
 }
 
 function base64ToArrayBuffer(b64) {
@@ -595,9 +607,9 @@ fileInput.addEventListener('change', async (e) => {
     processBtn.disabled = false;
     processBtn.textContent = 'Find cuts & split';
     envelopeCache = computeEnvelope(currentBuffer);
-    drawWave(envelopeCache, []);
     wavePanel.style.display = 'block';
     resultsPanel.style.display = 'none';
+    renderPreview();                     // show the cuts before anything is cut
   } catch (err) {
     statusEl.textContent = 'Could not decode that file: ' + err.message;
     processBtn.disabled = true;
@@ -605,9 +617,15 @@ fileInput.addEventListener('change', async (e) => {
   }
 });
 
-threshSlider.addEventListener('input', () => threshVal.textContent = threshSlider.value + ' dB');
-gapSlider.addEventListener('input', () => gapVal.textContent = gapSlider.value + ' ms');
-clipSlider.addEventListener('input', () => clipVal.textContent = parseFloat(clipSlider.value).toFixed(1) + ' s');
+threshSlider.addEventListener('input', () => {
+  threshVal.textContent = threshSlider.value + ' dB'; schedulePreview();
+});
+gapSlider.addEventListener('input', () => {
+  gapVal.textContent = gapSlider.value + ' ms'; schedulePreview();
+});
+clipSlider.addEventListener('input', () => {
+  clipVal.textContent = parseFloat(clipSlider.value).toFixed(1) + ' s'; schedulePreview();
+});
 
 function computeEnvelope(buffer) {
   const winMs = 20;
@@ -678,7 +696,7 @@ function buildSegments(cuts, totalSamples, sampleRate, minClipSec) {
   return merged.filter(s => s.end > s.start);
 }
 
-function drawWave(env, cutSamplesList) {
+function drawWave(env, cutSamplesList, thresholdDb) {
   const dpr = window.devicePixelRatio || 1;
   const cssWidth = waveCanvas.clientWidth || 600;
   const cssHeight = 140;
@@ -702,6 +720,19 @@ function drawWave(env, cutSamplesList) {
     const norm = Math.max(0, Math.min(1, (maxDb + 60) / 60)); // -60..0dB -> 0..1
     const h = norm * (cssHeight*0.42);
     ctx.fillRect(x, mid - h, 1, h*2);
+  }
+
+  // where the silence threshold sits, on the same -60..0 dB scale as the bars
+  if (typeof thresholdDb === 'number') {
+    const tNorm = Math.max(0, Math.min(1, (thresholdDb + 60) / 60));
+    const th = tNorm * (cssHeight * 0.42);
+    ctx.strokeStyle = 'rgba(226,82,59,.85)';
+    ctx.setLineDash([4, 3]);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, mid - th); ctx.lineTo(cssWidth, mid - th);
+    ctx.moveTo(0, mid + th); ctx.lineTo(cssWidth, mid + th);
+    ctx.stroke();
+    ctx.setLineDash([]);
   }
 
   ctx.strokeStyle = '#FFB627';
@@ -909,6 +940,55 @@ function syncNameToFile() {
 
 nameInput.addEventListener('input', () => { nameEdited = true; applyNames(); });
 
+/* ── preview ───────────────────────────────────────────────────────────────
+   Finding the cuts is cheap — it walks a 20ms envelope, not the samples. What
+   costs is slicing and encoding every clip. So the cuts are worked out and
+   drawn live while the sliders move, and the button is left to do the
+   expensive half. Both call planCuts(), so what you see is what you get. */
+function planCuts() {
+  if (!currentBuffer || !envelopeCache) return null;
+  const thresholdDb = parseFloat(threshSlider.value);
+  const cuts = findCutPoints(envelopeCache, thresholdDb, parseFloat(gapSlider.value));
+  let segs = buildSegments(cuts, currentBuffer.length, currentBuffer.sampleRate,
+                           parseFloat(clipSlider.value));
+  let dropped = 0;
+  if (trimMode === 'on') {
+    const padMs = parseFloat(padSlider.value);
+    const tightened = [];
+    for (const seg of segs) {
+      const t = tightenSegment(currentBuffer, seg.start, seg.end, thresholdDb, padMs);
+      if (t) tightened.push(t); else dropped++;      // a segment of pure silence
+    }
+    if (tightened.length) segs = tightened;
+  }
+  return { segs, dropped, thresholdDb };
+}
+
+function renderPreview() {
+  const plan = planCuts();
+  if (!plan) return;
+  drawWave(envelopeCache, plan.segs.slice(1).map(s => s.start), plan.thresholdDb);
+  const rate = currentBuffer.sampleRate;
+  const lens = plan.segs.map(s => (s.end - s.start) / rate);
+  const total = lens.reduce((a, b) => a + b, 0);
+  const shortest = lens.length ? Math.min(...lens) : 0;
+  const longest = lens.length ? Math.max(...lens) : 0;
+  previewOut.innerHTML = plan.segs.length
+    ? `<b>${plan.segs.length}</b> clip${plan.segs.length === 1 ? '' : 's'} at these settings · `
+      + `shortest <b>${formatTime(shortest)}</b> · longest <b>${formatTime(longest)}</b> · `
+      + `<b>${formatTime(total)}</b> kept of ${formatTime(currentBuffer.duration)}`
+      + (plan.dropped ? ` · ${plan.dropped} silent stretch${plan.dropped === 1 ? '' : 'es'} dropped` : '')
+    : 'Nothing above the threshold — try a lower dB.';
+}
+
+// sliders fire continuously; one redraw per frame is plenty
+let previewQueued = false;
+function schedulePreview() {
+  if (previewQueued) return;
+  previewQueued = true;
+  requestAnimationFrame(() => { previewQueued = false; renderPreview(); });
+}
+
 processBtn.addEventListener('click', async () => {
   if (!currentBuffer) return;
   processBtn.disabled = true;
@@ -916,26 +996,10 @@ processBtn.addEventListener('click', async () => {
   statusEl.textContent = 'Analyzing for silence…';
   await new Promise(r => setTimeout(r, 30));
 
-  const thresholdDb = parseFloat(threshSlider.value);
-  const minGapMs = parseFloat(gapSlider.value);
-  const minClipSec = parseFloat(clipSlider.value);
-
-  const cuts = findCutPoints(envelopeCache, thresholdDb, minGapMs);
-  currentSegments = buildSegments(cuts, currentBuffer.length, currentBuffer.sampleRate, minClipSec);
-
-  let dropped = 0;
-  if (trimMode === 'on') {
-    const padMs = parseFloat(padSlider.value);
-    const tightened = [];
-    for (const seg of currentSegments) {
-      const t = tightenSegment(currentBuffer, seg.start, seg.end, thresholdDb, padMs);
-      if (t) tightened.push(t); else dropped++;      // a segment of pure silence
-    }
-    if (tightened.length) currentSegments = tightened;
-  }
-
-  const cutSamples = currentSegments.slice(1).map(s => s.start);
-  drawWave(envelopeCache, cutSamples);
+  const plan = planCuts();
+  currentSegments = plan.segs;
+  const dropped = plan.dropped;
+  renderPreview();
 
   currentBlobs = [];
   clipList.innerHTML = '';
@@ -1090,12 +1154,7 @@ zipBtn.addEventListener('click', async () => {
   zipBtn.textContent = 'Download all as .zip';
 });
 
-window.addEventListener('resize', () => {
-  if (envelopeCache) {
-    const cutSamples = currentSegments.slice(1).map(s => s.start);
-    drawWave(envelopeCache, cutSamples);
-  }
-});
+window.addEventListener('resize', () => { if (envelopeCache) renderPreview(); });
 
 </script>
 </body>

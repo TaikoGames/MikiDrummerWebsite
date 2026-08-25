@@ -25,15 +25,11 @@
       });
     });
 
-    // When a new worker takes over it may already have handed this page the
-    // previous version of the code. Reload once — guarded, or a worker that
-    // claims on every load would spin the page forever.
-    var reloaded = false;
-    navigator.serviceWorker.addEventListener('controllerchange', function () {
-      if (reloaded) return;
-      reloaded = true;
-      window.location.reload();
-    });
+    // Deliberately no reload when a new worker takes over. It looked like a
+    // tidy way to pick up fresh code, and it is — right up until it fires
+    // while someone has an hour of audio loaded and clips on screen, and
+    // throws the lot away. Our own files are served network-first now, so a
+    // new version is picked up on the next visit anyway; that is soon enough.
   }
 
   var btn = document.getElementById('installBtn');
