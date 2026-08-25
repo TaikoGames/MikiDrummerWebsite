@@ -92,10 +92,22 @@
         var p = prompt;
         prompt = null;
         p.prompt();
-        var choice = await p.userChoice;
+        // userChoice does not always come back. If the browser thinks this app
+        // is already installed it quietly does nothing at all, and awaiting it
+        // forever leaves a dead button and no explanation — which is exactly
+        // how this was failing on Android.
+        var choice = await Promise.race([
+          p.userChoice,
+          new Promise(function (r) { setTimeout(function () { r({ outcome: 'no-answer' }); }, 2500); })
+        ]);
         btn.disabled = false;
         if (choice && choice.outcome === 'accepted') { hide(btn); hide(how); }
-        else tell('Not installed. You can also do it from the browser menu — ' + manualSteps());
+        else if (choice && choice.outcome === 'dismissed') {
+          tell('Not installed. You can also do it from the browser menu — ' + manualSteps());
+        } else {
+          tell('Your browser did not open the install dialog — it may think this is already installed. '
+             + 'Check your home screen first, otherwise: ' + manualSteps());
+        }
         return;
       } catch (e) {
         btn.disabled = false;
