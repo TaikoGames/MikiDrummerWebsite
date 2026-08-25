@@ -78,6 +78,48 @@
     show(how);
   }
 
+  /* A browser will not tell you why it refuses to install something, and the
+     person holding the phone cannot be expected to open devtools. So the page
+     checks the things Chrome actually requires and reports them in one line —
+     enough to say which link in the chain is broken without guessing. */
+  var promptSeen = false;
+  window.addEventListener('beforeinstallprompt', function () { promptSeen = true; });
+
+  async function diagnose() {
+    var bits = [];
+    bits.push('https:' + (location.protocol === 'https:' ? 'ok' : 'NO'));
+    bits.push('sw:' + (navigator.serviceWorker
+      ? (navigator.serviceWorker.controller ? 'ok' : 'not-controlling')
+      : 'unsupported'));
+
+    var link = document.querySelector('link[rel="manifest"]');
+    if (!link) bits.push('manifest:missing-link');
+    else {
+      try {
+        var res = await fetch(link.href, { cache: 'no-store' });
+        if (!res.ok) bits.push('manifest:http-' + res.status);
+        else {
+          var m = await res.json();
+          var icons = (m.icons || []).map(function (i) { return i.sizes; });
+          bits.push('manifest:ok');
+          bits.push('icons:' + (icons.join('/') || 'none'));
+          bits.push('start:' + (m.start_url || '?'));
+          // an icon that 404s is a silent install blocker
+          var big = (m.icons || []).filter(function (i) { return /512/.test(i.sizes || ''); })[0];
+          if (big) {
+            var ir = await fetch(new URL(big.src, location.origin).href, { method: 'GET', cache: 'no-store' });
+            bits.push('icon512:' + (ir.ok ? 'ok' : 'http-' + ir.status));
+          }
+        }
+      } catch (e) {
+        bits.push('manifest:' + (e && e.message ? e.message.slice(0, 24) : 'failed'));
+      }
+    }
+    bits.push('prompt:' + (promptSeen ? 'offered' : 'never-fired'));
+    bits.push('mode:' + (installed() ? 'installed' : 'browser'));
+    return bits.join(' · ');
+  }
+
   btn.addEventListener('click', async function () {
     // A stored prompt goes stale — the browser can refuse it if the page has
     // been open a while, or if it decided to show its own bar in the meantime.
@@ -111,8 +153,17 @@
         return;
       }
     }
-    if (how && !how.hidden) { hide(how); return; }   // second tap closes it
-    tell(manualSteps());
+    // First tap: what to do. Second tap: why the browser is not doing it for
+    // you, in a line short enough to read out to someone.
+    if (how && !how.hidden && how.dataset.state === 'steps') {
+      how.dataset.state = 'why';
+      tell('Checking…');
+      how.textContent = await diagnose();
+      return;
+    }
+    if (how && !how.hidden) { hide(how); how.dataset.state = ''; return; }
+    tell(manualSteps() + '  (tap again for why)');
+    if (how) how.dataset.state = 'steps';
   });
 
   window.addEventListener('appinstalled', function () { hide(btn); hide(how); });

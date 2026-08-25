@@ -4,7 +4,7 @@
   "short_name": "Click Track",
   "description": "Metronome and click-track maker: set the tempo, time signature and subdivision, play it live, or save a WAV click track. Works offline.",
   "start_url": "/click-track.html",
-  "scope": "/click-track.html",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#12100b",

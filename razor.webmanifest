@@ -4,7 +4,7 @@
   "short_name": "Razor Cut",
   "description": "Split a recording into separate clips wherever it goes quiet. Runs entirely on your device — nothing uploads.",
   "start_url": "/razor-cut-tool.html",
-  "scope": "/razor-cut-tool.html",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#0D0F0D",
