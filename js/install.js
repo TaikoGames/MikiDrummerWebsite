@@ -76,20 +76,35 @@
     return 'Look for the install icon at the right-hand end of the address bar, or ⋮ menu → “Cast, save and share” → “Install page as app”.';
   }
 
+  function tell(text) {
+    if (!how) { alert(text); return; }   // no slot in the page: still say something
+    how.textContent = text;
+    show(how);
+  }
+
   btn.addEventListener('click', async function () {
+    // A stored prompt goes stale — the browser can refuse it if the page has
+    // been open a while, or if it decided to show its own bar in the meantime.
+    // Whatever happens, the tap has to visibly do something.
     if (prompt) {
-      btn.disabled = true;
-      prompt.prompt();
-      var choice = await prompt.userChoice;
-      prompt = null;
-      btn.disabled = false;
-      if (choice && choice.outcome === 'accepted') hide(btn);
-      return;
+      try {
+        btn.disabled = true;
+        var p = prompt;
+        prompt = null;
+        p.prompt();
+        var choice = await p.userChoice;
+        btn.disabled = false;
+        if (choice && choice.outcome === 'accepted') { hide(btn); hide(how); }
+        else tell('Not installed. You can also do it from the browser menu — ' + manualSteps());
+        return;
+      } catch (e) {
+        btn.disabled = false;
+        tell(manualSteps());
+        return;
+      }
     }
-    if (how) {
-      how.textContent = manualSteps();
-      how.hidden ? show(how) : hide(how);
-    }
+    if (how && !how.hidden) { hide(how); return; }   // second tap closes it
+    tell(manualSteps());
   });
 
   window.addEventListener('appinstalled', function () { hide(btn); hide(how); });
