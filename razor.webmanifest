@@ -1,0 +1,17 @@
+{
+  "name": "Razor Cut — Silence Splitter",
+  "short_name": "Razor Cut",
+  "description": "Split a recording into separate clips wherever it goes quiet. Runs entirely on your device — nothing uploads.",
+  "start_url": "/razor-cut-tool.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0D0F0D",
+  "theme_color": "#0D0F0D",
+  "categories": ["music", "utilities", "productivity"],
+  "icons": [
+    { "src": "/images/razor-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/images/razor-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/images/razor-icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Razor Cut — Silence Splitter</title>
+<title>Razor Cut — Split Audio by Silence, Free &amp; On-Device</title>
+<meta name="description" content="Split a long recording into separate clips wherever it goes quiet — takes, samples, voice memos. Runs entirely in your browser, works offline, nothing uploads.">
+<link rel="canonical" href="https://www.mikidrummer.ca/razor-cut-tool.html">
+<link rel="manifest" href="/razor.webmanifest">
+<meta name="theme-color" content="#0D0F0D">
+<link rel="apple-touch-icon" href="/images/razor-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Razor Cut">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <script src="vendor/jszip/jszip.min.js"></script>
 <script src="vendor/lamejs/lame.min.js"></script>
 <style>
@@ -220,6 +228,7 @@
   .clip button.sh:active{background:rgba(255,255,255,.06);}
   .clip .acts{display:flex;gap:6px;align-items:center;}
   .allacts{display:flex;gap:8px;flex-wrap:wrap;}
+  .hint{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 0 0;}
   footer{
     text-align:center;
     color:var(--muted);
@@ -309,6 +318,24 @@
     <label class="ctrl">Min. clip length <span class="val" id="clipVal">1.0 s</span></label>
     <input type="range" id="clipLen" min="0.3" max="10" value="1" step="0.1">
 
+    <label class="ctrl">Trim the silence off each clip</label>
+    <div class="sourceTabs" id="trimTabs">
+      <button type="button" class="srcTab active" id="trimOff">Leave it</button>
+      <button type="button" class="srcTab" id="trimOn">Tighten</button>
+    </div>
+    <div id="padWrap" style="display:none;">
+      <label class="ctrl">Silence to leave either side <span class="val" id="padVal">40 ms</span></label>
+      <input type="range" id="padLen" min="0" max="400" value="40" step="5">
+    </div>
+
+    <label class="ctrl">Level</label>
+    <div class="sourceTabs" id="normTabs">
+      <button type="button" class="srcTab active" id="normOff">As recorded</button>
+      <button type="button" class="srcTab" id="normEach">Match each</button>
+      <button type="button" class="srcTab" id="normAll">Lift together</button>
+    </div>
+    <p class="hint" id="normHint">Left alone, clips keep the levels they were played at.</p>
+
     <button class="btn-primary" id="processBtn" disabled>Load a file first</button>
     <div id="status"></div>
   </div>
@@ -334,7 +361,15 @@
 
 </main>
 
-<footer>runs entirely on-device · no audio leaves your phone</footer>
+<footer>
+  runs entirely on-device · no audio leaves your phone
+  <div id="installRow" style="display:none;margin-top:12px;">
+    <button class="btn-secondary" id="installBtn" style="max-width:260px;margin:0 auto;">Install on this device</button>
+  </div>
+  <div id="iosHint" style="display:none;margin-top:12px;line-height:1.6;">
+    To keep it on your phone: <b>Share</b> → <b>Add to Home Screen</b>.<br>It works with no signal after that.
+  </div>
+</footer>
 
 <script>
 const fileInput = document.getElementById('fileInput');
@@ -346,6 +381,10 @@ const statusEl = document.getElementById('status');
 const threshSlider = document.getElementById('thresh');
 const gapSlider = document.getElementById('gapLen');
 const clipSlider = document.getElementById('clipLen');
+const padSlider = document.getElementById('padLen');
+const padWrap = document.getElementById('padWrap');
+const padVal = document.getElementById('padVal');
+const normHint = document.getElementById('normHint');
 const threshVal = document.getElementById('threshVal');
 const gapVal = document.getElementById('gapVal');
 const clipVal = document.getElementById('clipVal');
@@ -366,6 +405,8 @@ let currentSegments = []; // {startSample, endSample}
 let currentBlobs = []; // {blob, name}
 let envelopeCache = null;
 let exportFormat = 'mp3'; // default to MP3
+let trimMode = 'off';     // 'off' | 'on'  — trim the silence off each clip
+let normMode = 'off';     // 'off' | 'each' | 'all'
 
 const fmtMp3 = document.getElementById('fmtMp3');
 const fmtWav = document.getElementById('fmtWav');
@@ -378,6 +419,40 @@ function setFormat(f) {
 }
 fmtMp3.addEventListener('click', () => setFormat('mp3'));
 fmtWav.addEventListener('click', () => setFormat('wav'));
+
+const trimOffBtn = document.getElementById('trimOff');
+const trimOnBtn = document.getElementById('trimOn');
+function setTrim(mode) {
+  trimMode = mode;
+  trimOffBtn.classList.toggle('active', mode === 'off');
+  trimOnBtn.classList.toggle('active', mode === 'on');
+  padWrap.style.display = mode === 'on' ? 'block' : 'none';
+  if (currentBuffer && currentSegments.length) processBtn.click();
+}
+trimOffBtn.addEventListener('click', () => setTrim('off'));
+trimOnBtn.addEventListener('click', () => setTrim('on'));
+padSlider.addEventListener('input', () => padVal.textContent = padSlider.value + ' ms');
+padSlider.addEventListener('change', () => {
+  if (currentBuffer && currentSegments.length) processBtn.click();
+});
+
+const normBtns = {
+  off:  document.getElementById('normOff'),
+  each: document.getElementById('normEach'),
+  all:  document.getElementById('normAll'),
+};
+const NORM_HINT = {
+  off:  'Left alone, clips keep the levels they were played at.',
+  each: 'Every clip brought to the same peak — good for a sample pack, wrong for a take, since a ghost note ends up as loud as a rimshot.',
+  all:  'One gain for the lot, taken from the loudest clip, so the balance you played survives.',
+};
+function setNorm(mode) {
+  normMode = mode;
+  for (const k in normBtns) normBtns[k].classList.toggle('active', k === mode);
+  normHint.textContent = NORM_HINT[mode];
+  if (currentBuffer && currentSegments.length) processBtn.click();
+}
+for (const k in normBtns) normBtns[k].addEventListener('click', () => setNorm(k));
 
 const tabUpload = document.getElementById('tabUpload');
 const tabDrive = document.getElementById('tabDrive');
@@ -632,6 +707,51 @@ function formatTime(sec) {
   return m + ':' + String(s).padStart(2,'0');
 }
 
+/* ── tighten ───────────────────────────────────────────────────────────────
+   Cuts land in the middle of the silence, so every clip carries a chunk of
+   room tone at each end. This walks in from both sides of a segment to the
+   first sample that actually crosses the threshold and keeps a chosen sliver
+   of silence either side — enough to breathe, not enough to wait through. */
+function tightenSegment(buffer, start, end, thresholdDb, padMs) {
+  const limit = Math.pow(10, thresholdDb / 20);
+  const chans = [];
+  for (let c = 0; c < buffer.numberOfChannels; c++) chans.push(buffer.getChannelData(c));
+  const loud = i => {
+    for (let c = 0; c < chans.length; c++) if (Math.abs(chans[c][i]) > limit) return true;
+    return false;
+  };
+  let first = -1, last = -1;
+  for (let i = start; i < end; i++) if (loud(i)) { first = i; break; }
+  if (first < 0) return null;                       // nothing but silence in here
+  for (let i = end - 1; i >= first; i--) if (loud(i)) { last = i; break; }
+  const pad = Math.round(padMs / 1000 * buffer.sampleRate);
+  return { start: Math.max(start, first - pad), end: Math.min(end, last + 1 + pad) };
+}
+
+/* ── level ─────────────────────────────────────────────────────────────────
+   "Match each" brings every clip to the same peak — right for building a
+   sample pack, wrong for a take, since a ghost note ends up as loud as a
+   rimshot. "Lift together" scales everything by one factor taken from the
+   loudest clip, so the balance you played survives. */
+const PEAK_TARGET = 0.891;                          // -1 dBFS, leaves headroom
+
+function bufferPeak(buffer) {
+  let peak = 0;
+  for (let c = 0; c < buffer.numberOfChannels; c++) {
+    const d = buffer.getChannelData(c);
+    for (let i = 0; i < d.length; i++) { const v = Math.abs(d[i]); if (v > peak) peak = v; }
+  }
+  return peak;
+}
+
+function applyGain(buffer, gain) {
+  if (!(gain > 0) || Math.abs(gain - 1) < 1e-4) return;
+  for (let c = 0; c < buffer.numberOfChannels; c++) {
+    const d = buffer.getChannelData(c);
+    for (let i = 0; i < d.length; i++) d[i] *= gain;
+  }
+}
+
 function sliceBuffer(buffer, startSample, endSample) {
   const len = endSample - startSample;
   const newBuf = audioCtx.createBuffer(buffer.numberOfChannels, len, buffer.sampleRate);
@@ -730,6 +850,18 @@ processBtn.addEventListener('click', async () => {
 
   const cuts = findCutPoints(envelopeCache, thresholdDb, minGapMs);
   currentSegments = buildSegments(cuts, currentBuffer.length, currentBuffer.sampleRate, minClipSec);
+
+  let dropped = 0;
+  if (trimMode === 'on') {
+    const padMs = parseFloat(padSlider.value);
+    const tightened = [];
+    for (const seg of currentSegments) {
+      const t = tightenSegment(currentBuffer, seg.start, seg.end, thresholdDb, padMs);
+      if (t) tightened.push(t); else dropped++;      // a segment of pure silence
+    }
+    if (tightened.length) currentSegments = tightened;
+  }
+
   const cutSamples = currentSegments.slice(1).map(s => s.start);
   drawWave(envelopeCache, cutSamples);
 
@@ -739,9 +871,26 @@ processBtn.addEventListener('click', async () => {
   if (exportFormat === 'mp3' && typeof lamejs === 'undefined') {
     statusEl.textContent = 'MP3 encoder failed to load — exporting WAV instead.';
   }
+
+  // cut every clip first: "lift together" needs the loudest one before it can
+  // scale any of them, and the peaks are cheap to keep hold of
+  const cutBuffers = currentSegments.map(seg => sliceBuffer(currentBuffer, seg.start, seg.end));
+  let loudest = 0;
+  if (normMode !== 'off') {
+    for (const buf of cutBuffers) loudest = Math.max(loudest, bufferPeak(buf));
+  }
+  for (let i = 0; i < cutBuffers.length; i++) {
+    if (normMode === 'each') {
+      const peak = bufferPeak(cutBuffers[i]);
+      if (peak > 0) applyGain(cutBuffers[i], PEAK_TARGET / peak);
+    } else if (normMode === 'all' && loudest > 0) {
+      applyGain(cutBuffers[i], PEAK_TARGET / loudest);
+    }
+  }
+
   for (let i = 0; i < currentSegments.length; i++) {
     const seg = currentSegments[i];
-    const buf = sliceBuffer(currentBuffer, seg.start, seg.end);
+    const buf = cutBuffers[i];
     const ext = useMp3 ? 'mp3' : 'wav';
     const blob = useMp3 ? audioBufferToMp3Blob(buf) : audioBufferToWavBlob(buf);
     const name = `${currentFileBase}_${String(i+1).padStart(2,'0')}.${ext}`;
@@ -772,7 +921,8 @@ processBtn.addEventListener('click', async () => {
   shareAllBtn.style.display = canShareFiles() ? 'inline-block' : 'none';
   clipCount.textContent = `${currentSegments.length} clip${currentSegments.length===1?'':'s'} from ${formatTime(currentBuffer.duration)} of audio`;
   resultsPanel.style.display = 'block';
-  statusEl.textContent = 'Done. Adjust sliders and re-run any time.';
+  statusEl.textContent = 'Done. Adjust sliders and re-run any time.'
+    + (dropped ? ` ${dropped} silent stretch${dropped===1?'':'es'} dropped.` : '');
   processBtn.disabled = false;
   processBtn.textContent = 'Re-run with these settings';
   resultsPanel.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -873,6 +1023,46 @@ window.addEventListener('resize', () => {
     drawWave(envelopeCache, cutSamples);
   }
 });
+
+/* ── keep it on the phone ──────────────────────────────────────────────────
+   The whole tool already runs on-device; the only thing standing between it
+   and a rehearsal room with no signal is the download of the page itself. The
+   service worker caches that, so it opens whether or not there is a bar of
+   reception, and installing it puts it on the home screen like an app. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      /* private windows and file:// have no service workers — the tool still works */
+    });
+  });
+}
+
+let installPrompt = null;
+const installRow = document.getElementById('installRow');
+const installBtn = document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  installPrompt = e;
+  installRow.style.display = 'block';
+});
+installBtn.addEventListener('click', async () => {
+  if (!installPrompt) return;
+  installBtn.disabled = true;
+  installPrompt.prompt();
+  await installPrompt.userChoice;
+  installPrompt = null;
+  installRow.style.display = 'none';
+});
+window.addEventListener('appinstalled', () => { installRow.style.display = 'none'; });
+
+// iOS never fires beforeinstallprompt — it wants Share → Add to Home Screen,
+// so say so rather than showing a button that cannot work.
+(function () {
+  const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (iOS && !standalone) document.getElementById('iosHint').style.display = 'block';
+})();
 </script>
 </body>
 </html>
