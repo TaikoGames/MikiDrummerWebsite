@@ -303,6 +303,11 @@
       <div id="driveStatus" class="mono" style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;"></div>
     </div>
 
+    <label class="ctrl" for="clipName">Name the clips</label>
+    <input type="text" id="clipName" class="textin" placeholder="snare" autocapitalize="off"
+           autocorrect="off" spellcheck="false" maxlength="60">
+    <p class="hint" id="nameHint"></p>
+
     <label class="ctrl">Export format</label>
     <div class="sourceTabs" id="formatTabs">
       <button type="button" class="srcTab active" id="fmtMp3">MP3</button>
@@ -385,6 +390,8 @@ const padSlider = document.getElementById('padLen');
 const padWrap = document.getElementById('padWrap');
 const padVal = document.getElementById('padVal');
 const normHint = document.getElementById('normHint');
+const nameInput = document.getElementById('clipName');
+const nameHint = document.getElementById('nameHint');
 const threshVal = document.getElementById('threshVal');
 const gapVal = document.getElementById('gapVal');
 const clipVal = document.getElementById('clipVal');
@@ -414,6 +421,7 @@ function setFormat(f) {
   exportFormat = f;
   fmtMp3.classList.toggle('active', f === 'mp3');
   fmtWav.classList.toggle('active', f === 'wav');
+  updateNameHint();
   // if clips are already showing, re-encode them in the new format
   if (currentBuffer && currentSegments.length) processBtn.click();
 }
@@ -490,6 +498,7 @@ function extractDriveId(url) {
 
 async function loadDecodedBuffer(arrayBuf, labelName) {
   currentFileBase = labelName.replace(/\.[^/.]+$/, '');
+  syncNameToFile();
   currentBuffer = await audioCtx.decodeAudioData(arrayBuf);
   statusEl.textContent = `Loaded: ${currentBuffer.duration.toFixed(1)}s · ${currentBuffer.sampleRate}Hz · ${currentBuffer.numberOfChannels}ch`;
   processBtn.disabled = false;
@@ -567,6 +576,7 @@ fileInput.addEventListener('change', async (e) => {
   filenameEl.textContent = file.name;
   drop.classList.add('active');
   currentFileBase = file.name.replace(/\.[^/.]+$/, '');
+  syncNameToFile();
   statusEl.textContent = 'Decoding audio…';
   processBtn.disabled = true;
   processBtn.textContent = 'Decoding…';
@@ -837,6 +847,60 @@ function audioBufferToMp3Blob(buffer, kbps) {
   return new Blob(mp3Data, { type: 'audio/mpeg' });
 }
 
+/* ── naming ────────────────────────────────────────────────────────────────
+   The clips are the point of the exercise, and "voice-memo-4_03.wav" tells you
+   nothing six months later. The prefix is whatever is typed here, falling back
+   to the name of the file that was loaded. Renaming does not re-cut anything —
+   the audio is already encoded, only the labels change. */
+let nameEdited = false;      // once it is typed in, a new file does not clobber it
+
+function safeName(raw) {
+  const cleaned = String(raw || '')
+    .replace(/[\\/:*?"<>|]+/g, '-')      // illegal on one filesystem or another
+    .replace(/\s+/g, '-')
+    .replace(/-{2,}/g, '-')
+    .replace(/^[-.]+|[-.]+$/g, '')
+    .slice(0, 60);
+  return cleaned || 'clip';
+}
+
+function namePrefix() {
+  return safeName(nameInput.value.trim() || currentFileBase);
+}
+
+function extFor(blob) {
+  return blob && blob.type === 'audio/mpeg' ? 'mp3' : 'wav';
+}
+
+function clipNameAt(i, ext) {
+  return `${namePrefix()}_${String(i + 1).padStart(2, '0')}.${ext}`;
+}
+
+function updateNameHint() {
+  const ext = exportFormat === 'mp3' && typeof lamejs !== 'undefined' ? 'mp3' : 'wav';
+  nameHint.textContent = currentBlobs.length
+    ? `${clipNameAt(0, ext)}, ${clipNameAt(1, ext)}, …`
+    : `Files come out as ${namePrefix()}_01.${ext}, ${namePrefix()}_02.${ext} …`;
+}
+
+// rename what is already on screen, no re-encoding
+function applyNames() {
+  for (let i = 0; i < currentBlobs.length; i++) {
+    currentBlobs[i].name = clipNameAt(i, extFor(currentBlobs[i].blob));
+  }
+  const links = clipList.querySelectorAll('a.dl');
+  links.forEach((a, i) => { if (currentBlobs[i]) a.setAttribute('download', currentBlobs[i].name); });
+  updateNameHint();
+}
+
+// a fresh file brings its own name along, unless one was typed in on purpose
+function syncNameToFile() {
+  if (!nameEdited) nameInput.value = safeName(currentFileBase);
+  updateNameHint();
+}
+
+nameInput.addEventListener('input', () => { nameEdited = true; applyNames(); });
+
 processBtn.addEventListener('click', async () => {
   if (!currentBuffer) return;
   processBtn.disabled = true;
@@ -893,7 +957,7 @@ processBtn.addEventListener('click', async () => {
     const buf = cutBuffers[i];
     const ext = useMp3 ? 'mp3' : 'wav';
     const blob = useMp3 ? audioBufferToMp3Blob(buf) : audioBufferToWavBlob(buf);
-    const name = `${currentFileBase}_${String(i+1).padStart(2,'0')}.${ext}`;
+    const name = clipNameAt(i, ext);
     currentBlobs.push({ blob, name });
 
     const url = URL.createObjectURL(blob);
@@ -921,6 +985,7 @@ processBtn.addEventListener('click', async () => {
   shareAllBtn.style.display = canShareFiles() ? 'inline-block' : 'none';
   clipCount.textContent = `${currentSegments.length} clip${currentSegments.length===1?'':'s'} from ${formatTime(currentBuffer.duration)} of audio`;
   resultsPanel.style.display = 'block';
+  updateNameHint();
   statusEl.textContent = 'Done. Adjust sliders and re-run any time.'
     + (dropped ? ` ${dropped} silent stretch${dropped===1?'':'es'} dropped.` : '');
   processBtn.disabled = false;
@@ -976,12 +1041,12 @@ shareAllBtn.addEventListener('click', async () => {
   // and some share targets refuse more than a couple of files anyway
   let ok = false;
   try { ok = currentBlobs.length <= 4 && navigator.canShare && navigator.canShare({ files }); } catch (e) { ok = false; }
-  if (ok) return shareFiles(currentBlobs, shareAllBtn, currentFileBase + ' clips');
+  if (ok) return shareFiles(currentBlobs, shareAllBtn, namePrefix() + ' clips');
 
   if (typeof JSZip === 'undefined'){
     // no zipper, so hand over what we can rather than failing outright
     statusEl.textContent = 'Zip library did not load — sharing the clips one by one instead.';
-    return shareFiles(currentBlobs, shareAllBtn, currentFileBase + ' clips');
+    return shareFiles(currentBlobs, shareAllBtn, namePrefix() + ' clips');
   }
   const was = shareAllBtn.textContent;
   shareAllBtn.textContent = 'Zipping…';
@@ -989,7 +1054,7 @@ shareAllBtn.addEventListener('click', async () => {
   for (const { blob, name } of currentBlobs) zip.file(name, blob);
   const content = await zip.generateAsync({ type: 'blob' });
   shareAllBtn.textContent = was;
-  await shareFiles([{ blob: content, name: currentFileBase + '_split.zip' }], shareAllBtn,
+  await shareFiles([{ blob: content, name: namePrefix() + '_split.zip' }], shareAllBtn,
                    currentBlobs.length + ' clips');
 });
 
@@ -1009,7 +1074,7 @@ zipBtn.addEventListener('click', async () => {
   const url = URL.createObjectURL(content);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${currentFileBase}_split.zip`;
+  a.download = `${namePrefix()}_split.zip`;
   document.body.appendChild(a);
   a.click();
   a.remove();
