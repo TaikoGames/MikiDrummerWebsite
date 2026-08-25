@@ -4,10 +4,18 @@
  * thing between them and a rehearsal room with no signal is the download of
  * the page itself. The service worker handles that; this handles the button.
  *
- * Usage: <script src="/js/pwa.js" defer></script> plus, somewhere in the page,
- *   <div id="installRow" hidden><button id="installBtn">Install</button></div>
- *   <div id="iosHint" hidden>Share → Add to Home Screen</div>
- * Both are optional; nothing here throws if they are missing.
+ * The button is always on screen (until the app is actually installed), and
+ * that is deliberate. Browsers only fire beforeinstallprompt when they feel
+ * like it — never on iOS, not at all in Firefox on desktop, and in Chrome only
+ * after its own engagement heuristics are satisfied. A button that appears
+ * only when the event arrives is a button nobody can find, so this one is
+ * always there: it installs directly when the browser offers a prompt, and
+ * otherwise says where the option lives in that particular browser's menus.
+ *
+ * Usage: <script src="/js/pwa.js" defer></script> plus, somewhere near the top
+ * of the page:
+ *   <button id="installBtn" hidden>Install</button>
+ *   <p id="installHow" hidden></p>
  */
 (function () {
   if ('serviceWorker' in navigator) {
@@ -18,36 +26,61 @@
     });
   }
 
-  var row = document.getElementById('installRow');
   var btn = document.getElementById('installBtn');
-  var hint = document.getElementById('iosHint');
-  var show = function (el) { if (el) { el.hidden = false; el.style.display = ''; } };
-  var hide = function (el) { if (el) { el.hidden = true; el.style.display = 'none'; } };
-  var prompt = null;
+  var how = document.getElementById('installHow');
+  if (!btn) return;
 
-  window.addEventListener('beforeinstallprompt', function (e) {
-    e.preventDefault();
-    prompt = e;
-    show(row);
-  });
+  var ua = navigator.userAgent;
+  var iOS = /iPad|iPhone|iPod/.test(ua)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var safariMac = /Safari/.test(ua) && /Macintosh/.test(ua) && !/Chrome|Chromium|Edg/.test(ua);
+  var android = /Android/.test(ua);
+  var firefox = /Firefox/.test(ua);
 
-  if (btn) {
-    btn.addEventListener('click', async function () {
-      if (!prompt) return;
-      btn.disabled = true;
-      prompt.prompt();
-      await prompt.userChoice;
-      prompt = null;
-      hide(row);
-    });
+  function installed() {
+    return window.matchMedia('(display-mode: standalone)').matches
+      || window.matchMedia('(display-mode: minimal-ui)').matches
+      || navigator.standalone === true;
   }
 
-  window.addEventListener('appinstalled', function () { hide(row); });
+  var show = function (el) { if (el) { el.hidden = false; el.style.removeProperty('display'); } };
+  var hide = function (el) { if (el) { el.hidden = true; el.style.display = 'none'; } };
 
-  // iOS never fires beforeinstallprompt — it wants Share → Add to Home Screen,
-  // so say so rather than showing a button that cannot work.
-  var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  var installed = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  if (iOS && !installed) show(hint);
+  if (installed()) return;          // already on the home screen, nothing to offer
+  show(btn);
+
+  var prompt = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    prompt = e;                     // now the button can do it in one tap
+    hide(how);
+  });
+
+  function manualSteps() {
+    if (iOS) return 'Tap the Share button, then “Add to Home Screen”.';
+    if (safariMac) return 'In Safari: File → Add to Dock.';
+    if (firefox) return android
+      ? 'Tap ⋮ (top right), then “Install”.'
+      : 'Firefox on a computer cannot install web apps — open this page in Chrome or Edge, or just bookmark it.';
+    if (android) return 'Tap ⋮ (top right), then “Install app” or “Add to Home screen”.';
+    return 'Look for the install icon at the right-hand end of the address bar, or ⋮ menu → “Cast, save and share” → “Install page as app”.';
+  }
+
+  btn.addEventListener('click', async function () {
+    if (prompt) {
+      btn.disabled = true;
+      prompt.prompt();
+      var choice = await prompt.userChoice;
+      prompt = null;
+      btn.disabled = false;
+      if (choice && choice.outcome === 'accepted') hide(btn);
+      return;
+    }
+    if (how) {
+      how.textContent = manualSteps();
+      how.hidden ? show(how) : hide(how);
+    }
+  });
+
+  window.addEventListener('appinstalled', function () { hide(btn); hide(how); });
 })();

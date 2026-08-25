@@ -81,21 +81,27 @@
   .cli{margin-top:16px;font-size:12.5px;color:var(--muted);background:rgba(0,0,0,.25);border-left:3px solid var(--amber);padding:11px 13px;border-radius:6px;line-height:1.55}
   .cli a{color:var(--amber)}
   footer{margin-top:26px;text-align:center;color:var(--muted);font-size:12px}
+  .topActs{display:flex;align-items:center;gap:10px}
   .install{
     background:transparent;border:1px solid var(--line);color:var(--ink);
-    font:inherit;font-size:14px;font-weight:600;border-radius:10px;
-    padding:12px 18px;cursor:pointer;
+    font:inherit;font-size:12.5px;font-weight:600;border-radius:9px;
+    padding:8px 12px;cursor:pointer;white-space:nowrap;
   }
   .install:hover{border-color:var(--amber);color:var(--amber)}
-  .installNote{color:var(--muted);font-size:11.5px;line-height:1.6;margin-top:8px}
+  .installNote{color:var(--muted);font-size:12px;line-height:1.6;margin-top:10px;
+    border-left:2px solid var(--amber);padding-left:10px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div><span class="eyebrow">Miki Drummer · Tools</span><h1>Click Track</h1></div>
-    <a class="back" href="/bands.html">← Tools</a>
+    <div class="topActs">
+      <button id="installBtn" class="install" hidden type="button">⤓ Install</button>
+      <a class="back" href="/bands.html">← Tools</a>
+    </div>
   </div>
+  <p id="installHow" class="installNote" hidden></p>
   <p class="lead">A metronome you can play, and a click track you can keep. Set it, hit play, and download a WAV to practice or track to. Runs entirely in your browser.</p>
 
   <div class="stage">
@@ -165,13 +171,6 @@
     <span class="mono">python clicktrack.py --bpm 120 --bars 16</span>.
   </div>
 
-  <div id="installRow" hidden style="margin-top:22px;text-align:center">
-    <button id="installBtn" class="install">Install on this device</button>
-    <p class="installNote">Keeps working with no signal — handy in a rehearsal room.</p>
-  </div>
-  <div id="iosHint" hidden class="installNote" style="margin-top:22px;text-align:center">
-    To keep it on your phone: <b>Share</b> → <b>Add to Home Screen</b>.<br>It works with no signal after that.
-  </div>
 
   <footer>Made for practice. <span class="mono">mikidrummer.ca</span></footer>
 </div>
