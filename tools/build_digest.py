@@ -65,9 +65,21 @@ def tidy_city(name: str) -> str:
     return re.sub(r",?\s*(BC|B\.C\.|British Columbia)$", "", (name or "").strip(), flags=re.I).strip()
 
 
+def tidy_time(t: str) -> str:
+    """The sheet has "19" as often as "19:00"; both mean seven o'clock."""
+    t = (t or "").strip()
+    if re.fullmatch(r"\d{1,2}", t):
+        return f"{int(t):02d}:00"
+    m = re.fullmatch(r"(\d{1,2}):(\d{2})", t)
+    return f"{int(m.group(1)):02d}:{m.group(2)}" if m else t
+
+
 def shows_for(ym: str) -> list[dict]:
     shows = json.loads(DATA.read_text(encoding="utf-8"))["shows"]
     picked = [s for s in shows if (s.get("date") or "").startswith(ym)]
+    for s in picked:
+        s["time"] = tidy_time(s.get("time"))
+        s["city"] = tidy_city(s.get("city"))
     picked.sort(key=lambda s: (s["date"], s.get("time") or "", s["band"].lower()))
     return picked
 
