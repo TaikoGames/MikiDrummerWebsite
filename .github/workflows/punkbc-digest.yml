@@ -1,0 +1,58 @@
+name: Punk BC monthly digest
+
+# Builds the month's digest page, the archive, the email copy and the RSS item.
+#
+# Runs on the 1st at 14:10 UTC (about 7am in Vancouver) so the issue exists
+# before anyone reads their email, and again mid-month so a show added after
+# the 1st still shows up in the web copy people are linked to.
+#
+# Nothing here sends email. The RSS feed is what an email service reads to send
+# the campaign, which keeps every password and API key out of this repository.
+on:
+  schedule:
+    - cron: "10 14 1,15 * *"
+  workflow_dispatch:
+    inputs:
+      month:
+        description: "Which month to build, as YYYY-MM (blank = the one we are in)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: punkbc-digest
+  cancel-in-progress: true
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build the digest
+        run: |
+          if [ -n "${{ github.event.inputs.month }}" ]; then
+            python tools/build_digest.py --month "${{ github.event.inputs.month }}"
+          else
+            python tools/build_digest.py
+          fi
+
+      - name: Commit if anything changed
+        run: |
+          if [ -z "$(git status --porcelain digest punkbc-digest.xml sitemap.xml)" ]; then
+            echo "no change"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add digest punkbc-digest.xml sitemap.xml
+          git commit -m "Punk BC digest: $(date -u +%Y-%m)"
+          git pull --rebase --autostash origin main
+          git push
