@@ -27,6 +27,7 @@ import html
 import json
 import re
 import sys
+import urllib.parse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -89,6 +90,28 @@ def shows_for(ym: str) -> list[dict]:
 # email — four identical crowd shots is worse than none.
 GENERIC = ("moshpit2", "punkbc-placeholder")
 MAX_FEATURED = 4
+
+
+def art(url: str, w: int, h: int) -> str:
+    """Hand the image to a resizing proxy so it arrives the right shape.
+
+    The pictures come from wherever the show was announced: a 3840px PNG on a
+    ticketing CDN, a WebP on a band's own site, a Wikimedia file. Dropping those
+    straight into an email means megabytes down a phone, formats Outlook cannot
+    render, and every card a different shape. CSS cannot rescue it — object-fit
+    is ignored by Outlook's Word engine, which stretches instead of cropping.
+
+    So the crop happens before the image is ever sent: weserv returns exactly
+    w×h, always JPEG, from a cache. If it is ever unreachable the alt text is
+    what shows, which is why every card carries the band name.
+    """
+    if not url:
+        return url
+    if "mikidrummer.ca" in url:            # our own files are already sane
+        return url
+    bare = re.sub(r"^https?://", "", url)
+    return (f"https://images.weserv.nl/?url={urllib.parse.quote(bare, safe='')}"
+            f"&w={w}&h={h}&fit=cover&a=attention&output=jpg&q=82")
 
 
 def has_photo(s: dict) -> bool:
@@ -210,7 +233,7 @@ def render_page(ym: str, shows: list[dict]) -> str:
   .pick{{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);
     border-radius:8px;overflow:hidden;background:var(--card)}}
   .pick:hover{{border-color:var(--red)}}
-  .pick img{{display:block;width:100%;height:120px;object-fit:cover;background:#000}}
+  .pick img{{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000}}
   .pick-b{{font-size:13px;font-weight:bold;padding:8px 10px 0}}
   .pick-m{{font-size:11px;color:var(--gray);padding:2px 10px 10px}}
 </style>
@@ -268,7 +291,7 @@ def render_index(issues: list[str]) -> str:
   .pick{{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);
     border-radius:8px;overflow:hidden;background:var(--card)}}
   .pick:hover{{border-color:var(--red)}}
-  .pick img{{display:block;width:100%;height:120px;object-fit:cover;background:#000}}
+  .pick img{{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000}}
   .pick-b{{font-size:13px;font-weight:bold;padding:8px 10px 0}}
   .pick-m{{font-size:11px;color:var(--gray);padding:2px 10px 10px}}
 </style>
@@ -307,8 +330,9 @@ def render_email(ym: str, shows: list[dict]) -> str:
         pick_cells.append(f"""
             <td width="50%" valign="top" style="padding:6px;">
               <a href="{href}" style="text-decoration:none;color:#111111;">
-                <img src="{html.escape(s2['image'], quote=True)}" width="270" alt="{html.escape(s2['band'])}"
-                     style="display:block;width:100%;max-width:270px;height:150px;object-fit:cover;border-radius:6px;background:#eeeeee;">
+                <img src="{html.escape(art(s2['image'], 540, 300), quote=True)}" width="270" height="150"
+                     alt="{html.escape(s2['band'])}"
+                     style="display:block;width:100%;max-width:270px;height:auto;border-radius:6px;background:#eeeeee;border:0;">
                 <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;margin-top:6px;">{html.escape(s2['band'])}</div>
                 <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#555555;">{html.escape(day_label(s2['date']))} &middot; {html.escape(s2.get('venue') or 'TBA')}</div>
               </a>
