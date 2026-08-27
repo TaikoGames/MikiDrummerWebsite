@@ -3206,7 +3206,7 @@
     <!-- ===================== NEWSLETTER ===================== -->
     <section class="signup" id="newsletter">
       <h2>Once a month, in your inbox</h2>
-      <p>Every punk, hardcore and metal show we know about in BC, sent as one email at the start of the month. No spam, no selling your address on, unsubscribe whenever.</p>
+      <p>Every punk, hardcore and metal show we know about in BC, sent as one email at the start of the month. No spam, no selling your address on, and an unsubscribe link in every issue.</p>
       <form id="subForm" onsubmit="return subscribe(event)">
         <input type="email" id="subEmail" name="email" required placeholder="you@email.com"
                autocomplete="email" autocapitalize="off" spellcheck="false">
@@ -3518,6 +3518,20 @@
     btn.disabled = true
     btn.textContent = 'Sending…'
     try {
+      // Two places, on purpose. MailerLite is the actual list — it does the
+      // sending, the confirmation and the unsubscribe link that CASL requires.
+      // Its embed endpoint does not allow a cross-origin read, so the response
+      // is invisible to us; that is what no-cors means here. Formspree is the
+      // one we can read, so it drives what the visitor is told, and it drops a
+      // copy in the inbox as a receipt if MailerLite ever quietly stops.
+      const ml = new URLSearchParams()
+      ml.append('fields[email]', email)
+      ml.append('ml-submit', '1')
+      ml.append('anticsrf', 'true')
+      fetch('https://assets.mailerlite.com/jsonp/1653163/forms/196926200677926187/subscribe', {
+        method: 'POST', mode: 'no-cors', body: ml
+      }).catch(() => {})
+
       const res = await fetch('https://formspree.io/f/xpqgrqvb', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
