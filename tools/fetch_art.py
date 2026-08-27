@@ -89,16 +89,17 @@ def anchor(src_w: int, src_h: int, size=SIZE) -> tuple[float, float]:
     right guess. A picture taller than the card loses its top or its bottom,
     and the middle is the wrong guess: a gig poster puts the band's name across
     the very top, and the taller the poster the further up that name sits. So
-    the crop slides towards the top in proportion to how much has to come off —
-    a square press shot barely moves, a 1:3 poster is taken almost from its
-    edge.
+    the crop slides towards the top as the picture gets taller — and faster than
+    in proportion, because the title is not merely near the top of a poster, it
+    is against the edge of it. A square press shot still keeps its middle; a 1:2
+    poster is taken from the top inch.
     """
     want = size[0] / size[1]
     have = src_w / max(src_h, 1)
     if have >= want:                          # wider than the card: trim the sides
         return (0.5, 0.5)
     excess = want / have                      # times taller than the card needs
-    return (0.5, max(0.03, min(0.42, 0.42 / excess)))
+    return (0.5, max(0.02, min(0.42, 0.42 / excess ** 2)))
 
 
 def crop(raw: bytes, size=SIZE) -> bytes:
@@ -225,8 +226,11 @@ def main() -> int:
     force = "--force" in args
 
     ART.mkdir(parents=True, exist_ok=True)
+    # The index is loaded even under --force. A forced run re-fetches everything,
+    # but a host having a bad minute must not cost us a picture we already had:
+    # anything that fails keeps the copy on file.
     index = {}
-    if INDEX.exists() and not force:
+    if INDEX.exists():
         try:
             index = json.loads(INDEX.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
@@ -238,21 +242,28 @@ def main() -> int:
         if wanted(s):
             sources.setdefault(s["image"], s.get("band") or "art")
 
-    got = failed = 0
+    got = kept = failed = 0
     for url, band in sources.items():
-        name = index.get(url)
-        if name and (ART / name).exists():
+        have = index.get(url)
+        on_file = bool(have) and (ART / have).exists()
+        if on_file and not force:
             continue
-        name = name_for(band, url)
         try:
             data = crop(download(url))
         except Exception as e:
-            # A dead link is not a reason to fail the build: build_digest falls
-            # back to the original URL, which is exactly where we are today.
-            print(f"  could not use {band}'s photo ({e}) — leaving it remote")
-            failed += 1
+            if on_file:
+                print(f"  could not re-fetch {band}'s photo ({e}) — keeping the copy on file")
+                kept += 1
+            else:
+                # A dead link is not a reason to fail the build: build_digest
+                # falls back to the original URL, which is where it came from.
+                print(f"  could not use {band}'s photo ({e}) — leaving it remote")
+                failed += 1
             continue
+        name = name_for(band, url)
         (ART / name).write_bytes(data)
+        if have and have != name:
+            (ART / have).unlink(missing_ok=True)
         index[url] = name
         got += 1
         print(f"  {band} -> img/digest/{name} ({len(data) // 1024}KB)")
@@ -267,7 +278,8 @@ def main() -> int:
             dropped += 1
 
     INDEX.write_text(json.dumps(index, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(f"art: {len(index)} on file ({got} new, {failed} left remote, {dropped} pruned)")
+    print(f"art: {len(index)} on file ({got} fetched, {kept} kept as they were, "
+          f"{failed} left remote, {dropped} pruned)")
     return 0
 
 
