@@ -202,17 +202,7 @@
             "name": "Dead Fast"
           }
         }
-      ],
-      "album": {
-        "@type": "MusicAlbum",
-        "name": "Second Nature",
-        "byArtist": {
-          "@type": "MusicGroup",
-          "name": "Dead Fast"
-        },
-        "image": "https://i.scdn.co/image/ab67616d0000b2738aea2c18d831ef33bbe9f617"
-      },
-      "image": "https://i.scdn.co/image/ab67616d0000b2738aea2c18d831ef33bbe9f617"
+      ]
     },
     {
       "@type": "MusicGroup",
@@ -344,16 +334,6 @@
         background: var(--stone-900); aspect-ratio: 4 / 3; margin: 0; position: relative;
     }
     .band-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    /* Sleeve art, not a band shot: a square cover in a 4:3 frame has to be shown
-       whole — cropping it to fill takes a slice out of the artwork. It sits
-       centred instead, with a blurred copy of itself filling what is left so the
-       frame does not read as a photo with empty bars stuck on the sides. */
-    .band-art.sleeve img { object-fit: contain; position: relative; z-index: 1; }
-    .band-art.sleeve figcaption { z-index: 2; }
-    .band-art.sleeve::before {
-        content: ""; position: absolute; inset: -24px; background: var(--art) center/cover;
-        filter: blur(30px) saturate(1.3) brightness(0.42);
-    }
     .band-art figcaption {
         position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 14px 9px;
         font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stone-300);
@@ -537,18 +517,14 @@
                 <a class="lnk primary" href="/jukebox.html">Listen on the jukebox</a>
               </div>
             </div>
-            <figure class="band-art sleeve"
-                    style="--art:url('https://i.scdn.co/image/ab67616d00001e028aea2c18d831ef33bbe9f617')">
-              <!-- Spotify's own sleeve art. These URLs are content-addressed, so
-                   unlike the Google cache they used to point at they do not expire;
-                   the hash is the picture. The 0000b273 prefix is the 640px copy
-                   and 00001e02 the 300px one, hence the two-step fallback: try the
-                   sharp one, drop to the small one, and only then the lettering. -->
-              <img src="https://i.scdn.co/image/ab67616d0000b2738aea2c18d831ef33bbe9f617"
-                   alt="Second Nature, the album by Vancouver, BC punk rock band Dead Fast"
-                   loading="lazy" width="640" height="640" referrerpolicy="no-referrer"
-                   onerror="if(!this.dataset.small){this.dataset.small='1';this.src='https://i.scdn.co/image/ab67616d00001e028aea2c18d831ef33bbe9f617';return}this.closest('figure').className='band-art mark';this.replaceWith(Object.assign(document.createElement('span'),{innerHTML:'Dead&lt;br&gt;Fast&lt;small&gt;Vancouver · Punk Rock&lt;/small&gt;'}))">
-              <figcaption>Dead Fast — <i>Second Nature</i></figcaption>
+            <figure class="band-art">
+              <!-- Google's image cache, not our own copy: these URLs expire without
+                   warning, so swap in a file under images/dead-fast/ when there is one. -->
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSY_OF--GMLKNC1acGGuQACl5Z6-3EjaahDt6Fj-0etD_c_qYXC55dpV0k&amp;s=10"
+                   alt="Dead Fast, a Vancouver, BC punk rock band" loading="lazy"
+                   referrerpolicy="no-referrer"
+                   onerror="this.closest('figure').className='band-art mark';this.replaceWith(Object.assign(document.createElement('span'),{innerHTML:'Dead<br>Fast<small>Vancouver · Punk Rock</small>'}))">
+              <figcaption>Dead Fast — Vancouver punk rock</figcaption>
             </figure>
           </div>
         </section>
