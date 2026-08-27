@@ -63,5 +63,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add digest img/digest punkbc-digest.xml sitemap.xml
           git commit -m "Punk BC digest: $(date -u +%Y-%m)"
-          git pull --rebase --autostash origin main
-          git push
+          # Back to the branch it ran on, not a hardcoded main: this workflow is
+          # dispatched by hand on a branch as often as it runs on a schedule.
+          git pull --rebase --autostash origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
