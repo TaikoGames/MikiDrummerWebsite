@@ -89,9 +89,10 @@ def anchor(src_w: int, src_h: int, size=SIZE) -> tuple[float, float]:
     right guess. A picture taller than the card loses its top or its bottom,
     and the middle is the wrong guess: a gig poster puts the band's name across
     the very top, and the taller the poster the further up that name sits. So
-    the crop slides towards the top as the picture gets taller — and faster than
-    in proportion, because the title is not merely near the top of a poster, it
-    is against the edge of it. A square press shot still keeps its middle; a 1:2
+    the crop slides towards the top as the picture gets taller, and is pinned to
+    the very top once it is about two and a half times too tall — by then it is
+    a poster, and a poster's title is not near the top, it is against the edge.
+    A square press shot is barely moved; a 4:3 photo keeps its faces; a 2:3
     poster is taken from the top inch.
     """
     want = size[0] / size[1]
@@ -99,7 +100,7 @@ def anchor(src_w: int, src_h: int, size=SIZE) -> tuple[float, float]:
     if have >= want:                          # wider than the card: trim the sides
         return (0.5, 0.5)
     excess = want / have                      # times taller than the card needs
-    return (0.5, max(0.02, min(0.42, 0.42 / excess ** 2)))
+    return (0.5, max(0.03, min(0.45, 0.45 - 0.2625 * (excess - 1))))
 
 
 def crop(raw: bytes, size=SIZE) -> bytes:
@@ -182,20 +183,26 @@ def self_test() -> int:
     # where the crop is taken from: the taller the source, the higher up
     checks.append((anchor(1920, 1080) == (0.5, 0.5), "16:9 source, nothing to choose"))
     checks.append((anchor(3840, 1000) == (0.5, 0.5), "wider than the card, trim the sides"))
-    tall = anchor(800, 2000)[1]
+    poster = anchor(1000, 1500)[1]        # 2:3 gig poster
+    photo = anchor(1200, 900)[1]          # 4:3 press shot
     square = anchor(1000, 1000)[1]
-    checks.append((tall < square < 0.42, f"taller poster crops higher up ({tall:.2f} < {square:.2f})"))
-    checks.append((0.03 <= tall <= 0.42, f"anchor stays on the picture ({tall:.2f})"))
+    checks.append((poster < square < photo < 0.45,
+                   f"taller crops higher ({poster:.2f} < {square:.2f} < {photo:.2f})"))
+    checks.append((poster <= 0.06, f"a 2:3 poster keeps its title ({poster:.2f})"))
+    checks.append((0.2 <= square <= 0.35, f"a square photo keeps its faces ({square:.2f})"))
+    checks.append((anchor(800, 4000)[1] >= 0.03, "anchor never leaves the picture"))
 
-    # a transparent logo must not come out as a black rectangle
-    png = Image.new("RGBA", (400, 400), (0, 0, 0, 0))
-    for x in range(150, 250):
-        for y in range(150, 250):
+    # a transparent logo must not come out as a black rectangle. 16:9 on purpose:
+    # this is testing the alpha flattening, not where the crop is taken from.
+    png = Image.new("RGBA", (640, 360), (0, 0, 0, 0))
+    for x in range(280, 360):
+        for y in range(140, 220):
             png.putpixel((x, y), (255, 90, 20, 255))
     buf = io.BytesIO()
     png.save(buf, "PNG")
     out = Image.open(io.BytesIO(crop(buf.getvalue())))
     checks.append((out.getpixel((320, 180))[0] > 100, "transparent PNG keeps its subject"))
+    checks.append((out.getpixel((10, 10)) != (0, 0, 0), "and its transparency is not black"))
 
     # the same URL always lands on the same filename, two bands never collide
     a = name_for("Unsane", "https://x.test/a.jpg")
