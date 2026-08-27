@@ -53,8 +53,13 @@ COLUMNS = {
     "Genre": "genre",
     "Notes": "notes",
     "Image URL": "image",
+    "Curated": "curated",
 }
-FIELDS = ["band", "date", "time", "venue", "city", "price", "ticket", "genre", "notes", "image"]
+FIELDS = ["band", "date", "time", "venue", "city", "price", "ticket", "genre", "notes", "image",
+          "curated"]
+
+# The Curated column is however the person filling the sheet felt that day.
+TRUTHY = {"yes", "y", "true", "1", "x", "✓", "✔", "curated", "star", "*"}
 
 # People type dates the way they speak them; the board sorts and compares them
 # as plain strings, so everything has to come out as YYYY-MM-DD or not at all.
@@ -124,6 +129,7 @@ def parse_csv(text: str) -> list[dict]:
             print(f"  skipped {show['band']!r}: date {show['date']!r} not understood")
             continue
         show["date"] = date
+        show["curated"] = "yes" if show.get("curated", "").strip().lower() in TRUTHY else ""
         rows.append({k: show.get(k, "") for k in FIELDS})
     return rows
 

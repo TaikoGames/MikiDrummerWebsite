@@ -84,6 +84,36 @@ def shows_for(ym: str) -> list[dict]:
     return picked
 
 
+# The generic mosh-pit photo stands in wherever a show has no picture of its
+# own. It is fine as a thumbnail on the board and pointless at the top of an
+# email — four identical crowd shots is worse than none.
+GENERIC = ("moshpit2", "punkbc-placeholder")
+MAX_FEATURED = 4
+
+
+def has_photo(s: dict) -> bool:
+    img = (s.get("image") or "").lower()
+    return bool(img) and not any(g in img for g in GENERIC)
+
+
+def featured(shows: list[dict]) -> list[dict]:
+    """Which acts get a picture.
+
+    Whatever is ticked Curated in the sheet — the same flag that puts the
+    Recommended seal on the board, so one decision drives both. If nothing is
+    ticked, the month still gets a face on it: the first few shows that have a
+    picture of their own, spread out rather than three from the same week.
+    """
+    picked = [s for s in shows if s.get("curated") and has_photo(s)]
+    if picked:
+        return picked[:MAX_FEATURED]
+    withpics = [s for s in shows if has_photo(s)]
+    if len(withpics) <= MAX_FEATURED:
+        return withpics
+    step = len(withpics) / MAX_FEATURED
+    return [withpics[int(i * step)] for i in range(MAX_FEATURED)]
+
+
 def line_for(s: dict) -> str:
     """One show as plain text — used in the RSS summary and nowhere fancy."""
     bits = [day_label(s["date"]), "—", s["band"], "@", s.get("venue") or "TBA"]
@@ -119,6 +149,22 @@ def render_page(ym: str, shows: list[dict]) -> str:
             "      </li>"
         )
     listing = "\n".join(rows) if rows else '      <li class="show"><div class="what">Nothing listed for this month yet.</div></li>'
+
+    picks = featured(shows)
+    cards = []
+    for s2 in picks:
+        href = html.escape(s2.get("ticket") or BOARD, quote=True)
+        cards.append(
+            f'      <a class="pick" href="{href}" target="_blank" rel="noopener">\n'
+            f'        <img src="{html.escape(s2["image"], quote=True)}" alt="{html.escape(s2["band"])}" '
+            f'loading="lazy" referrerpolicy="no-referrer">\n'
+            f'        <div class="pick-b">{html.escape(s2["band"])}</div>\n'
+            f'        <div class="pick-m">{html.escape(day_label(s2["date"]))} · '
+            f'{html.escape(s2.get("venue") or "TBA")}'
+            f'{" · " + html.escape(s2["city"]) if s2.get("city") else ""}</div>\n'
+            "      </a>"
+        )
+    picks_block = ('    <div class="picks">\n' + "\n".join(cards) + "\n    </div>") if cards else ""
     label = month_name(ym)
     count = len(shows)
     cities = sorted({tidy_city(s.get("city")) for s in shows if tidy_city(s.get("city"))})
@@ -160,6 +206,13 @@ def render_page(ym: str, shows: list[dict]) -> str:
   .foot{{margin-top:32px;padding-top:18px;border-top:1px solid var(--border);
     color:var(--gray);font-size:12px;line-height:1.8}}
   .foot a{{color:var(--red)}}
+  .picks{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px}}
+  .pick{{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);
+    border-radius:8px;overflow:hidden;background:var(--card)}}
+  .pick:hover{{border-color:var(--red)}}
+  .pick img{{display:block;width:100%;height:120px;object-fit:cover;background:#000}}
+  .pick-b{{font-size:13px;font-weight:bold;padding:8px 10px 0}}
+  .pick-m{{font-size:11px;color:var(--gray);padding:2px 10px 10px}}
 </style>
 </head>
 <body>
@@ -167,6 +220,7 @@ def render_page(ym: str, shows: list[dict]) -> str:
     <p class="kicker">🤘 Punk BC · monthly</p>
     <h1>{label}</h1>
     <p class="sub">{html.escape(blurb)}</p>
+{picks_block}
     <ul class="list">
 {listing}
     </ul>
@@ -210,6 +264,13 @@ def render_index(issues: list[str]) -> str:
   a:hover{{color:var(--red)}}
   .foot{{margin-top:28px;color:var(--gray);font-size:12px}}
   .foot a{{color:var(--red)}}
+  .picks{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px}}
+  .pick{{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);
+    border-radius:8px;overflow:hidden;background:var(--card)}}
+  .pick:hover{{border-color:var(--red)}}
+  .pick img{{display:block;width:100%;height:120px;object-fit:cover;background:#000}}
+  .pick-b{{font-size:13px;font-weight:bold;padding:8px 10px 0}}
+  .pick-m{{font-size:11px;color:var(--gray);padding:2px 10px 10px}}
 </style>
 </head>
 <body>
@@ -235,6 +296,36 @@ def render_email(ym: str, shows: list[dict]) -> str:
     Light background on purpose: dark-themed email is a lottery across clients.
     """
     label = month_name(ym)
+
+    # Featured acts, two to a row. Tables and fixed widths because Outlook has
+    # no grid, and every client blocks images until the reader allows them —
+    # hence the alt text carrying the band name.
+    picks = featured(shows)
+    pick_cells = []
+    for s2 in picks:
+        href = html.escape(s2.get("ticket") or BOARD, quote=True)
+        pick_cells.append(f"""
+            <td width="50%" valign="top" style="padding:6px;">
+              <a href="{href}" style="text-decoration:none;color:#111111;">
+                <img src="{html.escape(s2['image'], quote=True)}" width="270" alt="{html.escape(s2['band'])}"
+                     style="display:block;width:100%;max-width:270px;height:150px;object-fit:cover;border-radius:6px;background:#eeeeee;">
+                <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;margin-top:6px;">{html.escape(s2['band'])}</div>
+                <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#555555;">{html.escape(day_label(s2['date']))} &middot; {html.escape(s2.get('venue') or 'TBA')}</div>
+              </a>
+            </td>""")
+    pick_rows = []
+    for i in range(0, len(pick_cells), 2):
+        pair = pick_cells[i:i + 2]
+        if len(pair) == 1:
+            pair.append('<td width="50%"></td>')
+        pick_rows.append("          <tr>" + "".join(pair) + "\n          </tr>")
+    picks_block = ("""
+      <tr><td style="padding-top:18px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+""" + "\n".join(pick_rows) + """
+        </table>
+      </td></tr>""") if pick_rows else ""
+
     rows = []
     for s in shows:
         ticket = html.escape(s.get("ticket") or BOARD, quote=True)
@@ -274,7 +365,7 @@ def render_email(ym: str, shows: list[dict]) -> str:
           {len(shows)} show{'s' if len(shows) != 1 else ''} across British Columbia.
           <a href="{SITE}/digest/{ym}.html" style="color:#dc2626;">Read it in a browser</a>.
         </div>
-      </td></tr>
+      </td></tr>{picks_block}
       <tr><td>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;">{listing}
         </table>
@@ -355,7 +446,11 @@ def main() -> int:
     shows = shows_for(ym)
     OUT.mkdir(exist_ok=True)
     (OUT / f"{ym}.html").write_text(render_page(ym, shows), encoding="utf-8")
-    (OUT / f"{ym}.email.html").write_text(render_email(ym, shows), encoding="utf-8")
+    # An email fragment carries no <meta charset>, and the client decides what
+    # the bytes mean — get it wrong and every "·" becomes "Â·". Numeric entities
+    # cannot be misread, so nothing non-ASCII survives into the file.
+    email_html = render_email(ym, shows).encode("ascii", "xmlcharrefreplace").decode("ascii")
+    (OUT / f"{ym}.email.html").write_text(email_html, encoding="utf-8")
 
     issues = sorted((p.stem for p in OUT.glob("*.html")
                      if re.fullmatch(r"\d{4}-\d{2}", p.stem)), reverse=True)

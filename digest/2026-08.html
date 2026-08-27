@@ -33,6 +33,13 @@
   .foot{margin-top:32px;padding-top:18px;border-top:1px solid var(--border);
     color:var(--gray);font-size:12px;line-height:1.8}
   .foot a{color:var(--red)}
+  .picks{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px}
+  .pick{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);
+    border-radius:8px;overflow:hidden;background:var(--card)}
+  .pick:hover{border-color:var(--red)}
+  .pick img{display:block;width:100%;height:120px;object-fit:cover;background:#000}
+  .pick-b{font-size:13px;font-weight:bold;padding:8px 10px 0}
+  .pick-m{font-size:11px;color:var(--gray);padding:2px 10px 10px}
 </style>
 </head>
 <body>
@@ -40,6 +47,23 @@
     <p class="kicker">🤘 Punk BC · monthly</p>
     <h1>August 2026</h1>
     <p class="sub">4 punk, hardcore and metal shows across Vancouver, Victoria in August 2026.</p>
+    <div class="picks">
+      <a class="pick" href="https://rickshawtheatre.com" target="_blank" rel="noopener">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Angelmaker_-_2025074_205307_2025-03-15_Heidelberg_Deathfest_-_Sven_-_5DS_R_-_0270_-_5DSR4789.jpg?width=500" alt="Angelmaker" loading="lazy" referrerpolicy="no-referrer">
+        <div class="pick-b">Angelmaker</div>
+        <div class="pick-m">Fri 28 Aug · Rickshaw Theatre · Vancouver</div>
+      </a>
+      <a class="pick" href="https://www.eventbrite.ca/e/a-jungle-of-jingles-tickets-1996704870016" target="_blank" rel="noopener">
+        <img src="https://www.mikidrummer.ca/images/lift-the-anchor/feature.jpg" alt="Lift the Anchor" loading="lazy" referrerpolicy="no-referrer">
+        <div class="pick-b">Lift the Anchor</div>
+        <div class="pick-m">Sat 29 Aug · The Portside Pub · Vancouver</div>
+      </a>
+      <a class="pick" href="https://www.mikidrummer.ca/punkbc.html" target="_blank" rel="noopener">
+        <img src="https://lastfm.freetls.fastly.net/i/u/300x300/574baf9d3413a66faf02a00975e96e2b" alt="Bootlicker" loading="lazy" referrerpolicy="no-referrer">
+        <div class="pick-b">Bootlicker</div>
+        <div class="pick-m">Sun 30 Aug · Sugar Nightclub · Victoria</div>
+      </a>
+    </div>
     <ul class="list">
       <li class="show">
         <div class="when">Fri 28 Aug<span class="time">18:00</span></div>
