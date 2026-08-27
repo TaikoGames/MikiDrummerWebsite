@@ -37,6 +37,9 @@ import io
 import json
 import re
 import sys
+import time
+import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -52,8 +55,13 @@ QUALITY = 82
 MAX_BYTES = 24 * 1024 * 1024
 TIMEOUT = 30
 
-UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
-      "Chrome/124.0 Safari/537.36")
+# Wikimedia refuses a browser User-Agent outright — "your request does not
+# comply with our robot policy" — and it is right to: a script pretending to be
+# Chrome gives them no way to tell who is hammering them. Say what this is and
+# where to complain about it, and the same requests go through.
+UA = "MikiDrummerBot/1.0 (+https://www.mikidrummer.ca/punkbc.html) Python-urllib"
+PAUSE = 0.4          # between requests to one host, so nobody has to rate-limit us
+RETRY_AFTER = 5      # one patient retry when they do anyway
 
 # The generic mosh-pit photo is not worth a file of its own — build_digest
 # never features it either.
@@ -74,13 +82,27 @@ def name_for(band: str, url: str) -> str:
     return f"{slug[:40]}-{digest}.jpg"
 
 
-def crop(raw: bytes, size=SIZE) -> bytes:
-    """Source bytes in, a JPEG of exactly `size` out.
+def anchor(src_w: int, src_h: int, size=SIZE) -> tuple[float, float]:
+    """Which part of the picture to keep.
 
-    Centred a little above the middle: posters put the headline at the top and
-    photographs put faces above the waist, so a dead-centre crop takes the
-    chest of the picture and loses both.
+    A picture wider than the card loses its sides, and the middle of it is the
+    right guess. A picture taller than the card loses its top or its bottom,
+    and the middle is the wrong guess: a gig poster puts the band's name across
+    the very top, and the taller the poster the further up that name sits. So
+    the crop slides towards the top in proportion to how much has to come off —
+    a square press shot barely moves, a 1:3 poster is taken almost from its
+    edge.
     """
+    want = size[0] / size[1]
+    have = src_w / max(src_h, 1)
+    if have >= want:                          # wider than the card: trim the sides
+        return (0.5, 0.5)
+    excess = want / have                      # times taller than the card needs
+    return (0.5, max(0.03, min(0.42, 0.42 / excess)))
+
+
+def crop(raw: bytes, size=SIZE) -> bytes:
+    """Source bytes in, a JPEG of exactly `size` out."""
     from PIL import Image, ImageOps
 
     im = Image.open(io.BytesIO(raw))
@@ -93,19 +115,38 @@ def crop(raw: bytes, size=SIZE) -> bytes:
         im = flat
     else:
         im = im.convert("RGB")
-    im = ImageOps.fit(im, size, method=Image.LANCZOS, centering=(0.5, 0.38))
+    im = ImageOps.fit(im, size, method=Image.LANCZOS, centering=anchor(*im.size, size=size))
     buf = io.BytesIO()
     im.save(buf, "JPEG", quality=QUALITY, optimize=True, progressive=True)
     return buf.getvalue()
 
 
+_last_hit: dict[str, float] = {}
+
+
 def download(url: str) -> bytes:
-    req = urllib.request.Request(url, headers={
-        "User-Agent": UA,
-        "Accept": "image/avif,image/webp,image/png,image/jpeg,*/*",
-    })
-    with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
-        raw = r.read(MAX_BYTES + 1)
+    """One image, politely: spaced out per host, and one retry if asked to wait."""
+    host = urllib.parse.urlsplit(url).netloc
+    for attempt in (1, 2):
+        wait = PAUSE - (time.monotonic() - _last_hit.get(host, 0))
+        if wait > 0:
+            time.sleep(wait)
+        req = urllib.request.Request(url, headers={
+            "User-Agent": UA,
+            "Accept": "image/avif,image/webp,image/png,image/jpeg,*/*",
+        })
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                raw = r.read(MAX_BYTES + 1)
+            break
+        except urllib.error.HTTPError as e:
+            _last_hit[host] = time.monotonic()
+            if e.code in (429, 503) and attempt == 1:
+                time.sleep(RETRY_AFTER)
+                continue
+            raise
+        finally:
+            _last_hit[host] = time.monotonic()
     if len(raw) > MAX_BYTES:
         raise ValueError(f"larger than {MAX_BYTES // 1024 // 1024}MB")
     if not raw:
@@ -136,6 +177,14 @@ def self_test() -> int:
         im = Image.open(io.BytesIO(out))
         checks.append((im.size == SIZE, f"{label} -> {im.size[0]}x{im.size[1]}"))
         checks.append((im.format == "JPEG", f"{label} -> {im.format}"))
+
+    # where the crop is taken from: the taller the source, the higher up
+    checks.append((anchor(1920, 1080) == (0.5, 0.5), "16:9 source, nothing to choose"))
+    checks.append((anchor(3840, 1000) == (0.5, 0.5), "wider than the card, trim the sides"))
+    tall = anchor(800, 2000)[1]
+    square = anchor(1000, 1000)[1]
+    checks.append((tall < square < 0.42, f"taller poster crops higher up ({tall:.2f} < {square:.2f})"))
+    checks.append((0.03 <= tall <= 0.42, f"anchor stays on the picture ({tall:.2f})"))
 
     # a transparent logo must not come out as a black rectangle
     png = Image.new("RGBA", (400, 400), (0, 0, 0, 0))

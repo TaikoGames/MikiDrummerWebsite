@@ -16,6 +16,10 @@ on:
       month:
         description: "Which month to build, as YYYY-MM (blank = the one we are in)"
         required: false
+      recrop:
+        description: "Re-download and re-crop every photo, not just the missing ones"
+        required: false
+        default: "false"
 
 permissions:
   contents: write
@@ -43,7 +47,7 @@ jobs:
       # domain. Never fails the build: anything it cannot fetch is sent as the
       # original remote URL, which is where every picture used to come from.
       - name: Fetch and crop the show photos
-        run: python tools/fetch_art.py || true
+        run: python tools/fetch_art.py ${{ github.event.inputs.recrop == 'true' && '--force' || '' }} || true
 
       - name: Build the digest
         run: |
