@@ -23,11 +23,11 @@ Usage:
 
 from __future__ import annotations
 
+import functools
 import html
 import json
 import re
 import sys
-import urllib.parse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -92,8 +92,19 @@ GENERIC = ("moshpit2", "punkbc-placeholder")
 MAX_FEATURED = 4
 
 
-def art(url: str, w: int, h: int) -> str:
-    """Hand the image to a resizing proxy so it arrives the right shape.
+ART_INDEX = ROOT / "img" / "digest" / "index.json"
+
+
+@functools.lru_cache(maxsize=1)
+def _art_map() -> dict:
+    try:
+        return json.loads(ART_INDEX.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def art(url: str) -> str:
+    """The cropped copy of a photo if we have one, otherwise the original.
 
     The pictures come from wherever the show was announced: a 3840px PNG on a
     ticketing CDN, a WebP on a band's own site, a Wikimedia file. Dropping those
@@ -101,17 +112,15 @@ def art(url: str, w: int, h: int) -> str:
     render, and every card a different shape. CSS cannot rescue it — object-fit
     is ignored by Outlook's Word engine, which stretches instead of cropping.
 
-    So the crop happens before the image is ever sent: weserv returns exactly
-    w×h, always JPEG, from a cache. If it is ever unreachable the alt text is
-    what shows, which is why every card carries the band name.
+    tools/fetch_art.py crops them ahead of time into img/digest and writes down
+    which file came from which URL. Anything it could not fetch is sent as it
+    always was: the wrong shape beats an empty box, and an empty box is what a
+    resizing proxy leaves behind on the day it is unreachable.
     """
     if not url:
         return url
-    if "mikidrummer.ca" in url:            # our own files are already sane
-        return url
-    bare = re.sub(r"^https?://", "", url)
-    return (f"https://images.weserv.nl/?url={urllib.parse.quote(bare, safe='')}"
-            f"&w={w}&h={h}&fit=cover&a=attention&output=jpg&q=82")
+    name = _art_map().get(url)
+    return f"{SITE}/img/digest/{name}" if name else url
 
 
 def has_photo(s: dict) -> bool:
@@ -179,7 +188,7 @@ def render_page(ym: str, shows: list[dict]) -> str:
         href = html.escape(s2.get("ticket") or BOARD, quote=True)
         cards.append(
             f'      <a class="pick" href="{href}" target="_blank" rel="noopener">\n'
-            f'        <img src="{html.escape(s2["image"], quote=True)}" alt="{html.escape(s2["band"])}" '
+            f'        <img src="{html.escape(art(s2["image"]), quote=True)}" alt="{html.escape(s2["band"])}" '
             f'loading="lazy" referrerpolicy="no-referrer">\n'
             f'        <div class="pick-b">{html.escape(s2["band"])}</div>\n'
             f'        <div class="pick-m">{html.escape(day_label(s2["date"]))} · '
@@ -233,7 +242,7 @@ def render_page(ym: str, shows: list[dict]) -> str:
   .pick{{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);
     border-radius:8px;overflow:hidden;background:var(--card)}}
   .pick:hover{{border-color:var(--red)}}
-  .pick img{{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000}}
+  .pick img{{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;background:#000}}
   .pick-b{{font-size:13px;font-weight:bold;padding:8px 10px 0}}
   .pick-m{{font-size:11px;color:var(--gray);padding:2px 10px 10px}}
 </style>
@@ -291,7 +300,7 @@ def render_index(issues: list[str]) -> str:
   .pick{{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);
     border-radius:8px;overflow:hidden;background:var(--card)}}
   .pick:hover{{border-color:var(--red)}}
-  .pick img{{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000}}
+  .pick img{{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;background:#000}}
   .pick-b{{font-size:13px;font-weight:bold;padding:8px 10px 0}}
   .pick-m{{font-size:11px;color:var(--gray);padding:2px 10px 10px}}
 </style>
@@ -327,10 +336,17 @@ def render_email(ym: str, shows: list[dict]) -> str:
     pick_cells = []
     for s2 in picks:
         href = html.escape(s2.get("ticket") or BOARD, quote=True)
+        src = art(s2["image"])
+        # A cropped file is 16:9 already, so telling the client its height costs
+        # nothing and stops the layout jumping as it loads. A photo we could not
+        # crop is whatever shape it was: give it a width and let it keep its own
+        # ratio, because Outlook obeys a height attribute by stretching to it.
+        cropped = src.startswith(f"{SITE}/img/digest/")
+        dims = 'width="270" height="150"' if cropped else 'width="270"'
         pick_cells.append(f"""
             <td width="50%" valign="top" style="padding:6px;">
               <a href="{href}" style="text-decoration:none;color:#111111;">
-                <img src="{html.escape(art(s2['image'], 540, 300), quote=True)}" width="270" height="150"
+                <img src="{html.escape(src, quote=True)}" {dims}
                      alt="{html.escape(s2['band'])}"
                      style="display:block;width:100%;max-width:270px;height:auto;border-radius:6px;background:#eeeeee;border:0;">
                 <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;margin-top:6px;">{html.escape(s2['band'])}</div>

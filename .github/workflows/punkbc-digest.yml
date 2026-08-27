@@ -36,6 +36,15 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Install Pillow
+        run: pip install --quiet pillow
+
+      # Crops the show photos into img/digest so the email links to our own
+      # domain. Never fails the build: anything it cannot fetch is sent as the
+      # original remote URL, which is where every picture used to come from.
+      - name: Fetch and crop the show photos
+        run: python tools/fetch_art.py || true
+
       - name: Build the digest
         run: |
           if [ -n "${{ github.event.inputs.month }}" ]; then
@@ -46,13 +55,13 @@ jobs:
 
       - name: Commit if anything changed
         run: |
-          if [ -z "$(git status --porcelain digest punkbc-digest.xml sitemap.xml)" ]; then
+          if [ -z "$(git status --porcelain digest img/digest punkbc-digest.xml sitemap.xml)" ]; then
             echo "no change"
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add digest punkbc-digest.xml sitemap.xml
+          git add digest img/digest punkbc-digest.xml sitemap.xml
           git commit -m "Punk BC digest: $(date -u +%Y-%m)"
           git pull --rebase --autostash origin main
           git push
