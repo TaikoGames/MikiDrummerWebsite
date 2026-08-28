@@ -1,0 +1,63 @@
+name: Punk BC send digest
+
+# Puts the month's digest into MailerLite — as a draft to look at, or as a send.
+#
+# This exists so the send does not depend on who is asking or from where. The
+# API key is a repository secret, so it is never in a chat, a transcript or a
+# checkout, and anyone who can dispatch this workflow can send without holding
+# the key. There is no schedule: nothing here ever fires on its own.
+#
+# Requires two repository secrets:
+#   MAILERLITE_API_KEY   an API token from MailerLite (Integrations -> API)
+#   MAILERLITE_FROM      the sender address, on a domain verified in MailerLite
+
+on:
+  workflow_dispatch:
+    inputs:
+      month:
+        description: "Which issue, as YYYY-MM (blank = the month we are in)"
+        required: false
+      send:
+        description: "Type SEND to deliver it. Anything else builds a draft only."
+        required: false
+        default: "draft"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: punkbc-send
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Check the script before trusting it with a mailing list
+        run: python tools/send_digest.py --self-test
+
+      # Split in two so the delivering path is a separate, clearly named step in
+      # the log — "Create the draft" running alone is proof nothing was sent.
+      - name: Create the draft
+        if: ${{ github.event.inputs.send != 'SEND' }}
+        env:
+          MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
+          MAILERLITE_FROM: ${{ secrets.MAILERLITE_FROM }}
+        run: |
+          python tools/send_digest.py ${{ github.event.inputs.month && format('--month {0}', github.event.inputs.month) || '' }}
+
+      - name: Send it to the group
+        if: ${{ github.event.inputs.send == 'SEND' }}
+        env:
+          MAILERLITE_API_KEY: ${{ secrets.MAILERLITE_API_KEY }}
+          MAILERLITE_FROM: ${{ secrets.MAILERLITE_FROM }}
+        run: |
+          python tools/send_digest.py --send ${{ github.event.inputs.month && format('--month {0}', github.event.inputs.month) || '' }}
