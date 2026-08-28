@@ -1,0 +1,31 @@
+name: Live URL check
+
+# Ask the live site what it actually serves. Nothing here can be answered from
+# a checkout: the repo having a file and Pages serving it are different claims,
+# and only a request to the real host settles which.
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "Space-separated URLs to check"
+        required: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask the site
+        run: |
+          URLS="${{ github.event.inputs.urls }}"
+          if [ -z "$URLS" ]; then
+            URLS="https://www.mikidrummer.ca/img/digest/satanic-surfers-621665ae.jpg
+                  https://www.mikidrummer.ca/images/diera-cover.png
+                  https://www.mikidrummer.ca/digest/2026-09.html
+                  https://www.mikidrummer.ca/punkbc.html"
+          fi
+          for u in $URLS; do
+            echo "--- $u"
+            curl -sSL -o /tmp/body -D /tmp/hdr -w '    status=%{http_code} type=%{content_type} bytes=%{size_download} redirects=%{num_redirects} final=%{url_effective}\n' "$u" || echo "    request failed"
+            echo -n "    first bytes: "; head -c 8 /tmp/body | xxd -p || true
+          done
