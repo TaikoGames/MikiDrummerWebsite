@@ -470,6 +470,103 @@ def update_sitemap(url: str, lastmod: str) -> None:
     SITEMAP.write_text(text, encoding="utf-8")
 
 
+def render_send(ym: str, email_html: str, count: int) -> str:
+    """The one page needed to actually send the thing.
+
+    The email copy is built every time the digest is, and then has to get from
+    this repository into MailerLite. Hunting down digest/2026-09.email.html on
+    GitHub, opening raw, selecting all — that is four steps too many for a job
+    done twice a month, and the kind of friction that ends with the newsletter
+    quietly not going out.
+
+    So this is a button. It always shows the current issue, because it is
+    rebuilt alongside it, and it carries the steps next to the thing they
+    describe rather than in someone's memory.
+
+    Deliberately kept out of search results: it is a tool, not a page anyone
+    should land on from Google.
+    """
+    label = month_name(ym)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Send the {html.escape(label)} digest</title>
+<style>
+  :root {{ --red:#dc2626; --ink:#111; --grey:#555; --line:#e5e5e5; }}
+  * {{ box-sizing:border-box }}
+  body {{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+         margin:0; padding:24px 16px; background:#fafafa; color:var(--ink); line-height:1.6 }}
+  .wrap {{ max-width:760px; margin:0 auto }}
+  h1 {{ font-size:24px; margin:0 0 4px }}
+  .sub {{ color:var(--grey); font-size:14px; margin-bottom:22px }}
+  .sub a {{ color:var(--red) }}
+  button {{ background:var(--red); color:#fff; border:0; border-radius:8px;
+            padding:14px 22px; font-size:16px; font-weight:600; cursor:pointer; width:100% }}
+  button:hover {{ filter:brightness(1.08) }}
+  #said {{ min-height:22px; font-size:14px; color:#15803d; margin:10px 0 0; font-weight:600 }}
+  ol {{ padding-left:22px; margin:24px 0 0 }}
+  li {{ margin-bottom:10px }}
+  code {{ background:#eee; padding:2px 6px; border-radius:4px; font-size:13px }}
+  textarea {{ width:100%; height:220px; margin-top:20px; font-family:ui-monospace,Menlo,Consolas,monospace;
+              font-size:11px; border:1px solid var(--line); border-radius:8px; padding:12px; background:#fff }}
+  .note {{ margin-top:24px; padding:14px 16px; background:#fffbe6; border:1px solid #e6d68a;
+           border-radius:8px; font-size:14px; color:#5a4a10 }}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Send the {html.escape(label)} digest</h1>
+  <div class="sub">{count} shows &middot;
+    <a href="{ym}.html">read the issue</a> &middot;
+    rebuilt automatically whenever the board changes</div>
+
+  <button id="copy" type="button">Copy the email HTML</button>
+  <p id="said"></p>
+
+  <ol>
+    <li>MailerLite &rarr; <b>Campaigns</b> &rarr; <b>Create campaign</b> &rarr; <i>Regular campaign</i></li>
+    <li>Subject: <code>Punk BC &mdash; {html.escape(label)} shows</code></li>
+    <li>Pick the group <b>Punk BC &mdash; monthly digest</b></li>
+    <li>For the content choose <b>Custom HTML</b> and paste</li>
+    <li><b>Send a test email</b> to yourself and check the photos load</li>
+    <li>Send it</li>
+  </ol>
+
+  <div class="note">
+    Send from a verified <b>mikidrummer.ca</b> address, not a Gmail one, and leave
+    MailerLite's unsubscribe link in place &mdash; CASL requires it for commercial
+    email in Canada.
+  </div>
+
+  <textarea id="html" readonly spellcheck="false">{html.escape(email_html)}</textarea>
+</div>
+<script>
+  var box = document.getElementById('html'),
+      said = document.getElementById('said');
+  document.getElementById('copy').addEventListener('click', function () {{
+    // The clipboard API needs a secure context and permission; select() and
+    // execCommand work everywhere and are the fallback, not the other way round.
+    function ok() {{ said.textContent = 'Copied \\u2014 paste it into MailerLite.'; }}
+    if (navigator.clipboard && window.isSecureContext) {{
+      navigator.clipboard.writeText(box.value).then(ok, manual);
+    }} else {{ manual(); }}
+    function manual() {{
+      box.focus(); box.select();
+      var done = false;
+      try {{ done = document.execCommand('copy'); }} catch (e) {{}}
+      said.textContent = done ? 'Copied \\u2014 paste it into MailerLite.'
+                              : 'Selected below \\u2014 press Ctrl/Cmd+C to copy.';
+    }}
+  }});
+</script>
+</body>
+</html>
+"""
+
+
 def main() -> int:
     args = sys.argv[1:]
     if "--month" in args:
@@ -491,6 +588,9 @@ def main() -> int:
     # cannot be misread, so nothing non-ASCII survives into the file.
     email_html = render_email(ym, shows).encode("ascii", "xmlcharrefreplace").decode("ascii")
     (OUT / f"{ym}.email.html").write_text(email_html, encoding="utf-8")
+    # Always the current issue, at a URL that never changes, so the monthly job
+    # is "open the bookmark, press the button" rather than a hunt through git.
+    (OUT / "send.html").write_text(render_send(ym, email_html, len(shows)), encoding="utf-8")
 
     issues = sorted((p.stem for p in OUT.glob("*.html")
                      if re.fullmatch(r"\d{4}-\d{2}", p.stem)), reverse=True)
