@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Angelmaker",
-      "date": "2026-08-28",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$28",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Deathcore",
-      "notes": "With Ingested, Larcenia Roe, Bayonet Dismemberment. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Angelmaker_-_2025074_205307_2025-03-15_Heidelberg_Deathfest_-_Sven_-_5DS_R_-_0270_-_5DSR4789.jpg?width=500"
-    },
-    {
       "band": "Twisted Teens",
       "date": "2026-08-29",
       "time": "19:30",
