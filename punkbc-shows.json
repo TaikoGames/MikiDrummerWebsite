@@ -2,30 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Twisted Teens",
-      "date": "2026-08-29",
-      "time": "19:30",
-      "venue": "Biltmore Cabaret",
-      "city": "Vancouver",
-      "price": "$22.50 adv",
-      "ticket": "https://biltmorecabaret.com",
-      "genre": "Punk",
-      "notes": "Doors 7pm. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
-    },
-    {
-      "band": "Lift the Anchor",
-      "date": "2026-08-29",
-      "time": "20:00",
-      "venue": "The Portside Pub",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.eventbrite.ca/e/a-jungle-of-jingles-tickets-1996704870016",
-      "genre": "Punk Rock",
-      "notes": "With Magnetiq, easy.feat, Brooke and the Afterglow",
-      "image": "https://www.mikidrummer.ca/images/lift-the-anchor/feature.jpg"
-    },
-    {
       "band": "Bootlicker",
       "date": "2026-08-30",
       "time": "21:00",
