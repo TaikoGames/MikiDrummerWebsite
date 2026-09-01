@@ -1,0 +1,57 @@
+{
+  "venue": "The Portside Pub",
+  "city": "Vancouver, BC",
+  "date": "2026-08-29",
+  "band": "Lift the Anchor",
+  "tracks": [
+    {
+      "title": "Hello RPM",
+      "file": "hello-rpm.mp3",
+      "seconds": 225.9,
+      "length": "3:46",
+      "bytes": 4017755
+    },
+    {
+      "title": "Aurora",
+      "file": "aurora.mp3",
+      "seconds": 267.0,
+      "length": "4:27",
+      "bytes": 4757482
+    },
+    {
+      "title": "Cornered",
+      "file": "cornered.mp3",
+      "seconds": 225.9,
+      "length": "3:46",
+      "bytes": 3678806
+    },
+    {
+      "title": "Shadows",
+      "file": "shadows.mp3",
+      "seconds": 192.5,
+      "length": "3:12",
+      "bytes": 3497478
+    },
+    {
+      "title": "Terrified",
+      "file": "terrified.mp3",
+      "seconds": 208.0,
+      "length": "3:28",
+      "bytes": 3704217
+    },
+    {
+      "title": "Liminal Divide",
+      "file": "liminal-divide.mp3",
+      "seconds": 208.0,
+      "length": "3:28",
+      "bytes": 3623751
+    },
+    {
+      "title": "The Crow",
+      "file": "the-crow.mp3",
+      "seconds": 328.6,
+      "length": "5:29",
+      "bytes": 5650738
+    }
+  ]
+}
