@@ -247,6 +247,34 @@
     $('goCard').hidden = false;
   }
 
+  // ---- arriving from the email -------------------------------------------
+  // #p=… is the submission itself, put there by the band's editor. The
+  // fragment never reaches a server, so nothing about this round-trips through
+  // anyone else. If it is there, this page has one job left: press Approve.
+  function fromLink() {
+    var m = (location.hash || '').match(/[#&]p=([^&]+)/);
+    if (!m) return false;
+    var text;
+    try { text = decodeURIComponent(escape(atob(decodeURIComponent(m[1])))); }
+    catch (e) { say('parseSaid', 'That link is damaged — open the file from the email instead.', 'err'); return true; }
+    $('in').value = text;
+    // The live copy has to be in hand before anything can be compared to it.
+    var wait = setInterval(function () {
+      if (!live) return;
+      clearInterval(wait);
+      check();
+      if (incoming && incoming.photosOmitted) {
+        $('riskBox').insertAdjacentHTML('beforeend',
+          '<div class="warnbox">⚠ ' + incoming.photosOmitted + ' photo(s) taken on a phone were too ' +
+          'big to travel in the link. Everything else is here. To include them, drop the file ' +
+          'from the email onto this page instead.</div>');
+      }
+      $('goCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 60);
+    setTimeout(function () { clearInterval(wait); }, 8000);
+    return true;
+  }
+
   $('checkBtn').addEventListener('click', check);
   $('pickBtn').addEventListener('click', function () { $('file').click(); });
   $('file').addEventListener('change', function (e) {
@@ -274,7 +302,13 @@
     }
   });
 
+  fromLink();
+  // Clicking a second link while this page is already open changes only the
+  // fragment, which is not a page load — without this, nothing would happen.
+  window.addEventListener('hashchange', function () { fromLink(); });
+
   $('reject').addEventListener('click', function () {
+    if (location.hash) history.replaceState(null, '', location.pathname);
     incoming = null;
     $('in').value = '';
     $('diffCard').hidden = true;
@@ -320,6 +354,9 @@
         btn.disabled = false; btn.textContent = was;
         if (r.ok) {
           say('said', 'Published. The site rebuilds in about a minute.');
+          // Drop the payload from the address bar: a reload should not offer
+          // to publish something that already went out.
+          if (location.hash) history.replaceState(null, '', location.pathname);
           live = JSON.parse(JSON.stringify(incoming));
           showDiff();
           return;

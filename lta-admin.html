@@ -481,6 +481,30 @@
     say('Back to what is on the site now.');
   });
 
+  // ---- a link that opens the review page with this already loaded ---------
+  // The payload rides in the fragment, which browsers never send to a server:
+  // it goes from the band's browser, through the email, into Miki's browser
+  // and nowhere else.
+  //
+  // Photos taken on a phone live in the file as base64 and are far too big for
+  // a link, so the link carries everything except those and says how many were
+  // left out. The full file is in the email either way.
+  var LINK_CAP = 60000;
+  function reviewLink() {
+    var slim = JSON.parse(JSON.stringify(data));
+    var omitted = 0;
+    slim.photos = slim.photos.filter(function (p) {
+      if (String(p.src || '').slice(0, 5) === 'data:') { omitted++; return false; }
+      return true;
+    });
+    if (omitted) slim.photosOmitted = omitted;
+    var enc;
+    try { enc = btoa(unescape(encodeURIComponent(JSON.stringify(slim)))); }
+    catch (e) { return null; }
+    if (enc.length > LINK_CAP) return null;
+    return 'https://www.mikidrummer.ca/lta-review.html#p=' + encodeURIComponent(enc);
+  }
+
   $('sendBtn').addEventListener('click', function () {
     var btn = $('sendBtn'), was = btn.textContent;
     btn.disabled = true; btn.textContent = 'Sending…';
@@ -489,7 +513,9 @@
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         _subject: 'Lift the Anchor press kit — changes from the band',
-        review: 'Review and publish: https://www.mikidrummer.ca/lta-review.html',
+        approve: reviewLink() ||
+          'Open https://www.mikidrummer.ca/lta-review.html and drop the attached file in ' +
+          '(too big for a one-click link — it has photos in it).',
         summary: summarise(),
         file: JSON.stringify(data, null, 2)
       })
