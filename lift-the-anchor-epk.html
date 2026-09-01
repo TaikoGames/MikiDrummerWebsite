@@ -523,6 +523,40 @@
         prog.style.width = '0';
         if (next) { next.click(); } else { current = null; paint(); }
     });
+
+    // ---- what the band chose in /lta-admin.html --------------------------
+    // The markup above is the truth for a crawler and for anyone with no
+    // JavaScript; this only ever hides or renames what is already there. A
+    // missing or broken file changes nothing, which is the point: the band
+    // cannot take the press kit down by mistake.
+    fetch('/data/lta-epk.json', { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (cfg) {
+            if (!cfg || !cfg.live) return;
+            var section = document.getElementById('live');
+            if (cfg.live.show === false) { if (section) section.hidden = true; return; }
+            if (!Array.isArray(cfg.live.tracks)) return;
+
+            var byFile = {};
+            cfg.live.tracks.forEach(function (t) { if (t && t.file) byFile[t.file] = t; });
+
+            var shown = 0;
+            rows.forEach(function (row) {
+                var file = (row.dataset.src || '').split('/').pop();
+                var want = byFile[file];
+                if (!want) { shown++; return; }
+                if (want.show === false) { row.hidden = true; return; }
+                shown++;
+                if (want.title) {
+                    row.querySelector('.live-name').textContent = want.title;
+                    row.dataset.title = want.title;
+                }
+            });
+            // Every song switched off is the same as the section being off —
+            // a heading over an empty box reads as a broken page.
+            if (!shown && section) section.hidden = true;
+        })
+        .catch(function () { /* the baked page is already correct */ });
 })();
 </script>
 </body>

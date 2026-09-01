@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Lift the Anchor — press kit editor</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --stone-950:#0b0c0e; --stone-900:#131518; --stone-850:#171a1d; --stone-800:#1e2124;
+    --stone-700:#2b2f34; --stone-600:#3a3f45; --stone-400:#7d848d; --stone-300:#a6adb6;
+    --stone-100:#e9ebee; --molten:#e8672a; --amber:#f4b400; --green:#3fbf6a; --edge:#2b2f34;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--stone-950);color:var(--stone-100);
+       font-family:"Helvetica Neue",system-ui,Arial,sans-serif;
+       padding:22px 18px 90px;line-height:1.6;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:820px;margin:0 auto}
+  .eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--molten);font-weight:700}
+  h1{font-family:"Arial Black","Helvetica Neue",system-ui,sans-serif;
+     font-size:clamp(25px,5vw,38px);letter-spacing:-.02em;margin:6px 0 10px;line-height:1.04}
+  .lead{color:var(--stone-300);font-size:15.5px;max-width:66ch}
+  .lead a{color:var(--molten)}
+  .card{background:var(--stone-900);border:1px solid var(--edge);border-radius:14px;
+        padding:18px;margin-top:18px}
+  .card h2{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-400);
+           margin-bottom:14px;font-family:ui-monospace,monospace}
+  .row{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--edge);
+       border-radius:11px;background:var(--stone-850);margin-bottom:8px;flex-wrap:wrap}
+  .row .grow{flex:1;min-width:150px}
+  .row .name{font-weight:700;font-size:15px}
+  .row .sub{color:var(--stone-400);font-size:12.5px;word-break:break-all}
+  .row.off{opacity:.45}
+  .row.off .name{text-decoration:line-through}
+  input[type=text]{width:100%;background:var(--stone-800);color:var(--stone-100);
+    border:1px solid var(--edge);border-radius:9px;padding:9px 11px;font-size:14px;font-family:inherit}
+  input[type=text]:focus{outline:none;border-color:var(--molten)}
+  label.sw{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;
+           color:var(--stone-300);user-select:none;flex:none}
+  label.sw input{width:18px;height:18px;accent-color:var(--molten);cursor:pointer}
+  .btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--edge);
+       background:var(--stone-850);color:var(--stone-100);border-radius:100px;
+       padding:10px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;
+       text-decoration:none;transition:border-color .15s,filter .15s}
+  .btn:hover{border-color:var(--stone-600)}
+  .btn.primary{background:var(--molten);color:#180a03;border-color:var(--molten)}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.mini{padding:6px 13px;font-size:12px}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .said{font-size:13.5px;margin-top:12px;min-height:20px;color:var(--green);font-weight:600}
+  .said.warn{color:var(--amber)} .said.err{color:#ff7a6b}
+  .hint{font-size:12.5px;color:var(--stone-400);line-height:1.65;margin-top:12px}
+  .hint code{background:var(--stone-850);border:1px solid var(--edge);border-radius:5px;padding:1px 5px}
+  .add{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .add input{flex:1;min-width:200px}
+  .count{color:var(--stone-400);font-size:12px;font-weight:400}
+  textarea{width:100%;height:170px;background:var(--stone-850);color:var(--stone-100);
+    border:1px solid var(--edge);border-radius:10px;padding:12px;font-size:11.5px;
+    font-family:ui-monospace,Menlo,monospace;margin-top:12px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .back{color:var(--stone-400);font-size:13px;text-decoration:none}
+  .back:hover{color:var(--molten)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <span class="eyebrow">Lift the Anchor · Band access</span>
+    <a class="back" href="/lift-the-anchor-epk.html" target="_blank" rel="noopener">See the press kit ↗</a>
+  </div>
+  <h1>Press kit editor</h1>
+  <p class="lead">
+    No login. Tick what should appear, rename a song, add a photo or a video, then
+    <b>send the changes</b>. Nothing here goes live on its own &mdash; Miki applies it, which
+    is deliberate: a page that could publish without a password could be published to by anyone.
+  </p>
+
+  <!-- ============ live set ============ -->
+  <div class="card">
+    <h2>The live set <span class="count" id="liveCount"></span></h2>
+    <label class="sw" style="margin-bottom:12px">
+      <input type="checkbox" id="liveShow"> Show the live section on the press kit at all
+    </label>
+    <div id="liveRows"></div>
+    <p class="hint">
+      Unticking a song hides it from the kit &mdash; the recording stays where it is, nothing is deleted.
+    </p>
+  </div>
+
+  <!-- ============ photos ============ -->
+  <div class="card">
+    <h2>Photos <span class="count" id="photoCount"></span></h2>
+    <div id="photoRows"></div>
+    <div class="add">
+      <input type="text" id="photoUrl" placeholder="Paste a photo link (Drive, Dropbox, anywhere)">
+      <button class="btn mini" type="button" id="photoAdd">Add photo</button>
+    </div>
+    <p class="hint">
+      To add your own: drop the file in the band's Drive folder, set it to
+      <b>anyone with the link</b>, copy the link and paste it above. Miki turns it into a
+      proper hosted image when he applies the change &mdash; Drive links are fine here, but
+      they are slow and can expire, so they do not go on the live page as-is.
+    </p>
+  </div>
+
+  <!-- ============ videos ============ -->
+  <div class="card">
+    <h2>Videos <span class="count" id="videoCount"></span></h2>
+    <div id="videoRows"></div>
+    <div class="add">
+      <input type="text" id="videoUrl" placeholder="Paste a YouTube link">
+      <button class="btn mini" type="button" id="videoAdd">Add video</button>
+    </div>
+    <p class="hint">
+      YouTube only, on purpose: a phone video is often a gigabyte, which the site cannot
+      host and nobody will wait to load. Upload it to YouTube (unlisted is fine) and paste
+      the link &mdash; any format works, <code>youtu.be/…</code>, <code>watch?v=…</code> or an embed link.
+    </p>
+  </div>
+
+  <!-- ============ send ============ -->
+  <div class="card">
+    <h2>Send the changes</h2>
+    <div class="actions">
+      <button class="btn primary" type="button" id="sendBtn">Send to Miki</button>
+      <button class="btn" type="button" id="dlBtn">Download the file</button>
+      <button class="btn" type="button" id="resetBtn">Undo my changes</button>
+    </div>
+    <div class="said" id="said"></div>
+    <p class="hint">
+      Your edits are kept in this browser as you go, so closing the tab does not lose them.
+      <b>Send to Miki</b> emails him what changed. <b>Download the file</b> is for him &mdash;
+      it drops straight into the site.
+    </p>
+    <textarea id="out" readonly spellcheck="false" aria-label="The file that will be sent"></textarea>
+  </div>
+</div>
+
+<script>
+(function () {
+  var SRC   = '/data/lta-epk.json';
+  var STORE = 'ltaEpkEditor:v1';
+  var FORM  = 'https://formspree.io/f/xpqgrqvb';
+  var $ = function (id) { return document.getElementById(id); };
+  var data = null, clean = null;
+
+  function say(msg, kind) {
+    var el = $('said');
+    el.textContent = msg;
+    el.className = 'said' + (kind ? ' ' + kind : '');
+  }
+
+  // ---- youtube: accept whatever they paste, store one canonical embed ------
+  function youtubeId(url) {
+    var m = String(url).match(
+      /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  function render() {
+    // live -------------------------------------------------------------
+    $('liveShow').checked = !!data.live.show;
+    var on = data.live.tracks.filter(function (t) { return t.show; }).length;
+    $('liveCount').textContent = on + ' of ' + data.live.tracks.length + ' showing';
+    $('liveRows').innerHTML = '';
+    data.live.tracks.forEach(function (t, i) {
+      var row = document.createElement('div');
+      row.className = 'row' + (t.show ? '' : ' off');
+      row.innerHTML =
+        '<label class="sw"><input type="checkbox" data-live="' + i + '"' + (t.show ? ' checked' : '') + '></label>' +
+        '<div class="grow"><input type="text" data-title="' + i + '" value=""></div>' +
+        '<span class="sub">' + t.length + '</span>';
+      row.querySelector('[data-title]').value = t.title;
+      $('liveRows').appendChild(row);
+    });
+
+    // photos -----------------------------------------------------------
+    $('photoCount').textContent = data.photos.filter(function (p) { return p.show; }).length +
+      ' of ' + data.photos.length + ' showing';
+    $('photoRows').innerHTML = '';
+    data.photos.forEach(function (p, i) {
+      var row = document.createElement('div');
+      row.className = 'row' + (p.show ? '' : ' off');
+      row.innerHTML =
+        '<label class="sw"><input type="checkbox" data-photo="' + i + '"' + (p.show ? ' checked' : '') + '></label>' +
+        '<div class="grow"><div class="name">Photo ' + (i + 1) + '</div><div class="sub"></div></div>' +
+        '<button class="btn mini" type="button" data-delphoto="' + i + '">Remove</button>';
+      row.querySelector('.sub').textContent = p.src;
+      $('photoRows').appendChild(row);
+    });
+
+    // videos -----------------------------------------------------------
+    $('videoCount').textContent = data.videos.filter(function (v) { return v.show; }).length +
+      ' of ' + data.videos.length + ' showing';
+    $('videoRows').innerHTML = '';
+    data.videos.forEach(function (v, i) {
+      var row = document.createElement('div');
+      row.className = 'row' + (v.show ? '' : ' off');
+      row.innerHTML =
+        '<label class="sw"><input type="checkbox" data-video="' + i + '"' + (v.show ? ' checked' : '') + '></label>' +
+        '<div class="grow"><input type="text" data-vtitle="' + i + '" placeholder="What is it? (optional)"></div>' +
+        '<button class="btn mini" type="button" data-delvideo="' + i + '">Remove</button>';
+      row.querySelector('[data-vtitle]').value = v.title || '';
+      $('videoRows').appendChild(row);
+    });
+
+    $('out').value = JSON.stringify(data, null, 2);
+    try { localStorage.setItem(STORE, JSON.stringify(data)); } catch (e) {}
+  }
+
+  // one listener for the lot, so rows can be rebuilt freely
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.id === 'liveShow') { data.live.show = t.checked; render(); }
+    else if (t.dataset.live !== undefined)  { data.live.tracks[+t.dataset.live].show = t.checked; render(); }
+    else if (t.dataset.photo !== undefined) { data.photos[+t.dataset.photo].show = t.checked; render(); }
+    else if (t.dataset.video !== undefined) { data.videos[+t.dataset.video].show = t.checked; render(); }
+  });
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    // Typing must not re-render: it would move the caret to the end on every key.
+    if (t.dataset.title !== undefined)  { data.live.tracks[+t.dataset.title].title = t.value; stash(); }
+    if (t.dataset.vtitle !== undefined) { data.videos[+t.dataset.vtitle].title = t.value; stash(); }
+  });
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (t.dataset.delphoto !== undefined) { data.photos.splice(+t.dataset.delphoto, 1); render(); }
+    if (t.dataset.delvideo !== undefined) { data.videos.splice(+t.dataset.delvideo, 1); render(); }
+  });
+
+  function stash() {
+    $('out').value = JSON.stringify(data, null, 2);
+    try { localStorage.setItem(STORE, JSON.stringify(data)); } catch (e) {}
+  }
+
+  $('photoAdd').addEventListener('click', function () {
+    var v = $('photoUrl').value.trim();
+    if (!v) { say('Paste a link first.', 'warn'); return; }
+    data.photos.push({ src: v, show: true, added: true });
+    $('photoUrl').value = '';
+    say('Photo added — send the changes when you are done.');
+    render();
+  });
+
+  $('videoAdd').addEventListener('click', function () {
+    var raw = $('videoUrl').value.trim();
+    if (!raw) { say('Paste a link first.', 'warn'); return; }
+    var id = youtubeId(raw);
+    if (!id) { say('That does not look like a YouTube link.', 'err'); return; }
+    if (data.videos.some(function (v) { return v.embed.indexOf(id) > -1; })) {
+      say('That video is already on the list.', 'warn'); return;
+    }
+    data.videos.push({ embed: 'https://www.youtube.com/embed/' + id, title: '', show: true, added: true });
+    $('videoUrl').value = '';
+    say('Video added — send the changes when you are done.');
+    render();
+  });
+
+  $('dlBtn').addEventListener('click', function () {
+    var blob = new Blob([JSON.stringify(data, null, 2) + '\n'], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'lta-epk.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    say('Downloaded. Send that file to Miki, or drop it in the site at data/lta-epk.json.');
+  });
+
+  $('resetBtn').addEventListener('click', function () {
+    if (!clean) { say('Nothing to undo yet.', 'warn'); return; }
+    data = JSON.parse(JSON.stringify(clean));
+    try { localStorage.removeItem(STORE); } catch (e) {}
+    render();
+    say('Back to what is on the site now.');
+  });
+
+  $('sendBtn').addEventListener('click', function () {
+    var btn = $('sendBtn'), was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch(FORM, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'Lift the Anchor press kit — changes from the band',
+        summary: summarise(),
+        file: JSON.stringify(data, null, 2)
+      })
+    }).then(function (r) {
+      btn.disabled = false; btn.textContent = was;
+      if (r.ok) say('Sent. Miki has it — it goes live once he applies it.');
+      else say('That did not send. Use Download the file and message it to him instead.', 'err');
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = was;
+      say('No connection. Use Download the file and message it to him instead.', 'err');
+    });
+  });
+
+  // A human-readable line at the top of the email, so the change is obvious
+  // without reading JSON.
+  function summarise() {
+    var hidTracks = data.live.tracks.filter(function (t) { return !t.show; }).map(function (t) { return t.title; });
+    var bits = [];
+    bits.push('Live section: ' + (data.live.show ? 'on' : 'OFF'));
+    bits.push('Songs showing: ' + data.live.tracks.filter(function (t) { return t.show; }).length +
+              ' of ' + data.live.tracks.length + (hidTracks.length ? ' (hidden: ' + hidTracks.join(', ') + ')' : ''));
+    var newPhotos = data.photos.filter(function (p) { return p.added; });
+    var newVideos = data.videos.filter(function (v) { return v.added; });
+    if (newPhotos.length) bits.push('New photos: ' + newPhotos.map(function (p) { return p.src; }).join(' | '));
+    if (newVideos.length) bits.push('New videos: ' + newVideos.map(function (v) { return v.embed; }).join(' | '));
+    return bits.join('\n');
+  }
+
+  // ---- load ---------------------------------------------------------------
+  fetch(SRC, { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (live) {
+      clean = live;
+      var saved = null;
+      try { saved = JSON.parse(localStorage.getItem(STORE) || 'null'); } catch (e) {}
+      // A draft is only usable if it still matches the shape of what is live;
+      // otherwise the site has moved on and the draft would fight it.
+      var usable = saved && saved.live && Array.isArray(saved.live.tracks) &&
+                   saved.live.tracks.length === live.live.tracks.length;
+      data = usable ? saved : JSON.parse(JSON.stringify(live));
+      if (usable) say('Picked up where you left off — Undo my changes goes back to the site.', 'warn');
+      render();
+    })
+    .catch(function (err) {
+      say('Could not load the press kit content (' + err.message + '). Reload, or tell Miki.', 'err');
+    });
+})();
+</script>
+</body>
+</html>
