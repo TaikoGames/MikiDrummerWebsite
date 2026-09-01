@@ -230,6 +230,33 @@
     .sc-list-label { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone-400); margin-bottom: 2px; }
     .sc-track-player { display: block; width: 100%; border-radius: 12px; border: 1px solid var(--edge); background: var(--stone-900); }
 
+    /* ---- Live set: one player, a list of tracks ----
+       Seven <audio controls> stacked would work and look like a filing
+       cabinet. One element, shared, with the list acting as the transport. */
+    .live-meta { color: var(--stone-400); font-size: 15px; margin-bottom: 22px; }
+    .live-meta b { color: var(--stone-100); }
+    .live-set { display: flex; flex-direction: column; gap: 8px; max-width: 620px; }
+    .live-row {
+        display: flex; align-items: center; gap: 16px; width: 100%; text-align: left;
+        padding: 14px 18px; border-radius: 12px; border: 1px solid var(--edge);
+        background: var(--stone-900); color: var(--stone-100); cursor: pointer;
+        font: inherit; transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .live-row:hover { border-color: var(--molten); }
+    .live-row .live-play {
+        flex: none; width: 34px; height: 34px; border-radius: 50%;
+        background: var(--molten); color: #180a03; display: grid; place-items: center;
+        font-size: 13px; line-height: 1;
+    }
+    .live-row .live-name { font-weight: 700; font-size: 16px; }
+    .live-row .live-time { margin-left: auto; color: var(--stone-400); font-size: 13px;
+                           font-variant-numeric: tabular-nums; }
+    .live-row[aria-current="true"] { border-color: var(--molten); background: rgba(232,103,42,0.09); }
+    .live-bar { max-width: 620px; height: 4px; border-radius: 3px; background: var(--edge);
+                margin-top: 16px; overflow: hidden; }
+    .live-bar i { display: block; height: 100%; width: 0; background: var(--molten); }
+    .print-live { display: none; }
+
     /* ---- Save as PDF button ---- */
     .pdf-btn {
         position: fixed; top: 16px; right: 16px; z-index: 60;
@@ -257,6 +284,13 @@
         .social, .reach { border-color: var(--molten) !important; }
         .sc-player, .sc-card, .videos, .sc-list, .media-actions { display: none !important; }
         .print-listen { display: inline-block; color: var(--molten); font-weight: 700; }
+        /* On paper the transport is useless, but the set list is not — keep the
+           songs and their times, drop the buttons and the progress bar. */
+        .live-bar { display: none !important; }
+        .live-row { border-color: var(--edge) !important; background: none !important;
+                    padding: 6px 0; break-inside: avoid; page-break-inside: avoid; }
+        .live-row .live-play { display: none !important; }
+        .print-live { display: inline-block; color: var(--molten); font-weight: 700; margin-top: 14px; }
     }
 </style>
 </head>
@@ -329,6 +363,71 @@
     </div>
 </section>
 
+<!-- ===================== LIVE ===================== -->
+<section id="live">
+    <div class="wrap">
+        <div class="sec-head"><h2 class="display">Live</h2></div>
+        <p class="live-meta">
+            <b>The Portside Pub</b> &middot; Vancouver, BC &middot; 29 August 2026 &mdash;
+            7 songs, 28 minutes, recorded off the desk. No overdubs.
+        </p>
+        <div class="live-set" id="liveSet">
+                <button class="live-row" type="button"
+                        data-src="/audio/live/portside-2026-08-29/hello-rpm.mp3"
+                        data-title="Hello RPM">
+                    <span class="live-play" aria-hidden="true">&#9654;</span>
+                    <span class="live-name">Hello RPM</span>
+                    <span class="live-time">3:46</span>
+                </button>
+                <button class="live-row" type="button"
+                        data-src="/audio/live/portside-2026-08-29/aurora.mp3"
+                        data-title="Aurora">
+                    <span class="live-play" aria-hidden="true">&#9654;</span>
+                    <span class="live-name">Aurora</span>
+                    <span class="live-time">4:27</span>
+                </button>
+                <button class="live-row" type="button"
+                        data-src="/audio/live/portside-2026-08-29/cornered.mp3"
+                        data-title="Cornered">
+                    <span class="live-play" aria-hidden="true">&#9654;</span>
+                    <span class="live-name">Cornered</span>
+                    <span class="live-time">3:46</span>
+                </button>
+                <button class="live-row" type="button"
+                        data-src="/audio/live/portside-2026-08-29/shadows.mp3"
+                        data-title="Shadows">
+                    <span class="live-play" aria-hidden="true">&#9654;</span>
+                    <span class="live-name">Shadows</span>
+                    <span class="live-time">3:12</span>
+                </button>
+                <button class="live-row" type="button"
+                        data-src="/audio/live/portside-2026-08-29/terrified.mp3"
+                        data-title="Terrified">
+                    <span class="live-play" aria-hidden="true">&#9654;</span>
+                    <span class="live-name">Terrified</span>
+                    <span class="live-time">3:28</span>
+                </button>
+                <button class="live-row" type="button"
+                        data-src="/audio/live/portside-2026-08-29/liminal-divide.mp3"
+                        data-title="Liminal Divide">
+                    <span class="live-play" aria-hidden="true">&#9654;</span>
+                    <span class="live-name">Liminal Divide</span>
+                    <span class="live-time">3:28</span>
+                </button>
+                <button class="live-row" type="button"
+                        data-src="/audio/live/portside-2026-08-29/the-crow.mp3"
+                        data-title="The Crow">
+                    <span class="live-play" aria-hidden="true">&#9654;</span>
+                    <span class="live-name">The Crow</span>
+                    <span class="live-time">5:29</span>
+                </button>
+        </div>
+        <div class="live-bar" aria-hidden="true"><i id="liveProg"></i></div>
+        <audio id="liveAudio" preload="none"></audio>
+        <a class="print-live" href="https://www.mikidrummer.ca/lift-the-anchor-epk.html#live">Hear the set at mikidrummer.ca</a>
+    </div>
+</section>
+
 <!-- ===================== CONNECT ===================== -->
 <section id="connect" class="connect">
     <div class="wrap">
@@ -370,6 +469,61 @@
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
         btn.disabled = false; btn.textContent = orig;
     });
+</script>
+
+<script>
+// ---- Live set transport -------------------------------------------------
+// One <audio> shared by every row. A row click either starts its track or
+// toggles the one already loaded, so two songs can never play over each other
+// — which is what a stack of separate players does the moment someone clicks
+// twice.
+(function () {
+    var set = document.getElementById('liveSet');
+    var audio = document.getElementById('liveAudio');
+    var prog = document.getElementById('liveProg');
+    if (!set || !audio || !prog) return;
+
+    var rows = [].slice.call(set.querySelectorAll('.live-row'));
+    var current = null;
+
+    function paint() {
+        rows.forEach(function (r) {
+            var on = r === current && !audio.paused;
+            r.setAttribute('aria-current', r === current ? 'true' : 'false');
+            r.querySelector('.live-play').innerHTML = on ? '&#10074;&#10074;' : '&#9654;';
+        });
+    }
+
+    rows.forEach(function (row) {
+        row.addEventListener('click', function () {
+            if (current === row) {
+                audio.paused ? audio.play() : audio.pause();
+                return;
+            }
+            current = row;
+            prog.style.width = '0';
+            audio.src = row.dataset.src;
+            audio.play().catch(function () {
+                // Autoplay policies, a missing file, a codec the browser will not
+                // take — say which track rather than leaving a dead button.
+                row.querySelector('.live-time').textContent = 'unavailable';
+            });
+            paint();
+        });
+    });
+
+    audio.addEventListener('play', paint);
+    audio.addEventListener('pause', paint);
+    audio.addEventListener('timeupdate', function () {
+        if (audio.duration) prog.style.width = (audio.currentTime / audio.duration * 100) + '%';
+    });
+    audio.addEventListener('ended', function () {
+        // Roll into the next song, so the set plays as a set.
+        var next = rows[rows.indexOf(current) + 1];
+        prog.style.width = '0';
+        if (next) { next.click(); } else { current = null; paint(); }
+    });
+})();
 </script>
 </body>
 </html>
