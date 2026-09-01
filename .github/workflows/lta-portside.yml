@@ -35,8 +35,20 @@ jobs:
         with:
           python-version: "3.x"
 
+      # The runner image does not ship ffmpeg, so install it rather than hope.
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+      # Piping this to head was the bug: bash -e only checks the last command in
+      # a pipeline, so `ffmpeg -version | head -1` reported success on a machine
+      # with no ffmpeg at all, and the run got as far as the encode before
+      # noticing. No pipe, no false pass.
       - name: Check ffmpeg is here
-        run: ffmpeg -version | head -1 && ffprobe -version | head -1
+        run: |
+          ffmpeg -version
+          ffprobe -version
 
       - name: Check the script
         run: python tools/fetch_portside.py --self-test
