@@ -60,6 +60,23 @@
     border:1px solid var(--edge);border-radius:10px;padding:12px;font-size:11.5px;
     font-family:ui-monospace,Menlo,monospace;margin-top:12px}
   .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .ord{display:flex;flex-direction:column;gap:2px;flex:none}
+  .ord button{width:26px;height:19px;line-height:1;padding:0;font-size:11px;border-radius:6px;
+              border:1px solid var(--edge);background:var(--stone-800);color:var(--stone-300);cursor:pointer}
+  .ord button:hover:not([disabled]){border-color:var(--molten);color:var(--molten)}
+  .ord button[disabled]{opacity:.3;cursor:default}
+  .thumb{width:64px;height:40px;object-fit:cover;border-radius:7px;border:1px solid var(--edge);
+         background:#000;flex:none}
+  textarea.bio{height:auto;min-height:92px;font-family:inherit;font-size:14px;line-height:1.6}
+  .factrow{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .factrow input{flex:1;min-width:130px}
+  .drop{border:1px dashed var(--stone-600);border-radius:11px;padding:16px;text-align:center;
+        color:var(--stone-400);font-size:13px;margin-top:10px;cursor:pointer}
+  .drop:hover,.drop.over{border-color:var(--molten);color:var(--molten)}
+  iframe.prev{width:100%;height:560px;border:1px solid var(--edge);border-radius:12px;
+              background:#0f1012;margin-top:12px;display:none}
+  iframe.prev.on{display:block}
+  .diff{font-size:13px;color:var(--stone-300);line-height:1.7;margin-top:10px;white-space:pre-wrap}
   .back{color:var(--stone-400);font-size:13px;text-decoration:none}
   .back:hover{color:var(--molten)}
 </style>
@@ -84,6 +101,12 @@
     <label class="sw" style="margin-bottom:12px">
       <input type="checkbox" id="liveShow"> Show the live section on the press kit at all
     </label>
+    <div class="factrow" style="margin-bottom:12px">
+      <input type="text" id="liveVenue" placeholder="Venue">
+      <input type="text" id="liveCity" placeholder="City">
+      <input type="text" id="liveDate" placeholder="YYYY-MM-DD">
+    </div>
+    <input type="text" id="liveBlurb" placeholder="How it was recorded (optional)" style="margin-bottom:14px">
     <div id="liveRows"></div>
     <p class="hint">
       Unticking a song hides it from the kit &mdash; the recording stays where it is, nothing is deleted.
@@ -96,7 +119,11 @@
     <div id="photoRows"></div>
     <div class="add">
       <input type="text" id="photoUrl" placeholder="Paste a photo link (Drive, Dropbox, anywhere)">
-      <button class="btn mini" type="button" id="photoAdd">Add photo</button>
+      <button class="btn mini" type="button" id="photoAdd">Add by link</button>
+    </div>
+    <div class="drop" id="drop">
+      Or drop a photo here &mdash; or <b>tap to choose one from your phone</b>
+      <input type="file" id="photoFile" accept="image/*" multiple hidden>
     </div>
     <p class="hint">
       To add your own: drop the file in the band's Drive folder, set it to
@@ -121,6 +148,29 @@
     </p>
   </div>
 
+  <!-- ============ bio ============ -->
+  <div class="card">
+    <h2>Bio</h2>
+    <div id="bioRows"></div>
+    <button class="btn mini" type="button" id="bioAdd">Add a paragraph</button>
+    <h2 style="margin-top:20px">The facts box</h2>
+    <div id="factRows"></div>
+    <button class="btn mini" type="button" id="factAdd">Add a row</button>
+  </div>
+
+  <!-- ============ preview ============ -->
+  <div class="card">
+    <h2>See it first</h2>
+    <div class="actions" style="margin-top:0">
+      <button class="btn" type="button" id="prevBtn">Show me the press kit with my changes</button>
+    </div>
+    <iframe class="prev" id="prev" title="Press kit preview"></iframe>
+    <p class="hint">
+      This is the real press kit page with your edits pushed into it &mdash; the same code
+      does both, so what you see here is what it will do.
+    </p>
+  </div>
+
   <!-- ============ send ============ -->
   <div class="card">
     <h2>Send the changes</h2>
@@ -129,6 +179,7 @@
       <button class="btn" type="button" id="dlBtn">Download the file</button>
       <button class="btn" type="button" id="resetBtn">Undo my changes</button>
     </div>
+    <div class="diff" id="diff"></div>
     <div class="said" id="said"></div>
     <p class="hint">
       Your edits are kept in this browser as you go, so closing the tab does not lose them.
@@ -160,7 +211,85 @@
     return m ? m[1] : null;
   }
 
+  function ord(kind, i, n) {
+    return '<span class="ord">' +
+      '<button type="button" data-up="' + kind + ':' + i + '"' + (i === 0 ? ' disabled' : '') + ' aria-label="Move up">&#9650;</button>' +
+      '<button type="button" data-down="' + kind + ':' + i + '"' + (i === n - 1 ? ' disabled' : '') + ' aria-label="Move down">&#9660;</button>' +
+      '</span>';
+  }
+  function ytId(url) { var m = String(url || '').match(/([A-Za-z0-9_-]{11})$/); return m ? m[1] : ''; }
+  function listFor(kind) {
+    return kind === 'live' ? data.live.tracks : kind === 'photo' ? data.photos : data.videos;
+  }
+  function move(kind, i, by) {
+    var list = listFor(kind), j = i + by;
+    if (j < 0 || j >= list.length) return;
+    var item = list.splice(i, 1)[0];
+    list.splice(j, 0, item);
+    render();
+  }
+
+  function renderBio() {
+    var box = $('bioRows');
+    box.innerHTML = '';
+    data.bio.forEach(function (para, i) {
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'display:flex;gap:8px;align-items:flex-start;margin-bottom:8px';
+      var ta = document.createElement('textarea');
+      ta.className = 'bio'; ta.value = para; ta.dataset.bio = i;
+      var del = document.createElement('button');
+      del.className = 'btn mini'; del.type = 'button'; del.textContent = 'Remove';
+      del.dataset.delbio = i;
+      wrap.appendChild(ta); wrap.appendChild(del);
+      box.appendChild(wrap);
+    });
+    var fb = $('factRows');
+    fb.innerHTML = '';
+    data.facts.forEach(function (f, i) {
+      var row = document.createElement('div');
+      row.className = 'factrow';
+      row.innerHTML =
+        '<input type="text" data-fk="' + i + '" placeholder="Label">' +
+        '<input type="text" data-fv="' + i + '" placeholder="Value">' +
+        '<button class="btn mini" type="button" data-delfact="' + i + '">Remove</button>';
+      row.querySelector('[data-fk]').value = f.k || '';
+      row.querySelector('[data-fv]').value = f.v || '';
+      fb.appendChild(row);
+    });
+  }
+
+  // What changed, in words, so the email is readable and so the band can see
+  // at a glance whether they did what they meant to.
+  function renderDiff() {
+    if (!clean) return;
+    var out = [];
+    if (!!data.live.show !== !!clean.live.show)
+      out.push(data.live.show ? '• Live section switched ON' : '• Live section switched OFF');
+    var hidden = data.live.tracks.filter(function (t) { return !t.show; }).map(function (t) { return t.title; });
+    if (hidden.length) out.push('• Songs hidden: ' + hidden.join(', '));
+    clean.live.tracks.forEach(function (t, i) {
+      var now = data.live.tracks.filter(function (x) { return x.file === t.file; })[0];
+      if (now && now.title !== t.title) out.push('• Renamed "' + t.title + '" to "' + now.title + '"');
+    });
+    var oldOrder = clean.live.tracks.map(function (t) { return t.file; }).join();
+    var newOrder = data.live.tracks.map(function (t) { return t.file; }).join();
+    if (oldOrder !== newOrder) out.push('• Songs reordered');
+    var addedP = data.photos.filter(function (p) { return p.added; }).length;
+    var addedV = data.videos.filter(function (v) { return v.added; }).length;
+    if (addedP) out.push('• ' + addedP + ' photo(s) added');
+    if (addedV) out.push('• ' + addedV + ' video(s) added');
+    if (data.photos.length < clean.photos.length) out.push('• ' + (clean.photos.length - data.photos.length) + ' photo(s) removed');
+    if (data.videos.length < clean.videos.length) out.push('• ' + (clean.videos.length - data.videos.length) + ' video(s) removed');
+    if (JSON.stringify(data.bio) !== JSON.stringify(clean.bio)) out.push('• Bio edited');
+    if (JSON.stringify(data.facts) !== JSON.stringify(clean.facts)) out.push('• Facts box edited');
+    $('diff').textContent = out.length ? 'What you changed:\n' + out.join('\n') : 'Nothing changed yet.';
+  }
+
   function render() {
+    $('liveVenue').value = data.live.venue || '';
+    $('liveCity').value  = data.live.city || '';
+    $('liveDate').value  = data.live.date || '';
+    $('liveBlurb').value = data.live.blurb || '';
     // live -------------------------------------------------------------
     $('liveShow').checked = !!data.live.show;
     var on = data.live.tracks.filter(function (t) { return t.show; }).length;
@@ -170,6 +299,7 @@
       var row = document.createElement('div');
       row.className = 'row' + (t.show ? '' : ' off');
       row.innerHTML =
+        ord('live', i, data.live.tracks.length) +
         '<label class="sw"><input type="checkbox" data-live="' + i + '"' + (t.show ? ' checked' : '') + '></label>' +
         '<div class="grow"><input type="text" data-title="' + i + '" value=""></div>' +
         '<span class="sub">' + t.length + '</span>';
@@ -185,10 +315,14 @@
       var row = document.createElement('div');
       row.className = 'row' + (p.show ? '' : ' off');
       row.innerHTML =
+        ord('photo', i, data.photos.length) +
         '<label class="sw"><input type="checkbox" data-photo="' + i + '"' + (p.show ? ' checked' : '') + '></label>' +
+        '<img class="thumb" alt="">' +
         '<div class="grow"><div class="name">Photo ' + (i + 1) + '</div><div class="sub"></div></div>' +
         '<button class="btn mini" type="button" data-delphoto="' + i + '">Remove</button>';
-      row.querySelector('.sub').textContent = p.src;
+      row.querySelector('.thumb').src = p.src;
+      row.querySelector('.sub').textContent =
+        p.src.slice(0, 5) === 'data:' ? 'from your device (' + Math.round(p.src.length / 1400) + 'KB)' : p.src;
       $('photoRows').appendChild(row);
     });
 
@@ -200,15 +334,18 @@
       var row = document.createElement('div');
       row.className = 'row' + (v.show ? '' : ' off');
       row.innerHTML =
+        ord('video', i, data.videos.length) +
         '<label class="sw"><input type="checkbox" data-video="' + i + '"' + (v.show ? ' checked' : '') + '></label>' +
+        '<img class="thumb" alt="" src="https://i.ytimg.com/vi/' + ytId(v.embed) + '/mqdefault.jpg">' +
         '<div class="grow"><input type="text" data-vtitle="' + i + '" placeholder="What is it? (optional)"></div>' +
         '<button class="btn mini" type="button" data-delvideo="' + i + '">Remove</button>';
       row.querySelector('[data-vtitle]').value = v.title || '';
       $('videoRows').appendChild(row);
     });
 
-    $('out').value = JSON.stringify(data, null, 2);
-    try { localStorage.setItem(STORE, JSON.stringify(data)); } catch (e) {}
+    renderBio();
+    renderDiff();
+    stash();
   }
 
   // one listener for the lot, so rows can be rebuilt freely
@@ -220,15 +357,82 @@
     else if (t.dataset.video !== undefined) { data.videos[+t.dataset.video].show = t.checked; render(); }
   });
   document.addEventListener('input', function (e) {
-    var t = e.target;
+    var t = e.target, d = t.dataset;
     // Typing must not re-render: it would move the caret to the end on every key.
-    if (t.dataset.title !== undefined)  { data.live.tracks[+t.dataset.title].title = t.value; stash(); }
-    if (t.dataset.vtitle !== undefined) { data.videos[+t.dataset.vtitle].title = t.value; stash(); }
+    if (d.title  !== undefined) { data.live.tracks[+d.title].title = t.value; }
+    else if (d.vtitle !== undefined) { data.videos[+d.vtitle].title = t.value; }
+    else if (d.bio !== undefined) { data.bio[+d.bio] = t.value; }
+    else if (d.fk  !== undefined) { data.facts[+d.fk].k = t.value; }
+    else if (d.fv  !== undefined) { data.facts[+d.fv].v = t.value; }
+    else if (t.id === 'liveVenue') { data.live.venue = t.value; }
+    else if (t.id === 'liveCity')  { data.live.city  = t.value; }
+    else if (t.id === 'liveDate')  { data.live.date  = t.value; }
+    else if (t.id === 'liveBlurb') { data.live.blurb = t.value; }
+    else return;
+    stash(); renderDiff();
   });
   document.addEventListener('click', function (e) {
-    var t = e.target;
-    if (t.dataset.delphoto !== undefined) { data.photos.splice(+t.dataset.delphoto, 1); render(); }
-    if (t.dataset.delvideo !== undefined) { data.videos.splice(+t.dataset.delvideo, 1); render(); }
+    var t = e.target, d = t.dataset;
+    if (d.delphoto !== undefined) { data.photos.splice(+d.delphoto, 1); render(); }
+    else if (d.delvideo !== undefined) { data.videos.splice(+d.delvideo, 1); render(); }
+    else if (d.delbio  !== undefined) { data.bio.splice(+d.delbio, 1); render(); }
+    else if (d.delfact !== undefined) { data.facts.splice(+d.delfact, 1); render(); }
+    else if (d.up   !== undefined) { var u = d.up.split(':');   move(u[0], +u[1], -1); }
+    else if (d.down !== undefined) { var w = d.down.split(':'); move(w[0], +w[1],  1); }
+  });
+
+  $('bioAdd').addEventListener('click', function () { data.bio.push(''); render(); });
+  $('factAdd').addEventListener('click', function () { data.facts.push({ k: '', v: '' }); render(); });
+
+  // ---- a photo off a phone, without anywhere to upload it -----------------
+  // No server to take a file, so it is shrunk here and carried inside the
+  // file itself. 1600px wide at JPEG 82 is plenty for a press photo and keeps
+  // a 12MP phone shot from turning into a megabyte of base64.
+  function addLocalPhoto(file) {
+    if (!/^image\//.test(file.type)) { say(file.name + ' is not an image.', 'err'); return; }
+    var img = new Image(), url = URL.createObjectURL(file);
+    img.onload = function () {
+      var scale = Math.min(1, 1600 / img.naturalWidth);
+      var c = document.createElement('canvas');
+      c.width  = Math.round(img.naturalWidth  * scale);
+      c.height = Math.round(img.naturalHeight * scale);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      var out = c.toDataURL('image/jpeg', 0.82);
+      data.photos.push({ src: out, show: true, added: true, name: file.name });
+      say(file.name + ' added at ' + c.width + '\u00d7' + c.height + '.');
+      render();
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); say('Could not read ' + file.name + '.', 'err'); };
+    img.src = url;
+  }
+  $('photoFile').addEventListener('change', function (e) {
+    [].slice.call(e.target.files).forEach(addLocalPhoto);
+    e.target.value = '';
+  });
+  $('drop').addEventListener('click', function () { $('photoFile').click(); });
+  ['dragenter', 'dragover'].forEach(function (n) {
+    $('drop').addEventListener(n, function (e) { e.preventDefault(); $('drop').classList.add('over'); });
+  });
+  ['dragleave', 'drop'].forEach(function (n) {
+    $('drop').addEventListener(n, function (e) { e.preventDefault(); $('drop').classList.remove('over'); });
+  });
+  $('drop').addEventListener('drop', function (e) {
+    [].slice.call(e.dataTransfer.files).forEach(addLocalPhoto);
+  });
+
+  // ---- preview: the real page, fed the draft ------------------------------
+  $('prevBtn').addEventListener('click', function () {
+    var f = $('prev');
+    if (!f.classList.contains('on')) {
+      f.src = '/lift-the-anchor-epk.html';
+      f.classList.add('on');
+      f.onload = function () { f.contentWindow.postMessage({ ltaPreview: data }, location.origin); };
+      $('prevBtn').textContent = 'Update the preview';
+    } else {
+      f.contentWindow.postMessage({ ltaPreview: data }, location.origin);
+    }
+    say('Preview updated.');
   });
 
   function stash() {

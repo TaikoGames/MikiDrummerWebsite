@@ -471,6 +471,7 @@
     });
 </script>
 
+<script src="/js/lta-epk.js"></script>
 <script>
 // ---- Live set transport -------------------------------------------------
 // One <audio> shared by every row. A row click either starts its track or
@@ -525,37 +526,22 @@
     });
 
     // ---- what the band chose in /lta-admin.html --------------------------
-    // The markup above is the truth for a crawler and for anyone with no
-    // JavaScript; this only ever hides or renames what is already there. A
-    // missing or broken file changes nothing, which is the point: the band
-    // cannot take the press kit down by mistake.
+    // Applied by js/lta-epk.js, the same code the editor previews with, so
+    // what they see before sending is what the page actually does.
+    function applyCfg(cfg) {
+        if (window.LTAEpk) window.LTAEpk.apply(cfg, document);
+        rows = [].slice.call(set.querySelectorAll('.live-row'));
+    }
+    // The editor opens this page in an iframe and posts its draft in; the
+    // draft never touches storage the real page reads, so a half-finished
+    // edit cannot leak onto the live site.
+    window.addEventListener('message', function (e) {
+        if (e.origin !== location.origin) return;
+        if (e.data && e.data.ltaPreview) applyCfg(e.data.ltaPreview);
+    });
     fetch('/data/lta-epk.json', { cache: 'no-store' })
         .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (cfg) {
-            if (!cfg || !cfg.live) return;
-            var section = document.getElementById('live');
-            if (cfg.live.show === false) { if (section) section.hidden = true; return; }
-            if (!Array.isArray(cfg.live.tracks)) return;
-
-            var byFile = {};
-            cfg.live.tracks.forEach(function (t) { if (t && t.file) byFile[t.file] = t; });
-
-            var shown = 0;
-            rows.forEach(function (row) {
-                var file = (row.dataset.src || '').split('/').pop();
-                var want = byFile[file];
-                if (!want) { shown++; return; }
-                if (want.show === false) { row.hidden = true; return; }
-                shown++;
-                if (want.title) {
-                    row.querySelector('.live-name').textContent = want.title;
-                    row.dataset.title = want.title;
-                }
-            });
-            // Every song switched off is the same as the section being off —
-            // a heading over an empty box reads as a broken page.
-            if (!shown && section) section.hidden = true;
-        })
+        .then(function (cfg) { if (cfg) applyCfg(cfg); })
         .catch(function () { /* the baked page is already correct */ });
 })();
 </script>

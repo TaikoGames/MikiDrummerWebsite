@@ -1,5 +1,5 @@
 {
-  "_readme": "Content for the Lift the Anchor press kit. Edited from /lta-admin.html \u2014 no login, no token. The page falls back to what is baked into the HTML if this file is missing or broken, so a bad edit cannot take the kit down.",
+  "_readme": "Content for the Lift the Anchor press kit. Edited from /lta-admin.html — no login, no token. The page falls back to what is baked into the HTML if this file is missing or broken, so a bad edit cannot take the kit down.",
   "updated": "2026-09-01",
   "live": {
     "show": true,
@@ -50,7 +50,8 @@
         "length": "5:29",
         "show": true
       }
-    ]
+    ],
+    "headline": "Live"
   },
   "photos": [
     {
@@ -77,6 +78,25 @@
     {
       "embed": "https://bandcamp.com/EmbeddedPlayer/track=1391101592/size=large/bgcol=16181b/linkcol=e8672a/tracklist=false/artwork=small/transparent=true/",
       "show": true
+    }
+  ],
+  "bio": [
+    "Lift the Anchor is a Vancouver punk rock band built on fresh starts and loud guitars. Big hooks, gang vocals, and choruses made for basement singalongs — melodic punk with just enough grit to leave a mark.",
+    "Their story is one of pulling up roots: trading small-town beginnings and a Toronto zip code for the West Coast, chasing a clean slate and a scene worth showing up for. That restless, start-over energy runs through everything they write — songs about leaving, arriving, and figuring it out at full volume.",
+    "Their 2025 demos \"Hello RPM\" and \"Aurora\" lay out the blueprint: fast, catchy, and heart-on-sleeve, somewhere in the lineage of Sum 41, Four Year Strong, and Silverstein. Lift the Anchor are just getting started — building it one show, one singalong at a time."
+  ],
+  "facts": [
+    {
+      "k": "Genre",
+      "v": "Punk Rock"
+    },
+    {
+      "k": "Hometown",
+      "v": "Vancouver, BC"
+    },
+    {
+      "k": "For fans of",
+      "v": "Sum 41 · Silverstein · Four Year Strong · Papa Roach"
     }
   ]
 }
