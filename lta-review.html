@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Review the band's changes — Lift the Anchor</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --stone-950:#0b0c0e; --stone-900:#131518; --stone-850:#171a1d; --stone-800:#1e2124;
+    --stone-700:#2b2f34; --stone-600:#3a3f45; --stone-400:#7d848d; --stone-300:#a6adb6;
+    --stone-100:#e9ebee; --molten:#e8672a; --amber:#f4b400; --green:#3fbf6a; --red:#ff7a6b;
+    --edge:#2b2f34;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--stone-950);color:var(--stone-100);
+       font-family:"Helvetica Neue",system-ui,Arial,sans-serif;
+       padding:22px 18px 90px;line-height:1.6}
+  .wrap{max-width:900px;margin:0 auto}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--molten);font-weight:700}
+  .back{color:var(--stone-400);font-size:13px;text-decoration:none}
+  .back:hover{color:var(--molten)}
+  h1{font-family:"Arial Black","Helvetica Neue",system-ui,sans-serif;
+     font-size:clamp(25px,5vw,36px);letter-spacing:-.02em;margin:6px 0 10px}
+  .lead{color:var(--stone-300);font-size:15.5px;max-width:70ch}
+  .card{background:var(--stone-900);border:1px solid var(--edge);border-radius:14px;
+        padding:18px;margin-top:18px}
+  .card h2{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-400);
+           margin-bottom:12px;font-family:ui-monospace,monospace}
+  textarea{width:100%;height:150px;background:var(--stone-850);color:var(--stone-100);
+    border:1px solid var(--edge);border-radius:10px;padding:12px;font-size:11.5px;
+    font-family:ui-monospace,Menlo,monospace}
+  textarea:focus{outline:none;border-color:var(--molten)}
+  .btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--edge);
+       background:var(--stone-850);color:var(--stone-100);border-radius:100px;
+       padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+       text-decoration:none;transition:filter .15s,border-color .15s}
+  .btn:hover{border-color:var(--stone-600)}
+  .btn.go{background:var(--green);color:#05210f;border-color:var(--green)}
+  .btn.no{background:transparent;color:var(--red);border-color:rgba(255,122,107,.5)}
+  .btn.go:hover{filter:brightness(1.08)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+  .said{font-size:14px;margin-top:12px;min-height:20px;font-weight:600;color:var(--green)}
+  .said.warn{color:var(--amber)} .said.err{color:var(--red)}
+  .hint{font-size:12.5px;color:var(--stone-400);line-height:1.65;margin-top:12px}
+  .hint code{background:var(--stone-850);border:1px solid var(--edge);border-radius:5px;padding:1px 5px}
+  .chg{margin:0;padding:0;list-style:none}
+  .chg li{padding:9px 12px;border:1px solid var(--edge);border-radius:10px;margin-bottom:7px;
+          background:var(--stone-850);font-size:14px;display:flex;gap:10px;align-items:flex-start}
+  .chg .mark{font-weight:800;flex:none;width:18px;text-align:center}
+  .chg .add .mark, li.add .mark{color:var(--green)}
+  li.del .mark{color:var(--red)}
+  li.mod .mark{color:var(--amber)}
+  .none{color:var(--stone-400);font-size:14px}
+  iframe.prev{width:100%;height:520px;border:1px solid var(--edge);border-radius:12px;
+              background:#0f1012;margin-top:12px;display:none}
+  iframe.prev.on{display:block}
+  .warnbox{border:1px solid rgba(244,180,0,.4);background:rgba(244,180,0,.07);
+           border-radius:11px;padding:12px 14px;font-size:13.5px;color:var(--amber);margin-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <span class="eyebrow">Miki Drummer · Private</span>
+    <a class="back" href="/admin.html">← Admin</a>
+  </div>
+  <h1>Review the band's changes</h1>
+  <p class="lead">
+    Paste what they sent, or drop the file they downloaded. You get a plain list of what
+    is different, a preview of the real page with it applied, and one button that publishes it.
+  </p>
+
+  <!-- ============ paste ============ -->
+  <div class="card">
+    <h2>1 · What they sent</h2>
+    <textarea id="in" placeholder="Paste the contents of the email, or drop lta-epk.json anywhere on this page…" spellcheck="false"></textarea>
+    <div class="actions">
+      <button class="btn" type="button" id="checkBtn">Check it</button>
+      <input type="file" id="file" accept="application/json,.json" hidden>
+      <button class="btn" type="button" id="pickBtn">Choose the file…</button>
+    </div>
+    <div class="said" id="parseSaid"></div>
+  </div>
+
+  <!-- ============ diff ============ -->
+  <div class="card" id="diffCard" hidden>
+    <h2>2 · What changes <span id="chgCount" style="color:var(--stone-400);font-weight:400"></span></h2>
+    <ul class="chg" id="chg"></ul>
+    <div id="riskBox"></div>
+    <div class="actions" style="margin-top:16px">
+      <button class="btn" type="button" id="prevBtn">Preview the press kit</button>
+    </div>
+    <iframe class="prev" id="prev" title="Preview"></iframe>
+  </div>
+
+  <!-- ============ publish ============ -->
+  <div class="card" id="goCard" hidden>
+    <h2>3 · Decide</h2>
+    <div class="actions">
+      <button class="btn go" type="button" id="approve">✓ Approve &amp; publish</button>
+      <button class="btn no" type="button" id="reject">✕ Reject</button>
+    </div>
+    <div class="said" id="said"></div>
+    <p class="hint">
+      Approve writes <code>data/lta-epk.json</code> straight to the site using the token
+      already saved in Admin — the same one the rest of Admin uses. The site rebuilds in
+      about a minute. Reject just clears this page; nothing is sent back to the band, so
+      tell them yourself.
+    </p>
+  </div>
+</div>
+
+<script src="/js/lta-epk.js"></script>
+<script>
+(function () {
+  var GH = { owner: 'TaikoGames', repo: 'MikiDrummerWebsite', branch: 'main' };
+  var SRC = '/data/lta-epk.json';
+  var $ = function (id) { return document.getElementById(id); };
+  var live = null, incoming = null;
+
+  function say(el, msg, kind) {
+    var e = $(el); e.textContent = msg;
+    e.className = 'said' + (kind ? ' ' + kind : '');
+  }
+  function token() { return localStorage.getItem('gh_token') || ''; }
+  function b64(s) { return btoa(unescape(encodeURIComponent(s))); }
+
+  fetch(SRC, { cache: 'no-store' }).then(function (r) { return r.json(); })
+    .then(function (d) { live = d; })
+    .catch(function () { say('parseSaid', 'Could not load what is currently live.', 'err'); });
+
+  // ---- read whatever they pasted ------------------------------------------
+  // The email carries a summary above the file, so take the JSON out of
+  // whatever is around it rather than making them tidy it up first.
+  function extract(raw) {
+    var s = String(raw || '').trim();
+    if (!s) throw new Error('nothing pasted');
+    try { return JSON.parse(s); } catch (e) {}
+    var a = s.indexOf('{'), b = s.lastIndexOf('}');
+    if (a > -1 && b > a) {
+      try { return JSON.parse(s.slice(a, b + 1)); } catch (e) {}
+    }
+    throw new Error('that does not contain a press kit file');
+  }
+
+  function sane(d) {
+    if (!d || typeof d !== 'object') return 'not a press kit file';
+    if (!d.live || !Array.isArray(d.live.tracks)) return 'no live set in it';
+    if (!Array.isArray(d.photos) || !Array.isArray(d.videos)) return 'photos or videos missing';
+    return null;
+  }
+
+  function check() {
+    var d;
+    try { d = extract($('in').value); }
+    catch (e) { say('parseSaid', e.message + '.', 'err'); return; }
+    var bad = sane(d);
+    if (bad) { say('parseSaid', 'Cannot use this — ' + bad + '.', 'err'); return; }
+    if (!live) { say('parseSaid', 'Still loading what is live — try again in a moment.', 'warn'); return; }
+    incoming = d;
+    say('parseSaid', 'Read it.', '');
+    say('said', '');
+    showDiff();
+  }
+
+  // ---- the diff, in words -------------------------------------------------
+  function showDiff() {
+    var out = [];
+    var add = function (kind, text) { out.push({ kind: kind, text: text }); };
+
+    if (!!incoming.live.show !== !!live.live.show)
+      add(incoming.live.show ? 'add' : 'del',
+          'Live section turned ' + (incoming.live.show ? 'ON' : 'OFF'));
+
+    ['venue', 'city', 'date', 'blurb'].forEach(function (k) {
+      if ((incoming.live[k] || '') !== (live.live[k] || ''))
+        add('mod', 'Live ' + k + ': "' + (live.live[k] || '') + '" → "' + (incoming.live[k] || '') + '"');
+    });
+
+    var liveByFile = {};
+    live.live.tracks.forEach(function (t) { liveByFile[t.file] = t; });
+    incoming.live.tracks.forEach(function (t) {
+      var was = liveByFile[t.file];
+      if (!was) { add('add', 'New song: ' + t.title); return; }
+      if (!!t.show !== !!was.show) add(t.show ? 'add' : 'del', (t.show ? 'Shows' : 'Hides') + ' "' + was.title + '"');
+      if (t.title !== was.title) add('mod', 'Renames "' + was.title + '" → "' + t.title + '"');
+    });
+    var o1 = live.live.tracks.map(function (t) { return t.file; }).join();
+    var o2 = incoming.live.tracks.map(function (t) { return t.file; }).join();
+    if (o1 !== o2 && o1.split(',').sort().join() === o2.split(',').sort().join())
+      add('mod', 'Reorders the set');
+
+    ['photos', 'videos'].forEach(function (key) {
+      var idOf = function (x) { return key === 'photos' ? x.src : x.embed; };
+      var had = live[key].map(idOf), has = incoming[key].map(idOf);
+      has.forEach(function (id, i) {
+        if (had.indexOf(id) === -1)
+          add('add', 'Adds a ' + key.slice(0, -1) + ': ' +
+              (id.slice(0, 5) === 'data:' ? 'from a phone, ' + Math.round(id.length / 1400) + 'KB' : id));
+        else if (!!incoming[key][i].show !== !!live[key][had.indexOf(id)].show)
+          add(incoming[key][i].show ? 'add' : 'del',
+              (incoming[key][i].show ? 'Shows' : 'Hides') + ' a ' + key.slice(0, -1));
+      });
+      had.forEach(function (id) {
+        if (has.indexOf(id) === -1) add('del', 'Removes a ' + key.slice(0, -1) + ': ' + id.slice(0, 70));
+      });
+    });
+
+    if (JSON.stringify(incoming.bio) !== JSON.stringify(live.bio)) add('mod', 'Edits the bio');
+    if (JSON.stringify(incoming.facts) !== JSON.stringify(live.facts)) add('mod', 'Edits the facts box');
+
+    var ul = $('chg');
+    ul.innerHTML = '';
+    if (!out.length) {
+      ul.innerHTML = '<li class="none">Nothing is different from what is already live.</li>';
+    } else {
+      out.forEach(function (c) {
+        var li = document.createElement('li');
+        li.className = c.kind;
+        li.innerHTML = '<span class="mark">' +
+          (c.kind === 'add' ? '+' : c.kind === 'del' ? '−' : '~') + '</span>';
+        var span = document.createElement('span');
+        span.textContent = c.text;
+        li.appendChild(span);
+        ul.appendChild(li);
+      });
+    }
+    $('chgCount').textContent = out.length ? '(' + out.length + ')' : '';
+
+    // Things worth a second look before publishing.
+    var risks = [];
+    var heavy = JSON.stringify(incoming).length;
+    if (heavy > 900000) risks.push('This file is ' + Math.round(heavy / 1024) +
+      'KB — phone photos are stored inside it. Worth converting them to real image files before this becomes the page everyone downloads.');
+    if (incoming.live.show === false) risks.push('The whole live section will disappear.');
+    var visible = incoming.live.tracks.filter(function (t) { return t.show !== false; }).length;
+    if (!visible) risks.push('Every song is switched off, so the live section will not show at all.');
+    $('riskBox').innerHTML = risks.length
+      ? '<div class="warnbox">' + risks.map(function (r) { return '⚠ ' + r; }).join('<br>') + '</div>' : '';
+
+    $('diffCard').hidden = false;
+    $('goCard').hidden = false;
+  }
+
+  $('checkBtn').addEventListener('click', check);
+  $('pickBtn').addEventListener('click', function () { $('file').click(); });
+  $('file').addEventListener('change', function (e) {
+    var f = e.target.files[0]; if (!f) return;
+    f.text().then(function (t) { $('in').value = t; check(); });
+    e.target.value = '';
+  });
+  ['dragover', 'drop'].forEach(function (n) {
+    document.addEventListener(n, function (e) { e.preventDefault(); });
+  });
+  document.addEventListener('drop', function (e) {
+    var f = e.dataTransfer.files[0]; if (!f) return;
+    f.text().then(function (t) { $('in').value = t; check(); });
+  });
+
+  $('prevBtn').addEventListener('click', function () {
+    var f = $('prev');
+    if (!f.classList.contains('on')) {
+      f.src = '/lift-the-anchor-epk.html';
+      f.classList.add('on');
+      f.onload = function () { f.contentWindow.postMessage({ ltaPreview: incoming }, location.origin); };
+      $('prevBtn').textContent = 'Update the preview';
+    } else {
+      f.contentWindow.postMessage({ ltaPreview: incoming }, location.origin);
+    }
+  });
+
+  $('reject').addEventListener('click', function () {
+    incoming = null;
+    $('in').value = '';
+    $('diffCard').hidden = true;
+    $('goCard').hidden = true;
+    $('prev').classList.remove('on');
+    say('parseSaid', 'Cleared. Nothing was published, and the band was not told — that is your message to send.', 'warn');
+  });
+
+  $('approve').addEventListener('click', function () {
+    if (!incoming) return;
+    if (!token()) {
+      say('said', 'No token saved. Open Admin, connect there, then come back — this page uses the same one.', 'err');
+      return;
+    }
+    var btn = $('approve'), was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Publishing…';
+
+    var headers = {
+      'Authorization': 'Bearer ' + token(),
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    };
+    var path = 'data/lta-epk.json';
+    var body = JSON.stringify(incoming, null, 2) + '\n';
+
+    // Read the current sha first: without it GitHub refuses to overwrite, and
+    // with a stale one it refuses too — which is the protection against
+    // publishing over a change that landed while this page was open.
+    fetch('https://api.github.com/repos/' + GH.owner + '/' + GH.repo + '/contents/' + path +
+          '?ref=' + GH.branch, { headers: headers, cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (cur) {
+        var payload = {
+          message: 'LTA press kit: changes from the band',
+          content: b64(body),
+          branch: GH.branch
+        };
+        if (cur && cur.sha) payload.sha = cur.sha;
+        return fetch('https://api.github.com/repos/' + GH.owner + '/' + GH.repo + '/contents/' + path,
+          { method: 'PUT', headers: headers, body: JSON.stringify(payload) });
+      })
+      .then(function (r) {
+        btn.disabled = false; btn.textContent = was;
+        if (r.ok) {
+          say('said', 'Published. The site rebuilds in about a minute.');
+          live = JSON.parse(JSON.stringify(incoming));
+          showDiff();
+          return;
+        }
+        if (r.status === 401) { say('said', 'The token was rejected — it may have expired. Reconnect in Admin.', 'err'); return; }
+        if (r.status === 404) { say('said', 'That token cannot write to this repository. Check it in Admin.', 'err'); return; }
+        if (r.status === 409) { say('said', 'The file changed on GitHub while this page was open. Reload and check the changes again.', 'err'); return; }
+        r.json().then(function (j) { say('said', 'GitHub said ' + r.status + ': ' + (j.message || ''), 'err'); })
+                .catch(function () { say('said', 'GitHub said ' + r.status + '.', 'err'); });
+      })
+      .catch(function (e) {
+        btn.disabled = false; btn.textContent = was;
+        say('said', 'Could not reach GitHub: ' + e.message, 'err');
+      });
+  });
+})();
+</script>
+</body>
+</html>
