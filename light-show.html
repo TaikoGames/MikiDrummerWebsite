@@ -205,27 +205,79 @@
   var $ = function(id){ return document.getElementById(id); };
 
   // ---------------------------------------------------------------- zones
-  // Coordinates are normalised to the 1:1 artwork, so they hold at any size.
+  // Coordinates are normalised to the artwork, so they hold at any size.
   // shape: ellipse blooms composited with 'lighter' over the base image.
-  var ZONES = [
-    { id:'city',    name:'City lights',   color:'#ff9a3c', x:0.50, y:0.775, rx:0.52, ry:0.17, src:'low',  gain:1.25, floor:0.05, decay:0.16, max:1.00 },
-    { id:'pyramid', name:'Pyramid',       color:'#ffd08a', x:0.50, y:0.470, rx:0.22, ry:0.13, src:'mid',  gain:1.15, floor:0.06, decay:0.10, max:0.95 },
-    { id:'chasm',   name:'Chasm fire',    color:'#ff6a2a', x:0.495,y:0.945, rx:0.11, ry:0.055,src:'low',  gain:1.40, floor:0.06, decay:0.13, max:1.00 },
-    { id:'sky',     name:'Sky / nebula',  color:'#7ea8ff', x:0.50, y:0.150, rx:0.62, ry:0.20, src:'high', gain:1.30, floor:0.04, decay:0.22, max:0.80 },
-    { id:'moonL',   name:'Left planet',   color:'#9fc4ff', x:0.085,y:0.290, rx:0.085,ry:0.085,src:'high', gain:1.20, floor:0.05, decay:0.18, max:0.85 },
-    { id:'moonR',   name:'Right planet',  color:'#9fc4ff', x:0.740,y:0.305, rx:0.080,ry:0.080,src:'mid',  gain:1.20, floor:0.05, decay:0.18, max:0.85 },
-    { id:'logo',    name:'GRANITE logo',  color:'#ffffff', x:0.480,y:0.200, rx:0.46, ry:0.095,src:'mid',  gain:1.10, floor:0.10, decay:0.08, max:0.70 }
-  ];
+  //
+  // One engine, one set of zones per band. ?band=lta switches artwork, zones,
+  // palette and saved setup; no parameter is Granite, exactly as before —
+  // same zones and the same storage key, so a rig already set up at a venue
+  // keeps its mapping.
+  var BANDS = {
+    granite: {
+      label: 'GRANITE',
+      art: '/images/granite/cosmos-artwork.jpg',
+      store: 'graniteLightShow:v1',
+      lead: "Feeds the Behringer's outputs into the artwork: each output drives its own lights on the image, live.",
+      zones: [
+        { id:'city',    name:'City lights',   color:'#ff9a3c', x:0.50, y:0.775, rx:0.52, ry:0.17, src:'low',  gain:1.25, floor:0.05, decay:0.16, max:1.00 },
+        { id:'pyramid', name:'Pyramid',       color:'#ffd08a', x:0.50, y:0.470, rx:0.22, ry:0.13, src:'mid',  gain:1.15, floor:0.06, decay:0.10, max:0.95 },
+        { id:'chasm',   name:'Chasm fire',    color:'#ff6a2a', x:0.495,y:0.945, rx:0.11, ry:0.055,src:'low',  gain:1.40, floor:0.06, decay:0.13, max:1.00 },
+        { id:'sky',     name:'Sky / nebula',  color:'#7ea8ff', x:0.50, y:0.150, rx:0.62, ry:0.20, src:'high', gain:1.30, floor:0.04, decay:0.22, max:0.80 },
+        { id:'moonL',   name:'Left planet',   color:'#9fc4ff', x:0.085,y:0.290, rx:0.085,ry:0.085,src:'high', gain:1.20, floor:0.05, decay:0.18, max:0.85 },
+        { id:'moonR',   name:'Right planet',  color:'#9fc4ff', x:0.740,y:0.305, rx:0.080,ry:0.080,src:'mid',  gain:1.20, floor:0.05, decay:0.18, max:0.85 },
+        { id:'logo',    name:'GRANITE logo',  color:'#ffffff', x:0.480,y:0.200, rx:0.46, ry:0.095,src:'mid',  gain:1.10, floor:0.10, decay:0.08, max:0.70 }
+      ]
+    },
+    // Lift the Anchor have no album art, so the band photo is the canvas and
+    // the three of them are the lights: whoever is loudest lights up. The wall
+    // behind carries the rest — the red tag for the kick, the white pieces
+    // either side for cymbals, the door for everything in the middle.
+    // The three player zones are tall ellipses over each figure; positions
+    // measured off images/lift-the-anchor/hero.jpg.
+    lta: {
+      label: 'Lift the Anchor',
+      art: '/images/lift-the-anchor/hero.jpg',
+      store: 'ltaLightShow:v1',
+      lead: "Feeds the desk's outputs into the band photo: each output lights up whoever it belongs to, live.",
+      zones: [
+        { id:'left',    name:'Left player',   color:'#e8672a', x:0.235,y:0.560, rx:0.115,ry:0.430,src:'mid',  gain:1.20, floor:0.05, decay:0.12, max:0.95 },
+        { id:'centre',  name:'Centre player', color:'#ffb066', x:0.500,y:0.560, rx:0.125,ry:0.450,src:'mid',  gain:1.20, floor:0.05, decay:0.12, max:0.95 },
+        { id:'right',   name:'Right player',  color:'#ff8a3c', x:0.762,y:0.560, rx:0.120,ry:0.430,src:'high', gain:1.20, floor:0.05, decay:0.12, max:0.95 },
+        { id:'tag',     name:'Red tag',       color:'#ff3b30', x:0.205,y:0.055, rx:0.135,ry:0.055,src:'low',  gain:1.45, floor:0.06, decay:0.15, max:1.00 },
+        { id:'wallL',   name:'Graffiti left', color:'#9fc4ff', x:0.045,y:0.450, rx:0.070,ry:0.320,src:'high', gain:1.25, floor:0.04, decay:0.20, max:0.85 },
+        { id:'wallR',   name:'Graffiti right',color:'#9fc4ff', x:0.935,y:0.360, rx:0.085,ry:0.270,src:'high', gain:1.25, floor:0.04, decay:0.20, max:0.85 },
+        { id:'door',    name:'Door',          color:'#ffd08a', x:0.512,y:0.140, rx:0.145,ry:0.125,src:'low',  gain:1.30, floor:0.06, decay:0.16, max:0.90 }
+      ]
+    }
+  };
+  var BAND_KEY = (function(){
+    var want = (new URLSearchParams(location.search).get('band') || '').toLowerCase();
+    return Object.prototype.hasOwnProperty.call(BANDS, want) ? want : 'granite';
+  })();
+  var BAND = BANDS[BAND_KEY];
+  var ZONES = BAND.zones;
   var DEFAULTS = JSON.parse(JSON.stringify(ZONES));
-  var STORE = 'graniteLightShow:v1';
+  var STORE = BAND.store;
+
+  (function nameThePage(){
+    document.title = BAND.label + ' Light Show — Miki Drummer';
+    var h = document.querySelector('h1');
+    if (h) h.textContent = BAND.label + ' Light Show';
+    var lead = document.querySelector('p.lead');
+    if (lead) {
+      lead.innerHTML = BAND.lead +
+        ' Plug the mixer in over USB, pick it below, map outputs to zones, then hit ' +
+        '<b>Show mode</b> and put it on the projector.';
+    }
+  })();
 
   // ---------------------------------------------------------------- canvas
   var cv = $('stage'), ctx = cv.getContext('2d');
   var art = new Image();
   var artReady = false;
   art.onload = function(){ artReady = true; cv.width = art.naturalWidth; cv.height = art.naturalHeight; draw(); };
-  art.onerror = function(){ setStatus('audioStatus','Artwork failed to load — check /images/granite/cosmos-artwork.jpg','err'); };
-  art.src = '/images/granite/cosmos-artwork.jpg';
+  art.onerror = function(){ setStatus('audioStatus','Artwork failed to load — check ' + BAND.art,'err'); };
+  art.src = BAND.art;
 
   function hexToRgb(h){
     var m = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(h);
