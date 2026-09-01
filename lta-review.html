@@ -75,6 +75,25 @@
     is different, a preview of the real page with it applied, and one button that publishes it.
   </p>
 
+  <!-- ============ connection ============ -->
+  <div class="card" id="connCard">
+    <h2>Access <span id="connTag" style="color:var(--stone-400);font-weight:400"></span></h2>
+    <div class="said" id="connSaid" style="margin-top:0">Checking…</div>
+    <div id="connFix" hidden>
+      <input type="text" id="tok" placeholder="Paste a GitHub token" autocomplete="off" spellcheck="false"
+             style="margin-top:10px;width:100%;background:var(--stone-850);color:var(--stone-100);border:1px solid var(--edge);border-radius:9px;padding:10px 12px;font-size:14px;font-family:ui-monospace,monospace">
+      <div class="actions">
+        <button class="btn" type="button" id="tokSave">Save &amp; check</button>
+        <a class="btn" href="https://github.com/settings/tokens/new?scopes=public_repo&amp;description=Miki%20site%20admin" target="_blank" rel="noopener">Get a classic token ↗</a>
+      </div>
+      <p class="hint">
+        A token lives in one browser only &mdash; connecting on the laptop does not connect the
+        phone. The quickest one that works here is a <b>classic</b> token with the
+        <code>public_repo</code> scope; the button above opens it with that already ticked.
+      </p>
+    </div>
+  </div>
+
   <!-- ============ paste ============ -->
   <div class="card">
     <h2>1 · What they sent</h2>
@@ -130,6 +149,71 @@
     e.className = 'said' + (kind ? ' ' + kind : '');
   }
   function token() { return localStorage.getItem('gh_token') || ''; }
+
+  // ---- say exactly what is wrong, before he has read anything -------------
+  // "The token was rejected" is four different problems wearing one coat: no
+  // token on this device, an expired one, one that cannot see this repository,
+  // and one that can read but not write. Each needs a different fix, so each
+  // gets its own sentence — and the fix is on this page rather than a trip to
+  // Admin and back.
+  var canWrite = false;
+  function checkToken() {
+    var t = token();
+    if (!t) {
+      canWrite = false;
+      $('connTag').textContent = 'not connected';
+      say('connSaid', 'No token saved in this browser. A token is per-browser, so if you connected on ' +
+                      'the laptop, this phone still needs its own.', 'warn');
+      $('connFix').hidden = false;
+      return Promise.resolve(false);
+    }
+    say('connSaid', 'Checking…', '');
+    return fetch('https://api.github.com/repos/' + GH.owner + '/' + GH.repo,
+                 { headers: { 'Authorization': 'Bearer ' + t, 'Accept': 'application/vnd.github+json' },
+                   cache: 'no-store' })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('The token was rejected by GitHub — expired, revoked, or a character lost in the paste.');
+        if (r.status === 404) throw new Error('That token cannot see ' + GH.owner + '/' + GH.repo +
+          '. GitHub answers 404 rather than 403 here, so this is almost always access, not a missing repo. ' +
+          'A fine-grained token must name ' + GH.owner + ' as its resource owner, list this repository, ' +
+          'and carry Contents: Read and write. A classic token with public_repo is quicker.');
+        if (!r.ok) throw new Error('GitHub answered ' + r.status + '.');
+        return r.json();
+      })
+      .then(function (info) {
+        if (info.permissions && info.permissions.push === false)
+          throw new Error('This token can read the repository but not write to it — it needs Contents: Read and write.');
+        canWrite = true;
+        $('connTag').textContent = 'connected';
+        say('connSaid', 'Connected as a writer. Approve will publish.', '');
+        $('connFix').hidden = true;
+        return true;
+      })
+      .catch(function (e) {
+        canWrite = false;
+        $('connTag').textContent = 'not working';
+        say('connSaid', e.message, 'err');
+        $('connFix').hidden = false;
+        return false;
+      });
+  }
+  checkToken();
+  // Connecting in Admin in another tab, then coming back here, should not need
+  // a reload to notice — and neither should a token that expired while the
+  // page sat open.
+  var lastSeen = token();
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) return;
+    if (token() !== lastSeen || !canWrite) { lastSeen = token(); checkToken(); }
+  });
+  $('tokSave').addEventListener('click', function () {
+    var t = ($('tok').value || '').trim();
+    if (!t) { say('connSaid', 'Paste the token first.', 'warn'); return; }
+    localStorage.setItem('gh_token', t);
+    lastSeen = t;
+    $('tok').value = '';
+    checkToken();
+  });
   function b64(s) { return btoa(unescape(encodeURIComponent(s))); }
 
   fetch(SRC, { cache: 'no-store' }).then(function (r) { return r.json(); })
@@ -368,8 +452,10 @@
 
   $('approve').addEventListener('click', function () {
     if (!incoming) return;
-    if (!token()) {
-      say('said', 'No token saved. Open Admin, connect there, then come back — this page uses the same one.', 'err');
+    if (!canWrite) {
+      say('said', 'Not connected — see Access at the top of this page. Nothing was published.', 'err');
+      checkToken();
+      $('connCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
     var btn = $('approve'), was = btn.textContent;
@@ -410,8 +496,12 @@
           showDiff();
           return;
         }
-        if (r.status === 401) { say('said', 'The token was rejected — it may have expired. Reconnect in Admin.', 'err'); return; }
-        if (r.status === 404) { say('said', 'That token cannot write to this repository. Check it in Admin.', 'err'); return; }
+        if (r.status === 401 || r.status === 404) {
+          say('said', 'GitHub refused the write. Details under Access at the top.', 'err');
+          checkToken();
+          $('connCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
         if (r.status === 409) { say('said', 'The file changed on GitHub while this page was open. Reload and check the changes again.', 'err'); return; }
         r.json().then(function (j) { say('said', 'GitHub said ' + r.status + ': ' + (j.message || ''), 'err'); })
                 .catch(function () { say('said', 'GitHub said ' + r.status + '.', 'err'); });
