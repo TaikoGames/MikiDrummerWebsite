@@ -22,6 +22,8 @@
   .wrap{max-width:1120px;margin:0 auto}
   .top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
   .eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--molten);font-weight:700}
+  .bandswitch{margin-left:14px}
+  .bandswitch .back{margin-left:0}
   .back{color:var(--stone-400);font-size:13px;text-decoration:none}
   .back:hover{color:var(--molten)}
   h1{font-family:"Arial Black","Helvetica Neue",system-ui,sans-serif;
@@ -113,6 +115,9 @@
   <div class="top hideable">
     <span class="eyebrow">Miki Drummer · Private</span>
     <a class="back" href="/admin.html">← Admin</a>
+    <!-- Filled in by the band picker below, so the other band is one tap away
+         at a venue rather than a URL to remember and type on a phone. -->
+    <span class="bandswitch" id="bandSwitch"></span>
   </div>
   <h1 class="hideable">GRANITE Light Show</h1>
   <p class="lead hideable">
@@ -268,6 +273,17 @@
       lead.innerHTML = BAND.lead +
         ' Plug the mixer in over USB, pick it below, map outputs to zones, then hit ' +
         '<b>Show mode</b> and put it on the projector.';
+    }
+    var sw = document.getElementById('bandSwitch');
+    if (sw) {
+      Object.keys(BANDS).forEach(function(key){
+        if (key === BAND_KEY) return;
+        var a = document.createElement('a');
+        a.className = 'back';
+        a.href = key === 'granite' ? '/light-show.html' : '/light-show.html?band=' + key;
+        a.textContent = BANDS[key].label + ' →';
+        sw.appendChild(a);
+      });
     }
   })();
 
