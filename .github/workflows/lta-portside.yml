@@ -1,0 +1,58 @@
+name: LTA Portside live audio
+
+# Fetches the 29 Aug 2026 Portside set out of Drive and commits it as MP3.
+#
+# Runs here rather than anywhere else for two reasons: the runner can reach
+# Drive, and it has ffmpeg. Neither is true of the sandbox this was written in.
+#
+# Dispatch only. It moves ~440MB of WAV and commits ~45MB of MP3, which is not
+# something to do on a timer.
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Re-download and re-encode everything, not just what is missing"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lta-portside
+  cancel-in-progress: false
+
+jobs:
+  audio:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Check ffmpeg is here
+        run: ffmpeg -version | head -1 && ffprobe -version | head -1
+
+      - name: Check the script
+        run: python tools/fetch_portside.py --self-test
+
+      - name: Fetch and encode the set
+        run: python tools/fetch_portside.py ${{ github.event.inputs.force == 'true' && '--force' || '' }}
+
+      - name: Commit the audio
+        run: |
+          if [ -z "$(git status --porcelain audio/live)" ]; then
+            echo "no change"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audio/live
+          git commit -m "LTA: live at The Portside Pub, 29 Aug 2026"
+          git pull --rebase --autostash origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
