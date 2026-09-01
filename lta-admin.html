@@ -174,6 +174,10 @@
   <!-- ============ send ============ -->
   <div class="card">
     <h2>Send the changes</h2>
+    <div class="factrow" style="margin-bottom:6px">
+      <input type="text" id="who" placeholder="Your name">
+      <input type="text" id="whoMail" placeholder="Your email — so Miki can reply">
+    </div>
     <div class="actions">
       <button class="btn primary" type="button" id="sendBtn">Send to Miki</button>
       <button class="btn" type="button" id="dlBtn">Download the file</button>
@@ -358,6 +362,10 @@
   });
   document.addEventListener('input', function (e) {
     var t = e.target, d = t.dataset;
+    if (t.id === 'who' || t.id === 'whoMail') {
+      try { localStorage.setItem('ltaWho', JSON.stringify(whoAmI())); } catch (err) {}
+      return;
+    }
     // Typing must not re-render: it would move the caret to the end on every key.
     if (d.title  !== undefined) { data.live.tracks[+d.title].title = t.value; }
     else if (d.vtitle !== undefined) { data.videos[+d.vtitle].title = t.value; }
@@ -435,6 +443,10 @@
     say('Preview updated.');
   });
 
+  function whoAmI() {
+    return { name: ($('who').value || '').trim(), email: ($('whoMail').value || '').trim() };
+  }
+
   function stash() {
     $('out').value = JSON.stringify(data, null, 2);
     try { localStorage.setItem(STORE, JSON.stringify(data)); } catch (e) {}
@@ -492,6 +504,7 @@
   var LINK_CAP = 60000;
   function reviewLink() {
     var slim = JSON.parse(JSON.stringify(data));
+    slim.from = whoAmI();
     var omitted = 0;
     slim.photos = slim.photos.filter(function (p) {
       if (String(p.src || '').slice(0, 5) === 'data:') { omitted++; return false; }
@@ -516,8 +529,8 @@
         approve: reviewLink() ||
           'Open https://www.mikidrummer.ca/lta-review.html and drop the attached file in ' +
           '(too big for a one-click link — it has photos in it).',
-        summary: summarise(),
-        file: JSON.stringify(data, null, 2)
+        summary: preview(),
+        file: JSON.stringify(Object.assign({}, data, { from: whoAmI() }), null, 2)
       })
     }).then(function (r) {
       btn.disabled = false; btn.textContent = was;
@@ -528,6 +541,57 @@
       say('No connection. Use Download the file and message it to him instead.', 'err');
     });
   });
+
+  // The email cannot run the page, so this is the preview: the press kit as it
+  // will read, written out. Ticks are what a visitor will see, crosses are what
+  // was switched off. Anyone can check this on a phone without opening anything.
+  function preview() {
+    var L = [];
+    var me = whoAmI();
+    L.push('CHANGES FROM ' + (me.name || 'the band').toUpperCase());
+    if (me.email) L.push('Reply to: ' + me.email);
+    L.push('');
+    L.push('THE PRESS KIT WILL READ:');
+    L.push('');
+    if (!data.live.show) {
+      L.push('LIVE — hidden completely');
+    } else {
+      var head = [data.live.venue, data.live.city, data.live.date].filter(Boolean).join(' \u00b7 ');
+      L.push('LIVE — ' + (head || 'the live set'));
+      var n = 0;
+      data.live.tracks.forEach(function (t) {
+        if (t.show) { n++; L.push('  \u2713 ' + n + '. ' + t.title + '   ' + t.length); }
+        else        { L.push('  \u2717    ' + t.title + '   ' + t.length + '   (hidden)'); }
+      });
+      if (!n) L.push('  (every song is off, so this section will not show)');
+    }
+    L.push('');
+    var newP = data.photos.filter(function (p) { return p.added; }).length;
+    var onP  = data.photos.filter(function (p) { return p.show !== false; }).length;
+    L.push('PHOTOS: ' + onP + ' showing' + (newP ? ', ' + newP + ' new' : ''));
+    data.photos.forEach(function (p) {
+      L.push('  ' + (p.show === false ? '\u2717' : '\u2713') + ' ' +
+             (String(p.src).slice(0, 5) === 'data:'
+               ? (p.name || 'photo from a phone') + ' (' + Math.round(p.src.length / 1400) + 'KB)'
+               : p.src));
+    });
+    L.push('');
+    L.push('VIDEOS: ' + data.videos.filter(function (v) { return v.show !== false; }).length + ' showing');
+    data.videos.forEach(function (v) {
+      L.push('  ' + (v.show === false ? '\u2717' : '\u2713') + ' ' + (v.title || v.embed));
+    });
+    L.push('');
+    L.push('BIO: ' + data.bio.length + ' paragraph(s)');
+    data.bio.forEach(function (b, i) {
+      L.push('  ' + (i + 1) + '. ' + String(b).slice(0, 110) + (String(b).length > 110 ? '\u2026' : ''));
+    });
+    L.push('');
+    data.facts.forEach(function (f) { L.push('  ' + f.k + ': ' + f.v); });
+    L.push('');
+    L.push('--- WHAT CHANGED ---');
+    L.push(summarise());
+    return L.join('\n');
+  }
 
   // A human-readable line at the top of the email, so the change is obvious
   // without reading JSON.
@@ -556,6 +620,10 @@
       var usable = saved && saved.live && Array.isArray(saved.live.tracks) &&
                    saved.live.tracks.length === live.live.tracks.length;
       data = usable ? saved : JSON.parse(JSON.stringify(live));
+      try {
+        var who = JSON.parse(localStorage.getItem('ltaWho') || 'null');
+        if (who) { $('who').value = who.name || ''; $('whoMail').value = who.email || ''; }
+      } catch (e) {}
       if (usable) say('Picked up where you left off — Undo my changes goes back to the site.', 'warn');
       render();
     })

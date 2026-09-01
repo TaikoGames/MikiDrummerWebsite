@@ -103,14 +103,16 @@
     <h2>3 · Decide</h2>
     <div class="actions">
       <button class="btn go" type="button" id="approve">✓ Approve &amp; publish</button>
-      <button class="btn no" type="button" id="reject">✕ Reject</button>
+      <button class="btn no" type="button" id="reject">✕ Reject &amp; tell them</button>
     </div>
+    <input type="text" id="why" placeholder="Why? (goes in the reply — optional)" style="margin-top:12px;width:100%;background:var(--stone-850);color:var(--stone-100);border:1px solid var(--edge);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit">
     <div class="said" id="said"></div>
     <p class="hint">
       Approve writes <code>data/lta-epk.json</code> straight to the site using the token
       already saved in Admin — the same one the rest of Admin uses. The site rebuilds in
-      about a minute. Reject just clears this page; nothing is sent back to the band, so
-      tell them yourself.
+      about a minute. Reject opens a reply to whoever sent it, with your reason and the
+      set list already in it &mdash; nothing is published and nothing is lost, they can edit
+      and send again.
     </p>
   </div>
 </div>
@@ -214,8 +216,18 @@
     if (JSON.stringify(incoming.bio) !== JSON.stringify(live.bio)) add('mod', 'Edits the bio');
     if (JSON.stringify(incoming.facts) !== JSON.stringify(live.facts)) add('mod', 'Edits the facts box');
 
+    var who = incoming.from || {};
+    $('chgCount').title = '';
     var ul = $('chg');
     ul.innerHTML = '';
+    if (who.name || who.email) {
+      var li0 = document.createElement('li');
+      li0.innerHTML = '<span class="mark">@</span>';
+      var s0 = document.createElement('span');
+      s0.textContent = 'From ' + (who.name || 'the band') + (who.email ? ' <' + who.email + '>' : '');
+      li0.appendChild(s0);
+      ul.appendChild(li0);
+    }
     if (!out.length) {
       ul.innerHTML = '<li class="none">Nothing is different from what is already live.</li>';
     } else {
@@ -307,14 +319,51 @@
   // fragment, which is not a page load — without this, nothing would happen.
   window.addEventListener('hashchange', function () { fromLink(); });
 
+  // Rejecting is a message to a person, not a state change: nothing was
+  // published, so there is nothing to undo. It hands the reply to the mail app
+  // already written — including which songs they had switched off, so they can
+  // see what was being turned down without opening anything.
   $('reject').addEventListener('click', function () {
+    if (!incoming) return;
+    var from = incoming.from || {};
+    var why = ($('why').value || '').trim();
+    var lines = [];
+    lines.push('Hi' + (from.name ? ' ' + from.name : '') + ',');
+    lines.push('');
+    lines.push('Thanks for the press kit changes — I have not put these live.');
+    if (why) { lines.push(''); lines.push(why); }
+    lines.push('');
+    lines.push('What you sent:');
+    (incoming.live.tracks || []).forEach(function (t) {
+      lines.push('  ' + (t.show === false ? '(hidden) ' : '') + t.title);
+    });
+    lines.push('');
+    lines.push('Your edits are still saved in the editor, so you can change it and send again:');
+    lines.push('https://www.mikidrummer.ca/lta-admin.html');
+    lines.push('');
+    lines.push('Miki');
+
+    var href = 'mailto:' + encodeURIComponent(from.email || '') +
+      '?subject=' + encodeURIComponent('Lift the Anchor press kit — not published yet') +
+      '&body=' + encodeURIComponent(lines.join('\n'));
+
+    if (from.email) {
+      location.href = href;
+      say('said', 'Reply opened' + (from.name ? ' to ' + from.name : '') + '. Nothing was published.', 'warn');
+    } else {
+      // They did not fill their address in, so there is nobody to write to —
+      // say that plainly rather than opening an empty mail window.
+      say('said', 'Nothing published. They did not leave an email in the editor, ' +
+                  'so tell them however you normally would.', 'warn');
+    }
+
     if (location.hash) history.replaceState(null, '', location.pathname);
     incoming = null;
     $('in').value = '';
+    $('why').value = '';
     $('diffCard').hidden = true;
     $('goCard').hidden = true;
     $('prev').classList.remove('on');
-    say('parseSaid', 'Cleared. Nothing was published, and the band was not told — that is your message to send.', 'warn');
   });
 
   $('approve').addEventListener('click', function () {
