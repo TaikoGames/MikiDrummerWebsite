@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Brutal Youth & The Anti-Queens",
-      "date": "2026-09-01",
-      "time": "21:00",
-      "venue": "The Blue Grotto Nightclub",
-      "city": "Kelowna",
-      "price": "",
-      "ticket": "https://www.showpass.com/the-anti-queens-and-brutal-youth/",
-      "genre": "Punk",
-      "notes": "",
-      "image": "https://dcm1eeuyachdi.cloudfront.net/fit-in/3840x3840/filters:quality(100):format(webp)/media/images/events/rocksteady-industries/img-banner/0fb9a9ef-0d9.png"
-    },
-    {
       "band": "Belvedere / The Anti Queens / Brutal Youth",
       "date": "2026-09-03",
       "time": "19:00",
