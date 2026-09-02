@@ -9,7 +9,7 @@
     "blurb": "recorded off the desk. No overdubs.",
     "tracks": [
       {
-        "title": "Hello RPM",
+        "title": "Hello RPM1",
         "file": "hello-rpm.mp3",
         "length": "3:46",
         "show": true
@@ -98,5 +98,9 @@
       "k": "For fans of",
       "v": "Sum 41 · Silverstein · Four Year Strong · Papa Roach"
     }
-  ]
+  ],
+  "from": {
+    "name": "",
+    "email": ""
+  }
 }
