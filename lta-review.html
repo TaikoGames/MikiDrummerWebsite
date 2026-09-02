@@ -201,11 +201,14 @@
   // Connecting in Admin in another tab, then coming back here, should not need
   // a reload to notice — and neither should a token that expired while the
   // page sat open.
+  // Two windows side by side never go hidden, so focus has to count too.
   var lastSeen = token();
-  document.addEventListener('visibilitychange', function () {
+  function recheck() {
     if (document.hidden) return;
     if (token() !== lastSeen || !canWrite) { lastSeen = token(); checkToken(); }
-  });
+  }
+  document.addEventListener('visibilitychange', recheck);
+  window.addEventListener('focus', recheck);
   $('tokSave').addEventListener('click', function () {
     var t = ($('tok').value || '').trim();
     if (!t) { say('connSaid', 'Paste the token first.', 'warn'); return; }
@@ -461,14 +464,29 @@
     $('prev').classList.remove('on');
   });
 
+  // Approve never gives up on the first "not connected". canWrite is only ever
+  // a snapshot — of the last check, which may predate a token pasted since, a
+  // network that has come back, or a connection made in another tab. Telling
+  // him it is not connected while the panel above says it is, is exactly the
+  // "keeps rejecting the token" he reported. So: re-check, and if that comes
+  // back good, publish. Only a check that genuinely fails stops the button.
   $('approve').addEventListener('click', function () {
     if (!incoming) return;
     if (!canWrite) {
-      say('said', 'Not connected — see Access at the top of this page. Nothing was published.', 'err');
-      checkToken();
-      $('connCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      say('said', 'Checking the connection…', '');
+      $('approve').disabled = true;
+      checkToken().then(function (ok) {
+        $('approve').disabled = false;
+        if (ok) { publish(); return; }
+        say('said', 'Not connected — see Access at the top of this page. Nothing was published.', 'err');
+        $('connCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
       return;
     }
+    publish();
+  });
+
+  function publish() {
     var btn = $('approve'), was = btn.textContent;
     btn.disabled = true; btn.textContent = 'Publishing…';
 
@@ -521,7 +539,7 @@
         btn.disabled = false; btn.textContent = was;
         say('said', 'Could not reach GitHub: ' + e.message, 'err');
       });
-  });
+  }
 })();
 </script>
 </body>
