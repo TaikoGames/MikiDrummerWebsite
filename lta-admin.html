@@ -443,6 +443,41 @@
     say('Preview updated.');
   });
 
+  // A draft saved by an older version of this page is missing whatever had not
+  // been built yet — the first drafts had no bio and no facts box, and reading
+  // .forEach off a field that does not exist took the whole editor down with
+  // "could not load the press kit content", which is both wrong and unhelpful.
+  // Anything absent is filled from what is live, so an old draft opens instead
+  // of breaking, and the parts it never knew about simply start unedited.
+  function normalise(d, live) {
+    d = (d && typeof d === 'object') ? d : {};
+    live = live || {};
+    var L = live.live || {};
+    d.live = (d.live && typeof d.live === 'object') ? d.live : {};
+    // Length alone is not shape: a draft whose tracks are not song objects, or
+    // whose files no longer match what is on the site, renders as a column of
+    // blank rows — which looks like the editor is broken rather than the draft.
+    var good = Array.isArray(d.live.tracks) && d.live.tracks.length === (L.tracks || []).length &&
+               d.live.tracks.every(function (t, i) {
+                 return t && typeof t === 'object' && typeof t.file === 'string' &&
+                        (!L.tracks || !L.tracks[i] || t.file === L.tracks[i].file ||
+                         (L.tracks || []).some(function (x) { return x.file === t.file; }));
+               });
+    if (!good) d.live.tracks = JSON.parse(JSON.stringify(L.tracks || []));
+    if (typeof d.live.show !== 'boolean') d.live.show = L.show !== false;
+    ['venue', 'city', 'date', 'blurb'].forEach(function (k) {
+      if (typeof d.live[k] !== 'string') d.live[k] = L[k] || '';
+    });
+    ['photos', 'videos', 'bio', 'facts'].forEach(function (k) {
+      if (!Array.isArray(d[k])) d[k] = JSON.parse(JSON.stringify(live[k] || []));
+    });
+    d.facts = d.facts.map(function (f) {
+      return (f && typeof f === 'object') ? { k: f.k || '', v: f.v || '' } : { k: '', v: '' };
+    });
+    d.bio = d.bio.map(function (b) { return typeof b === 'string' ? b : String(b || ''); });
+    return d;
+  }
+
   function whoAmI() {
     return { name: ($('who').value || '').trim(), email: ($('whoMail').value || '').trim() };
   }
@@ -612,14 +647,14 @@
   fetch(SRC, { cache: 'no-store' })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (live) {
-      clean = live;
+      clean = normalise(live, live);
       var saved = null;
       try { saved = JSON.parse(localStorage.getItem(STORE) || 'null'); } catch (e) {}
       // A draft is only usable if it still matches the shape of what is live;
       // otherwise the site has moved on and the draft would fight it.
       var usable = saved && saved.live && Array.isArray(saved.live.tracks) &&
                    saved.live.tracks.length === live.live.tracks.length;
-      data = usable ? saved : JSON.parse(JSON.stringify(live));
+      data = usable ? normalise(saved, live) : JSON.parse(JSON.stringify(clean));
       try {
         var who = JSON.parse(localStorage.getItem('ltaWho') || 'null');
         if (who) { $('who').value = who.name || ''; $('whoMail').value = who.email || ''; }
@@ -628,7 +663,21 @@
       render();
     })
     .catch(function (err) {
-      say('Could not load the press kit content (' + err.message + '). Reload, or tell Miki.', 'err');
+      // Whatever went wrong, the one thing that always works is throwing the
+      // draft away — so offer that rather than leaving a dead page.
+      say('Something in your saved draft could not be opened (' + err.message + '). ' +
+          'Press "Start fresh" to drop it and load what is on the site.', 'err');
+      var b = document.createElement('button');
+      b.className = 'btn primary';
+      b.type = 'button';
+      b.textContent = 'Start fresh';
+      b.style.marginTop = '10px';
+      b.addEventListener('click', function () {
+        try { localStorage.removeItem(STORE); } catch (e) {}
+        location.reload();
+      });
+      $('said').appendChild(document.createElement('br'));
+      $('said').appendChild(b);
     });
 })();
 </script>

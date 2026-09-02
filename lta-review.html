@@ -234,6 +234,17 @@
     throw new Error('that does not contain a press kit file');
   }
 
+  // A submission from an older editor has no bio or facts box in it. Filling
+  // them from what is live means the diff says "nothing changed" rather than
+  // inventing an edit that nobody made.
+  function fill(d) {
+    if (!d || !live) return d;
+    ['photos', 'videos', 'bio', 'facts'].forEach(function (k) {
+      if (!Array.isArray(d[k])) d[k] = JSON.parse(JSON.stringify(live[k] || []));
+    });
+    return d;
+  }
+
   function sane(d) {
     if (!d || typeof d !== 'object') return 'not a press kit file';
     if (!d.live || !Array.isArray(d.live.tracks)) return 'no live set in it';
@@ -248,7 +259,7 @@
     var bad = sane(d);
     if (bad) { say('parseSaid', 'Cannot use this — ' + bad + '.', 'err'); return; }
     if (!live) { say('parseSaid', 'Still loading what is live — try again in a moment.', 'warn'); return; }
-    incoming = d;
+    incoming = fill(d);
     say('parseSaid', 'Read it.', '');
     say('said', '');
     showDiff();
