@@ -55,12 +55,58 @@
   },
   "photos": [
     {
-      "src": "images/lift-the-anchor/hero.jpg",
+      "src": "images/lift-the-anchor/feature.jpg",
       "show": true
     },
     {
-      "src": "images/lift-the-anchor/feature.jpg",
+      "src": "images/lift-the-anchor/live-01.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — Guitarist and vocalist",
       "show": true
+    },
+    {
+      "src": "images/lift-the-anchor/live-02.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — Drummer behind the kit",
+      "show": true
+    },
+    {
+      "src": "images/lift-the-anchor/live-03.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — Vocalist and bassist",
+      "show": true
+    },
+    {
+      "src": "images/lift-the-anchor/live-04.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — Guitar and drums under the lights",
+      "show": true
+    },
+    {
+      "src": "images/lift-the-anchor/live-05.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — Singing at the microphone",
+      "show": true
+    },
+    {
+      "src": "images/lift-the-anchor/live-06.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — Mid-set",
+      "show": true
+    },
+    {
+      "src": "images/lift-the-anchor/live-07.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — Guitarist side-on",
+      "show": true
+    },
+    {
+      "src": "images/lift-the-anchor/live-08.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — Bassist — head clipped by the frame",
+      "show": false
+    },
+    {
+      "src": "images/lift-the-anchor/live-09.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — Wide, underexposed",
+      "show": false
+    },
+    {
+      "src": "images/lift-the-anchor/live-10.jpg",
+      "alt": "Lift the Anchor at the Portside Pub — From the floor, underexposed",
+      "show": false
     }
   ],
   "videos": [

@@ -129,7 +129,10 @@
         // Something the band added. Built here rather than baked, so it can
         // only ever be an image from a link they pasted.
         shot = doc.createElement('div');
-        shot.className = 'shot feature';
+        // Plain .shot, not .feature. A photo off a phone is nearly always
+        // portrait, and .feature crops to 2:1 — which takes the top off
+        // whoever is in it.
+        shot.className = 'shot';
         var img = doc.createElement('img');
         img.src = src;
         img.alt = p.alt || 'Lift the Anchor';
