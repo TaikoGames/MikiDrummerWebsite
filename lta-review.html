@@ -496,7 +496,13 @@
       'Content-Type': 'application/json'
     };
     var path = 'data/lta-epk.json';
-    var body = JSON.stringify(incoming, null, 2) + '\n';
+    // Who sent it and how many photos the link dropped are facts about the
+    // submission, not about the band. They were being written into the live
+    // content file, where they mean nothing and never get cleaned up.
+    var out = JSON.parse(JSON.stringify(incoming));
+    delete out.from;
+    delete out.photosOmitted;
+    var body = JSON.stringify(out, null, 2) + '\n';
 
     // Read the current sha first: without it GitHub refuses to overwrite, and
     // with a stale one it refuses too — which is the protection against
