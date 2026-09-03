@@ -26,6 +26,18 @@
       "image": "https://assets.exclaim.ca/image/upload/v1703988208/prop7.jpg"
     },
     {
+      "band": "Chief State / Guyliner / The Grouches / The Rip-Offsprings",
+      "date": "2026-09-05",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "Pop Punk Social · Guyliner as MCR · The Grouches play Green Day covers",
+      "image": "https://www.mikidrummer.ca/images/shows/pop-punk-social-2026-09-05.jpg"
+    },
+    {
       "band": "Satanic Surfers",
       "date": "2026-09-09",
       "time": "19:00",
@@ -36,18 +48,6 @@
       "genre": "Punk",
       "notes": "",
       "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1188031941%2F376658818745%2F1%2Foriginal.20260701-200933?crop=focalpoint&fit=crop&w=940&auto=format%2Ccompress&q=75&sharp=10&fp-x=0.494&fp-y=0.014&s=79c2703d3585726112e5c672817ff5bb"
-    },
-    {
-      "band": "Anciients",
-      "date": "2026-09-12",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$24",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Progressive Metal",
-      "notes": "10 Years Of Voice Of The Void. With Tribunal, WORSE, Franklin. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
       "band": "Dismal Outlook",
@@ -62,6 +62,18 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
+      "band": "Anciients",
+      "date": "2026-09-12",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$24",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Progressive Metal",
+      "notes": "10 Years Of Voice Of The Void. With Tribunal, WORSE, Franklin. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
+    },
+    {
       "band": "ATD, Scatterbox and more",
       "date": "2026-09-19",
       "time": "19",
@@ -72,18 +84,6 @@
       "genre": "",
       "notes": "",
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCnETL8kQOMwqqr4mESShO80Aw8FIq-mutJJcfZ1csRw&s"
-    },
-    {
-      "band": "The Spits",
-      "date": "2026-09-20",
-      "time": "19:00",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "",
-      "genre": "",
-      "notes": "Punk",
-      "image": "https://images.squarespace-cdn.com/content/v1/5c6c4858c46f6d31bcc4fb49/1693596257321-8ZZMIPE5BN1J3VYDMLY3/AQ-2023PROMO-michaelxcrusty6.jpg"
     },
     {
       "band": "Unsane",
@@ -98,6 +98,18 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Unsane_2005_red.jpg?width=600"
     },
     {
+      "band": "The Spits",
+      "date": "2026-09-20",
+      "time": "19:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "Punk",
+      "image": "https://images.squarespace-cdn.com/content/v1/5c6c4858c46f6d31bcc4fb49/1693596257321-8ZZMIPE5BN1J3VYDMLY3/AQ-2023PROMO-michaelxcrusty6.jpg"
+    },
+    {
       "band": "Elder",
       "date": "2026-09-21",
       "time": "19:00",
@@ -110,18 +122,6 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
-      "band": "Revocation",
-      "date": "2026-09-22",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$30",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Death Metal",
-      "notes": "With Defeated Sanity, Fuming Mouth, Weeping. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Revocation_at_Alchemica,_Bologna_2.jpg?width=600"
-    },
-    {
       "band": "Delilah Bon",
       "date": "2026-09-22",
       "time": "19:00",
@@ -132,6 +132,18 @@
       "genre": "Punk",
       "notes": "",
       "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg/500px-Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg"
+    },
+    {
+      "band": "Revocation",
+      "date": "2026-09-22",
+      "time": "18:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$30",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Death Metal",
+      "notes": "With Defeated Sanity, Fuming Mouth, Weeping. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Revocation_at_Alchemica,_Bologna_2.jpg?width=600"
     },
     {
       "band": "Covenant Festival XI — Night One",
@@ -290,18 +302,6 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Russ_Rankin_2019_(cropped).jpg?width=600"
     },
     {
-      "band": "Militarie Gun",
-      "date": "2026-10-10",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$20",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Punk",
-      "notes": "With Softcult, Shady Nasty, Dazy. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Militarie-Gun-Roll-4_031.jpg?width=500"
-    },
-    {
       "band": "Corner Boys",
       "date": "2026-10-10",
       "time": "20:00",
@@ -312,6 +312,18 @@
       "genre": "Punk",
       "notes": "",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+    },
+    {
+      "band": "Militarie Gun",
+      "date": "2026-10-10",
+      "time": "18:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$20",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Punk",
+      "notes": "With Softcult, Shady Nasty, Dazy. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Militarie-Gun-Roll-4_031.jpg?width=500"
     },
     {
       "band": "The Menzingers / Hot Water Music",
