@@ -50,18 +50,6 @@
       "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1188031941%2F376658818745%2F1%2Foriginal.20260701-200933?crop=focalpoint&fit=crop&w=940&auto=format%2Ccompress&q=75&sharp=10&fp-x=0.494&fp-y=0.014&s=79c2703d3585726112e5c672817ff5bb"
     },
     {
-      "band": "Dismal Outlook",
-      "date": "2026-09-12",
-      "time": "21:00",
-      "venue": "Capital Ballroom",
-      "city": "Victoria",
-      "price": "$15",
-      "ticket": "",
-      "genre": "Hardcore",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
       "band": "Anciients",
       "date": "2026-09-12",
       "time": "19:00",
@@ -72,6 +60,18 @@
       "genre": "Progressive Metal",
       "notes": "10 Years Of Voice Of The Void. With Tribunal, WORSE, Franklin. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
+    },
+    {
+      "band": "Dismal Outlook",
+      "date": "2026-09-12",
+      "time": "21:00",
+      "venue": "Capital Ballroom",
+      "city": "Victoria",
+      "price": "$15",
+      "ticket": "",
+      "genre": "Hardcore",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
       "band": "ATD, Scatterbox and more",
@@ -86,18 +86,6 @@
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCnETL8kQOMwqqr4mESShO80Aw8FIq-mutJJcfZ1csRw&s"
     },
     {
-      "band": "Unsane",
-      "date": "2026-09-20",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$22",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Noise Rock",
-      "notes": "19+ event",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Unsane_2005_red.jpg?width=600"
-    },
-    {
       "band": "The Spits",
       "date": "2026-09-20",
       "time": "19:00",
@@ -108,6 +96,18 @@
       "genre": "",
       "notes": "Punk",
       "image": "https://images.squarespace-cdn.com/content/v1/5c6c4858c46f6d31bcc4fb49/1693596257321-8ZZMIPE5BN1J3VYDMLY3/AQ-2023PROMO-michaelxcrusty6.jpg"
+    },
+    {
+      "band": "Unsane",
+      "date": "2026-09-20",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$22",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Noise Rock",
+      "notes": "19+ event",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Unsane_2005_red.jpg?width=600"
     },
     {
       "band": "Elder",
@@ -122,18 +122,6 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
-      "band": "Delilah Bon",
-      "date": "2026-09-22",
-      "time": "19:00",
-      "venue": "Hollywood Theatre",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/delilah-bon-live-in-vancouver-/1645162889870380/",
-      "genre": "Punk",
-      "notes": "",
-      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg/500px-Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg"
-    },
-    {
       "band": "Revocation",
       "date": "2026-09-22",
       "time": "18:00",
@@ -144,6 +132,18 @@
       "genre": "Death Metal",
       "notes": "With Defeated Sanity, Fuming Mouth, Weeping. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Revocation_at_Alchemica,_Bologna_2.jpg?width=600"
+    },
+    {
+      "band": "Delilah Bon",
+      "date": "2026-09-22",
+      "time": "19:00",
+      "venue": "Hollywood Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/delilah-bon-live-in-vancouver-/1645162889870380/",
+      "genre": "Punk",
+      "notes": "",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg/500px-Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg"
     },
     {
       "band": "Covenant Festival XI — Night One",
@@ -302,18 +302,6 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Russ_Rankin_2019_(cropped).jpg?width=600"
     },
     {
-      "band": "Corner Boys",
-      "date": "2026-10-10",
-      "time": "20:00",
-      "venue": "Cobalt",
-      "city": "Vancouver",
-      "price": "$10",
-      "ticket": "",
-      "genre": "Punk",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
       "band": "Militarie Gun",
       "date": "2026-10-10",
       "time": "18:00",
@@ -324,6 +312,18 @@
       "genre": "Punk",
       "notes": "With Softcult, Shady Nasty, Dazy. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Militarie-Gun-Roll-4_031.jpg?width=500"
+    },
+    {
+      "band": "Corner Boys",
+      "date": "2026-10-10",
+      "time": "20:00",
+      "venue": "Cobalt",
+      "city": "Vancouver",
+      "price": "$10",
+      "ticket": "",
+      "genre": "Punk",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
       "band": "The Menzingers / Hot Water Music",
