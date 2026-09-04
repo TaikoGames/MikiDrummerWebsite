@@ -95,14 +95,34 @@ def tz_offset(date_str: str) -> str:
 
 
 def performers(show: dict) -> list[str]:
-    acts = [show["band"]]
+    """Every act on the bill, named one at a time.
+
+    A bill arrives from the sheet as a single string — "Belvedere / The Anti
+    Queens / Brutal Youth" — and listing all three as one MusicGroup leaves
+    none of them searchable by name.
+
+    Split on " / " and never on a bare "/". The same column also holds
+    "Ripcordz w/ The Oo-E Boo-E's" and "The Bouncing Souls w/ The Suicide
+    Machines", where the slash belongs to "w/"; a bare split would invent a
+    band called "Ripcordz w".
+    """
+    acts = show["band"].split(" / ")
     notes = (show.get("notes") or "").strip()
     if notes.lower().startswith("with "):
-        for name in notes[5:].split(","):
-            name = name.strip()
-            if name:
-                acts.append(name)
-    return acts
+        acts += notes[5:].split(",")
+
+    out: list[str] = []
+    seen: set[str] = set()
+    for name in acts:
+        # Support acts are written "With Integrity, Earth Crisis, Juice. 19+",
+        # so the last one arrives wearing the door policy. Only a trailing age
+        # tag is cut — "easy.feat" is a band name and keeps its dot.
+        name = re.sub(r"\.\s*(19\+|all ages)\.?$", "", name.strip(), flags=re.I).strip()
+        key = name.lower()
+        if name and key not in seen:
+            seen.add(key)
+            out.append(name)
+    return out
 
 
 def href_for(show: dict) -> str:

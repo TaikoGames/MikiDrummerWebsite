@@ -201,6 +201,50 @@
     .social .g { width: 18px; height: 18px; border-radius: 5px; background: currentColor; opacity: 0.85; }
     .reach { display: inline-block; margin-top: 8px; padding: 16px 40px; border-radius: 100px; background: var(--molten); color: #180a03; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; box-shadow: 0 14px 34px rgba(232,103,42,0.35); }
 
+    /* ---------- BOOKING ----------
+       A promoter should not have to open Instagram to make an offer. The form
+       is collapsed until asked for, so the page still reads as a press kit
+       rather than a lead-capture funnel. */
+    .book-btn {
+        display: inline-block; margin: 0 0 8px; padding: 16px 40px; border: 0; cursor: pointer;
+        font: inherit; border-radius: 100px; background: var(--molten); color: #180a03;
+        font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; font-size: 15px;
+        box-shadow: 0 14px 34px rgba(232,103,42,0.35);
+        transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .book-btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(232,103,42,0.45); }
+    .book-btn:active { transform: translateY(1px); }
+    /* Once the form is open, Send is the only thing that should look urgent. */
+    .book-btn[aria-expanded="true"] {
+        background: transparent; color: var(--stone-300);
+        border: 1px solid var(--edge); box-shadow: none; padding: 12px 28px; font-size: 13px;
+    }
+    .book-btn[aria-expanded="true"]:hover { color: var(--stone-100); border-color: var(--molten); box-shadow: none; }
+    .hero .book-btn { margin-top: 22px; }
+
+    .book-panel { max-width: 560px; margin: 26px auto 0; text-align: left; }
+    .book-panel[hidden] { display: none; }
+    .book-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .book-field { display: flex; flex-direction: column; gap: 6px; }
+    .book-field.wide { grid-column: 1 / -1; }
+    .book-field label { font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em;
+                        text-transform: uppercase; color: var(--stone-400); }
+    .book-field input, .book-field textarea, .book-field select {
+        font: inherit; color: var(--stone-100); background: var(--stone-900);
+        border: 1px solid var(--edge); border-radius: 10px; padding: 12px 14px; width: 100%;
+    }
+    .book-field input:focus, .book-field textarea:focus, .book-field select:focus {
+        outline: 2px solid var(--molten); outline-offset: 1px; border-color: var(--molten);
+    }
+    .book-field textarea { min-height: 92px; resize: vertical; }
+    /* Spam trap: never shown, never announced, and a filled one is a robot. */
+    .book-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .book-send { margin-top: 16px; width: 100%; }
+    .book-said { margin-top: 14px; font-size: 14.5px; min-height: 1.2em; }
+    .book-said.ok { color: var(--molten-2); }
+    .book-said.err { color: #ff8f8f; }
+    .book-alt { margin-top: 12px; font-size: 13px; color: var(--stone-400); }
+
     footer { padding: 40px 0 60px; border-top: 1px solid var(--edge); text-align: center; color: var(--stone-400); font-size: 13px; }
     footer .mk { height: 30px; width: auto; opacity: 0.7; margin: 0 auto 10px; display: block; }
 
@@ -264,6 +308,7 @@
                 margin-top: 16px; overflow: hidden; }
     .live-bar i { display: block; height: 100%; width: 0; background: var(--molten); }
     .print-live { display: none; }
+    .print-book { display: none; }
 
     /* ---- Save as PDF button ---- */
     .pdf-btn {
@@ -299,6 +344,9 @@
                     padding: 6px 0; break-inside: avoid; page-break-inside: avoid; }
         .live-row .live-play { display: none !important; }
         .print-live { display: inline-block; color: var(--molten); font-weight: 700; margin-top: 14px; }
+        /* A form on paper is furniture. Print where to reach them instead. */
+        .book-btn, .book-panel { display: none !important; }
+        .print-book { display: block; color: var(--molten); font-weight: 700; margin-top: 14px; }
     }
 </style>
 </head>
@@ -317,6 +365,7 @@
             <span class="chip"><b>Genre</b> — Punk Rock</span>
             <span class="chip"><b>Based in</b> — Vancouver, BC</span>
         </div>
+        <a class="book-btn" href="#book">Book the band</a>
     </div>
 </header>
 
@@ -454,12 +503,68 @@
     <div class="wrap">
         <span class="eyebrow">Reach out</span>
         <h2 class="display">Let's talk</h2>
-        <p>Booking, press, or just to say hi — slide into the DMs on Instagram or find us on Bandcamp.</p>
-        <div class="socials">
+        <p>Booking, press, or just to say hi. Send the details and we'll come back to you.</p>
+
+        <!-- Without JavaScript this is an ordinary form posting to Formspree,
+             which still works — the button below only collapses it. -->
+        <button class="book-btn" id="bookToggle" type="button"
+                aria-expanded="false" aria-controls="book">Book the band</button>
+
+        <div class="book-panel" id="book">
+            <form id="bookForm" method="POST" action="https://formspree.io/f/xpqgrqvb">
+                <input type="hidden" name="_subject" value="Lift the Anchor — booking enquiry">
+                <div class="book-grid">
+                    <div class="book-field">
+                        <label for="bkName">Your name</label>
+                        <input id="bkName" name="name" type="text" autocomplete="name" required>
+                    </div>
+                    <div class="book-field">
+                        <label for="bkEmail">Email</label>
+                        <input id="bkEmail" name="email" type="email" autocomplete="email" required>
+                    </div>
+                    <div class="book-field">
+                        <label for="bkVenue">Venue or promoter</label>
+                        <input id="bkVenue" name="venue" type="text">
+                    </div>
+                    <div class="book-field">
+                        <label for="bkCity">City</label>
+                        <input id="bkCity" name="city" type="text">
+                    </div>
+                    <div class="book-field">
+                        <label for="bkDate">Date</label>
+                        <input id="bkDate" name="date" type="date">
+                    </div>
+                    <div class="book-field">
+                        <label for="bkKind">Kind of show</label>
+                        <select id="bkKind" name="kind">
+                            <option value="">—</option>
+                            <option>Support slot</option>
+                            <option>Headline</option>
+                            <option>Festival</option>
+                            <option>Private / corporate</option>
+                            <option>Something else</option>
+                        </select>
+                    </div>
+                    <div class="book-field wide">
+                        <label for="bkMsg">Anything else — bill, pay, load-in</label>
+                        <textarea id="bkMsg" name="message"></textarea>
+                    </div>
+                </div>
+                <div class="book-hp" aria-hidden="true">
+                    <label for="bkCompany">Leave this empty</label>
+                    <input id="bkCompany" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+                </div>
+                <button class="book-btn book-send" type="submit" id="bookSend">Send the enquiry</button>
+                <p class="book-said" id="bookSaid" role="status" aria-live="polite"></p>
+                <p class="book-alt">Prefer a DM? <a href="https://www.instagram.com/lifttheanchor/" target="_blank" rel="noopener">@lifttheanchor</a> on Instagram.</p>
+            </form>
+        </div>
+
+        <div class="socials" style="margin-top:32px">
             <a class="social" href="https://www.instagram.com/lifttheanchor/" target="_blank" rel="noopener"><span class="g"></span> Instagram</a>
             <a class="social" href="https://lifttheanchor.bandcamp.com" target="_blank" rel="noopener"><span class="g"></span> Bandcamp</a>
         </div>
-        <a class="reach" href="https://www.instagram.com/lifttheanchor/" target="_blank" rel="noopener">Message us on Instagram</a>
+        <p class="print-book">Booking — instagram.com/lifttheanchor · mikidrummer.ca/lift-the-anchor-epk.html</p>
     </div>
 </section>
 
@@ -471,6 +576,62 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
     document.getElementById('pdfBtn').addEventListener('click', function () { window.print(); });
+
+    // ---- Booking ---------------------------------------------------------
+    // The panel is collapsed by script rather than by markup: if this file
+    // fails to load, the form is simply open and posts to Formspree the
+    // ordinary way. A booker never loses the ability to make an offer.
+    (function () {
+        var panel  = document.getElementById('book');
+        var toggle = document.getElementById('bookToggle');
+        var form   = document.getElementById('bookForm');
+        var said   = document.getElementById('bookSaid');
+        var send   = document.getElementById('bookSend');
+        if (!panel || !toggle || !form) return;
+
+        function open(yes) {
+            panel.hidden = !yes;
+            toggle.setAttribute('aria-expanded', yes ? 'true' : 'false');
+            toggle.textContent = yes ? 'Hide the form' : 'Book the band';
+        }
+        // Anyone arriving on /#book — the hero button, or a link someone was
+        // sent — wants the form, not a closed box.
+        open(location.hash === '#book');
+        toggle.addEventListener('click', function () {
+            var willOpen = panel.hidden;
+            open(willOpen);
+            if (willOpen) document.getElementById('bkName').focus();
+        });
+        window.addEventListener('hashchange', function () {
+            if (location.hash === '#book') { open(true); document.getElementById('bkName').focus(); }
+        });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            said.textContent = ''; said.className = 'book-said';
+            var was = send.textContent;
+            send.disabled = true; send.textContent = 'Sending…';
+            fetch(form.action, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' },
+                body: new FormData(form)
+            }).then(function (r) {
+                send.disabled = false; send.textContent = was;
+                if (r.ok) {
+                    form.reset();
+                    said.textContent = 'Sent — thanks. We usually come back within a couple of days.';
+                    said.className = 'book-said ok';
+                    return;
+                }
+                said.textContent = 'That did not send. Message @lifttheanchor on Instagram and we will pick it up there.';
+                said.className = 'book-said err';
+            }).catch(function () {
+                send.disabled = false; send.textContent = was;
+                said.textContent = 'No connection. Message @lifttheanchor on Instagram and we will pick it up there.';
+                said.className = 'book-said err';
+            });
+        });
+    })();
 
     document.getElementById('dlAllBtn').addEventListener('click', async function () {
         const btn = this, orig = btn.textContent;
