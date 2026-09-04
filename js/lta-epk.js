@@ -184,8 +184,12 @@
         box.appendChild(vid);
         byId[embed] = vid;
       } else if (item.title) {
-        var existing = vid.querySelector('.cap');
-        if (existing) existing.textContent = item.title;
+        // A baked caption is a heading plus a source line ("YouTube Short").
+        // Writing the title over the whole .cap would flatten both into one
+        // run of text and drop the styling with them, so only the heading is
+        // renamed and the source line is left alone.
+        var head = vid.querySelector('.cap h3') || vid.querySelector('.cap');
+        if (head) head.textContent = item.title;
       }
       vid.hidden = item.show === false;
       if (item.show !== false) order.push(vid);
