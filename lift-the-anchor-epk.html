@@ -145,15 +145,15 @@
     .dl-btn-media:disabled { opacity: 0.6; cursor: default; }
 
     /* ---------- VIDEOS ---------- */
-    /* Two columns so a pair of vertical Shorts sits side by side; a normal
-       landscape video spans both. Every .vid stays a direct child of .videos,
+    /* One per row, in order. Every .vid stays a direct child of .videos,
        because the editor's reorder only moves nodes it owns. */
-    .videos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; max-width: 760px; }
+    .videos { display: grid; grid-template-columns: 1fr; gap: 22px; max-width: 760px; }
     .vid { border: 1px solid var(--edge); border-radius: 14px; overflow: hidden; background: var(--stone-900); }
-    .vid:not(.short) { grid-column: 1 / -1; }
     .vid .thumb { position: relative; aspect-ratio: 16/9; display: grid; place-items: center; background: linear-gradient(150deg, var(--stone-700), var(--stone-950)); }
     /* A Short is 9:16. Forced into the 16:9 frame it would be two black bars
-       with a sliver of band in the middle. */
+       with a sliver of band in the middle. Capped in width so a full-bleed
+       vertical clip does not turn into 900px of scrolling. */
+    .vid.short { max-width: 300px; }
     .vid.short .thumb { aspect-ratio: 9/16; }
     .vid .play { width: 62px; height: 62px; border-radius: 50%; background: var(--molten); display: grid; place-items: center; box-shadow: 0 10px 30px rgba(232,103,42,0.4); transition: transform 0.2s ease; }
     .vid:hover .play { transform: scale(1.08); }
@@ -267,9 +267,7 @@
         .shot.feature { aspect-ratio: 3 / 2; }
         /* Two columns wide is the whole row here, so a wide shot spans it. */
         .shot.wide { grid-column: 1 / -1; }
-        /* Shorts stay two-up even on a phone. Stacked full width they are
-           roughly 600px tall each, which is a lot of scrolling for two clips. */
-        .videos { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+        .videos { grid-template-columns: 1fr; }
     }
     @media (prefers-reduced-motion: reduce) { .player.playing .art .eq span { animation: none; } }
 
