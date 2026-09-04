@@ -2,7 +2,7 @@
   "_readme": "Content for the Lift the Anchor press kit. Edited from /lta-admin.html — no login, no token. The page falls back to what is baked into the HTML if this file is missing or broken, so a bad edit cannot take the kit down.",
   "updated": "2026-09-01",
   "live": {
-    "show": true,
+    "show": false,
     "venue": "The Portside Pub",
     "city": "Vancouver, BC",
     "date": "2026-08-29",
