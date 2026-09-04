@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Belvedere / The Anti Queens / Brutal Youth",
-      "date": "2026-09-03",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "",
-      "genre": "",
-      "notes": "Punk",
-      "image": "https://i.ytimg.com/vi/uvf731ONKlI/maxresdefault.jpg"
-    },
-    {
       "band": "Propagandhi / The Flatliners",
       "date": "2026-09-04",
       "time": "19:00",
