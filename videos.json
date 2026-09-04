@@ -1,20 +1,29 @@
 {
+  "_comment": "Videos shown on video.html. The page builds the iframes from this file at runtime; tools/build_videos.py bakes matching VideoObject structured data into video.html so Google can index them. After editing this file, run: python tools/build_videos.py",
   "featured": {
     "id": "Vnxkbt7xEWo",
-    "title": "Get Dead - Fire Sale"
+    "title": "Get Dead - Fire Sale",
+    "uploadDate": "2020-11-23T09:56:45-08:00",
+    "duration": "PT2M30S"
   },
   "sidebar": [
     {
       "id": "Hb0sgnwfHls",
-      "title": "Drag my Body - Hot Water Music"
+      "title": "Drag my Body - Hot Water Music",
+      "uploadDate": "2022-12-08T01:30:36-08:00",
+      "duration": "PT3M19S"
     },
     {
       "id": "f1DRS9IAEWo",
-      "title": "Pennywise - Peaceful Day"
+      "title": "Pennywise - Peaceful Day",
+      "uploadDate": "2021-06-03T00:31:01-07:00",
+      "duration": "PT3M1S"
     },
     {
       "id": "CviWc1tnSP8",
-      "title": "Supersonic - Bad Religion"
+      "title": "Supersonic - Bad Religion",
+      "uploadDate": "2023-10-29T23:22:54-07:00",
+      "duration": "PT1M47S"
     }
   ]
 }
