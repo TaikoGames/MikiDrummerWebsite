@@ -28,7 +28,8 @@
     },
     {
       "id": "bands",
-      "k": ["band", "bands", "play", "plays", "project", "projects", "current"],
+      "k": ["band", "bands", "what bands", "which bands", "project", "projects", "current bands",
+            "play in", "plays in"],
       "q": "What bands does Miki play in?",
       "a": "Currently Lift the Anchor (punk rock) and Granite (metal and grunge). Past projects include Bound By None, Dead Fast and Bound.",
       "link": "/bands.html",

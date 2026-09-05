@@ -168,6 +168,19 @@
   var KEY_STORE = 'siteChat:anthropicKey';
   var LESSONS   = 'siteChat:lessons';
   var MISSED    = 'siteChat:missed';
+  var PENDING   = 'siteChat:pending';   // misses waiting to be reported
+  var SENT_DAY  = 'siteChat:sentDay';   // the last day this browser reported
+
+  // Where unanswered questions get reported, so the gaps are visible rather
+  // than only living in whichever visitor's browser hit them.
+  //
+  // This shares an inbox with the booking form, and the free Formspree tier is
+  // 50 submissions a month, so a chatty week here could swallow a real booking
+  // enquiry. Hence the throttle below: one report per browser per day, at most
+  // REPORT_CAP questions in it, batched rather than one message per question.
+  // Give this its own form id and the ceiling stops being shared.
+  var REPORT_URL = 'https://formspree.io/f/xpqgrqvb';
+  var REPORT_CAP = 12;
   var GH = { owner: 'TaikoGames', repo: 'MikiDrummerWebsite', branch: 'main', path: 'data/site-kb.json' };
 
   var log = document.getElementById('log');
@@ -487,6 +500,7 @@
     missed.unshift(q);
     writeList(MISSED, missed.slice(0, 25));
     renderMissed();
+    queueMiss(q);
 
     if (!key()) {
       say('bot',
@@ -527,6 +541,54 @@
     c.addEventListener('click', function () { input.value = s; form.requestSubmit(); });
     chips.appendChild(c);
   });
+
+  // ---- reporting the gaps -------------------------------------------------
+  // Sends nothing but the questions themselves — no name, no email, nothing
+  // about who asked. The point is only to know which answers are missing.
+
+  function ownerHere() {
+    // The owner already sees their own misses in the panel below, and their
+    // testing should not spend the inbox allowance.
+    try { return !!localStorage.getItem('gh_token'); } catch (e) { return false; }
+  }
+
+  function queueMiss(q) {
+    if (ownerHere()) return;
+    if (q.length < 4 || q.length > 300) return;
+    var pending = readList(PENDING);
+    if (pending.some(function (p) { return norm(p) === norm(q); })) return;
+    pending.push(q);
+    writeList(PENDING, pending.slice(-REPORT_CAP));
+  }
+
+  function reportMisses() {
+    if (ownerHere()) return;
+    var pending = readList(PENDING);
+    if (!pending.length) return;
+    var day = today();
+    var last = '';
+    try { last = localStorage.getItem(SENT_DAY) || ''; } catch (e) {}
+    if (last === day) return;                       // one report per browser per day
+
+    // Claim the day before the request goes out, so a slow network cannot let
+    // two sends race through.
+    try { localStorage.setItem(SENT_DAY, day); } catch (e) {}
+    fetch(REPORT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'Site chat — ' + pending.length +
+                  (pending.length === 1 ? ' question it could not answer' : ' questions it could not answer'),
+        questions: pending.join('\n'),
+        note: 'Asked on ' + day + ' at /chat.html. Teach it answers in the Teach it something panel.'
+      })
+    }).then(function (r) {
+      if (r.ok) { writeList(PENDING, []); return; }
+      try { localStorage.setItem(SENT_DAY, last); } catch (e) {}   // let it retry
+    }).catch(function () {
+      try { localStorage.setItem(SENT_DAY, last); } catch (e) {}
+    });
+  }
 
   // ---- teaching -----------------------------------------------------------
 
@@ -693,6 +755,9 @@
     grab(SHOWS_URL, function (d) { shows = d.shows || d; })
   ]).then(function () {
     renderMissed(); renderLessons();
+    // Report what earlier visits could not answer. Done on load rather than
+    // mid-conversation so a slow or blocked request never delays a reply.
+    reportMisses();
     var n = shows ? upcoming().length : 0;
     say('bot', 'Ask me about this site — the shows board, the bands, lessons, booking, the tools.' +
         (n ? ' I can see ' + n + ' upcoming shows right now.' : '') +
