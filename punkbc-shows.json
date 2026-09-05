@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Propagandhi / The Flatliners",
-      "date": "2026-09-04",
-      "time": "19:00",
-      "venue": "Harbour Event & Convention Centre",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/propagandhi-vancouver/873002972276191/",
-      "genre": "Punk",
-      "notes": "",
-      "image": "https://assets.exclaim.ca/image/upload/v1703988208/prop7.jpg"
-    },
-    {
       "band": "Chief State / Guyliner / The Grouches / The Rip-Offsprings",
       "date": "2026-09-05",
       "time": "19:00",
@@ -26,6 +14,45 @@
       "image": "https://www.mikidrummer.ca/images/shows/pop-punk-social-2026-09-05.jpg"
     },
     {
+      "band": "Kruelty",
+      "date": "2026-09-08",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thecobalt.ca",
+      "genre": "Death Metal/Hardcore",
+      "notes": "With Dead Heat, Dying Remains, Kill Chain. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
+      "band": "Earth Altar",
+      "date": "2026-09-09",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$19.55 adv",
+      "ticket": "https://theastoria.ca",
+      "genre": "Doom/Sludge",
+      "notes": "With Empress, Lumivore, Goblin Vessel. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
+      "band": "Goetia",
+      "date": "2026-09-09",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thecobalt.ca",
+      "genre": "Death Metal",
+      "notes": "With Asphyxiated, Empalement. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
       "band": "Satanic Surfers",
       "date": "2026-09-09",
       "time": "19:00",
@@ -36,6 +63,19 @@
       "genre": "Punk",
       "notes": "",
       "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1188031941%2F376658818745%2F1%2Foriginal.20260701-200933?crop=focalpoint&fit=crop&w=940&auto=format%2Ccompress&q=75&sharp=10&fp-x=0.494&fp-y=0.014&s=79c2703d3585726112e5c672817ff5bb"
+    },
+    {
+      "band": "Mortuary Cave",
+      "date": "2026-09-11",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$23 adv",
+      "ticket": "https://theastoria.ca",
+      "genre": "Sludge",
+      "notes": "With Voltage, Balkan, Wet Rot. Album release show. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
     },
     {
       "band": "Anciients",
@@ -62,6 +102,19 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
+      "band": "Mares of Thrace",
+      "date": "2026-09-18",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$23 adv",
+      "ticket": "https://theastoria.ca",
+      "genre": "Doom/Noise Rock",
+      "notes": "With Burnt Lung, Burn Pattern, Manicouagan. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
       "band": "ATD, Scatterbox and more",
       "date": "2026-09-19",
       "time": "19",
@@ -72,6 +125,19 @@
       "genre": "",
       "notes": "",
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCnETL8kQOMwqqr4mESShO80Aw8FIq-mutJJcfZ1csRw&s"
+    },
+    {
+      "band": "Sleep",
+      "date": "2026-09-20",
+      "time": "19:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "From $70 USD",
+      "ticket": "https://www.commodoreballroom.com/shows",
+      "genre": "Doom/Stoner Metal",
+      "notes": "Only Canadian date on their fall North America tour",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sleep_at_the_Filmore_Detroit%2C_March_31%2C_2018.jpg?width=600",
+      "curated": ""
     },
     {
       "band": "The Spits",
@@ -132,6 +198,45 @@
       "genre": "Punk",
       "notes": "",
       "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg/500px-Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg"
+    },
+    {
+      "band": "Quicksand & Fucked Up",
+      "date": "2026-09-22",
+      "time": "20:00",
+      "venue": "Capital Ballroom",
+      "city": "Victoria",
+      "price": "",
+      "ticket": "https://www.ticketmaster.ca",
+      "genre": "Post-Hardcore/Punk",
+      "notes": "Co-headline fall Canadian tour. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fucked_up_at_the_polaris_music_prize_gala_2009_by_dustin_rabin.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Quicksand & Fucked Up",
+      "date": "2026-09-23",
+      "time": "19:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "$34.50 adv",
+      "ticket": "https://www.ticketweb.ca/event/quicksand-and-fucked-up-the-pearl-tickets/15034213",
+      "genre": "Post-Hardcore/Punk",
+      "notes": "Presented by MODO-Live & Rickshaw. Same tour as the Sept 22 Victoria date. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Quicksand_Rock_am_Ring_2014_%28113%29.JPG?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Tyrann",
+      "date": "2026-09-23",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$25.30 adv",
+      "ticket": "https://theastoria.ca",
+      "genre": "Heavy Metal",
+      "notes": "With Speed Reaper, Powermönger. Members of Tribulation/Enforcer. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
     },
     {
       "band": "Covenant Festival XI — Night One",
@@ -326,6 +431,19 @@
       "image": "https://lastfm.freetls.fastly.net/i/u/300x300/b8867cfe9516d94e98f4cf3fd56a82cc"
     },
     {
+      "band": "SiM",
+      "date": "2026-10-17",
+      "time": "18:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.livenation.com",
+      "genre": "Metalcore",
+      "notes": "HOOMAN World Tour. With Zero 9:36",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
       "band": "Hulder",
       "date": "2026-10-17",
       "time": "19:00",
@@ -348,6 +466,19 @@
       "genre": "Metalcore",
       "notes": "With Wolves At The Gate, Bloodlines. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Demon_Hunter_Band_Lineup_Collage.jpg?width=600"
+    },
+    {
+      "band": "Kostnatění",
+      "date": "2026-10-23",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://theastoria.ca",
+      "genre": "Black Metal",
+      "notes": "With Liminal Shroud, Xiphoid Dementia, Infinexhuma",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
     },
     {
       "band": "Youth Fountain",
@@ -374,6 +505,19 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Dillinger_Escape_Plan_Furnace_Fest_2025_Birmingham_Alabama_3.png?width=300"
     },
     {
+      "band": "Pain of Truth",
+      "date": "2026-10-31",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thecobalt.ca",
+      "genre": "Metallic Hardcore",
+      "notes": "With Missing Link, Fatal Realm, Locked Shut. Touring on new self-titled album",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
       "band": "Sabbat",
       "date": "2026-10-31",
       "time": "19:00",
@@ -396,6 +540,19 @@
       "genre": "Punk",
       "notes": "Halloween show",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+    },
+    {
+      "band": "Sunn O)))",
+      "date": "2026-11-01",
+      "time": "20:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "From $107 USD",
+      "ticket": "https://www.livenation.com",
+      "genre": "Drone Metal",
+      "notes": "19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sunn_O%29%29%29_%40_Roskilde_%2705_%28327956477%29.jpg?width=600",
+      "curated": ""
     },
     {
       "band": "Exhumed",
