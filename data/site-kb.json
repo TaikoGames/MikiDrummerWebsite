@@ -59,6 +59,16 @@
       "label": "Book Lift the Anchor"
     },
     {
+      "id": "availability",
+      "k": ["available", "availability", "free", "are you free", "open date", "open dates",
+            "can you play", "are you playing", "any dates", "what dates", "calendar",
+            "still available", "taking bookings", "book a date", "play my venue", "play our venue"],
+      "q": "Are the bands available on a given date?",
+      "a": "Dates are not posted publicly — the quickest way to find out is to ask with the date in hand. The Book the band form on Lift the Anchor's press kit takes the date, the venue and the city and goes straight to Miki.",
+      "link": "/lift-the-anchor-epk.html#book",
+      "label": "Book the band"
+    },
+    {
       "id": "punkbc",
       "k": ["punk bc", "punkbc", "listings", "board", "gig guide", "what's on", "whats on"],
       "q": "What is Punk BC?",

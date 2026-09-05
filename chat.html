@@ -64,6 +64,12 @@
   .brain button{font:inherit;font-size:13px;cursor:pointer;border:1px solid var(--line);
                 background:transparent;color:var(--ink);border-radius:10px;padding:10px 16px}
   .brain button:hover{border-color:var(--accent)}
+  .brain code{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:12px}
+  .lesson{display:flex;align-items:flex-start;gap:10px;justify-content:space-between;
+          border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:8px;
+          background:var(--panel2);font-size:13px;line-height:1.5}
+  .lesson b{color:var(--gold);font-weight:700}
+  .lesson button{flex:none;padding:4px 10px;font-size:12px}
   .said{font-size:12.5px;margin-top:10px;min-height:1.1em;color:var(--muted)}
   .said.ok{color:var(--ok)} .said.err{color:#ff8f8f}
   .warn{margin-top:12px;font-size:12.5px;color:var(--gold);line-height:1.55}
@@ -91,6 +97,43 @@
     <input id="q" name="q" type="text" placeholder="Ask about shows, the bands, lessons…" required>
     <button class="send" id="send" type="submit">Ask</button>
   </form>
+
+  <details class="brain" id="teachBox">
+    <summary>Teach it something</summary>
+    <p>
+      Give it the words someone might use and the answer to give back. It works
+      in this browser straight away; Publish writes it into
+      <code>data/site-kb.json</code> so it works for everyone.
+    </p>
+
+    <div id="missedWrap" hidden>
+      <p style="color:var(--gold)">Asked here and not answered — click one to teach it:</p>
+      <div class="chips" id="missed"></div>
+    </div>
+
+    <div class="row">
+      <input id="tWords" placeholder="Trigger words, comma separated — availability, are you free">
+    </div>
+    <div class="row">
+      <input id="tAnswer" placeholder="The answer to give back">
+    </div>
+    <div class="row">
+      <input id="tLabel" placeholder="Link label — Book the band" style="min-width:150px">
+      <input id="tHref" placeholder="/lift-the-anchor-epk.html#book" style="min-width:170px">
+      <button id="tAdd" type="button">Add</button>
+    </div>
+    <p class="said" id="tSaid"></p>
+
+    <div id="lessonWrap" hidden>
+      <p>Taught in this browser, not published yet:</p>
+      <div id="lessons"></div>
+      <div class="row">
+        <button id="tPublish" type="button">Publish to the site</button>
+        <button id="tForget" type="button">Discard them</button>
+      </div>
+      <p class="said" id="pubSaid"></p>
+    </div>
+  </details>
 
   <details class="brain">
     <summary>Smarter answers (optional)</summary>
@@ -123,6 +166,9 @@
   var KB_URL    = '/data/site-kb.json';
   var SHOWS_URL = '/punkbc-shows.json';
   var KEY_STORE = 'siteChat:anthropicKey';
+  var LESSONS   = 'siteChat:lessons';
+  var MISSED    = 'siteChat:missed';
+  var GH = { owner: 'TaikoGames', repo: 'MikiDrummerWebsite', branch: 'main', path: 'data/site-kb.json' };
 
   var log = document.getElementById('log');
   var form = document.getElementById('ask');
@@ -174,6 +220,15 @@
 
   // ---- shows --------------------------------------------------------------
 
+  // "Is the band free that weekend" asks about their diary, not about what is
+  // on this weekend, and "free" is too common a word to win on scoring alone.
+  // Requiring somebody to be addressed keeps "any free shows this weekend" —
+  // which names nobody — pointed at the listings.
+  function asksAvailability(n) {
+    return /\b(available|availability|free|hire)\b/.test(n) &&
+           /\b(you|your|band|bands|guys|miki|they|them|granite|anchor)\b/.test(n);
+  }
+
   function today() { return new Date().toISOString().slice(0, 10); }
 
   function upcoming() {
@@ -212,6 +267,8 @@
   // board" is held back so a named topic can be tried first.
   function answerShows(q, specificOnly) {
     var n = norm(q);
+
+    if (asksAvailability(n)) return null;
     var showy = /\b(show|shows|gig|gigs|concert|concerts|playing|on tonight|tonight|weekend|listing|listings|whats on|whos playing)\b/.test(n);
     var up = upcoming();
 
@@ -278,33 +335,54 @@
 
   // ---- knowledge base -----------------------------------------------------
 
+  // ---- things taught in this browser --------------------------------------
+  // A lesson has the same shape as a published topic, so the matcher does not
+  // know the difference. Kept locally until published, which means teaching
+  // works with no token and no network.
+
+  function readList(store) {
+    try { var v = JSON.parse(localStorage.getItem(store) || '[]'); return Array.isArray(v) ? v : []; }
+    catch (e) { return []; }
+  }
+  function writeList(store, v) {
+    try { localStorage.setItem(store, JSON.stringify(v)); } catch (e) {}
+  }
+
+  function lessons() { return readList(LESSONS); }
+
+  // Everything the matcher searches: what is published, plus what has been
+  // taught here. Local lessons go first so a new answer wins a tie against an
+  // older published one.
+  function allTopics() {
+    return lessons().concat(kb ? kb.topics : []);
+  }
+
   // How many topics each keyword appears in. A word used by one topic points
   // straight at it; a word several topics share barely narrows anything down.
   // Without this, "how do I book the band" scores "book" and "band" equally
   // and answers with the list of bands.
-  var spread = null;
-  function keywordSpread() {
-    if (spread) return spread;
-    spread = {};
-    kb.topics.forEach(function (t) {
+  function keywordSpread(topics) {
+    var spread = {};
+    topics.forEach(function (t) {
       var once = {};
-      t.k.forEach(function (key) { once[norm(key)] = 1; });
+      (t.k || []).forEach(function (key) { once[norm(key)] = 1; });
       Object.keys(once).forEach(function (k) { spread[k] = (spread[k] || 0) + 1; });
     });
     return spread;
   }
 
   function answerKB(q, floor) {
-    if (!kb) return null;
+    var topics = allTopics();
+    if (!topics.length) return null;
     var ws = words(q);
     if (!ws.length) return null;
-    var sp = keywordSpread();
+    var sp = keywordSpread(topics);
     var nq = norm(q);
     var best = null, bestScore = 0;
 
-    kb.topics.forEach(function (t) {
+    topics.forEach(function (t) {
       var score = 0;
-      t.k.forEach(function (key) {
+      (t.k || []).forEach(function (key) {
         var k = norm(key);
         if (!k) return;
         var rarity = 1 / (sp[k] || 1);          // 1 for a word only this topic uses
@@ -331,8 +409,8 @@
 
   function contextBlob() {
     var lines = ['Facts about this website (mikidrummer.ca):'];
-    (kb ? kb.topics : []).forEach(function (t) {
-      lines.push('- ' + t.q + ' ' + t.a + ' [' + t.link + ']');
+    allTopics().forEach(function (t) {
+      lines.push('- ' + (t.q ? t.q + ' ' : '') + t.a + ' [' + t.link + ']');
     });
     var up = upcoming().slice(0, 25);
     if (up.length) {
@@ -389,11 +467,26 @@
     var named = answerKB(q, 5);
     if (named) { say('bot', named.text, named.links); return; }
 
+    // Asked in so many words and not already answered by something more
+    // specific: send them to the form rather than to whichever topic happened
+    // to share a word with the question.
+    if (asksAvailability(norm(q))) {
+      var av = allTopics().filter(function (t) { return t.id === 'availability'; })[0];
+      if (av) { say('bot', av.a, [{ label: av.label, href: av.link }]); return; }
+    }
+
     var shown = answerShows(q, false);
     if (shown) { say('bot', shown, [{ label: 'Punk BC', href: '/punkbc.html' }]); return; }
 
     var known = answerKB(q, 2);
     if (known) { say('bot', known.text, known.links); return; }
+
+    // Remember what it could not answer. This is the list worth teaching from
+    // — real questions people asked, rather than guesses about what they might.
+    var missed = readList(MISSED).filter(function (m) { return norm(m) !== norm(q); });
+    missed.unshift(q);
+    writeList(MISSED, missed.slice(0, 25));
+    renderMissed();
 
     if (!key()) {
       say('bot',
@@ -435,6 +528,137 @@
     chips.appendChild(c);
   });
 
+  // ---- teaching -----------------------------------------------------------
+
+  var tWords  = document.getElementById('tWords');
+  var tAnswer = document.getElementById('tAnswer');
+  var tLabel  = document.getElementById('tLabel');
+  var tHref   = document.getElementById('tHref');
+  var tSaid   = document.getElementById('tSaid');
+  var lessonWrap = document.getElementById('lessonWrap');
+  var lessonBox  = document.getElementById('lessons');
+  var missedWrap = document.getElementById('missedWrap');
+  var missedBox  = document.getElementById('missed');
+  var pubSaid    = document.getElementById('pubSaid');
+
+  function note(el2, msg, kind) {
+    el2.textContent = msg;
+    el2.className = 'said' + (kind ? ' ' + kind : '');
+  }
+
+  function renderMissed() {
+    var list = readList(MISSED);
+    missedWrap.hidden = !list.length;
+    missedBox.textContent = '';
+    list.forEach(function (m) {
+      var c = el('button', 'chip', m.length > 46 ? m.slice(0, 46) + '…' : m);
+      c.type = 'button';
+      c.title = m;
+      c.addEventListener('click', function () {
+        // Seed the trigger words from the question itself, minus the filler.
+        tWords.value = words(m).slice(0, 6).join(', ');
+        tAnswer.focus();
+      });
+      missedBox.appendChild(c);
+    });
+  }
+
+  function renderLessons() {
+    var list = lessons();
+    lessonWrap.hidden = !list.length;
+    lessonBox.textContent = '';
+    list.forEach(function (t, i) {
+      var row = el('div', 'lesson');
+      var txt = el('div');
+      txt.appendChild(el('b', null, (t.k || []).join(', ')));
+      txt.appendChild(el('div', null, t.a));
+      row.appendChild(txt);
+      var del = el('button', null, 'Remove');
+      del.type = 'button';
+      del.addEventListener('click', function () {
+        var l = lessons(); l.splice(i, 1); writeList(LESSONS, l); renderLessons();
+      });
+      row.appendChild(del);
+      lessonBox.appendChild(row);
+    });
+  }
+
+  document.getElementById('tAdd').addEventListener('click', function () {
+    var ks = tWords.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+    var a = tAnswer.value.trim();
+    if (!ks.length) { note(tSaid, 'Give it at least one trigger word.', 'err'); return; }
+    if (!a)         { note(tSaid, 'Give it an answer to say back.', 'err'); return; }
+
+    var href = tHref.value.trim();
+    // Only ever a link within this site: an answer that can send someone
+    // anywhere is a way to turn the bot into a redirect.
+    if (href && !/^\/[^\/]/.test(href)) {
+      note(tSaid, 'The link has to be a path on this site, starting with one slash — /services.html', 'err');
+      return;
+    }
+    var t = { id: 'taught-' + Date.now(), k: ks, q: '', a: a,
+              link: href || '/', label: tLabel.value.trim() || 'Open' };
+    var l = lessons(); l.push(t); writeList(LESSONS, l);
+
+    // Whatever it now answers is no longer an open question.
+    writeList(MISSED, readList(MISSED).filter(function (m) { return !answerKB(m, 2); }));
+    renderMissed(); renderLessons();
+    tWords.value = tAnswer.value = tLabel.value = tHref.value = '';
+    note(tSaid, 'Learned. Ask it now — it works in this browser. Publish to make it everyone’s.', 'ok');
+  });
+
+  document.getElementById('tForget').addEventListener('click', function () {
+    writeList(LESSONS, []); renderLessons(); note(pubSaid, 'Discarded.', '');
+  });
+
+  document.getElementById('tPublish').addEventListener('click', function () {
+    var l = lessons();
+    if (!l.length) return;
+    var tok = '';
+    try { tok = localStorage.getItem('gh_token') || ''; } catch (e) {}
+    if (!tok) {
+      note(pubSaid, 'No GitHub token saved in this browser — connect on the Admin page first, ' +
+                    'then come back. Nothing was published.', 'err');
+      return;
+    }
+    var btn = this, was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Publishing…';
+    var H = { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json',
+              'Content-Type': 'application/json' };
+    var api = 'https://api.github.com/repos/' + GH.owner + '/' + GH.repo + '/contents/' + GH.path;
+
+    // Read the file fresh rather than publishing the copy this page loaded —
+    // someone may have edited it since, and the sha is what stops an overwrite.
+    fetch(api + '?ref=' + GH.branch, { headers: H, cache: 'no-store' })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('GitHub rejected the token.');
+        if (r.status === 404) throw new Error('That token cannot see this repository.');
+        if (!r.ok) throw new Error('GitHub answered ' + r.status + '.');
+        return r.json();
+      })
+      .then(function (cur) {
+        var live = JSON.parse(decodeURIComponent(escape(atob(cur.content.replace(/\s/g, '')))));
+        live.topics = live.topics.concat(l);
+        live.updated = new Date().toISOString().slice(0, 10);
+        var body = JSON.stringify(live, null, 2) + '\n';
+        return fetch(api, { method: 'PUT', headers: H, body: JSON.stringify({
+          message: 'Site chat: ' + l.length + (l.length === 1 ? ' answer' : ' answers') + ' taught from the page',
+          content: btoa(unescape(encodeURIComponent(body))),
+          sha: cur.sha, branch: GH.branch
+        }) });
+      })
+      .then(function (r) {
+        btn.disabled = false; btn.textContent = was;
+        if (!r.ok) { note(pubSaid, 'GitHub refused the write (' + r.status + '). Nothing published.', 'err'); return; }
+        writeList(LESSONS, []); renderLessons();
+        note(pubSaid, 'Published. Live for everyone in about a minute.', 'ok');
+      })
+      .catch(function (e) {
+        btn.disabled = false; btn.textContent = was;
+        note(pubSaid, e.message + ' Nothing was published — your answers are still saved here.', 'err');
+      });
+  });
+
   // ---- key panel ----------------------------------------------------------
 
   var keyIn = document.getElementById('key'), keySaid = document.getElementById('keySaid');
@@ -468,6 +692,7 @@
     grab(KB_URL, function (d) { kb = d; }),
     grab(SHOWS_URL, function (d) { shows = d.shows || d; })
   ]).then(function () {
+    renderMissed(); renderLessons();
     var n = shows ? upcoming().length : 0;
     say('bot', 'Ask me about this site — the shows board, the bands, lessons, booking, the tools.' +
         (n ? ' I can see ' + n + ' upcoming shows right now.' : '') +
