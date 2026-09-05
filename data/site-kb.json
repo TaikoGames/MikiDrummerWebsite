@@ -1,0 +1,126 @@
+{
+  "_readme": "What the site assistant knows. Plain facts only, each with the page it came from, so an answer can always point at something real. Edit freely — chat.html reads this at load and needs no rebuild. Keep 'a' short: it is spoken back almost verbatim.",
+  "updated": "2026-09-05",
+  "topics": [
+    {
+      "id": "who",
+      "k": ["who", "miki", "about", "drummer", "bio", "experience", "ibiza", "spain", "background"],
+      "q": "Who is Miki?",
+      "a": "Miki is a drummer based in Vancouver, BC, originally from Ibiza, Spain, with more than 20 years behind a kit across punk, rock and live performance.",
+      "link": "/about.html",
+      "label": "About"
+    },
+    {
+      "id": "services",
+      "k": ["service", "services", "hire", "session", "record", "recording", "remote", "track", "tracks", "studio", "rates", "price", "cost"],
+      "q": "What does Miki do?",
+      "a": "Remote drum recording and custom drum tracks, online drum lessons, video editing, live setup and tuning, and drum rental in Vancouver.",
+      "link": "/services.html",
+      "label": "Services"
+    },
+    {
+      "id": "lessons",
+      "k": ["lesson", "lessons", "teach", "teaching", "learn", "student", "tuition", "online lesson"],
+      "q": "Does Miki teach?",
+      "a": "Yes — drum lessons, online. They are listed with the rest of the services.",
+      "link": "/services.html",
+      "label": "Services"
+    },
+    {
+      "id": "bands",
+      "k": ["band", "bands", "play", "plays", "project", "projects", "current"],
+      "q": "What bands does Miki play in?",
+      "a": "Currently Lift the Anchor (punk rock) and Granite (metal and grunge). Past projects include Bound By None, Dead Fast and Bound.",
+      "link": "/bands.html",
+      "label": "Bands"
+    },
+    {
+      "id": "lta",
+      "k": ["lift", "anchor", "lift the anchor", "lta", "punk rock band"],
+      "q": "Who are Lift the Anchor?",
+      "a": "A melodic Vancouver punk rock band — big hooks, gang vocals, songs about fresh starts. For fans of Sum 41, Silverstein and Four Year Strong. The press kit has photos, video, and a Book the band form.",
+      "link": "/lift-the-anchor-epk.html",
+      "label": "Lift the Anchor press kit"
+    },
+    {
+      "id": "granite",
+      "k": ["granite", "metal", "grunge"],
+      "q": "Who are Granite?",
+      "a": "A genre-bending metal and grunge band from Vancouver — heavy riffs, raw vocals, a relentless live show. The press kit has photos, music and booking.",
+      "link": "/granite-epk.html",
+      "label": "Granite press kit"
+    },
+    {
+      "id": "booking",
+      "k": ["book", "booking", "book the band", "book a band", "book lift the anchor", "book granite", "hire the band", "promoter", "offer", "contact", "email", "reach", "get in touch"],
+      "q": "How do I book a band?",
+      "a": "Lift the Anchor's press kit has a Book the band form — venue, city, date and what you are offering. Granite's kit has its own contact section.",
+      "link": "/lift-the-anchor-epk.html#book",
+      "label": "Book Lift the Anchor"
+    },
+    {
+      "id": "punkbc",
+      "k": ["punk bc", "punkbc", "listings", "board", "gig guide", "what's on", "whats on"],
+      "q": "What is Punk BC?",
+      "a": "A board of upcoming punk, hardcore, metal and crust shows across British Columbia — Vancouver, Victoria, Kelowna, Nanaimo and beyond, with dates, venues and ticket links.",
+      "link": "/punkbc.html",
+      "label": "Punk BC"
+    },
+    {
+      "id": "video",
+      "k": ["video", "videos", "cover", "covers", "youtube", "watch"],
+      "q": "Where are the videos?",
+      "a": "Drum covers and live performances, including tracks by Get Dead, Hot Water Music and Bad Religion.",
+      "link": "/video.html",
+      "label": "Videos"
+    },
+    {
+      "id": "jukebox",
+      "k": ["jukebox", "playlist", "records", "spin", "submit a song", "visualizer", "visualiser"],
+      "q": "What is the jukebox?",
+      "a": "Spin the records, watch the visualiser, and submit a song for the playlist.",
+      "link": "/jukebox.html",
+      "label": "Jukebox"
+    },
+    {
+      "id": "tools",
+      "k": ["tool", "tools", "toy", "toys", "made", "built", "app", "apps"],
+      "q": "What tools are on the site?",
+      "a": "A few built here: the drum visualiser, the cymbal designer, the light show, Razor Cut for splitting audio, the gig checklist, the click track and the stage playbook.",
+      "link": "/admin.html",
+      "label": "Tools"
+    },
+    {
+      "id": "lightshow",
+      "k": ["light", "lights", "light show", "lightshow", "visualiser", "visualizer", "reactive"],
+      "q": "What is the light show?",
+      "a": "Album art or a band photo lit by the music in real time, one zone per player. There is a version for Granite and one for Lift the Anchor.",
+      "link": "/light-show.html",
+      "label": "Light show"
+    },
+    {
+      "id": "click",
+      "k": ["click", "click track", "metronome", "tempo", "bpm"],
+      "q": "Is there a metronome?",
+      "a": "Yes — a click track tool with tempo and time signature.",
+      "link": "/click-track.html",
+      "label": "Click track"
+    },
+    {
+      "id": "checklist",
+      "k": ["checklist", "gig checklist", "pack", "packing", "gear", "load in", "load-in"],
+      "q": "Is there a gig checklist?",
+      "a": "Yes — a packing and load-in checklist you can tick off on a phone.",
+      "link": "/gig-checklist.html",
+      "label": "Gig checklist"
+    },
+    {
+      "id": "kit",
+      "k": ["kit", "setup", "drum kit", "gear list", "cymbals", "snare", "what do you play"],
+      "q": "What kit does Miki play?",
+      "a": "The setup is mapped out piece by piece on the drum map page.",
+      "link": "/drum-map.html",
+      "label": "Drum map"
+    }
+  ]
+}

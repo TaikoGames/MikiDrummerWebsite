@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Ask the site — Miki Drummer</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2c2023;
+    --accent:#e8372a; --gold:#e7b53c; --ink:#f4efe6; --muted:#a2938c; --ok:#7ee787;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1100px 620px at 50% -10%, #3a0a0a 0%, transparent 60%),
+      linear-gradient(#0d0b0c,#140d0d 70%,#170c0c);
+    color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    min-height:100vh;padding:24px 16px 40px;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+  .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{font-size:23px;letter-spacing:-.01em}
+  a{color:var(--gold)}
+  .sub{color:var(--muted);font-size:13.5px;margin:6px 0 18px;line-height:1.55}
+  .back{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);
+        border-radius:20px;padding:6px 12px}
+  .back:hover{color:var(--ink);border-color:var(--accent)}
+
+  .log{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);
+       border-radius:16px;padding:16px;min-height:280px;max-height:60vh;overflow-y:auto;
+       display:flex;flex-direction:column;gap:12px}
+  .msg{max-width:88%;padding:11px 14px;border-radius:14px;font-size:14.5px;line-height:1.55;
+       white-space:pre-wrap;word-wrap:break-word}
+  .msg.me{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:5px}
+  .msg.bot{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);
+           border-bottom-left-radius:5px}
+  .msg.bot.thinking{color:var(--muted);font-style:italic}
+  .msg .src{display:block;margin-top:9px;font-size:12.5px}
+  .msg .src a{margin-right:12px;white-space:nowrap}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+  .chip{font:inherit;font-size:12.5px;cursor:pointer;color:var(--muted);background:transparent;
+        border:1px solid var(--line);border-radius:20px;padding:7px 13px}
+  .chip:hover{color:var(--ink);border-color:var(--accent)}
+
+  form.ask{display:flex;gap:10px;margin-top:14px}
+  form.ask input{flex:1;font:inherit;color:var(--ink);background:var(--panel);
+                 border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+  form.ask input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .send{font:inherit;font-weight:800;cursor:pointer;border:0;border-radius:12px;
+        padding:13px 22px;background:var(--accent);color:#fff}
+  .send:disabled{opacity:.55;cursor:default}
+
+  details.brain{margin-top:22px;border:1px solid var(--line);border-radius:14px;
+                background:linear-gradient(180deg,var(--panel),#140d0f);padding:14px 16px}
+  details.brain summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--muted)}
+  details.brain summary:hover{color:var(--ink)}
+  .brain p{color:var(--muted);font-size:13px;line-height:1.6;margin-top:12px}
+  .brain .row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .brain input{flex:1;min-width:230px;font:inherit;font-size:13px;color:var(--ink);
+               background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .brain button{font:inherit;font-size:13px;cursor:pointer;border:1px solid var(--line);
+                background:transparent;color:var(--ink);border-radius:10px;padding:10px 16px}
+  .brain button:hover{border-color:var(--accent)}
+  .said{font-size:12.5px;margin-top:10px;min-height:1.1em;color:var(--muted)}
+  .said.ok{color:var(--ok)} .said.err{color:#ff8f8f}
+  .warn{margin-top:12px;font-size:12.5px;color:var(--gold);line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <h1>🤖 Ask the site</h1>
+    <a class="back" href="/admin.html">← Admin</a>
+  </div>
+  <p class="sub">
+    A prototype. It answers from this site's own pages and from the live Punk BC
+    listings — no account, no key, nothing sent anywhere. If it does not know
+    something it says so rather than guessing.
+  </p>
+
+  <div class="log" id="log" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+  <div class="chips" id="chips"></div>
+
+  <form class="ask" id="ask" autocomplete="off">
+    <label for="q" class="sr" style="position:absolute;left:-9999px">Your question</label>
+    <input id="q" name="q" type="text" placeholder="Ask about shows, the bands, lessons…" required>
+    <button class="send" id="send" type="submit">Ask</button>
+  </form>
+
+  <details class="brain">
+    <summary>Smarter answers (optional)</summary>
+    <p>
+      Everything above runs on pattern matching over the site's own data. It is
+      fast and free and never invents anything, but it only answers what it has
+      been taught. Paste an Anthropic API key and questions it cannot place get
+      passed to Claude instead, with the site's facts and the current listings
+      as context.
+    </p>
+    <div class="row">
+      <input id="key" type="password" placeholder="sk-ant-…" autocomplete="off">
+      <button id="keySave" type="button">Save</button>
+      <button id="keyClear" type="button">Forget</button>
+    </div>
+    <p class="said" id="keySaid"></p>
+    <p class="warn">
+      The key is kept in this browser only and is sent straight to Anthropic —
+      it never reaches this site or anywhere else. Anyone with access to this
+      browser profile can read it, so do not do this on a shared machine.
+    </p>
+  </details>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var KB_URL    = '/data/site-kb.json';
+  var SHOWS_URL = '/punkbc-shows.json';
+  var KEY_STORE = 'siteChat:anthropicKey';
+
+  var log = document.getElementById('log');
+  var form = document.getElementById('ask');
+  var input = document.getElementById('q');
+  var send = document.getElementById('send');
+
+  var kb = null, shows = null, loadErr = [];
+
+  // ---- plumbing -----------------------------------------------------------
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  // Every answer is built from text nodes and anchors we construct, so nothing
+  // a person types and nothing in the data can become markup.
+  function say(who, text, links) {
+    var m = el('div', 'msg ' + who, text);
+    if (links && links.length) {
+      var src = el('span', 'src');
+      links.forEach(function (l) {
+        var a = el('a', null, l.label + ' →');
+        a.href = l.href;
+        src.appendChild(a);
+      });
+      m.appendChild(src);
+    }
+    log.appendChild(m);
+    log.scrollTop = log.scrollHeight;
+    return m;
+  }
+
+  function norm(s) {
+    return String(s || '').toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/[^a-z0-9+ ]+/g, ' ')
+      .replace(/\s+/g, ' ').trim();
+  }
+
+  var STOP = ' a an the is are was were do does did i you me my your of for on at in to and or any some what whats when where who how show me tell about please can could there '
+    .split(' ').filter(Boolean);
+
+  function words(s) {
+    return norm(s).split(' ').filter(function (w) { return w && STOP.indexOf(w) < 0; });
+  }
+
+  // ---- shows --------------------------------------------------------------
+
+  function today() { return new Date().toISOString().slice(0, 10); }
+
+  function upcoming() {
+    var t = today();
+    return (shows || []).filter(function (s) { return (s.date || '') >= t; })
+                        .sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  }
+
+  function prettyDate(iso) {
+    var d = new Date(iso + 'T12:00:00');
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('en-CA', { weekday: 'short', day: 'numeric', month: 'long' });
+  }
+
+  function showLine(s) {
+    var bits = [prettyDate(s.date)];
+    if (s.time) bits.push(s.time);
+    var line = bits.join(' · ') + ' — ' + s.band;
+    var where = [s.venue, s.city].filter(Boolean).join(', ');
+    if (where) line += '\n   ' + where;
+    if (s.price) line += ' · ' + s.price;
+    return line;
+  }
+
+  function listShows(list, lead, cap) {
+    cap = cap || 6;
+    if (!list.length) return null;
+    var head = lead + (list.length > cap ? ' (first ' + cap + ' of ' + list.length + ')' : '') + ':\n\n';
+    return head + list.slice(0, cap).map(showLine).join('\n\n');
+  }
+
+  // Everything the shows board can be asked. Returns text, or null to let the
+  // knowledge base have a go.
+  // specificOnly: answer only if the question actually pins something down — a
+  // place, a band, a date window, a count. The catch-all "here is the whole
+  // board" is held back so a named topic can be tried first.
+  function answerShows(q, specificOnly) {
+    var n = norm(q);
+    var showy = /\b(show|shows|gig|gigs|concert|concerts|playing|on tonight|tonight|weekend|listing|listings|whats on|whos playing)\b/.test(n);
+    var up = upcoming();
+
+    if (!shows) return showy ? 'I could not load the listings just now, so I cannot answer that one. The board itself is at /punkbc.html.' : null;
+
+    // A city or venue named in the question wins, whether or not the word
+    // "show" appears — "anything in Victoria" is a shows question.
+    //
+    // The sheet is written by hand, so the same city appears as "Victoria" and
+    // as "Victoria, BC". Matching those as different places quietly loses
+    // shows, so a place is compared on the part before the comma.
+    function head(s) { return norm(s).split(' bc')[0].split(',')[0].trim(); }
+
+    var places = {};   // normalised head -> { label, kind }
+    up.forEach(function (s) {
+      if (s.city  && !places[head(s.city)])  places[head(s.city)]  = { label: head(s.city).replace(/\b\w/g, function (c) { return c.toUpperCase(); }), kind: 'city' };
+      if (s.venue && !places[head(s.venue)]) places[head(s.venue)] = { label: s.venue, kind: 'venue' };
+    });
+
+    var hitKey = null;
+    Object.keys(places).sort(function (a, b) { return b.length - a.length; }).forEach(function (p) {
+      if (!hitKey && p.length > 3 && n.indexOf(p) >= 0) hitKey = p;
+    });
+    if (hitKey) {
+      var place = places[hitKey];
+      var there = up.filter(function (s) {
+        return head(s.city) === hitKey || head(s.venue) === hitKey;
+      });
+      var where = (place.kind === 'venue' ? ' at ' : ' in ') + place.label;
+      return listShows(there, there.length + (there.length === 1 ? ' show' : ' shows') +
+                       ' coming up' + where) ||
+             'Nothing upcoming listed' + where + '.';
+    }
+
+    // A band asked for by name.
+    var band = null;
+    up.forEach(function (s) {
+      (s.band || '').split(' / ').forEach(function (b) {
+        if (!band && norm(b).length > 3 && n.indexOf(norm(b)) >= 0) band = s;
+      });
+    });
+    if (band) return 'Yes — ' + showLine(band);
+
+    if (!showy) return null;
+
+    if (/\btonight\b/.test(n)) {
+      var t = up.filter(function (s) { return s.date === today(); });
+      return listShows(t, 'On tonight') || 'Nothing listed for tonight.';
+    }
+    if (/\b(weekend|this week)\b/.test(n)) {
+      var end = new Date(); end.setDate(end.getDate() + 7);
+      var soon = up.filter(function (s) { return s.date <= end.toISOString().slice(0, 10); });
+      return listShows(soon, soon.length + ' in the next week') || 'Nothing listed in the next week.';
+    }
+    if (/\b(next|soonest|first)\b/.test(n) && up.length) {
+      return 'Next one up:\n\n' + showLine(up[0]);
+    }
+    if (/\bhow many\b/.test(n)) {
+      return 'There are ' + up.length + ' upcoming shows on the board right now.';
+    }
+    if (specificOnly) return null;
+    return listShows(up, up.length + ' shows coming up');
+  }
+
+  // ---- knowledge base -----------------------------------------------------
+
+  // How many topics each keyword appears in. A word used by one topic points
+  // straight at it; a word several topics share barely narrows anything down.
+  // Without this, "how do I book the band" scores "book" and "band" equally
+  // and answers with the list of bands.
+  var spread = null;
+  function keywordSpread() {
+    if (spread) return spread;
+    spread = {};
+    kb.topics.forEach(function (t) {
+      var once = {};
+      t.k.forEach(function (key) { once[norm(key)] = 1; });
+      Object.keys(once).forEach(function (k) { spread[k] = (spread[k] || 0) + 1; });
+    });
+    return spread;
+  }
+
+  function answerKB(q, floor) {
+    if (!kb) return null;
+    var ws = words(q);
+    if (!ws.length) return null;
+    var sp = keywordSpread();
+    var nq = norm(q);
+    var best = null, bestScore = 0;
+
+    kb.topics.forEach(function (t) {
+      var score = 0;
+      t.k.forEach(function (key) {
+        var k = norm(key);
+        if (!k) return;
+        var rarity = 1 / (sp[k] || 1);          // 1 for a word only this topic uses
+        // A multi-word key matching as a phrase is worth far more than a
+        // single word that happens to collide.
+        // Longer phrase, more specific: "book lift the anchor" should beat
+        // "lift the anchor" when both are present.
+        if (k.indexOf(' ') >= 0) { if (nq.indexOf(k) >= 0) score += (6 + k.length / 10) * rarity; return; }
+        ws.forEach(function (w) {
+          if (w === k) score += 4 * rarity;
+          else if (w.length > 4 && k.indexOf(w) === 0) score += 1.5 * rarity;
+        });
+      });
+      if (score > bestScore) { bestScore = score; best = t; }
+    });
+
+    if (!best || bestScore < (floor || 2)) return null;
+    return { text: best.a, links: [{ label: best.label, href: best.link }] };
+  }
+
+  // ---- optional Claude ----------------------------------------------------
+
+  function key() { try { return localStorage.getItem(KEY_STORE) || ''; } catch (e) { return ''; } }
+
+  function contextBlob() {
+    var lines = ['Facts about this website (mikidrummer.ca):'];
+    (kb ? kb.topics : []).forEach(function (t) {
+      lines.push('- ' + t.q + ' ' + t.a + ' [' + t.link + ']');
+    });
+    var up = upcoming().slice(0, 25);
+    if (up.length) {
+      lines.push('', 'Upcoming shows on the Punk BC board (today is ' + today() + '):');
+      up.forEach(function (s) {
+        lines.push('- ' + s.date + (s.time ? ' ' + s.time : '') + ' — ' + s.band +
+                   ' — ' + [s.venue, s.city].filter(Boolean).join(', ') +
+                   (s.price ? ' — ' + s.price : ''));
+      });
+    }
+    return lines.join('\n');
+  }
+
+  function askClaude(q) {
+    return fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-5',
+        max_tokens: 500,
+        system: 'You answer questions about the website mikidrummer.ca for its visitors. ' +
+                'Use only the facts below. If they do not cover the question, say you do not know ' +
+                'and suggest the closest page. Two or three sentences, plain and friendly, no markdown.\n\n' +
+                contextBlob(),
+        messages: [{ role: 'user', content: q }]
+      })
+    }).then(function (r) {
+      if (!r.ok) return r.json().catch(function () { return {}; }).then(function (j) {
+        throw new Error((j.error && j.error.message) || ('Anthropic answered ' + r.status));
+      });
+      return r.json();
+    }).then(function (d) {
+      return (d.content || []).map(function (c) { return c.text || ''; }).join('').trim();
+    });
+  }
+
+  // ---- the actual conversation -------------------------------------------
+
+  function respond(q) {
+    // Order matters, and each step earns its place:
+    //   1. a question naming a venue, city, band or date window is about the
+    //      shows, whatever else is in it — "what's on at the Cobalt"
+    //   2. otherwise a question naming a topic wins over the word "show"
+    //      appearing in it — "where can I find the light show"
+    //   3. then the catch-all listing, then a loose topic match.
+    var pinned = answerShows(q, true);
+    if (pinned) { say('bot', pinned, [{ label: 'Punk BC', href: '/punkbc.html' }]); return; }
+
+    var named = answerKB(q, 5);
+    if (named) { say('bot', named.text, named.links); return; }
+
+    var shown = answerShows(q, false);
+    if (shown) { say('bot', shown, [{ label: 'Punk BC', href: '/punkbc.html' }]); return; }
+
+    var known = answerKB(q, 2);
+    if (known) { say('bot', known.text, known.links); return; }
+
+    if (!key()) {
+      say('bot',
+          'I do not know that one. I can answer questions about the shows board, the bands, ' +
+          'the services and the tools on this site — try one of the buttons above the box. ' +
+          'For anything else, Smarter answers at the bottom of the page hands the question to Claude.');
+      return;
+    }
+
+    var thinking = say('bot thinking', 'Thinking…');
+    send.disabled = true;
+    askClaude(q).then(function (text) {
+      thinking.remove(); send.disabled = false;
+      say('bot', text || 'Claude came back with nothing. Try rewording it.');
+    }).catch(function (e) {
+      thinking.remove(); send.disabled = false;
+      say('bot', 'That did not work: ' + e.message);
+    });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var q = input.value.trim();
+    if (!q) return;
+    say('me', q);
+    input.value = '';
+    respond(q);
+  });
+
+  // ---- starters -----------------------------------------------------------
+
+  var STARTERS = ['What shows are coming up?', 'Anything in Victoria?', 'Who are Lift the Anchor?',
+                  'Does Miki teach drums?', 'How do I book the band?'];
+  var chips = document.getElementById('chips');
+  STARTERS.forEach(function (s) {
+    var c = el('button', 'chip', s);
+    c.type = 'button';
+    c.addEventListener('click', function () { input.value = s; form.requestSubmit(); });
+    chips.appendChild(c);
+  });
+
+  // ---- key panel ----------------------------------------------------------
+
+  var keyIn = document.getElementById('key'), keySaid = document.getElementById('keySaid');
+  function keyState() {
+    keySaid.textContent = key() ? 'A key is saved in this browser. Unknown questions go to Claude.'
+                                : 'No key saved. Answers come from the site data only.';
+    keySaid.className = 'said' + (key() ? ' ok' : '');
+  }
+  document.getElementById('keySave').addEventListener('click', function () {
+    var v = keyIn.value.trim();
+    if (!v) { keySaid.textContent = 'Paste the key first.'; keySaid.className = 'said err'; return; }
+    try { localStorage.setItem(KEY_STORE, v); } catch (e) {}
+    keyIn.value = ''; keyState();
+  });
+  document.getElementById('keyClear').addEventListener('click', function () {
+    try { localStorage.removeItem(KEY_STORE); } catch (e) {}
+    keyIn.value = ''; keyState();
+  });
+  keyState();
+
+  // ---- boot ---------------------------------------------------------------
+
+  function grab(url, onto) {
+    return fetch(url, { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(onto)
+      .catch(function () { loadErr.push(url); });
+  }
+
+  Promise.all([
+    grab(KB_URL, function (d) { kb = d; }),
+    grab(SHOWS_URL, function (d) { shows = d.shows || d; })
+  ]).then(function () {
+    var n = shows ? upcoming().length : 0;
+    say('bot', 'Ask me about this site — the shows board, the bands, lessons, booking, the tools.' +
+        (n ? ' I can see ' + n + ' upcoming shows right now.' : '') +
+        (loadErr.length ? '\n\n(Heads up: I could not load ' + loadErr.join(' and ') +
+                          ', so some answers will be thin.)' : ''));
+  });
+})();
+</script>
+</body>
+</html>
