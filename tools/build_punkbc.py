@@ -23,7 +23,7 @@ from __future__ import annotations
 import html
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 try:
@@ -74,7 +74,90 @@ VENUE_ADDRESS = {
     "Red Gate Arts Society": "1965 Main St",
     "Portside Pub": "7 Alexander St",
     "The Portside Pub": "7 Alexander St",
+    "Lucky Bar": "517 Yates St",
+    "Hollywood Theatre": "3123 W Broadway",
+    "The WISE Hall": "1882 Adanac St",
+    "Green Auto": "1822 Pandora St",
+    "Jackknife Brewing": "727 Baillie Ave",
 }
+
+# The same venue arrives spelled several ways (hand-entered here and in the
+# Google Sheet). Left un-normalised it splits the city tabs, produces
+# inconsistent MusicVenue entities, and silently misses VENUE_ADDRESS -- which
+# is how five Astoria shows ended up with no street address in their schema.
+# Keys are lowercased; canonical_venue() does the lookup.
+VENUE_ALIAS = {
+    "astoria": "The Astoria",
+    "astoria pub": "The Astoria",
+    "the astoria pub": "The Astoria",
+    "cobalt": "The Cobalt",
+    "the cobalt cabaret": "The Cobalt",
+    "cobalt cabaret": "The Cobalt",
+    "wise hall": "The WISE Hall",
+    "the wise hall": "The WISE Hall",
+    "wise hall & lounge": "The WISE Hall",
+    "portside pub": "The Portside Pub",
+    "red gate": "Red Gate Arts Society",
+    "green auto body": "Green Auto",
+    "rickshaw": "Rickshaw Theatre",
+    "the rickshaw": "Rickshaw Theatre",
+    "the rickshaw theatre": "Rickshaw Theatre",
+    "biltmore": "Biltmore Cabaret",
+    "the biltmore": "Biltmore Cabaret",
+    "the biltmore cabaret": "Biltmore Cabaret",
+    "commodore": "Commodore Ballroom",
+    "the commodore": "Commodore Ballroom",
+    "lanalou's": "LanaLou's",
+    "lanalous": "LanaLou's",
+    "pearl": "The Pearl",
+    "the pearl vancouver": "The Pearl",
+    "lucky bar": "Lucky Bar",
+    "luckybar": "Lucky Bar",
+}
+
+# "Victoria" and "Victoria, BC" are one city, but render as two tabs.
+CITY_ALIAS = {
+    "victoria, bc": "Victoria",
+    "vancouver, bc": "Vancouver",
+    "kelowna, bc": "Kelowna",
+    "nanaimo, bc": "Nanaimo",
+    "burnaby, bc": "Burnaby",
+    "surrey, bc": "Surrey",
+}
+
+
+def canonical_venue(name: str) -> str:
+    """Fold known spelling variants onto one venue name."""
+    name = (name or "").strip()
+    if not name:
+        return name
+    return VENUE_ALIAS.get(name.lower(), name)
+
+
+def canonical_city(name: str) -> str:
+    """Fold '<City>, BC' onto '<City>' so each city gets one tab."""
+    name = (name or "").strip()
+    if not name:
+        return name
+    return CITY_ALIAS.get(name.lower(), name)
+
+
+def today_local() -> str:
+    """Today's date in Vancouver, as YYYY-MM-DD.
+
+    zoneinfo needs the `tzdata` package, which isn't installed on this machine
+    or necessarily in CI. Without it ZoneInfo() raises, _TZ is None, and a naive
+    datetime.utcnow() is already *tomorrow* in Vancouver every evening after 5pm
+    PDT -- which silently dropped that night's shows off the board at exactly the
+    hour people check what's on tonight. So fall back to UTC minus the Pacific
+    offset rather than to UTC itself.
+    """
+    if _TZ is not None:
+        return datetime.now(_TZ).date().isoformat()
+    now = datetime.now(timezone.utc)
+    # Rough DST fallback, same rule tz_offset() uses below.
+    hours = 7 if 4 <= now.month <= 10 else 8
+    return (now - timedelta(hours=hours)).date().isoformat()
 
 
 def tz_offset(date_str: str) -> str:
@@ -364,8 +447,15 @@ def update_sitemap(today: str) -> None:
 def main() -> None:
     shows = json.loads(DATA.read_text(encoding="utf-8"))["shows"]
     shows = [s for s in shows if s.get("band") and s.get("date")]
+    # Fold venue/city spelling variants before anything reads them, so the
+    # structured data, the city tabs and the address lookup all agree.
+    for s in shows:
+        if s.get("venue"):
+            s["venue"] = canonical_venue(s["venue"])
+        if s.get("city"):
+            s["city"] = canonical_city(s["city"])
     shows.sort(key=lambda s: s["date"])
-    today = datetime.now(_TZ).date().isoformat() if _TZ else datetime.utcnow().date().isoformat()
+    today = today_local()
     # keep only shows today or later (mirrors the client filter). An empty board
     # is the honest answer when nothing is coming up: baking last month's dates
     # back in would leave the page advertising shows that already happened, and
