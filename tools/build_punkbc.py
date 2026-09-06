@@ -20,6 +20,7 @@ Usage:  python3 tools/build_punkbc.py
 
 from __future__ import annotations
 
+import collections
 import html
 import json
 import re
@@ -420,6 +421,242 @@ def replace_region(text: str, name: str, start_pat: str, end_pat: str, body: str
     return new
 
 
+# ── per-venue landing pages ────────────────────────────────────────────────
+#
+# The board is one URL, and its city tabs filter in JavaScript without changing
+# it, so Google only ever sees a single page. That leaves real queries with no
+# page to rank -- "Rickshaw Theatre upcoming shows" has 22 shows of content
+# behind it. A page per venue gives each of those its own URL, title and
+# MusicEvent block.
+#
+# Deliberately no per-city pages: Vancouver is ~93% of the board, so a Vancouver
+# page would be a near-duplicate of punkbc.html competing with it for the same
+# queries. Venues are genuinely distinct subsets; cities here are not.
+VENUE_PAGE_DIR = ROOT / "shows"
+VENUE_PAGE_MIN = 4  # below this a page is thin content and does more harm than good
+
+
+def slugify(name: str) -> str:
+    s = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+    return s or "venue"
+
+
+def venue_page_html(venue: str, city: str, shows: list[dict], today: str) -> str:
+    addr = VENUE_ADDRESS.get(venue)
+    link = VENUE_LINK.get(venue)
+    slug = slugify(venue)
+    url = f"{SITE}/shows/{slug}.html"
+    n = len(shows)
+
+    where = f"{addr}, {city}" if addr else city
+    title = f"Upcoming Shows at {venue} — {city} | Punk BC"
+    if n:
+        desc = (
+            f"{n} upcoming punk, hardcore and metal show{'s' if n != 1 else ''} at "
+            f"{venue} in {city}, BC. Dates, door times, ticket prices and lineups."
+        )
+    else:
+        desc = f"Upcoming punk and hardcore shows at {venue} in {city}, BC."
+
+    events = json.loads(build_events_jsonld(shows).split(">", 1)[1].rsplit("<", 1)[0]) if shows else []
+    for e in events:
+        e["url"] = url
+    graph = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {"@type": "ListItem", "position": 1, "name": "Punk BC", "item": PAGE_URL},
+                    {"@type": "ListItem", "position": 2, "name": venue, "item": url},
+                ],
+            },
+            {
+                "@type": "MusicVenue",
+                "name": venue,
+                "address": {
+                    "@type": "PostalAddress",
+                    **({"streetAddress": addr} if addr else {}),
+                    "addressLocality": city,
+                    "addressRegion": "BC",
+                    "addressCountry": "CA",
+                },
+                **({"url": link} if link else {}),
+            },
+            *events,
+        ],
+    }
+
+    rows = []
+    for s in shows:
+        d = datetime.fromisoformat(s["date"])
+        day = d.strftime("%a %b %d").upper().replace(" 0", " ")
+        band = html.escape(s["band"])
+        notes = html.escape(s.get("notes") or "")
+        price = html.escape(s.get("price") or "")
+        genre = html.escape(s.get("genre") or "")
+        href = html.escape(href_for(s), quote=True)
+        time_ = html.escape(s.get("time") or "")
+        rows.append(
+            f'      <li class="row">\n'
+            f'        <div class="when"><b>{day}</b>{"<span>" + time_ + "</span>" if time_ else ""}</div>\n'
+            f'        <div class="what">\n'
+            f'          <a class="band" href="{href}" target="_blank" rel="noopener">{band}</a>\n'
+            f'          {"<div class=meta>" + notes + "</div>" if notes else ""}\n'
+            f'        </div>\n'
+            f'        <div class="tags">{"<span class=tag>" + genre + "</span>" if genre else ""}'
+            f'{"<span class=price>" + price + "</span>" if price else ""}</div>\n'
+            f"      </li>"
+        )
+    listing = "\n".join(rows) if rows else (
+        '      <li class="row empty">Nothing listed here right now — '
+        f'<a href="/punkbc.html">see the full BC board</a>.</li>'
+    )
+
+    other = ""
+    if link:
+        other = f'<a class="lnk" href="{html.escape(link, quote=True)}" target="_blank" rel="noopener">{html.escape(venue)} website</a>'
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{html.escape(title)}</title>
+<meta name="description" content="{html.escape(desc, quote=True)}">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{url}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{url}">
+<meta property="og:title" content="{html.escape(title)}">
+<meta property="og:description" content="{html.escape(desc, quote=True)}">
+<meta property="og:site_name" content="Punk BC">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{json.dumps(graph, indent=2, ensure_ascii=False)}
+</script>
+<style>
+  :root {{ --bg:#0b0c0e; --card:#131518; --edge:#2b2f34; --dim:#7d848d; --mid:#a6adb6; --fg:#e9ebee; --hot:#e8672a; }}
+  *{{box-sizing:border-box;margin:0;padding:0}}
+  body{{background:var(--bg);color:var(--fg);font-family:"Helvetica Neue",system-ui,Arial,sans-serif;line-height:1.6;padding:0 18px 70px}}
+  .wrap{{max-width:860px;margin:0 auto}}
+  a{{color:inherit;text-decoration:none}}
+  header{{padding:44px 0 26px;border-bottom:1px solid var(--edge)}}
+  .eyebrow{{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--hot);font-weight:700}}
+  h1{{font-family:"Arial Black",system-ui,sans-serif;font-size:clamp(26px,5vw,42px);letter-spacing:-.02em;margin:10px 0 12px;line-height:1.05}}
+  .lead{{color:var(--mid);font-size:16px;max-width:66ch}}
+  .crumb{{margin-top:18px;font-size:13px;color:var(--dim)}}
+  .crumb a:hover{{color:var(--hot)}}
+  ul{{list-style:none;margin-top:26px}}
+  .row{{display:grid;grid-template-columns:120px minmax(0,1fr) auto;gap:14px;align-items:start;
+       padding:15px 0;border-bottom:1px solid var(--edge)}}
+  .when{{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--mid);white-space:nowrap}}
+  .when b{{display:block;color:var(--fg);font-size:13px}}
+  .when span{{color:var(--dim)}}
+  .band{{font-weight:700;font-size:16px}}
+  .band:hover{{color:var(--hot)}}
+  .meta{{color:var(--dim);font-size:13px;margin-top:3px}}
+  .tags{{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}}
+  .tag{{border:1px solid var(--edge);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.05em}}
+  .price{{font-size:13px;color:var(--hot);font-weight:700}}
+  .row.empty{{display:block;color:var(--dim)}}
+  .row.empty a{{color:var(--hot)}}
+  .links{{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}}
+  .lnk{{border:1px solid var(--edge);background:var(--card);border-radius:100px;padding:10px 18px;font-size:14px;font-weight:600}}
+  .lnk:hover{{border-color:var(--hot)}}
+  .lnk.primary{{background:var(--hot);color:#180a03;border-color:var(--hot)}}
+  footer{{margin-top:40px;padding-top:22px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}}
+  footer a{{color:var(--hot)}}
+  @media(max-width:620px){{ .row{{grid-template-columns:1fr;gap:4px}} .tags{{justify-content:flex-start}} }}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Punk BC · Venue</span>
+    <h1>Upcoming shows at {html.escape(venue)}</h1>
+    <p class="lead">{html.escape(str(n))} upcoming punk, hardcore and metal show{'s' if n != 1 else ''} at
+      {html.escape(venue)}{' — ' + html.escape(where) if where else ''}. Updated from the
+      <a href="/punkbc.html" style="color:var(--hot)">Punk BC</a> board.</p>
+    <div class="crumb"><a href="/punkbc.html">← All BC shows</a></div>
+  </header>
+
+  <ul>
+{listing}
+  </ul>
+
+  <div class="links">
+    <a class="lnk primary" href="/punkbc.html">All punk shows in BC</a>
+    {other}
+  </div>
+
+  <footer>
+    Part of <a href="/punkbc.html">Punk BC</a>, a listing of punk, hardcore and metal shows across
+    British Columbia, kept by <a href="/">Miki Drummer</a>. Last updated {today}.
+  </footer>
+</div>
+</body>
+</html>
+"""
+
+
+def build_venue_links(shows: list[dict]) -> str:
+    """The 'Browse by venue' block on the board.
+
+    Without this the venue pages are orphans: nothing on the site links to them,
+    so crawlers only reach them via the sitemap and they carry no internal link
+    equity.
+    """
+    counts = collections.Counter(s.get("venue") or "Venue" for s in shows)
+    listed = [
+        (v, n) for v, n in counts.most_common()
+        if n >= VENUE_PAGE_MIN or (VENUE_PAGE_DIR / f"{slugify(v)}.html").exists()
+    ]
+    if not listed:
+        return ""
+    links = "\n".join(
+        f'        <a class="venue-link" href="/shows/{slugify(v)}.html">'
+        f"{html.escape(v)} <span>{n}</span></a>"
+        for v, n in listed
+    )
+    return f"""    <section class="venues" id="venues">
+      <h2>Browse by venue</h2>
+      <p>Every upcoming show at the rooms that book the most punk and hardcore in BC.</p>
+      <div class="venue-links">
+{links}
+      </div>
+    </section>"""
+
+
+def build_venue_pages(shows: list[dict], today: str) -> list[str]:
+    """Write shows/<venue>.html for venues with enough upcoming shows.
+
+    Also refreshes any page already on disk even if that venue has since dropped
+    below the threshold -- once a URL is indexed, letting it 404 is worse than
+    letting it say there is nothing on.
+    """
+    VENUE_PAGE_DIR.mkdir(exist_ok=True)
+    by_venue: dict[str, list[dict]] = {}
+    for s in shows:
+        by_venue.setdefault(s.get("venue") or "Venue", []).append(s)
+
+    existing = {p.stem for p in VENUE_PAGE_DIR.glob("*.html")}
+    wanted = {v for v, rows in by_venue.items() if len(rows) >= VENUE_PAGE_MIN}
+    # keep refreshing pages that already exist
+    wanted |= {v for v in by_venue if slugify(v) in existing}
+
+    written = []
+    for venue in sorted(wanted):
+        rows = sorted(by_venue.get(venue, []), key=lambda s: s["date"])
+        city = collections.Counter(
+            (s.get("city") or "Vancouver") for s in rows
+        ).most_common(1)[0][0] if rows else "Vancouver"
+        path = VENUE_PAGE_DIR / f"{slugify(venue)}.html"
+        path.write_text(venue_page_html(venue, city, rows, today), encoding="utf-8")
+        written.append(f"shows/{path.name} ({len(rows)})")
+    return written
+
+
 def update_sitemap(today: str) -> None:
     text = SITEMAP.read_text(encoding="utf-8")
 
@@ -440,6 +677,40 @@ def update_sitemap(today: str) -> None:
     if n != 1:
         raise SystemExit("punkbc <url> block not found in sitemap.xml")
     if new != text:
+        SITEMAP.write_text(new, encoding="utf-8")
+
+
+VENUE_SITEMAP_START = "  <!-- PUNKBC-VENUES:START (generated by tools/build_punkbc.py) -->"
+VENUE_SITEMAP_END = "  <!-- PUNKBC-VENUES:END -->"
+
+
+def update_sitemap_venues(today: str) -> None:
+    """Keep the venue-page <url> entries in sitemap.xml in step with shows/."""
+    text = SITEMAP.read_text(encoding="utf-8")
+    if VENUE_SITEMAP_START not in text:
+        # first run: drop the marked region in just before </urlset>
+        text = text.replace(
+            "</urlset>", f"{VENUE_SITEMAP_START}\n{VENUE_SITEMAP_END}\n</urlset>"
+        )
+
+    entries = []
+    for p in sorted(VENUE_PAGE_DIR.glob("*.html")):
+        entries.append(
+            f"  <url>\n"
+            f"    <loc>{SITE}/shows/{p.name}</loc>\n"
+            f"    <lastmod>{today}</lastmod>\n"
+            f"    <priority>0.7</priority>\n"
+            f"    <changefreq>weekly</changefreq>\n"
+            f"  </url>"
+        )
+    block = "\n".join([VENUE_SITEMAP_START, *entries, VENUE_SITEMAP_END])
+    new = re.sub(
+        re.escape(VENUE_SITEMAP_START) + r".*?" + re.escape(VENUE_SITEMAP_END),
+        lambda _: block,
+        text,
+        flags=re.S,
+    )
+    if new != SITEMAP.read_text(encoding="utf-8"):
         SITEMAP.write_text(new, encoding="utf-8")
         print("sitemap.xml: punkbc lastmod ->", today)
 
@@ -493,9 +764,19 @@ def main() -> None:
         "/* SHOWS-SEED:END */",
         build_seed(shows),
     )
+    written = build_venue_pages(shows, today)
+    text = replace_region(
+        text, "VENUES",
+        "<!-- VENUES:START (generated by tools/build_punkbc.py) -->",
+        "<!-- VENUES:END -->",
+        build_venue_links(shows),
+    )
     PAGE.write_text(text, encoding="utf-8")
     update_sitemap(today)
+    update_sitemap_venues(today)
     print(f"punkbc.html: baked {len(shows)} shows + MusicEvent/FAQ structured data")
+    if written:
+        print("venue pages: " + ", ".join(written))
 
 
 if __name__ == "__main__":
