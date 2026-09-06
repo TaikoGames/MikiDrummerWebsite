@@ -23,7 +23,7 @@
       "ticket": "https://thecobalt.ca",
       "genre": "Death Metal/Hardcore",
       "notes": "With Dead Heat, Dying Remains, Kill Chain. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "image": "https://f4.bcbits.com/img/0037451827_16.jpg",
       "curated": ""
     },
     {
@@ -40,6 +40,19 @@
       "curated": ""
     },
     {
+      "band": "Earth Altar",
+      "date": "2026-09-09",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$19.55 adv",
+      "ticket": "https://astoria.pub/",
+      "genre": "Doom/Sludge",
+      "notes": "With Empress, Lumivore, Goblin Vessel. 19+",
+      "image": "https://orangetickets.ca/admin/img_flayers/2271-51392177.jpg",
+      "curated": ""
+    },
+    {
       "band": "Goetia",
       "date": "2026-09-09",
       "time": "19:00",
@@ -49,15 +62,15 @@
       "ticket": "https://thecobalt.ca",
       "genre": "Death Metal",
       "notes": "With Asphyxiated, Empalement. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "image": "https://i0.wp.com/toiletovhell.com/wp-content/uploads/2025/04/goetia.jpg?w=500&ssl=1",
       "curated": ""
     },
     {
       "band": "Satanic Surfers",
       "date": "2026-09-09",
       "time": "19:00",
-      "venue": "Lucky Bar",
-      "city": "Victoria",
+      "venue": "lucky Bar",
+      "city": "Victoria, BC",
       "price": "",
       "ticket": "https://www.eventbrite.ca/e/satanic-surfers-for-i-am-with-brutal-youth-blackout-tickets-1992489936035",
       "genre": "Punk",
@@ -75,6 +88,19 @@
       "genre": "Sludge",
       "notes": "With Voltage, Balkan, Wet Rot. Album release show. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
+      "band": "Mortuary Cave",
+      "date": "2026-09-11",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$23 adv",
+      "ticket": "https://astoria.pub/",
+      "genre": "Sludge",
+      "notes": "With Voltage, Balkan, Wet Rot. Album release show. 19+",
+      "image": "https://f4.bcbits.com/img/0042512315_16.jpg",
       "curated": ""
     },
     {
@@ -112,6 +138,19 @@
       "genre": "Doom/Noise Rock",
       "notes": "With Burnt Lung, Burn Pattern, Manicouagan. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
+      "band": "Mares of Thrace",
+      "date": "2026-09-18",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$23 adv",
+      "ticket": "https://astoria.pub/",
+      "genre": "Doom/Noise Rock",
+      "notes": "With Burnt Lung, Burn Pattern, Manicouagan. 19+",
+      "image": "https://f4.bcbits.com/img/0038564378_16.jpg",
       "curated": ""
     },
     {
@@ -236,6 +275,19 @@
       "genre": "Heavy Metal",
       "notes": "With Speed Reaper, Powermönger. Members of Tribulation/Enforcer. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
+      "band": "Tyrann",
+      "date": "2026-09-23",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$25.30 adv",
+      "ticket": "https://astoria.pub/",
+      "genre": "Heavy Metal",
+      "notes": "With Speed Reaper, Powermönger. Members of Tribulation/Enforcer. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
       "curated": ""
     },
     {
@@ -419,6 +471,19 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
+      "band": "Corner Boys",
+      "date": "2026-10-10",
+      "time": "20:00",
+      "venue": "Cobalt",
+      "city": "Vancouver",
+      "price": "$10",
+      "ticket": "",
+      "genre": "Punk",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
       "band": "The Menzingers / Hot Water Music",
       "date": "2026-10-11",
       "time": "19:00",
@@ -440,7 +505,7 @@
       "ticket": "https://www.livenation.com",
       "genre": "Metalcore",
       "notes": "HOOMAN World Tour. With Zero 9:36",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
       "curated": ""
     },
     {
@@ -481,6 +546,19 @@
       "curated": ""
     },
     {
+      "band": "Kostnatění",
+      "date": "2026-10-23",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://astoria.pub/",
+      "genre": "Black Metal",
+      "notes": "With Liminal Shroud, Xiphoid Dementia, Infinexhuma",
+      "image": "https://f4.bcbits.com/img/0042157612_16.jpg",
+      "curated": ""
+    },
+    {
       "band": "Youth Fountain",
       "date": "2026-10-25",
       "time": "21:00",
@@ -514,7 +592,7 @@
       "ticket": "https://thecobalt.ca",
       "genre": "Metallic Hardcore",
       "notes": "With Missing Link, Fatal Realm, Locked Shut. Touring on new self-titled album",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "image": "https://static.wixstatic.com/media/3f3fbe_116731a3dc6b42e3b7280a858ff728c5~mv2.png/v1/fill/w_400,h_246,al_c,q_85,usm_0.66_1.00_0.01/Pain%20of%20Truth.png",
       "curated": ""
     },
     {
