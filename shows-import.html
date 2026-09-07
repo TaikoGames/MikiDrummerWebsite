@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Import shows — Miki Drummer</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2c2023;
+    --accent:#e8372a; --gold:#e7b53c; --ink:#f4efe6; --muted:#a2938c; --ok:#7ee787;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:radial-gradient(1100px 620px at 50% -10%, #3a0a0a 0%, transparent 60%),
+               linear-gradient(#0d0b0c,#140d0d 70%,#170c0c);
+    color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    min-height:100vh;padding:24px 16px 60px;
+  }
+  .wrap{max-width:1000px;margin:0 auto}
+  .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{font-size:23px}
+  a{color:var(--gold)}
+  .sub{color:var(--muted);font-size:13.5px;margin:6px 0 18px;line-height:1.6;max-width:70ch}
+  .back{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);
+        border-radius:20px;padding:6px 12px}
+  .back:hover{color:var(--ink);border-color:var(--accent)}
+
+  .card{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);
+        border-radius:16px;padding:16px;margin-bottom:16px}
+  textarea{width:100%;min-height:190px;font:inherit;font-size:13.5px;line-height:1.5;
+           color:var(--ink);background:var(--panel2);border:1px solid var(--line);
+           border-radius:12px;padding:13px 15px;resize:vertical}
+  textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  button{font:inherit;font-size:13.5px;cursor:pointer;border:1px solid var(--line);
+         background:transparent;color:var(--ink);border-radius:10px;padding:11px 18px}
+  button:hover{border-color:var(--accent)}
+  button.go{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:800}
+  button:disabled{opacity:.5;cursor:default}
+  .said{font-size:12.5px;margin-top:10px;min-height:1.1em;color:var(--muted)}
+  .said.ok{color:var(--ok)} .said.err{color:#ff8f8f} .said.warn{color:var(--gold)}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+     color:var(--muted);font-weight:700;padding:8px 6px;border-bottom:1px solid var(--line)}
+  td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr.dup{opacity:.5}
+  td input{width:100%;font:inherit;font-size:12.5px;color:var(--ink);background:var(--panel2);
+           border:1px solid var(--line);border-radius:7px;padding:6px 8px}
+  td.tick{width:26px} td.flag{white-space:nowrap;font-size:11.5px;color:var(--gold)}
+  .hint{color:var(--muted);font-size:12.5px;margin-top:10px;line-height:1.6}
+  code{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <h1>📋 Import shows</h1>
+    <a class="back" href="/admin.html">← Admin</a>
+  </div>
+  <p class="sub">
+    Paste a listings page — select all on the site, copy, paste here. It pulls out
+    the date, bands, venue, city, price and ticket link, marks anything already on
+    the board, and lets you fix a row before it goes in. Nothing is sent anywhere
+    until you press Add.
+  </p>
+
+  <div class="card">
+    <textarea id="raw" placeholder="Paste the listings here…
+&#10;Sept 12 — Dismal Outlook @ Capital Ballroom, Victoria — $15&#10;Fri Oct 3, 8pm · The Spits, Bootlicker @ The Cobalt · $22 · https://…"></textarea>
+    <div class="row">
+      <button class="go" id="parse" type="button">Read it</button>
+      <button id="clear" type="button">Clear</button>
+      <span class="said" id="parseSaid"></span>
+    </div>
+    <p class="hint">
+      Undated lines are skipped rather than guessed at. A year is only assumed when
+      the listing leaves it out, and then it is the next time that date comes round.
+    </p>
+  </div>
+
+  <div class="card" id="tableCard" hidden>
+    <div id="tableWrap"></div>
+    <div class="row">
+      <button class="go" id="add" type="button">Add the ticked ones</button>
+      <button id="all" type="button">Tick all new</button>
+      <button id="none" type="button">Untick all</button>
+    </div>
+    <p class="said" id="addSaid"></p>
+    <p class="hint">
+      Add writes straight to <code>punkbc-shows.json</code> on GitHub with the token
+      from the Admin page. The board re-bakes itself on the next scheduled run, or
+      you can run the workflow to see them sooner.
+    </p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var SHOWS_URL = '/punkbc-shows.json';
+  var GH = { owner: 'TaikoGames', repo: 'MikiDrummerWebsite', branch: 'main', path: 'punkbc-shows.json' };
+  var $ = function (id) { return document.getElementById(id); };
+
+  var existing = [];   // what is already on the board
+  var rows = [];       // what was parsed out of the paste
+
+  fetch(SHOWS_URL, { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) { existing = d.shows || []; })
+    .catch(function () { say('parseSaid', 'Could not load the current board — duplicates will not be flagged.', 'warn'); });
+
+  function say(id, msg, kind) {
+    var e = $(id); e.textContent = msg; e.className = 'said' + (kind ? ' ' + kind : '');
+  }
+  function norm(s) {
+    return String(s || '').toLowerCase().replace(/[’']/g, '')
+      .replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  // ---- dates --------------------------------------------------------------
+
+  var MONTHS = { jan:1, feb:2, mar:3, apr:4, may:5, jun:6, jul:7, aug:8, sep:9, sept:9,
+                 oct:10, nov:11, dec:12 };
+  var MONTH_RE = '(jan|feb|mar|apr|may|jun|jul|aug|sept|sep|oct|nov|dec)[a-z]*';
+
+  function iso(y, m, d) {
+    if (m < 1 || m > 12 || d < 1 || d > 31) return null;
+    var s = y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    var chk = new Date(s + 'T12:00:00');
+    return isNaN(chk) || chk.getDate() !== d ? null : s;
+  }
+
+  // A listing that leaves the year off means the next one coming, not one in
+  // the past — "Jan 10" seen in September is next January.
+  function inferYear(m, d) {
+    var now = new Date(), y = now.getFullYear();
+    var guess = iso(y, m, d);
+    if (!guess) return null;
+    var todayIso = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    return guess >= todayIso ? guess : iso(y + 1, m, d);
+  }
+
+  function findDate(line) {
+    var s = line.toLowerCase();
+    var m;
+    // 2026-09-12
+    if ((m = s.match(/\b(20\d\d)-(\d{1,2})-(\d{1,2})\b/)))
+      return iso(+m[1], +m[2], +m[3]);
+    // 12 September 2026  /  12 Sept
+    if ((m = s.match(new RegExp('\\b(\\d{1,2})\\s+' + MONTH_RE + '\\.?(?:\\s+(20\\d\\d))?\\b'))))
+      return m[3] ? iso(+m[3], MONTHS[m[2].slice(0, 4)] || MONTHS[m[2].slice(0, 3)], +m[1])
+                  : inferYear(MONTHS[m[2].slice(0, 4)] || MONTHS[m[2].slice(0, 3)], +m[1]);
+    // September 12, 2026  /  Sept 12
+    if ((m = s.match(new RegExp('\\b' + MONTH_RE + '\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(20\\d\\d))?\\b'))))
+      return m[3] ? iso(+m[3], MONTHS[m[1].slice(0, 4)] || MONTHS[m[1].slice(0, 3)], +m[2])
+                  : inferYear(MONTHS[m[1].slice(0, 4)] || MONTHS[m[1].slice(0, 3)], +m[2]);
+    // 09/12 or 09/12/2026 — month first, the North American way these are written
+    if ((m = s.match(/\b(\d{1,2})\/(\d{1,2})(?:\/(20\d\d|\d\d))?\b/))) {
+      if (m[3]) return iso(+(m[3].length === 2 ? '20' + m[3] : m[3]), +m[1], +m[2]);
+      return inferYear(+m[1], +m[2]);
+    }
+    return null;
+  }
+
+  function findTime(line) {
+    var m = line.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b/i);
+    if (m) {
+      var h = +m[1] % 12;
+      if (/pm/i.test(m[3])) h += 12;
+      return String(h).padStart(2, '0') + ':' + (m[2] || '00');
+    }
+    m = line.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
+    return m ? String(+m[1]).padStart(2, '0') + ':' + m[2] : '';
+  }
+
+  function findPrice(line) {
+    var m = line.match(/\$\s?\d+(?:\.\d{2})?(?:\s*(?:adv|advance|door|\+))?/i);
+    return m ? m[0].replace(/\s+/g, ' ').trim() : '';
+  }
+
+  function findLink(line) {
+    var m = line.match(/https?:\/\/[^\s,)"']+/);
+    return m ? m[0].replace(/[.,;]+$/, '') : '';
+  }
+
+  // Venue and city usually sit after an "@" or " at ", and the city after a
+  // comma. Everything before that is the bill.
+  function splitPlace(text) {
+    var out = { bands: text.trim(), venue: '', city: '' };
+    var m = text.match(/^([\s\S]*?)\s(?:@|\bat\b)\s+([^\n]+)$/i);
+    if (m) { out.bands = m[1].trim(); out.venue = m[2].trim(); }
+    if (out.venue) {
+      var parts = out.venue.split(',');
+      if (parts.length > 1) {
+        out.city = parts.pop().trim();
+        out.venue = parts.join(',').trim();
+      }
+    }
+    return out;
+  }
+
+  var NOISE = /^(doors?|tickets?|more info|rsvp|free|all ages|19\+|presented by|sold out)\b/i;
+
+  // A venue or city only ever runs to the end of its own line. Anything past
+  // the first joiner belongs to a later line that got folded into this show —
+  // an undated heading, say — and dragging it along leaves "Vancouver —".
+  // Cut first, tidy after: tidy strips trailing punctuation, so doing it the
+  // other way round leaves the dash the cut exposes.
+  function firstClause(s) { return tidy(String(s || '').split('·')[0]); }
+
+  function tidy(s) {
+    return s.replace(/https?:\/\/\S+/g, ' ')
+            .replace(/\$\s?\d+(?:\.\d{2})?(?:\s*(?:adv|advance|door|\+))?/ig, ' ')
+            .replace(/\b\d{1,2}(?::\d{2})?\s*(am|pm)\b/ig, ' ')
+            .replace(new RegExp('\\b(mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun)[a-z]*\\.?,?', 'ig'), ' ')
+            .replace(new RegExp('\\b' + MONTH_RE + '\\.?\\s*\\d{1,2}(st|nd|rd|th)?,?(\\s*20\\d\\d)?', 'ig'), ' ')
+            .replace(new RegExp('\\b\\d{1,2}\\s+' + MONTH_RE + '\\.?(\\s*20\\d\\d)?', 'ig'), ' ')
+            .replace(/\b20\d\d-\d{1,2}-\d{1,2}\b/g, ' ')
+            .replace(/\b\d{1,2}\/\d{1,2}(\/\d{2,4})?\b/g, ' ')
+            .replace(/^[\s\-–—·•|,:]+|[\s\-–—·•|,:]+$/g, '')
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+  }
+
+  // A line carrying a date starts a show; lines after it belong to that show
+  // until the next date. That is how these pages are almost always laid out.
+  function parseText(text) {
+    var lines = String(text || '').split(/\r?\n/);
+    var blocks = [], cur = null;
+    lines.forEach(function (raw) {
+      var line = raw.trim();
+      if (!line) return;
+      var d = findDate(line);
+      if (d) { cur = { date: d, lines: [line] }; blocks.push(cur); }
+      else if (cur) cur.lines.push(line);
+    });
+
+    return blocks.map(function (b) {
+      var joined = b.lines.join(' \n ');
+      var flat = b.lines.join(' · ');
+      var place = splitPlace(b.lines.map(function (l) { return NOISE.test(l) ? '' : l; })
+                              .filter(Boolean).join(' · '));
+      var bands = tidy(place.bands);
+      // Leftovers like a lone "·" are not a band name.
+      if (bands.replace(/[^a-z0-9]/gi, '').length < 2) bands = '';
+      return {
+        date: b.date,
+        time: findTime(flat),
+        band: bands,
+        venue: firstClause(place.venue),
+        city: firstClause(place.city),
+        price: findPrice(flat),
+        ticket: findLink(joined),
+        source: flat
+      };
+    }).filter(function (r) { return r.band || r.venue; });
+  }
+
+  // ---- duplicates ---------------------------------------------------------
+  // Same date and venue is the reliable signal: the same gig gets billed a
+  // dozen ways ("Belvedere" vs "Belvedere / The Anti Queens"), but two
+  // different gigs rarely share a room on a night.
+  function dupOf(r) {
+    var rv = norm(r.venue).replace(/^the /, '');
+    return existing.filter(function (s) {
+      if (s.date !== r.date) return false;
+      var sv = norm(s.venue).replace(/^the /, '');
+      if (rv && sv && (rv === sv || rv.indexOf(sv) >= 0 || sv.indexOf(rv) >= 0)) return true;
+      var rb = norm(r.band), sb = norm(s.band);
+      return rb && sb && (rb === sb || rb.indexOf(sb) >= 0 || sb.indexOf(rb) >= 0);
+    })[0] || null;
+  }
+
+  // ---- the table ----------------------------------------------------------
+
+  var FIELDS = [['date', 'Date', 96], ['time', 'Time', 62], ['band', 'Bands', 0],
+                ['venue', 'Venue', 0], ['city', 'City', 0], ['price', 'Price', 70]];
+
+  function render() {
+    var wrap = $('tableWrap');
+    wrap.textContent = '';
+    var table = document.createElement('table');
+    var thead = document.createElement('tr');
+    ['', 'Date', 'Time', 'Bands', 'Venue', 'City', 'Price', ''].forEach(function (h) {
+      var th = document.createElement('th'); th.textContent = h; thead.appendChild(th);
+    });
+    table.appendChild(thead);
+
+    rows.forEach(function (r, i) {
+      var tr = document.createElement('tr');
+      if (r.dup) tr.className = 'dup';
+
+      var tick = document.createElement('td'); tick.className = 'tick';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = !r.dup; cb.disabled = !!r.dup;
+      cb.addEventListener('change', function () { r.take = cb.checked; });
+      r.take = cb.checked;
+      tick.appendChild(cb); tr.appendChild(tick);
+
+      FIELDS.forEach(function (f) {
+        var td = document.createElement('td');
+        var inp = document.createElement('input');
+        inp.value = r[f[0]] || '';
+        if (f[2]) inp.style.width = f[2] + 'px';
+        inp.addEventListener('input', function () { r[f[0]] = inp.value; });
+        td.appendChild(inp); tr.appendChild(td);
+      });
+
+      var flag = document.createElement('td'); flag.className = 'flag';
+      flag.textContent = r.dup ? 'already on the board' : '';
+      if (r.dup) flag.title = r.dup.band + ' — ' + r.dup.venue;
+      tr.appendChild(flag);
+
+      table.appendChild(tr);
+    });
+    wrap.appendChild(table);
+    $('tableCard').hidden = false;
+  }
+
+  $('parse').addEventListener('click', function () {
+    rows = parseText($('raw').value);
+    rows.forEach(function (r) { r.dup = dupOf(r); });
+    if (!rows.length) {
+      $('tableCard').hidden = true;
+      say('parseSaid', 'No dated listings in that. Every show needs a date on its line.', 'err');
+      return;
+    }
+    var fresh = rows.filter(function (r) { return !r.dup; }).length;
+    say('parseSaid', rows.length + ' found, ' + fresh + ' new, ' +
+        (rows.length - fresh) + ' already on the board.', fresh ? 'ok' : 'warn');
+    render();
+  });
+
+  $('clear').addEventListener('click', function () {
+    $('raw').value = ''; rows = []; $('tableCard').hidden = true; say('parseSaid', '');
+  });
+  $('all').addEventListener('click', function () {
+    $('tableWrap').querySelectorAll('input[type=checkbox]:not(:disabled)').forEach(function (c) {
+      c.checked = true; c.dispatchEvent(new Event('change'));
+    });
+  });
+  $('none').addEventListener('click', function () {
+    $('tableWrap').querySelectorAll('input[type=checkbox]').forEach(function (c) {
+      c.checked = false; c.dispatchEvent(new Event('change'));
+    });
+  });
+
+  // ---- writing them in ----------------------------------------------------
+
+  $('add').addEventListener('click', function () {
+    var take = rows.filter(function (r) { return r.take && !r.dup; });
+    if (!take.length) { say('addSaid', 'Nothing ticked.', 'warn'); return; }
+    var bad = take.filter(function (r) { return !r.date || !r.band; });
+    if (bad.length) { say('addSaid', bad.length + ' ticked row(s) still need a date and a band.', 'err'); return; }
+
+    var tok = '';
+    try { tok = localStorage.getItem('gh_token') || ''; } catch (e) {}
+    if (!tok) {
+      say('addSaid', 'No GitHub token in this browser — connect on the Admin page first. Nothing was added.', 'err');
+      return;
+    }
+
+    var btn = this, was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Adding…';
+    var H = { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json',
+              'Content-Type': 'application/json' };
+    var api = 'https://api.github.com/repos/' + GH.owner + '/' + GH.repo + '/contents/' + GH.path;
+
+    fetch(api + '?ref=' + GH.branch, { headers: H, cache: 'no-store' })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('GitHub rejected the token.');
+        if (r.status === 404) throw new Error('That token cannot see this repository.');
+        if (!r.ok) throw new Error('GitHub answered ' + r.status + '.');
+        return r.json();
+      })
+      .then(function (cur) {
+        var live = JSON.parse(decodeURIComponent(escape(atob(cur.content.replace(/\s/g, '')))));
+        // Check again against the file as it is now, not as it was on load.
+        existing = live.shows || [];
+        var adding = take.filter(function (r) { return !dupOf(r); }).map(function (r) {
+          return { band: r.band, date: r.date, time: r.time || '', venue: r.venue || '',
+                   city: r.city || '', price: r.price || '', ticket: r.ticket || '',
+                   genre: '', notes: '', image: 'https://www.mikidrummer.ca/punkbc-placeholder.svg' };
+        });
+        if (!adding.length) throw new Error('All of those are already on the board now.');
+        live.shows = live.shows.concat(adding);
+        live.shows.sort(function (a, b) { return (a.date || '') < (b.date || '') ? -1 : 1; });
+        return fetch(api, { method: 'PUT', headers: H, body: JSON.stringify({
+          message: 'Punk BC: ' + adding.length + ' show' + (adding.length === 1 ? '' : 's') + ' added by hand',
+          content: btoa(unescape(encodeURIComponent(JSON.stringify(live, null, 2) + '\n'))),
+          sha: cur.sha, branch: GH.branch
+        }) }).then(function (res) { return { res: res, n: adding.length }; });
+      })
+      .then(function (o) {
+        btn.disabled = false; btn.textContent = was;
+        if (!o.res.ok) { say('addSaid', 'GitHub refused the write (' + o.res.status + '). Nothing added.', 'err'); return; }
+        say('addSaid', o.n + ' added. The board re-bakes on the next scheduled run.', 'ok');
+        rows.forEach(function (r) { if (r.take) { r.dup = { band: r.band, venue: r.venue }; } });
+        render();
+      })
+      .catch(function (e) {
+        btn.disabled = false; btn.textContent = was;
+        say('addSaid', e.message + ' Nothing was added.', 'err');
+      });
+  });
+
+  window.ShowsImport = { parse: parseText };   // for the tests
+})();
+</script>
+</body>
+</html>
