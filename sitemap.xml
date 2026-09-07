@@ -105,5 +105,11 @@
     <priority>0.7</priority>
     <changefreq>weekly</changefreq>
   </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/shows/vancouver-punk-shows.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+  </url>
   <!-- PUNKBC-VENUES:END -->
 </urlset>

@@ -135,9 +135,21 @@ def parse_csv(text: str) -> list[dict]:
 
 
 def key(show: dict) -> tuple:
+    """Identity of a show, for merging.
+
+    The venue has to be canonicalised here, not just at render time. "The
+    Astoria" and "Astoria Pub" are one room; keyed on the raw spelling they
+    look like two different gigs, and the same night gets stored twice — which
+    is how Earth Altar, Mortuary Cave and Mares of Thrace each ended up on the
+    board twice. The alias table already knew they were the same; only the
+    display was using it.
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from build_punkbc import canonical_venue
+
     return ((show.get("band") or "").strip().lower(),
             (show.get("date") or "").strip(),
-            (show.get("venue") or "").strip().lower())
+            canonical_venue(show.get("venue") or "").strip().lower())
 
 
 def merge(existing: list[dict], sheet: list[dict]) -> list[dict]:
