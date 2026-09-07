@@ -602,6 +602,11 @@ def venue_page_html(venue: str, city: str, shows: list[dict], today: str) -> str
 
 CITY_PAGE_MIN = 8   # a city page needs a real board behind it, not three gigs
 
+# Cities that get a page whatever the count. Victoria is here on purpose: it is
+# under the threshold today, but it is a real scene with its own search term and
+# the page will fill out as shows land. Everything else has to earn it.
+CITY_PAGES_ALWAYS = {"Victoria"}
+
 
 def city_slug(city: str) -> str:
     """The page people are actually searching for.
@@ -758,7 +763,8 @@ def city_page_html(city: str, shows: list[dict], today: str) -> str:
     <p class="lead">Every upcoming punk, hardcore and metal show in {html.escape(city)} —
       {html.escape(str(n))} on the board right now across {len(venues)} venue{'s' if len(venues) != 1 else ''},
       with dates, door times, ticket prices and who is on the bill. Kept up to date from the
-      <a href="/punkbc.html" style="color:var(--hot)">Punk BC</a> board.</p>
+      <a href="/punkbc.html" style="color:var(--hot)">Punk BC</a> board.
+      {'A quiet stretch — the <a href="/punkbc.html" style="color:var(--hot)">full BC board</a> has the rest, and this page fills up as shows are announced.' if n < CITY_PAGE_MIN else ''}</p>
     <div class="crumb"><a href="/punkbc.html">← All BC shows</a></div>
   </header>
 
@@ -793,6 +799,7 @@ def build_city_pages(shows: list[dict], today: str) -> list[str]:
 
     existing = {p.stem for p in VENUE_PAGE_DIR.glob("*.html")}
     wanted = {c for c, rows in by_city.items() if len(rows) >= CITY_PAGE_MIN}
+    wanted |= {c for c in CITY_PAGES_ALWAYS if c in by_city}
     # Once indexed, a URL going 404 is worse than one saying nothing is on.
     wanted |= {c for c in by_city if city_slug(c) in existing}
 
