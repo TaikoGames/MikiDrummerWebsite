@@ -66,18 +66,6 @@
       "curated": ""
     },
     {
-      "band": "Dismal Outlook",
-      "date": "2026-09-12",
-      "time": "21:00",
-      "venue": "Capital Ballroom",
-      "city": "Victoria",
-      "price": "$15",
-      "ticket": "",
-      "genre": "Hardcore",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
       "band": "The Exit Strategy / Puddy Waters / Examine the Bore",
       "date": "2026-09-12",
       "time": "",
@@ -102,6 +90,18 @@
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzNWTfUCyCatVKUuiVEZ9jexmUNCHwG85CvRJAU8QhA5XOT5lBQXB-ixYn4wzH15rOczst-xNi3jBAz6WGnBviAx8m5g8KjsQit4TrC27J7w&s=10"
     },
     {
+      "band": "Dismal Outlook",
+      "date": "2026-09-12",
+      "time": "21:00",
+      "venue": "Capital Ballroom",
+      "city": "Victoria",
+      "price": "$15",
+      "ticket": "",
+      "genre": "Hardcore",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+    },
+    {
       "band": "Dark Thoughts / Schedule 1 / Pill Mill",
       "date": "2026-09-15",
       "time": "",
@@ -109,6 +109,30 @@
       "city": "Vancouver",
       "price": "",
       "ticket": "",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+    },
+    {
+      "band": "Brasser / Curb Zombie / Brehdren",
+      "date": "2026-09-18",
+      "time": "",
+      "venue": "LanaLou's",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/brasser-curb-zombie-brehdren/1561399485461074/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+    },
+    {
+      "band": "Out Of Order / Night Court / Terminal City Rats / Teratoma",
+      "date": "2026-09-18",
+      "time": "",
+      "venue": "Green Auto",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/out-of-order-montreal-plus-loc/2265951294164205/",
       "genre": "",
       "notes": "",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
@@ -125,30 +149,6 @@
       "notes": "With Burnt Lung, Burn Pattern, Manicouagan. 19+",
       "image": "https://f4.bcbits.com/img/0038564378_16.jpg",
       "curated": ""
-    },
-    {
-      "band": "Out Of Order / Night Court / Terminal City Rats / Teratoma",
-      "date": "2026-09-18",
-      "time": "",
-      "venue": "Green Auto",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/out-of-order-montreal-plus-loc/2265951294164205/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
-      "band": "Brasser / Curb Zombie / Brehdren",
-      "date": "2026-09-18",
-      "time": "",
-      "venue": "LanaLou's",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/brasser-curb-zombie-brehdren/1561399485461074/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
       "band": "Cheap Flavor / Baron / Witiko",
@@ -188,18 +188,6 @@
       "curated": ""
     },
     {
-      "band": "Unsane",
-      "date": "2026-09-20",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$22",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Noise Rock",
-      "notes": "19+ event",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Unsane_2005_red.jpg?width=600"
-    },
-    {
       "band": "The Spits",
       "date": "2026-09-20",
       "time": "19:00",
@@ -210,6 +198,18 @@
       "genre": "",
       "notes": "Punk",
       "image": "https://images.squarespace-cdn.com/content/v1/5c6c4858c46f6d31bcc4fb49/1693596257321-8ZZMIPE5BN1J3VYDMLY3/AQ-2023PROMO-michaelxcrusty6.jpg"
+    },
+    {
+      "band": "Unsane",
+      "date": "2026-09-20",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$22",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Noise Rock",
+      "notes": "19+ event",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Unsane_2005_red.jpg?width=600"
     },
     {
       "band": "Elder",
@@ -224,17 +224,16 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
-      "band": "Quicksand & Fucked Up",
+      "band": "Revocation",
       "date": "2026-09-22",
-      "time": "20:00",
-      "venue": "Capital Ballroom",
-      "city": "Victoria",
-      "price": "",
-      "ticket": "https://www.ticketmaster.ca",
-      "genre": "Post-Hardcore/Punk",
-      "notes": "Co-headline fall Canadian tour. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fucked_up_at_the_polaris_music_prize_gala_2009_by_dustin_rabin.jpg?width=600",
-      "curated": ""
+      "time": "18:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$30",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Death Metal",
+      "notes": "With Defeated Sanity, Fuming Mouth, Weeping. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Revocation_at_Alchemica,_Bologna_2.jpg?width=600"
     },
     {
       "band": "Delilah Bon",
@@ -249,28 +248,16 @@
       "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg/500px-Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg"
     },
     {
-      "band": "Revocation",
+      "band": "Quicksand & Fucked Up",
       "date": "2026-09-22",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$30",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Death Metal",
-      "notes": "With Defeated Sanity, Fuming Mouth, Weeping. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Revocation_at_Alchemica,_Bologna_2.jpg?width=600"
-    },
-    {
-      "band": "Tyrann",
-      "date": "2026-09-23",
-      "time": "19:00",
-      "venue": "Astoria Pub",
-      "city": "Vancouver",
-      "price": "$25.30 adv",
-      "ticket": "https://astoria.pub/",
-      "genre": "Heavy Metal",
-      "notes": "With Speed Reaper, Powermönger. Members of Tribulation/Enforcer. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
+      "time": "20:00",
+      "venue": "Capital Ballroom",
+      "city": "Victoria",
+      "price": "",
+      "ticket": "https://www.ticketmaster.ca",
+      "genre": "Post-Hardcore/Punk",
+      "notes": "Co-headline fall Canadian tour. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fucked_up_at_the_polaris_music_prize_gala_2009_by_dustin_rabin.jpg?width=600",
       "curated": ""
     },
     {
@@ -287,6 +274,19 @@
       "curated": ""
     },
     {
+      "band": "Tyrann",
+      "date": "2026-09-23",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$25.30 adv",
+      "ticket": "https://astoria.pub/",
+      "genre": "Heavy Metal",
+      "notes": "With Speed Reaper, Powermönger. Members of Tribulation/Enforcer. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
+      "curated": ""
+    },
+    {
       "band": "Covenant Festival XI — Night One",
       "date": "2026-09-24",
       "time": "18:00",
@@ -296,18 +296,6 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Metal",
       "notes": "Misthyrming, Abyssal, Brazen Horde, Diabolic Oath, Fire Magic, Living Evil. 3-day pass $280. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
-    },
-    {
-      "band": "Covenant Festival XI — Night Two",
-      "date": "2026-09-25",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$110",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Black Metal",
-      "notes": "Ruim, Volahn, Egregore and more. 3-day pass $280. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
@@ -323,6 +311,18 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
+      "band": "Covenant Festival XI — Night Two",
+      "date": "2026-09-25",
+      "time": "18:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$110",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Black Metal",
+      "notes": "Ruim, Volahn, Egregore and more. 3-day pass $280. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
+    },
+    {
       "band": "Ensiferum",
       "date": "2026-09-25",
       "time": "19:00",
@@ -333,6 +333,18 @@
       "genre": "Folk Metal",
       "notes": "With Firewind & Atavistia",
       "image": "https://ensiferum.com/_assets/band.CxYa1rmZ_Z2s8fxM.webp"
+    },
+    {
+      "band": "The Growlers",
+      "date": "2026-09-26",
+      "time": "",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/the-growlers/1207544338248190/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
       "band": "Covenant Festival XI — Night Three",
@@ -357,18 +369,6 @@
       "genre": "Industrial Metal",
       "notes": "With Guiltless",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Author_%26_Punisher_%40_Roadburn_Festival_2017_02.jpg?width=600"
-    },
-    {
-      "band": "The Growlers",
-      "date": "2026-09-26",
-      "time": "",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/the-growlers/1207544338248190/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
       "band": "Judge",
@@ -455,18 +455,6 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/13-06-09_RaR_Nekrogoblikon_01.jpg?width=600"
     },
     {
-      "band": "HammerFall",
-      "date": "2026-10-07",
-      "time": "18:30",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$35",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Power Metal",
-      "notes": "With Evergrey, Elvenking. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hammerfall_-_Wacken_Open_Air_2023_37_(cropped).jpg?width=600"
-    },
-    {
       "band": "Dead Pioneers",
       "date": "2026-10-07",
       "time": "",
@@ -479,6 +467,18 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
+      "band": "HammerFall",
+      "date": "2026-10-07",
+      "time": "18:30",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$35",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Power Metal",
+      "notes": "With Evergrey, Elvenking. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hammerfall_-_Wacken_Open_Air_2023_37_(cropped).jpg?width=600"
+    },
+    {
       "band": "Shiner",
       "date": "2026-10-08",
       "time": "19:00",
@@ -489,6 +489,18 @@
       "genre": "Rock",
       "notes": "With Fotocrime",
       "image": "https://www.timmcmahan.com/graphics/shiner4.jpg"
+    },
+    {
+      "band": "Longshot",
+      "date": "2026-10-09",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.eventbrite.ca/e/longshot-30-year-anniversary-tickets-1994373470738",
+      "genre": "",
+      "notes": "30 year anniversary — night 1",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
       "band": "Good Riddance",
@@ -504,26 +516,14 @@
     },
     {
       "band": "Longshot",
-      "date": "2026-10-09",
-      "time": "19:00",
+      "date": "2026-10-10",
+      "time": "",
       "venue": "The Cobalt",
       "city": "Vancouver",
       "price": "",
       "ticket": "https://www.eventbrite.ca/e/longshot-30-year-anniversary-tickets-1994373470738",
       "genre": "",
-      "notes": "30 year anniversary — night 1",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
-      "band": "Corner Boys",
-      "date": "2026-10-10",
-      "time": "20:00",
-      "venue": "Cobalt",
-      "city": "Vancouver",
-      "price": "$10",
-      "ticket": "",
-      "genre": "Punk",
-      "notes": "",
+      "notes": "30 year anniversary — night 2",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
@@ -539,15 +539,15 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Militarie-Gun-Roll-4_031.jpg?width=500"
     },
     {
-      "band": "Longshot",
+      "band": "Corner Boys",
       "date": "2026-10-10",
-      "time": "",
-      "venue": "The Cobalt",
+      "time": "20:00",
+      "venue": "Cobalt",
       "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.eventbrite.ca/e/longshot-30-year-anniversary-tickets-1994373470738",
-      "genre": "",
-      "notes": "30 year anniversary — night 2",
+      "price": "$10",
+      "ticket": "",
+      "genre": "Punk",
+      "notes": "",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
@@ -561,18 +561,6 @@
       "genre": "Punk",
       "notes": "",
       "image": "https://lastfm.freetls.fastly.net/i/u/300x300/b8867cfe9516d94e98f4cf3fd56a82cc"
-    },
-    {
-      "band": "Hulder",
-      "date": "2026-10-17",
-      "time": "19:00",
-      "venue": "The Astoria",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://theastoria.ca",
-      "genre": "Black Metal",
-      "notes": "Verbolgen 2026 Tour. With Antichrist Siege Machine",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
       "band": "The Corps / Danger Box / Miles to Nowhere / Dusty Pines",
@@ -598,6 +586,18 @@
       "notes": "HOOMAN World Tour. With Zero 9:36",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
       "curated": ""
+    },
+    {
+      "band": "Hulder",
+      "date": "2026-10-17",
+      "time": "19:00",
+      "venue": "The Astoria",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://theastoria.ca",
+      "genre": "Black Metal",
+      "notes": "Verbolgen 2026 Tour. With Antichrist Siege Machine",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
       "band": "Demon Hunter",
@@ -661,6 +661,19 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Dillinger_Escape_Plan_Furnace_Fest_2025_Birmingham_Alabama_3.png?width=300"
     },
     {
+      "band": "Pain of Truth",
+      "date": "2026-10-31",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thecobalt.ca",
+      "genre": "Metallic Hardcore",
+      "notes": "With Missing Link, Fatal Realm, Locked Shut. Touring on new self-titled album",
+      "image": "https://static.wixstatic.com/media/3f3fbe_116731a3dc6b42e3b7280a858ff728c5~mv2.png/v1/fill/w_400,h_246,al_c,q_85,usm_0.66_1.00_0.01/Pain%20of%20Truth.png",
+      "curated": ""
+    },
+    {
       "band": "Sabbat",
       "date": "2026-10-31",
       "time": "19:00",
@@ -683,19 +696,6 @@
       "genre": "Punk",
       "notes": "Halloween show",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
-      "band": "Pain of Truth",
-      "date": "2026-10-31",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://thecobalt.ca",
-      "genre": "Metallic Hardcore",
-      "notes": "With Missing Link, Fatal Realm, Locked Shut. Touring on new self-titled album",
-      "image": "https://static.wixstatic.com/media/3f3fbe_116731a3dc6b42e3b7280a858ff728c5~mv2.png/v1/fill/w_400,h_246,al_c,q_85,usm_0.66_1.00_0.01/Pain%20of%20Truth.png",
-      "curated": ""
     },
     {
       "band": "Sunn O)))",
