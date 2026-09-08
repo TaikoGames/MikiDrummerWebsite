@@ -280,13 +280,13 @@
       "band": "Tyrann",
       "date": "2026-09-23",
       "time": "19:00",
-      "venue": "The Astoria",
+      "venue": "Astoria Pub",
       "city": "Vancouver",
       "price": "$25.30 adv",
       "ticket": "https://astoria.pub/",
       "genre": "Heavy Metal",
       "notes": "With Speed Reaper, Powermönger. Members of Tribulation/Enforcer. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
       "curated": ""
     },
     {
@@ -579,7 +579,7 @@
       "ticket": "https://facebook.com/events/s/the-corps-western-spice-tour-a/1334691088869652/",
       "genre": "",
       "notes": "",
-      "image": "https://www.mikidrummer.ca/images/shows/the-corps-the-cobalt-vancouver-2026-10-17.jpg",
+      "image": "https://www.mikidrummer.ca/images/shows/Fomites-logo.jpg",
       "image_source": "supplied by Miki"
     },
     {
@@ -592,7 +592,7 @@
       "ticket": "https://www.livenation.com",
       "genre": "Metalcore",
       "notes": "HOOMAN World Tour. With Zero 9:36",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
       "curated": ""
     },
     {
