@@ -88,6 +88,8 @@
       <button class="go" id="add" type="button">Add the ticked ones</button>
       <button id="all" type="button">Tick all new</button>
       <button id="none" type="button">Untick all</button>
+      <button id="onlyNew" type="button">Show only what's missing</button>
+      <button id="copy" type="button">Copy the missing ones</button>
     </div>
     <p class="said" id="addSaid"></p>
     <p class="hint">
@@ -331,9 +333,17 @@
       say('parseSaid', 'No dated listings in that. Every show needs a date on its line.', 'err');
       return;
     }
+    // The usual question is not "what can I add" but "am I missing anything",
+    // so answer that in the first sentence rather than making it be counted
+    // off a table.
     var fresh = rows.filter(function (r) { return !r.dup; }).length;
-    say('parseSaid', rows.length + ' found, ' + fresh + ' new, ' +
-        (rows.length - fresh) + ' already on the board.', fresh ? 'ok' : 'warn');
+    say('parseSaid', fresh === 0
+        ? (rows.length === 1
+             ? 'Nothing missing — that one is already on the board.'
+             : 'Nothing missing — all ' + rows.length + ' of those are already on the board.')
+        : fresh + ' of ' + rows.length + ' are not on the board yet; the other ' +
+          (rows.length - fresh) + ' you already have.',
+        fresh ? 'ok' : 'warn');
     render();
   });
 
@@ -345,6 +355,34 @@
       c.checked = true; c.dispatchEvent(new Event('change'));
     });
   });
+  var hiding = false;
+  $('onlyNew').addEventListener('click', function () {
+    hiding = !hiding;
+    this.textContent = hiding ? 'Show everything' : "Show only what's missing";
+    $('tableWrap').querySelectorAll('tr.dup').forEach(function (tr) { tr.hidden = hiding; });
+  });
+
+  $('copy').addEventListener('click', function () {
+    var miss = rows.filter(function (r) { return !r.dup; });
+    if (!miss.length) { say('addSaid', 'Nothing missing to copy.', 'warn'); return; }
+    var text = miss.map(function (r) {
+      return [r.date, r.time, r.band, r.venue, r.city, r.price, r.ticket]
+             .filter(Boolean).join(' | ');
+    }).join('\n');
+    var done = function () { say('addSaid', miss.length + ' copied.', 'ok'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+    } else fallback(text, done);
+  });
+  function fallback(text, done) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); }
+    catch (e) { say('addSaid', 'Could not copy — select the rows by hand.', 'err'); }
+    ta.remove();
+  }
+
   $('none').addEventListener('click', function () {
     $('tableWrap').querySelectorAll('input[type=checkbox]').forEach(function (c) {
       c.checked = false; c.dispatchEvent(new Event('change'));
