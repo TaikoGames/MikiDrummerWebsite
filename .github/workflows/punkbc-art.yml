@@ -1,0 +1,71 @@
+name: Punk BC show art
+
+# Fills in real artwork for shows still carrying the placeholder.
+#
+# This has to run here rather than anywhere else: the machine the tool was
+# written on cannot reach a single image host — bcbits, last.fm, Wikimedia,
+# ytimg and gigpit are all refused at its egress proxy — so nothing could be
+# verified from there. A runner has open network, which is the whole point.
+#
+# Art is taken from the ticket page already on each show, so it is the poster
+# the promoter published for that night rather than a band photo matched by
+# name. Every candidate is downloaded and opened before it is accepted, and
+# what is accepted is committed here and served from this site, so it cannot
+# rot when someone reorganises their CDN.
+on:
+  workflow_dispatch:
+    inputs:
+      check_only:
+        description: "Report what it would do and change nothing"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: punkbc-art
+  cancel-in-progress: false
+
+jobs:
+  art:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Pillow
+        run: python -m pip install --quiet --upgrade pip Pillow
+
+      - name: Self-test
+        run: python3 tools/fetch_show_art.py --self-test
+
+      - name: Fetch and verify the art
+        run: |
+          if [ "${{ inputs.check_only }}" = "true" ]; then
+            python3 tools/fetch_show_art.py --check
+          else
+            python3 tools/fetch_show_art.py
+          fi
+
+      - name: Re-bake the board
+        if: inputs.check_only != 'true'
+        run: python3 tools/build_punkbc.py
+
+      - name: Commit
+        if: inputs.check_only != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No art changed."
+            exit 0
+          fi
+          git add -A
+          git commit -m "Punk BC: real artwork for shows that had the placeholder"
+          git push origin "$GITHUB_REF_NAME"
