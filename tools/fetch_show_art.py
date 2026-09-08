@@ -54,7 +54,15 @@ MAX_BYTES = 8_000_000
 # these was looked up by hand — a name search alone is how a listing ends up
 # showing a different band with the same name.
 ART_SOURCES = {
+    # Denver, Gregg Deal's band — deadpioneers.bandcamp.com is their own page.
     "dead pioneers": "https://deadpioneers.bandcamp.com/album/dead-pioneers",
+    # West Philly trio. Not "darkthoughtspom", and not the Funeral Portrait
+    # song of the same name — both come back first on a plain name search.
+    "dark thoughts": "https://dark-thoughts.bandcamp.com/",
+    # London, going since 1995. Their own Bandcamp, not a label compilation.
+    "the restarts": "https://therestarts.bandcamp.com/",
+    # Toronto. Their own site rather than a label or a festival listing.
+    "the obgms": "https://theobgms.com/",
 }
 
 # Hosts that hand back a login wall or an expiring signed URL rather than the
