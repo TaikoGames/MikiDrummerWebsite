@@ -1,0 +1,74 @@
+name: Punk BC collect shows
+
+# Reads every enabled source in data/show-sources.json and puts anything new in
+# data/shows-queue.json for review at /shows-queue.html.
+#
+# It never writes to the board. A venue feed carries whatever the room booked —
+# comedy, tribute nights, a wedding band — and this board is punk shows, so a
+# person decides. The job failing means a source broke, not that the board did.
+on:
+  schedule:
+    - cron: "40 13 * * *"      # ~6:40am in Vancouver, before anyone looks
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Report what it would queue and change nothing"
+        required: false
+        default: "false"
+      only:
+        description: "Only sources whose id contains this"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: punkbc-collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Self-test
+        run: python3 tools/collect_shows.py --self-test
+
+      - name: Collect
+        id: collect
+        run: |
+          ARGS=""
+          [ "${{ inputs.dry_run }}" = "true" ] && ARGS="$ARGS --dry-run"
+          [ -n "${{ inputs.only }}" ] && ARGS="$ARGS --only ${{ inputs.only }}"
+          python3 tools/collect_shows.py $ARGS | tee /tmp/report.txt
+
+      - name: Commit the queue
+        if: always() && inputs.dry_run != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data/shows-queue.json; then
+            echo "Nothing new to queue."
+            exit 0
+          fi
+          git add data/shows-queue.json
+          git commit -m "Punk BC: queue shows found by the collector"
+          git push origin "$GITHUB_REF_NAME"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo '### Punk BC collector'
+            echo '```'
+            cat /tmp/report.txt 2>/dev/null || echo 'no report'
+            echo '```'
+            echo 'Review at https://www.mikidrummer.ca/shows-queue.html'
+          } >> "$GITHUB_STEP_SUMMARY"

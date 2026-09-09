@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Shows waiting — Punk BC</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2c2023;
+    --accent:#e8372a; --gold:#e7b53c; --ink:#f4efe6; --muted:#a2938c; --ok:#7ee787;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:radial-gradient(1100px 620px at 50% -10%, #3a0a0a 0%, transparent 60%),
+               linear-gradient(#0d0b0c,#140d0d 70%,#170c0c);
+    color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    min-height:100vh;padding:24px 16px 70px;
+  }
+  .wrap{max-width:1000px;margin:0 auto}
+  .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{font-size:23px}
+  a{color:var(--gold)}
+  .sub{color:var(--muted);font-size:13.5px;margin:6px 0 18px;line-height:1.6;max-width:72ch}
+  .back{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);
+        border-radius:20px;padding:6px 12px}
+  .back:hover{color:var(--ink);border-color:var(--accent)}
+
+  .card{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);
+        border-radius:16px;padding:16px;margin-bottom:16px}
+  .said{font-size:12.5px;margin-top:10px;min-height:1.1em;color:var(--muted)}
+  .said.ok{color:var(--ok)} .said.err{color:#ff8f8f} .said.warn{color:var(--gold)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  button{font:inherit;font-size:13.5px;cursor:pointer;border:1px solid var(--line);
+         background:transparent;color:var(--ink);border-radius:10px;padding:10px 17px}
+  button:hover{border-color:var(--accent)}
+  button.go{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:800}
+  button:disabled{opacity:.5;cursor:default}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+     color:var(--muted);font-weight:700;padding:8px 6px;border-bottom:1px solid var(--line)}
+  td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr.gone{opacity:.4}
+  td input{width:100%;font:inherit;font-size:12.5px;color:var(--ink);background:var(--panel2);
+           border:1px solid var(--line);border-radius:7px;padding:6px 8px}
+  td.tick{width:26px} td.src{white-space:nowrap;font-size:11px;color:var(--muted)}
+  .empty{color:var(--muted);font-size:14px;padding:14px 0;line-height:1.7}
+  code{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;
+       font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <h1>🎫 Shows waiting</h1>
+    <a class="back" href="/admin.html">← Admin</a>
+  </div>
+  <p class="sub">
+    What the collector found and nobody has looked at yet. Nothing here is on the
+    site. Tick what belongs on the board, fix anything wrong, then Add — the rest
+    can be turned down so it never comes back.
+  </p>
+
+  <div class="card" id="listCard">
+    <div id="listWrap"><p class="empty">Loading…</p></div>
+    <div class="row" id="controls" hidden>
+      <button class="go" id="add">Add the ticked ones</button>
+      <button id="reject">Turn down the ticked ones</button>
+      <button id="all">Tick all</button>
+      <button id="none">Untick all</button>
+    </div>
+    <p class="said" id="said"></p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var QUEUE = '/data/shows-queue.json';
+  var GH = { owner: 'TaikoGames', repo: 'MikiDrummerWebsite', branch: 'main' };
+  var $ = function (id) { return document.getElementById(id); };
+
+  var queue = null, rows = [];
+
+  function say(msg, kind) {
+    var e = $('said'); e.textContent = msg; e.className = 'said' + (kind ? ' ' + kind : '');
+  }
+  function token() {
+    try { return localStorage.getItem('gh_token') || ''; } catch (e) { return ''; }
+  }
+  function b64(s) { return btoa(unescape(encodeURIComponent(s))); }
+  function unb64(s) { return decodeURIComponent(escape(atob(String(s).replace(/\s/g, '')))); }
+
+  var FIELDS = [['date','Date',98],['time','Time',62],['band','Bands',0],
+                ['venue','Venue',0],['city','City',0],['price','Price',72]];
+
+  function render() {
+    var wrap = $('listWrap');
+    wrap.textContent = '';
+    if (!rows.length) {
+      var p = document.createElement('p');
+      p.className = 'empty';
+      p.textContent = 'Nothing waiting. The collector runs daily — anything new turns up here.';
+      wrap.appendChild(p);
+      $('controls').hidden = true;
+      return;
+    }
+    var table = document.createElement('table');
+    var head = document.createElement('tr');
+    ['', 'Date', 'Time', 'Bands', 'Venue', 'City', 'Price', 'From'].forEach(function (h) {
+      var th = document.createElement('th'); th.textContent = h; head.appendChild(th);
+    });
+    table.appendChild(head);
+
+    rows.forEach(function (r) {
+      var tr = document.createElement('tr');
+      if (r.gone) tr.className = 'gone';
+      var tick = document.createElement('td'); tick.className = 'tick';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = !!r.take; cb.disabled = !!r.gone;
+      cb.addEventListener('change', function () { r.take = cb.checked; });
+      tick.appendChild(cb); tr.appendChild(tick);
+
+      FIELDS.forEach(function (f) {
+        var td = document.createElement('td');
+        var inp = document.createElement('input');
+        inp.value = r[f[0]] || '';
+        inp.disabled = !!r.gone;
+        if (f[2]) inp.style.width = f[2] + 'px';
+        inp.addEventListener('input', function () { r[f[0]] = inp.value; });
+        td.appendChild(inp); tr.appendChild(td);
+      });
+
+      var src = document.createElement('td');
+      src.className = 'src'; src.textContent = r.source || '—';
+      tr.appendChild(src);
+      table.appendChild(tr);
+    });
+    wrap.appendChild(table);
+    $('controls').hidden = false;
+  }
+
+  fetch(QUEUE, { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : { pending: [] }; })
+    .then(function (d) {
+      queue = d;
+      rows = (d.pending || []).map(function (s) {
+        var c = JSON.parse(JSON.stringify(s)); c.take = true; return c;
+      });
+      render();
+      if (rows.length) say(rows.length + ' waiting. Everything is ticked — untick what you do not want.');
+    })
+    .catch(function () { say('Could not load the queue.', 'err'); });
+
+  $('all').addEventListener('click', function () {
+    rows.forEach(function (r) { if (!r.gone) r.take = true; }); render();
+  });
+  $('none').addEventListener('click', function () {
+    rows.forEach(function (r) { r.take = false; }); render();
+  });
+
+  // Writing two files in one go is not possible through the contents API, so
+  // the board is written first and the queue only after it succeeded. Losing
+  // the queue entry for a show that never landed would be the bad order.
+  function commit(path, build, message) {
+    var H = { 'Authorization': 'Bearer ' + token(),
+              'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+    var api = 'https://api.github.com/repos/' + GH.owner + '/' + GH.repo + '/contents/' + path;
+    return fetch(api + '?ref=' + GH.branch, { headers: H, cache: 'no-store' })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('GitHub rejected the token.');
+        if (r.status === 404) throw new Error('That token cannot see this repository.');
+        if (!r.ok) throw new Error('GitHub answered ' + r.status + '.');
+        return r.json();
+      })
+      .then(function (cur) {
+        var body = build(JSON.parse(unb64(cur.content)));
+        return fetch(api, { method: 'PUT', headers: H, body: JSON.stringify({
+          message: message, content: b64(JSON.stringify(body, null, 2) + '\n'),
+          sha: cur.sha, branch: GH.branch
+        }) });
+      })
+      .then(function (r) {
+        if (!r.ok) throw new Error('GitHub refused the write (' + r.status + ').');
+      });
+  }
+
+  function keyOf(s) {
+    return String(s.band || '').trim().toLowerCase() + '|' + s.date + '|' +
+           String(s.venue || '').trim().toLowerCase();
+  }
+
+  function act(which) {
+    var take = rows.filter(function (r) { return r.take && !r.gone; });
+    if (!take.length) { say('Nothing ticked.', 'warn'); return; }
+    if (!token()) {
+      say('No GitHub token in this browser — connect on the Admin page first. Nothing changed.', 'err');
+      return;
+    }
+    var btn = which === 'add' ? $('add') : $('reject');
+    var was = btn.textContent;
+    $('add').disabled = $('reject').disabled = true;
+    btn.textContent = which === 'add' ? 'Adding…' : 'Turning down…';
+
+    var keys = {};
+    take.forEach(function (r) { keys[keyOf(r)] = true; });
+    var clean = take.map(function (r) {
+      var o = {};
+      ['band','date','time','venue','city','price','ticket','genre','notes','image','source']
+        .forEach(function (f) { o[f] = r[f] || ''; });
+      return o;
+    });
+
+    var first = which === 'add'
+      ? commit('punkbc-shows.json', function (live) {
+          var have = {};
+          (live.shows || []).forEach(function (s) { have[keyOf(s)] = true; });
+          clean.forEach(function (s) { if (!have[keyOf(s)]) live.shows.push(s); });
+          live.shows.sort(function (a, b) {
+            return (a.date || '') < (b.date || '') ? -1 : 1;
+          });
+          return live;
+        }, 'Punk BC: ' + clean.length + ' show' + (clean.length === 1 ? '' : 's') + ' approved from the queue')
+      : Promise.resolve();
+
+    first.then(function () {
+      return commit('data/shows-queue.json', function (q) {
+        q.pending = (q.pending || []).filter(function (s) { return !keys[keyOf(s)]; });
+        if (which !== 'add') {
+          q.dismissed = (q.dismissed || []).concat(clean);
+        }
+        return q;
+      }, which === 'add'
+           ? 'Punk BC: clear approved shows from the queue'
+           : 'Punk BC: turn down ' + clean.length + ' from the queue');
+    }).then(function () {
+      $('add').disabled = $('reject').disabled = false;
+      btn.textContent = was;
+      rows.forEach(function (r) { if (r.take) r.gone = true; });
+      render();
+      say(which === 'add'
+          ? clean.length + ' added. The board re-bakes on the next scheduled run.'
+          : clean.length + ' turned down — they will not come back.', 'ok');
+    }).catch(function (e) {
+      $('add').disabled = $('reject').disabled = false;
+      btn.textContent = was;
+      say(e.message + ' Nothing was changed.', 'err');
+    });
+  }
+
+  $('add').addEventListener('click', function () { act('add'); });
+  $('reject').addEventListener('click', function () { act('reject'); });
+})();
+</script>
+</body>
+</html>

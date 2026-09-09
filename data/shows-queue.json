@@ -1,0 +1,7 @@
+{
+  "_readme": "Shows found by tools/collect_shows.py, waiting for review at /shows-queue.html. Nothing in here is on the site. Approving a row moves it to punkbc-shows.json; turning one down records it in \"dismissed\" so the collector never offers it again.",
+  "pending": [],
+  "dismissed": [],
+  "last_good": {},
+  "updated": ""
+}

@@ -1,0 +1,51 @@
+{
+  "_readme": "Where shows come from. Adding a venue is one entry here — no code. The collector reads each source, keeps what is new, and puts it in the queue for review; nothing here can reach the board on its own. Run tools/collect_shows.py, or let the daily workflow do it.",
+  "_kinds": {
+    "jsonld": "A normal web page. Reads schema.org Event data — the same markup a venue already publishes so Google can show its listings. No parsing, nothing to break when they restyle the page.",
+    "ics": "A calendar feed (.ics). Google Calendar publishes one for any public calendar at https://calendar.google.com/calendar/ical/<address>/public/basic.ics"
+  },
+  "sources": [
+    {
+      "id": "vancouver-punk-calendar",
+      "kind": "ics",
+      "url": "https://calendar.google.com/calendar/ical/vancouverpunkcalendar%40gmail.com/public/basic.ics",
+      "city": "Vancouver",
+      "enabled": true,
+      "note": "Public community calendar. Venue comes from each event's location."
+    },
+    {
+      "id": "rickshaw-theatre",
+      "kind": "jsonld",
+      "url": "https://rickshawtheatre.com",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "enabled": false,
+      "note": "Turn on once checked — 22 of the board's shows are here. Confirm robots.txt allows it first."
+    },
+    {
+      "id": "the-cobalt",
+      "kind": "jsonld",
+      "url": "https://thecobalt.ca",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "enabled": false,
+      "note": "Second biggest room on the board."
+    },
+    {
+      "id": "the-astoria",
+      "kind": "jsonld",
+      "url": "https://theastoria.ca",
+      "venue": "The Astoria",
+      "city": "Vancouver",
+      "enabled": false
+    },
+    {
+      "id": "the-pearl",
+      "kind": "jsonld",
+      "url": "https://thepearlvancouver.com",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "enabled": false
+    }
+  ]
+}
