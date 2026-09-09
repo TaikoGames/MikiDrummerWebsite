@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Open dates — Punk BC</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2c2023;
+    --accent:#e8372a; --gold:#e7b53c; --ink:#f4efe6; --muted:#a2938c; --ok:#7ee787;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1100px 620px at 50% -10%, #3a0a0a 0%, transparent 60%),
+       linear-gradient(#0d0b0c,#140d0d 70%,#170c0c);
+       color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+       min-height:100vh;padding:24px 16px 70px}
+  .wrap{max-width:860px;margin:0 auto}
+  .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{font-size:23px} a{color:var(--gold)}
+  .sub{color:var(--muted);font-size:13.5px;margin:6px 0 18px;line-height:1.6;max-width:70ch}
+  .back{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);
+        border-radius:20px;padding:6px 12px}
+  .back:hover{color:var(--ink);border-color:var(--accent)}
+
+  .card{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);
+        border-radius:16px;padding:18px;margin-bottom:16px}
+  h2{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+     margin-bottom:12px;font-weight:700}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .f{display:flex;flex-direction:column;gap:5px}
+  .f.wide{grid-column:1/-1}
+  label{font-size:11.5px;color:var(--muted);letter-spacing:.05em}
+  input,select,textarea{font:inherit;font-size:13.5px;color:var(--ink);background:var(--panel2);
+    border:1px solid var(--line);border-radius:9px;padding:10px 12px;width:100%}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  textarea{min-height:58px;resize:vertical}
+
+  button{font:inherit;font-size:13.5px;cursor:pointer;border:1px solid var(--line);
+    background:transparent;color:var(--ink);border-radius:10px;padding:10px 17px}
+  button:hover{border-color:var(--accent)}
+  button.go{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:800}
+  button:disabled{opacity:.5;cursor:default}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  .said{font-size:12.5px;margin-top:10px;min-height:1.1em;color:var(--muted)}
+  .said.ok{color:var(--ok)} .said.err{color:#ff8f8f} .said.warn{color:var(--gold)}
+
+  .date{border:1px solid var(--line);border-radius:12px;background:var(--panel2);
+        padding:13px 15px;margin-top:10px;display:flex;gap:14px;align-items:flex-start;
+        flex-wrap:wrap}
+  .date .b{flex:1;min-width:220px}
+  .when{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--accent);
+        letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+  .place{font-size:15px;font-weight:700;margin-top:2px}
+  .meta{color:var(--muted);font-size:13px;margin-top:3px}
+  .pill{font-size:10px;letter-spacing:.12em;text-transform:uppercase;border-radius:100px;
+        padding:3px 9px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .pill.open{color:var(--ok);border-color:rgba(126,231,135,.4)}
+  .pill.filled{color:var(--gold);border-color:rgba(231,181,60,.4)}
+  .acts{display:flex;gap:7px;flex-wrap:wrap}
+  .acts button{padding:6px 12px;font-size:12px}
+  .empty{color:var(--muted);font-size:14px;padding:8px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <h1>📅 Open dates</h1>
+    <a class="back" href="/admin.html">← Admin</a>
+  </div>
+  <p class="sub">
+    Dates you are offering other bands. Anything open here shows on
+    <a href="/play-with-us.html">play-with-us.html</a> with a form attached.
+    Mark one filled when it is gone and it stays up with the bill on it, so
+    nobody asks twice.
+  </p>
+
+  <div class="card">
+    <h2>Add a date</h2>
+    <div class="grid">
+      <div class="f"><label for="date">Date</label><input id="date" type="date"></div>
+      <div class="f"><label for="city">City</label><input id="city" type="text" value="Vancouver"></div>
+      <div class="f"><label for="venue">Venue</label><input id="venue" type="text" placeholder="Or leave blank for TBD"></div>
+      <div class="f"><label for="with">Already on it</label><input id="with" type="text" placeholder="Lift the Anchor"></div>
+      <div class="f wide"><label for="slot">What's on offer</label>
+        <input id="slot" type="text" placeholder="One support slot · two openers · a bill to build"></div>
+      <div class="f wide"><label for="note">Anything they need to know</label>
+        <textarea id="note" placeholder="Door split, backline, curfew, all-ages…"></textarea></div>
+    </div>
+    <div class="row">
+      <button class="go" id="add">Add it</button>
+      <span class="said" id="addSaid"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>What's up there</h2>
+    <div id="list"><p class="empty">Loading…</p></div>
+    <div class="row"><button class="go" id="save" hidden>Publish the changes</button></div>
+    <p class="said" id="saveSaid"></p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var SRC = '/data/open-dates.json';
+  var GH = { owner:'TaikoGames', repo:'MikiDrummerWebsite', branch:'main', path:'data/open-dates.json' };
+  var $ = function (id) { return document.getElementById(id); };
+
+  var doc = null, dirty = false;
+
+  function say(id, msg, kind) {
+    var e = $(id); e.textContent = msg; e.className = 'said' + (kind ? ' ' + kind : '');
+  }
+  function token() { try { return localStorage.getItem('gh_token') || ''; } catch (e) { return ''; } }
+  function b64(s) { return btoa(unescape(encodeURIComponent(s))); }
+  function unb64(s) { return decodeURIComponent(escape(atob(String(s).replace(/\s/g,'')))); }
+  function today() {
+    var d = new Date();
+    return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  }
+  function pretty(iso) {
+    var d = new Date(iso + 'T12:00:00');
+    return isNaN(d) ? iso : d.toLocaleDateString('en-CA',
+      { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+  }
+  function slug(s) {
+    return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  }
+
+  function render() {
+    var box = $('list');
+    box.textContent = '';
+    var rows = (doc && doc.dates || []).slice().sort(function (a,b) {
+      return (a.date||'') < (b.date||'') ? -1 : 1;
+    });
+    if (!rows.length) {
+      box.innerHTML = '<p class="empty">Nothing up yet. Add a date above — until then the ' +
+        'public page just invites bands to propose one.</p>';
+    }
+    rows.forEach(function (d) {
+      var past = d.date < today();
+      var el = document.createElement('div');
+      el.className = 'date';
+      var b = document.createElement('div');
+      b.className = 'b';
+      b.innerHTML = '<div class="when">' + pretty(d.date) + (past ? ' · past' : '') + '</div>' +
+        '<div class="place"></div><div class="meta"></div>';
+      b.querySelector('.place').textContent =
+        (d.venue || 'Venue TBD') + (d.city ? ' · ' + d.city : '');
+      b.querySelector('.meta').textContent =
+        [d.slot, d.with ? 'with ' + d.with : '', d.filled_by ? 'taken by ' + d.filled_by : '', d.note]
+          .filter(Boolean).join(' · ');
+      el.appendChild(b);
+
+      var pill = document.createElement('span');
+      var st = d.status || 'open';
+      pill.className = 'pill ' + (st === 'open' ? 'open' : 'filled');
+      pill.textContent = st;
+      el.appendChild(pill);
+
+      var acts = document.createElement('div');
+      acts.className = 'acts';
+
+      if (st === 'open') {
+        var fill = document.createElement('button');
+        fill.type = 'button'; fill.textContent = 'Mark filled';
+        fill.addEventListener('click', function () {
+          var who = prompt('Who took it? (shows on the public page)');
+          if (who === null) return;
+          d.status = 'filled'; d.filled_by = who.trim();
+          dirty = true; render(); say('saveSaid', 'Not published yet.', 'warn');
+        });
+        acts.appendChild(fill);
+      } else {
+        var reopen = document.createElement('button');
+        reopen.type = 'button'; reopen.textContent = 'Reopen';
+        reopen.addEventListener('click', function () {
+          d.status = 'open'; delete d.filled_by;
+          dirty = true; render(); say('saveSaid', 'Not published yet.', 'warn');
+        });
+        acts.appendChild(reopen);
+      }
+
+      var del = document.createElement('button');
+      del.type = 'button'; del.textContent = 'Remove';
+      del.addEventListener('click', function () {
+        doc.dates = doc.dates.filter(function (x) { return x !== d; });
+        dirty = true; render(); say('saveSaid', 'Not published yet.', 'warn');
+      });
+      acts.appendChild(del);
+      el.appendChild(acts);
+      box.appendChild(el);
+    });
+    $('save').hidden = !dirty;
+  }
+
+  fetch(SRC, { cache:'no-store' })
+    .then(function (r) { return r.ok ? r.json() : { dates: [] }; })
+    .then(function (d) { doc = d; doc.dates = doc.dates || []; render(); })
+    .catch(function () { say('saveSaid', 'Could not load the dates.', 'err'); });
+
+  $('add').addEventListener('click', function () {
+    if (!doc) return;
+    var date = $('date').value;
+    if (!date) { say('addSaid', 'A date, at least.', 'warn'); return; }
+    if (date < today()) { say('addSaid', 'That is in the past.', 'warn'); return; }
+    var venue = $('venue').value.trim(), city = $('city').value.trim();
+    var base = slug(venue || city || 'date') + '-' + date;
+    var id = base, n = 2;
+    while (doc.dates.some(function (x) { return x.id === id; })) id = base + '-' + (n++);
+
+    doc.dates.push({
+      id: id, date: date, city: city, venue: venue,
+      slot: $('slot').value.trim(), with: $('with').value.trim(),
+      note: $('note').value.trim(), status: 'open'
+    });
+    ['date','venue','slot','with','note'].forEach(function (f) { $(f).value = ''; });
+    dirty = true; render();
+    say('addSaid', 'Added below — press Publish to put it live.', 'ok');
+  });
+
+  $('save').addEventListener('click', function () {
+    if (!token()) {
+      say('saveSaid', 'No GitHub token in this browser — connect on the Admin page first. Nothing published.', 'err');
+      return;
+    }
+    var btn = $('save'), was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Publishing…';
+    var H = { 'Authorization':'Bearer ' + token(), 'Accept':'application/vnd.github+json',
+              'Content-Type':'application/json' };
+    var api = 'https://api.github.com/repos/' + GH.owner + '/' + GH.repo + '/contents/' + GH.path;
+
+    // Read it fresh: the sha is what stops this overwriting a change made
+    // somewhere else since the page loaded.
+    fetch(api + '?ref=' + GH.branch, { headers:H, cache:'no-store' })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('GitHub rejected the token.');
+        if (r.status === 404) throw new Error('That token cannot see this repository.');
+        if (!r.ok) throw new Error('GitHub answered ' + r.status + '.');
+        return r.json();
+      })
+      .then(function (cur) {
+        var live = JSON.parse(unb64(cur.content));
+        live.dates = doc.dates;
+        return fetch(api, { method:'PUT', headers:H, body: JSON.stringify({
+          message: 'Punk BC: open dates updated',
+          content: b64(JSON.stringify(live, null, 2) + '\n'),
+          sha: cur.sha, branch: GH.branch
+        }) });
+      })
+      .then(function (r) {
+        btn.disabled = false; btn.textContent = was;
+        if (!r.ok) { say('saveSaid', 'GitHub refused the write (' + r.status + '). Nothing published.', 'err'); return; }
+        dirty = false; render();
+        say('saveSaid', 'Published. Live in about a minute.', 'ok');
+      })
+      .catch(function (e) {
+        btn.disabled = false; btn.textContent = was;
+        say('saveSaid', e.message + ' Nothing published.', 'err');
+      });
+  });
+})();
+</script>
+</body>
+</html>

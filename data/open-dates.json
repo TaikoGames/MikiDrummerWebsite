@@ -1,0 +1,16 @@
+{
+  "_readme": "Dates we are offering other bands. Edit here or at /dates-admin.html. A date with \"status\": \"open\" shows on /play-with-us.html and can be claimed; \"filled\" stays visible with the bill on it so nobody asks twice; \"past\" and anything before today drop off on their own.",
+  "_fields": {
+    "id": "short slug, must be unique — used in the confirmation email",
+    "date": "YYYY-MM-DD",
+    "city": "where it is",
+    "venue": "room name, or \"TBD\" if it is not locked yet",
+    "slot": "what is actually on offer — \"one support slot\", \"two openers\", \"a bill to build\"",
+    "with": "who is already on it",
+    "note": "anything a band needs to know before saying yes — pay split, backline, curfew",
+    "status": "open | filled | cancelled",
+    "filled_by": "who took it, once it is gone"
+  },
+  "contact": "Punk BC / Miki",
+  "dates": []
+}
