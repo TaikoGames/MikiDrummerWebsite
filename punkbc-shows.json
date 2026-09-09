@@ -2,19 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Kruelty",
-      "date": "2026-09-08",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://thecobalt.ca",
-      "genre": "Death Metal/Hardcore",
-      "notes": "With Dead Heat, Dying Remains, Kill Chain. 19+",
-      "image": "https://f4.bcbits.com/img/0037451827_16.jpg",
-      "curated": ""
-    },
-    {
       "band": "Earth Altar",
       "date": "2026-09-09",
       "time": "19:00",
