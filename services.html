@@ -316,6 +316,35 @@
           var TITLE = 'Miki Drummer — drum recording, tracks and lessons';
           var BLURB = 'Remote drum recording, custom tracks and lessons, out of Vancouver.';
 
+          // An email per share, through the form the site already uses. One per
+          // browser per day: a page someone taps five times is one share, and
+          // this form's monthly allowance is shared with band bookings — a
+          // booking bouncing because the quota went on share pings would be a
+          // bad trade. Give it its own form id and that ceiling stops mattering.
+          var PING = 'https://formspree.io/f/xpqgrqvb';
+          var K_PING = 'mdSharePing';
+
+          function notify(method) {
+            var day = new Date().toISOString().slice(0, 10);
+            try {
+              if (localStorage.getItem(K_PING) === day) return;
+              localStorage.setItem(K_PING, day);
+            } catch (e) { /* private browsing — send it, better twice than never */ }
+            // keepalive so it still goes out if the share sheet takes the page
+            // away mid-request.
+            fetch(PING, {
+              method: 'POST', keepalive: true,
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({
+                _subject: 'Someone shared your services page',
+                shared: 'services.html',
+                how: method === 'web_share' ? 'share sheet (phone)' : 'copied the link',
+                when: new Date().toLocaleString('en-CA', { timeZone: 'America/Vancouver' }),
+                link: link(method)
+              })
+            }).catch(function () {});
+          }
+
           var btn = document.getElementById('shareGo');
           var label = document.getElementById('shareLabel');
           var orig = label.textContent, timer = 0;
@@ -345,12 +374,13 @@
               // Nothing is counted until the sheet resolves — backing out of it
               // rejects, and a share that never happened should not be counted.
               navigator.share({ title: TITLE, text: BLURB, url: link('web_share') })
-                .then(function () { track('web_share'); })
+                .then(function () { track('web_share'); notify('web_share'); })
                 .catch(function () {});
               return;
             }
             var url = link('copy');
             track('copy');
+            notify('copy');
             if (navigator.clipboard && navigator.clipboard.writeText) {
               navigator.clipboard.writeText(url).then(copied, function () {
                 window.prompt('Copy this link', url);
