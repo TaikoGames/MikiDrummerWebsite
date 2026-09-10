@@ -1,0 +1,56 @@
+{
+  "_readme": "Contact lookups for bands on the Punk BC board, used by the terminal panel on /ask-a-band.html. Filled in by research, not by the page: a browser can only reach other sites through a CORS proxy, most band and label sites block it, and the pages that do come through are full of things that look like emails but are not -- Bandcamp hands back a Sentry telemetry address that would otherwise be shown as the band's contact. So every entry here is a real lookup someone did, and 'checked' says when.",
+  "_fields": {
+    "band": "band name as it appears on the board",
+    "checked": "YYYY-MM-DD the lookup was done",
+    "email": "best direct address, or empty if none is published",
+    "email_source": "where the address came from, so it can be re-verified",
+    "profiles": "every place checked, in order: {name, url, found} -- found is 'email' | 'form' | 'profile' | 'none'",
+    "note": "anything worth knowing before reaching out"
+  },
+  "bands": [
+    {
+      "band": "Die Job",
+      "checked": "2026-09-09",
+      "email": "diejobpunk@gmail.com",
+      "email_source": "https://www.kindacoolrecords.com/diejob",
+      "profiles": [
+        { "name": "Label page (Kinda Cool Records)", "url": "https://www.kindacoolrecords.com/diejob", "found": "email" },
+        { "name": "Label contact", "url": "mailto:kindacoolrecords@gmail.com", "found": "email" },
+        { "name": "Instagram", "url": "https://www.instagram.com/diejobpunk/", "found": "profile" },
+        { "name": "Facebook", "url": "https://www.facebook.com/diejobpunk", "found": "profile" },
+        { "name": "Bandcamp", "url": "https://kindacoolrecords.bandcamp.com/album/hazards-of-occupation", "found": "profile" }
+      ],
+      "note": "East Vancouver melodic punk on Kinda Cool Records. Band address and label address both published."
+    },
+    {
+      "band": "Bound By None",
+      "checked": "2026-09-09",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        { "name": "Bandcamp", "url": "https://boundbynone.bandcamp.com/", "found": "form" },
+        { "name": "Bandcamp contact form", "url": "https://bandcamp.com/contact?b=980338355&n=Bound%20by%20none", "found": "form" },
+        { "name": "Facebook", "url": "https://www.facebook.com/bbnband/", "found": "profile" },
+        { "name": "SoundCloud", "url": "https://soundcloud.com/bound-by-none", "found": "profile" },
+        { "name": "Apple Music", "url": "https://music.apple.com/us/artist/bound-by-none/1326669154", "found": "profile" }
+      ],
+      "note": "No address published anywhere. Miki drummed for them, so a direct text beats any of this. Do not confuse with 'Bound To None', a different band."
+    },
+    {
+      "band": "Dead Pioneers",
+      "checked": "2026-09-09",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        { "name": "Official site", "url": "https://deadpioneers.band/", "found": "profile" },
+        { "name": "Contact form", "url": "https://deadpioneers.band/contact/", "found": "form" },
+        { "name": "Instagram", "url": "https://www.instagram.com/dead.pioneers", "found": "profile" },
+        { "name": "Facebook", "url": "https://www.facebook.com/dead.pioneers/", "found": "profile" },
+        { "name": "Bandcamp", "url": "https://deadpioneers.bandcamp.com/", "found": "profile" },
+        { "name": "Label (Alternative Tentacles)", "url": "https://alternativetentacles.com/pages/artist-page/dead-pioneers", "found": "profile" }
+      ],
+      "note": "On Alternative Tentacles and Hassle Records, so likely booked through management. Contact form is the only direct route published."
+    }
+  ]
+}

@@ -80,6 +80,21 @@
         border-left:3px solid var(--accent);padding:11px 13px;border-radius:6px}
   footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:22px;line-height:1.9}
   .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  /* ---- contact lookup terminal ---- */
+  .scanbtn{font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;margin-top:10px;
+           border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+           border-radius:100px;padding:8px 16px}
+  .scanbtn:hover{border-color:var(--accent)}
+  .scanbtn:disabled{opacity:.5;cursor:default}
+  .term{margin-top:10px;background:#0a0708;border:1px solid var(--line);border-radius:11px;
+        padding:12px 13px;font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+        font-size:12.5px;line-height:1.65;color:var(--muted);white-space:pre-wrap;
+        word-break:break-word;max-height:280px;overflow:auto}
+  .term:empty{display:none}
+  .term b{color:var(--ink);font-weight:700}
+  .term .ok{color:var(--ok)}        /* email found */
+  .term .form{color:var(--warn)}    /* form or DM only */
+  .term .no{color:#7a6b66}
 </style>
 </head>
 <body>
@@ -114,6 +129,11 @@
       <label for="contact">How you reach them <span class="opt">if you know</span></label>
       <input id="contact" type="text" placeholder="email, number or @handle" autocomplete="off">
       <div class="hit" id="chit"></div>
+    </div>
+
+    <div id="lookup" hidden>
+      <button type="button" id="scan" class="scanbtn">Look them up</button>
+      <pre id="term" class="term" aria-live="polite"></pre>
     </div>
   </div>
 
@@ -272,6 +292,92 @@
   // the Rewrite button. Storing *who* it was written for instead means moving
   // to a different band resumes writing on its own, which is what you want:
   // a message written for Tuesday's band is stale for today's anyway.
+  // ---- contact lookup ------------------------------------------------------
+  //
+  // Replays a lookup that was already done and recorded in
+  // /data/band-contacts.json. It does NOT search live, and shouldn't pretend
+  // to: a page can only reach other sites through a CORS proxy, most band and
+  // label sites refuse it (Die Job's label returned 24 bytes), and the ones
+  // that answer are full of strings shaped like addresses that aren't --
+  // Bandcamp returns a Sentry telemetry address that would show up green as
+  // the band's email and get an invite sent to an error tracker. So the line
+  // count is real, the results are real, and the date it was checked is shown.
+  var lookups = null;
+
+  fetch('/data/band-contacts.json', { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { lookups = (d && d.bands) || []; lookupReady(); })
+    .catch(function () { lookups = []; });
+
+  function lookupFor(name) {
+    if (!lookups || !name) return null;
+    var k = norm(name);
+    for (var i = 0; i < lookups.length; i++) {
+      if (norm(lookups[i].band) === k) return lookups[i];
+    }
+    return null;
+  }
+
+  function lookupReady() {
+    var el = $('lookup');
+    if (el) el.hidden = !$('band').value.trim();
+  }
+
+  function termLine(html) {
+    var t = $('term');
+    t.innerHTML += html + '\n';
+    t.scrollTop = t.scrollHeight;
+  }
+
+  var LABEL = { email: 'email found', form: 'contact form only',
+                profile: 'profile, no address', none: 'nothing' };
+  var CLS   = { email: 'ok', form: 'form', profile: 'no', none: 'no' };
+
+  function runLookup() {
+    var name = $('band').value.trim();
+    if (!name) return;
+    var rec = lookupFor(name);
+    var t = $('term');
+    t.innerHTML = '';
+    $('scan').disabled = true;
+
+    termLine('<b>' + esc(name) + '</b>');
+
+    if (!rec) {
+      termLine('<span class="no">no lookup on file.</span>');
+      termLine('<span class="form">ask Claude to look them up, then this fills in.</span>');
+      $('scan').disabled = false;
+      return;
+    }
+
+    var i = 0, best = '';
+    (function step() {
+      if (i >= rec.profiles.length) {
+        termLine('');
+        if (rec.email) {
+          best = rec.email;
+          termLine('<span class="ok">✓ ' + esc(rec.email) + '</span>');
+          $('contact').value = rec.email;
+          $('contact').dispatchEvent(new Event('input', { bubbles: true }));
+          termLine('<span class="no">filled in above — hit Email to send.</span>');
+        } else {
+          termLine('<span class="form">no address published.</span>');
+          termLine('<span class="no">use a form or DM below; nothing can send those for you.</span>');
+        }
+        if (rec.note) termLine('<span class="no">' + esc(rec.note) + '</span>');
+        termLine('<span class="no">checked ' + esc(rec.checked) + '</span>');
+        $('scan').disabled = false;
+        return;
+      }
+      var p = rec.profiles[i++];
+      var host = '';
+      try { host = new URL(p.url, location.href).host.replace(/^www\./, ''); } catch (e) { host = ''; }
+      termLine('  ' + esc(p.name) + ' <span class="no">' + esc(host) + '</span> … ' +
+               '<span class="' + (CLS[p.found] || 'no') + '">' + (LABEL[p.found] || p.found) + '</span>');
+      setTimeout(step, 220);
+    })();
+  }
+
   function editedFor() { return norm(load(K_EDITED, '') || ''); }
 
   function fillMessage() {
@@ -291,6 +397,8 @@
     if (bad) $('staleWhy').textContent = 'This doesn\'t mention ' + v + ' anywhere.';
   }
 
+  $('scan').addEventListener('click', runLookup);
+
   $('rewrite').addEventListener('click', function () {
     save(K_EDITED, '');
     $('msg').value = messageFor($('band').value.trim());
@@ -308,6 +416,8 @@
   function bandChanged() {
     var v = $('band').value.trim();
     $('log').disabled = !v;
+    lookupReady();
+    if ($('term')) $('term').innerHTML = '';
     fillMessage();
 
     // The address belongs to the band, not to the form — switch band and the
