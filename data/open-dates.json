@@ -12,5 +12,16 @@
     "filled_by": "who took it, once it is gone"
   },
   "contact": "Punk BC / Miki",
-  "dates": []
+  "dates": [
+    {
+      "id": "halloween-2026-10-31",
+      "date": "2026-10-31",
+      "city": "Vancouver",
+      "venue": "",
+      "slot": "Room on the bill",
+      "with": "",
+      "note": "",
+      "status": "open"
+    }
+  ]
 }

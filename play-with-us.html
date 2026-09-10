@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Play with us — Punk BC</title>
-<meta name="description" content="Open dates going with Lift the Anchor and Granite — pick one, tell us who you are, and we will come back to you. Or propose a date of your own.">
+<meta name="description" content="We have a date going. Tell us who you are and hit the button.">
 <link rel="canonical" href="https://www.mikidrummer.ca/play-with-us.html">
 <link rel="icon" href="favicon.ico">
 <style>
@@ -13,141 +13,100 @@
     --fg:#e9ebee; --hot:#e8672a; --ok:#5fbf7a;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--fg);line-height:1.6;padding:0 18px 80px;
-       font-family:"Helvetica Neue",system-ui,Arial,sans-serif}
-  .wrap{max-width:760px;margin:0 auto}
+  body{background:var(--bg);color:var(--fg);line-height:1.6;
+       font-family:"Helvetica Neue",system-ui,Arial,sans-serif;
+       min-height:100vh;display:grid;place-items:center;padding:32px 18px 60px}
+  .wrap{width:100%;max-width:520px}
   a{color:var(--hot)}
 
-  header{padding:52px 0 26px;border-bottom:1px solid var(--edge)}
-  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--hot);font-weight:700}
-  h1{font-family:"Arial Black",system-ui,sans-serif;font-size:clamp(28px,5vw,46px);
-     line-height:1.04;letter-spacing:-.02em;margin:10px 0 14px;text-wrap:balance}
-  .lead{color:var(--mid);font-size:17px;max-width:62ch}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+           color:var(--hot);font-weight:700}
 
-  h2{font-family:"Arial Black",system-ui,sans-serif;font-size:13px;letter-spacing:.2em;
-     text-transform:uppercase;color:var(--dim);font-weight:400;margin:38px 0 14px}
+  .date{border:1px solid var(--edge);border-radius:16px;background:var(--card);
+        padding:26px 26px 24px;margin-top:14px}
+  .day{font-family:"Arial Black",system-ui,sans-serif;
+       font-size:clamp(34px,8vw,58px);line-height:1;letter-spacing:-.03em;
+       text-wrap:balance}
+  .sub{color:var(--mid);font-size:16px;margin-top:10px}
+  .sub b{color:var(--fg)}
+  .extra{color:var(--dim);font-size:14px;margin-top:8px}
 
-  .dates{display:flex;flex-direction:column;gap:12px}
-  .date{border:1px solid var(--edge);border-radius:12px;background:var(--card);
-        padding:16px 18px;display:flex;gap:16px;align-items:flex-start;
-        cursor:pointer;transition:border-color .15s ease}
-  .date:hover{border-color:var(--hot)}
-  .date.filled{cursor:default;opacity:.6}
-  .date.filled:hover{border-color:var(--edge)}
-  .date input{margin-top:5px;accent-color:var(--hot);flex:none}
-  .date .body{flex:1;min-width:0}
-  .when{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--hot);
-        font-weight:700;letter-spacing:.1em;text-transform:uppercase}
-  .place{font-size:17px;font-weight:700;margin:3px 0 2px}
-  .slot{color:var(--mid);font-size:14.5px}
-  .note{color:var(--dim);font-size:13.5px;margin-top:6px}
-  .taken{display:inline-block;margin-top:6px;font-size:11px;letter-spacing:.12em;
-         text-transform:uppercase;color:var(--ok);border:1px solid rgba(95,191,122,.4);
-         border-radius:100px;padding:2px 10px}
-  .none{border:1px dashed var(--edge);border-radius:12px;padding:22px;color:var(--mid);
-        font-size:15px;line-height:1.7}
-
-  form{margin-top:8px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  .f{display:flex;flex-direction:column;gap:6px}
-  .f.wide{grid-column:1/-1}
-  label{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim)}
-  input[type=text],input[type=email],input[type=date],input[type=number],textarea,select{
-    font:inherit;font-size:15px;color:var(--fg);background:var(--card);
-    border:1px solid var(--edge);border-radius:10px;padding:11px 13px;width:100%}
-  input:focus,textarea:focus,select:focus{outline:2px solid var(--hot);outline-offset:1px;
-    border-color:var(--hot)}
-  textarea{min-height:96px;resize:vertical}
-  .hint{font-size:12.5px;color:var(--dim)}
+  form{margin-top:20px;display:flex;flex-direction:column;gap:12px}
+  label{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+        color:var(--dim);display:block;margin-bottom:5px}
+  input{font:inherit;font-size:16px;color:var(--fg);background:var(--bg);
+        border:1px solid var(--edge);border-radius:11px;padding:13px 14px;width:100%}
+  input:focus{outline:2px solid var(--hot);outline-offset:1px;border-color:var(--hot)}
   .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 
-  button{font:inherit;font-size:15px;font-weight:800;cursor:pointer;border:0;
-         border-radius:100px;padding:15px 34px;background:var(--hot);color:#180a03;
-         text-transform:uppercase;letter-spacing:.07em;margin-top:20px;
-         box-shadow:0 12px 30px rgba(232,103,42,.3)}
+  button{font:inherit;font-size:17px;font-weight:800;cursor:pointer;border:0;width:100%;
+         border-radius:100px;padding:17px;background:var(--hot);color:#180a03;
+         text-transform:uppercase;letter-spacing:.08em;margin-top:6px;
+         box-shadow:0 14px 34px rgba(232,103,42,.32)}
   button:hover{transform:translateY(-1px)}
-  button:disabled{opacity:.55;cursor:default;transform:none}
-  .said{margin-top:14px;font-size:14.5px;min-height:1.3em}
+  button:disabled{opacity:.55;cursor:default;transform:none;box-shadow:none}
+
+  .said{font-size:15px;min-height:1.3em;text-align:center;margin-top:4px}
   .said.ok{color:var(--ok)} .said.err{color:#ff8f8f} .said.warn{color:#e7b53c}
 
-  footer{margin-top:52px;padding-top:24px;border-top:1px solid var(--edge);
-         color:var(--dim);font-size:13px;line-height:1.8}
+  .done{display:none;text-align:center;padding:8px 0 4px}
+  .done .tick{font-size:38px;line-height:1}
+  .done h2{font-family:"Arial Black",system-ui,sans-serif;font-size:22px;margin:10px 0 6px}
+  .done p{color:var(--mid);font-size:15px}
+  body.sent .done{display:block}
+  body.sent form,body.sent .extra{display:none}
 
-  @media (max-width:620px){ .grid{grid-template-columns:1fr} }
+  .none{border:1px dashed var(--edge);border-radius:16px;padding:26px;color:var(--mid);
+        font-size:15.5px;line-height:1.7;margin-top:14px}
+  footer{margin-top:26px;text-align:center;color:var(--dim);font-size:13px;line-height:1.9}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header>
   <div class="eyebrow">Punk BC</div>
-  <h1>Play with us</h1>
-  <p class="lead">Dates we have going and room on the bill. Pick one, tell us who
-    you are, and we will come back to you — usually within a couple of days.
-    Nothing here is a booking until we have both said yes.</p>
-</header>
 
-<h2 id="datesHead">Open dates</h2>
-<div class="dates" id="dates">
-  <div class="none">Loading…</div>
-</div>
+  <div id="card" class="date" hidden>
+    <div class="day" id="day">—</div>
+    <div class="sub" id="where"></div>
+    <div class="extra" id="extra"></div>
 
-<form id="form" novalidate>
-  <h2>Who are you</h2>
-  <div class="grid">
-    <div class="f">
-      <label for="band">Band</label>
-      <input id="band" name="band" type="text" autocomplete="organization" required>
-    </div>
-    <div class="f">
-      <label for="from">Where you're from</label>
-      <input id="from" name="from" type="text" placeholder="Vancouver, Seattle, wherever">
-    </div>
-    <div class="f">
-      <label for="name">Your name</label>
-      <input id="name" name="name" type="text" autocomplete="name" required>
-    </div>
-    <div class="f">
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" autocomplete="email" required>
-    </div>
-    <div class="f wide">
-      <label for="link">Somewhere we can hear you</label>
-      <input id="link" name="link" type="text" placeholder="Bandcamp, Spotify, a video — anything">
-    </div>
-    <div class="f">
-      <label for="size">People in the band</label>
-      <input id="size" name="size" type="number" min="1" max="20" inputmode="numeric">
-      <span class="hint">For load-in and backline.</span>
-    </div>
-    <div class="f">
-      <label for="draw">People you can bring</label>
-      <input id="draw" name="draw" type="text" placeholder="Honest guess">
-      <span class="hint">A real number beats a big one.</span>
-    </div>
-    <div class="f wide">
-      <label for="msg">Anything else</label>
-      <textarea id="msg" name="message" placeholder="Backline you need, what you play, who you've played with, a date that works better…"></textarea>
+    <form id="form" novalidate>
+      <div>
+        <label for="band">Your band</label>
+        <input id="band" type="text" autocomplete="organization" required>
+      </div>
+      <div>
+        <label for="contact">Email or phone</label>
+        <input id="contact" type="text" inputmode="email" autocomplete="email" required>
+      </div>
+      <div class="hp" aria-hidden="true">
+        <label for="company">Leave this empty</label>
+        <input id="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <button type="submit" id="go">We're in</button>
+      <p class="said" id="said" role="status" aria-live="polite"></p>
+    </form>
+
+    <div class="done">
+      <div class="tick">✓</div>
+      <h2 id="doneTitle">You're on the list</h2>
+      <p>We'll be in touch with the details. Nothing's locked until we both say yes.</p>
     </div>
   </div>
 
-  <div class="hp" aria-hidden="true">
-    <label for="company">Leave this empty</label>
-    <input id="company" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+  <div id="none" class="none" hidden>
+    Nothing going right now. Message
+    <a href="https://www.instagram.com/lifttheanchor/" target="_blank" rel="noopener">@lifttheanchor</a>
+    and we'll tell you when the next one lands.
   </div>
 
-  <button type="submit" id="send">Send it</button>
-  <p class="said" id="said" role="status" aria-live="polite"></p>
-</form>
-
-<footer>
-  Punk BC · <a href="/punkbc.html">the shows board</a> ·
-  <a href="/lift-the-anchor-epk.html">Lift the Anchor</a> ·
-  <a href="/granite-epk.html">Granite</a><br>
-  Putting on a show and want us on it instead? The
-  <a href="/lift-the-anchor-epk.html#book">booking form</a> is the other direction.
-</footer>
+  <footer>
+    <a href="/punkbc.html">Punk BC shows</a> ·
+    <a href="/lift-the-anchor-epk.html">Lift the Anchor</a><br>
+    Booking us instead? <a href="/lift-the-anchor-epk.html#book">That form's here</a>.
+  </footer>
 
 </div>
 
@@ -158,157 +117,82 @@
   var SRC = '/data/open-dates.json';
   var FORM = 'https://formspree.io/f/xpqgrqvb';
   var $ = function (id) { return document.getElementById(id); };
+  var date = null;
 
-  var dates = [], picked = null;
+  function today() {
+    var d = new Date();
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  }
+  function say(msg, kind) {
+    var e = $('said'); e.textContent = msg; e.className = 'said' + (kind ? ' ' + kind : '');
+  }
+
+  fetch(SRC, { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : { dates: [] }; })
+    .then(function (d) {
+      // The soonest date still open. More than one and this shows the next —
+      // one button is the whole point, so the rest wait their turn.
+      date = (d.dates || [])
+        .filter(function (x) { return x && x.date >= today() && (x.status || 'open') === 'open'; })
+        .sort(function (a, b) { return a.date < b.date ? -1 : 1; })[0];
+      if (!date) { $('none').hidden = false; return; }
+
+      var dt = new Date(date.date + 'T12:00:00');
+      $('day').textContent = isNaN(dt) ? date.date
+        : dt.toLocaleDateString('en-CA', { weekday:'long', day:'numeric', month:'long' });
+      $('where').innerHTML = date.venue
+        ? '<b>' + esc(date.venue) + '</b>' + (date.city ? ' · ' + esc(date.city) : '')
+        : (date.city ? esc(date.city) + ' · venue to be confirmed' : 'Venue to be confirmed');
+      var extra = [date.slot, date.with ? 'with ' + date.with : '', date.note]
+                    .filter(Boolean).join(' · ');
+      if (extra) $('extra').textContent = extra; else $('extra').remove();
+      $('card').hidden = false;
+    })
+    .catch(function () { $('none').hidden = false; });
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
       return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
     });
   }
-  function today() {
-    var d = new Date();
-    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-  }
-  function pretty(iso) {
-    var d = new Date(iso + 'T12:00:00');
-    if (isNaN(d)) return iso;
-    return d.toLocaleDateString('en-CA', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  }
-  function say(msg, kind) {
-    var e = $('said'); e.textContent = msg; e.className = 'said' + (kind ? ' ' + kind : '');
-  }
-
-  // Every list ends with "a date that isn't listed" — a band with a show of
-  // their own is exactly who we want to hear from, and an empty board should
-  // never be a dead end.
-  function render() {
-    var box = $('dates');
-    box.textContent = '';
-
-    dates.forEach(function (d) {
-      var open = d.status !== 'filled' && d.status !== 'cancelled';
-      var el = document.createElement('label');
-      el.className = 'date' + (open ? '' : ' filled');
-
-      var input = document.createElement('input');
-      input.type = 'radio'; input.name = 'date'; input.value = d.id;
-      input.disabled = !open;
-      input.addEventListener('change', function () { picked = d; say(''); });
-      el.appendChild(input);
-
-      var body = document.createElement('div');
-      body.className = 'body';
-      body.innerHTML =
-        '<div class="when">' + esc(pretty(d.date)) + '</div>' +
-        '<div class="place">' + esc(d.venue || 'Venue TBD') +
-          (d.city ? ' <span style="color:var(--mid);font-weight:400">· ' + esc(d.city) + '</span>' : '') +
-        '</div>' +
-        (d.slot ? '<div class="slot">' + esc(d.slot) + (d.with ? ' &middot; with ' + esc(d.with) : '') + '</div>' : '') +
-        (d.note ? '<div class="note">' + esc(d.note) + '</div>' : '') +
-        (open ? '' : '<span class="taken">' +
-           (d.status === 'cancelled' ? 'Off' : 'Taken' + (d.filled_by ? ' — ' + esc(d.filled_by) : '')) +
-         '</span>');
-      el.appendChild(body);
-      box.appendChild(el);
-    });
-
-    var other = document.createElement('label');
-    other.className = 'date';
-    var oi = document.createElement('input');
-    oi.type = 'radio'; oi.name = 'date'; oi.value = '__other__';
-    oi.addEventListener('change', function () {
-      picked = { id: '__other__', date: '', venue: '', city: '' };
-      say('');
-      $('otherWrap').hidden = false;
-      $('otherDate').focus();
-    });
-    other.appendChild(oi);
-    other.insertAdjacentHTML('beforeend',
-      '<div class="body">' +
-        '<div class="when">Something else</div>' +
-        '<div class="place">A date of your own</div>' +
-        '<div class="slot">Putting on a show and want us on the bill? Tell us when.</div>' +
-        '<div id="otherWrap" hidden style="margin-top:12px;display:grid;' +
-             'grid-template-columns:1fr 1fr;gap:10px">' +
-          '<div class="f"><label for="otherDate">Date</label>' +
-            '<input id="otherDate" name="your_date" type="date"></div>' +
-          '<div class="f"><label for="otherWhere">Where</label>' +
-            '<input id="otherWhere" name="your_venue" type="text" placeholder="Venue, city"></div>' +
-        '</div>' +
-      '</div>');
-    box.appendChild(other);
-
-    // Radios inside a label that also contains inputs: clicking the inner date
-    // field would otherwise re-trigger the label and steal focus back.
-    ['otherDate', 'otherWhere'].forEach(function (id) {
-      var el = $(id);
-      if (el) el.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); });
-    });
-  }
-
-  fetch(SRC, { cache: 'no-store' })
-    .then(function (r) { return r.ok ? r.json() : { dates: [] }; })
-    .then(function (d) {
-      var t = today();
-      dates = (d.dates || []).filter(function (x) { return x && x.date && x.date >= t; })
-                             .sort(function (a, b) { return a.date < b.date ? -1 : 1; });
-      var open = dates.filter(function (x) { return x.status !== 'filled' && x.status !== 'cancelled'; });
-      $('datesHead').textContent = open.length
-        ? 'Open dates — ' + open.length
-        : 'No dates open right now';
-      render();
-    })
-    .catch(function () {
-      $('dates').innerHTML = '<div class="none">Could not load the dates — ' +
-        'tell us the date you have in mind in the form below and we will sort it out.</div>';
-      render();
-    });
 
   $('form').addEventListener('submit', function (e) {
     e.preventDefault();
-    if (!picked) { say('Pick a date first — or "a date of your own" at the bottom of the list.', 'warn'); return; }
-    var band = $('band').value.trim(), name = $('name').value.trim(), email = $('email').value.trim();
-    if (!band || !name || !email) { say('Band, your name and an email, then we can answer you.', 'warn'); return; }
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { say('That email does not look right.', 'warn'); return; }
+    var band = $('band').value.trim(), contact = $('contact').value.trim();
+    if (!band)    { say('Who are you?', 'warn'); $('band').focus(); return; }
+    // Deliberately loose: a phone number, an Instagram handle and an email are
+    // all fine. Turning someone away over a format is worse than a reply we
+    // have to chase.
+    if (contact.length < 5) { say('An email or a phone number, so we can answer.', 'warn'); $('contact').focus(); return; }
 
-    var which = picked.id === '__other__'
-      ? 'their own date: ' + (($('otherDate') || {}).value || 'not given') +
-        ' at ' + (($('otherWhere') || {}).value || 'not given')
-      : pretty(picked.date) + ' — ' + (picked.venue || 'venue TBD') +
-        (picked.city ? ', ' + picked.city : '');
-
-    var btn = $('send'), was = btn.textContent;
+    var when = $('day').textContent + (date.venue ? ' — ' + date.venue : '') +
+               (date.city ? ', ' + date.city : '');
+    var btn = $('go'), was = btn.textContent;
     btn.disabled = true; btn.textContent = 'Sending…';
+    say('');
+
     fetch(FORM, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
-        _subject: 'Play with us — ' + band + ' for ' + which,
-        date_wanted: which,
+        _subject: band + " is in for " + when,
         band: band,
-        from: $('from').value.trim(),
-        contact: name,
-        email: email,
-        listen: $('link').value.trim(),
-        band_size: $('size').value.trim(),
-        can_bring: $('draw').value.trim(),
-        message: $('msg').value.trim(),
+        contact: contact,
+        date: date.date,
+        date_readable: when,
         _gotcha: $('company').value
       })
     }).then(function (r) {
       btn.disabled = false; btn.textContent = was;
       if (r.ok) {
-        $('form').reset();
-        picked = null;
-        var ow = $('otherWrap'); if (ow) ow.hidden = true;
-        say('Got it — we will come back to you within a couple of days. Nothing is booked until we both say yes.', 'ok');
+        $('doneTitle').textContent = band + " — you're on the list";
+        document.body.classList.add('sent');
         return;
       }
-      say('That did not send. Email us instead and we will pick it up there.', 'err');
+      say("That didn't send. DM @lifttheanchor and we'll sort it there.", 'err');
     }).catch(function () {
       btn.disabled = false; btn.textContent = was;
-      say('No connection. Try again in a minute, or send us a DM.', 'err');
+      say('No connection. Try again in a minute.', 'err');
     });
   });
 })();
