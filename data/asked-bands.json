@@ -1,0 +1,11 @@
+{
+  "_readme": "Bands we have already invited, so four of us don't message the same band in one afternoon. /ask-a-band.html reads this and warns before a repeat ask. Entries arrive by email when someone taps \"I sent it\" — add them here to make them visible to everyone.",
+  "_fields": {
+    "band": "who was asked",
+    "by": "which of us sent it",
+    "on": "YYYY-MM-DD",
+    "channel": "instagram | email | copied | sent",
+    "reply": "optional — what came back"
+  },
+  "asked": []
+}

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Ask a band — Punk BC</title>
+<meta name="description" content="Type a band name, send them the invite. Anyone in the band can do it.">
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2c2023;
+    --accent:#e8372a; --gold:#e7b53c; --ink:#f4efe6; --muted:#a2938c;
+    --ok:#7ee787; --warn:#e7b53c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(900px 520px at 50% -10%, #3a0a0a 0%, transparent 60%),
+       linear-gradient(#0d0b0c,#140d0d 70%,#170c0c);
+       color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+       min-height:100vh;padding:22px 15px 60px;line-height:1.6}
+  .wrap{max-width:560px;margin:0 auto}
+  a{color:var(--gold)}
+
+  .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);
+           font-weight:800}
+  h1{font-size:25px;margin-top:4px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:13.5px;margin:8px 0 18px}
+
+  .card{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);
+        border-radius:16px;padding:17px;margin-bottom:14px}
+  h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+     margin-bottom:11px;font-weight:800}
+
+  label{display:block;font-size:11px;font-weight:800;letter-spacing:.09em;
+        text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  input,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--panel2);
+    border:1px solid var(--line);border-radius:10px;padding:12px 13px;width:100%}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  textarea{min-height:200px;resize:vertical;font-size:14px;line-height:1.65}
+  .row{margin-bottom:12px}
+  .row:last-child{margin-bottom:0}
+
+  button{font:inherit;font-size:14px;cursor:pointer;border:1px solid var(--line);
+    background:var(--panel2);color:var(--ink);border-radius:10px;padding:12px 14px}
+  button:hover{border-color:var(--accent)}
+  button:disabled{opacity:.5;cursor:default}
+  .go{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:800;
+      width:100%;padding:15px;font-size:15px;letter-spacing:.03em}
+  .chans{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .chans button{width:100%}
+  .said{font-size:12.5px;color:var(--muted);margin-top:10px;min-height:1.1em}
+  .said.ok{color:var(--ok)} .said.warn{color:var(--warn)} .said.err{color:#ff8f8f}
+
+  .date{border:1px solid var(--line);border-radius:13px;background:var(--panel2);
+        padding:14px 15px;margin-bottom:14px}
+  .date .when{font-size:19px;font-weight:800}
+  .date .where{color:var(--muted);font-size:13.5px}
+
+  .hit{font-size:12.5px;color:var(--muted);margin-top:8px;min-height:1.1em}
+  .hit b{color:var(--gold);font-weight:600}
+  .dupe{border-left:3px solid var(--warn);background:rgba(231,181,60,.08);
+        border-radius:6px;padding:10px 12px;margin-top:10px;font-size:13px;color:var(--warn);
+        display:none}
+  .dupe.show{display:block}
+
+  .log{list-style:none;font-size:13.5px}
+  .log li{padding:9px 0;border-top:1px solid var(--line);display:flex;gap:10px;
+          align-items:baseline;flex-wrap:wrap}
+  .log li:first-child{border-top:0}
+  .log .b{font-weight:700}
+  .log .m{color:var(--muted);font-size:12px;margin-left:auto}
+  .empty{color:var(--muted);font-size:13.5px}
+
+  .note{font-size:12.5px;color:var(--muted);background:rgba(0,0,0,.25);
+        border-left:3px solid var(--accent);padding:11px 13px;border-radius:6px}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:22px;line-height:1.9}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Punk BC</div>
+  <h1>Ask a band</h1>
+  <p class="sub">
+    Type a name, the message writes itself, you send it from your own phone.
+    Any of us can do this — tell the others here so nobody gets asked twice.
+  </p>
+
+  <div class="date" id="date" hidden>
+    <div class="when" id="when">—</div>
+    <div class="where" id="where"></div>
+  </div>
+
+  <div class="card">
+    <h2>Who's sending</h2>
+    <div class="row">
+      <label for="me">Your name</label>
+      <input id="me" type="text" placeholder="Miki" autocomplete="name">
+    </div>
+    <div class="row">
+      <label for="band">Band you want to ask</label>
+      <input id="band" type="text" list="acts" placeholder="Start typing…" autocomplete="off">
+      <datalist id="acts"></datalist>
+      <div class="hit" id="hit"></div>
+      <div class="dupe" id="dupe"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>The message</h2>
+    <textarea id="msg" spellcheck="true"></textarea>
+    <div class="chans" style="margin-top:12px">
+      <button type="button" id="copy">Copy it</button>
+      <button type="button" id="insta">Instagram</button>
+      <button type="button" id="mail">Email</button>
+      <button type="button" id="find">Find them</button>
+    </div>
+    <p class="said" id="said">Pick a band and this fills in with their name.</p>
+    <p class="said warn" id="stale" hidden>
+      <span id="staleWhy"></span>
+      <button type="button" id="rewrite" style="padding:6px 10px;font-size:12.5px;margin-left:6px">Rewrite it</button>
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Once you've sent it</h2>
+    <p class="note">
+      Tap this and the rest of us see it in the shared list below, so the same
+      band doesn't get four messages in one afternoon.
+    </p>
+    <div class="hp" aria-hidden="true">
+      <label for="company">Leave this empty</label>
+      <input id="company" type="text" tabindex="-1" autocomplete="off">
+    </div>
+    <button class="go" id="log" style="margin-top:12px" disabled>I sent it</button>
+    <p class="said" id="logSaid"></p>
+  </div>
+
+  <div class="card">
+    <h2>Already asked</h2>
+    <ul class="log" id="asked"><li class="empty">Nobody yet.</li></ul>
+  </div>
+
+  <footer>
+    <a href="/play-with-us.html">The page they land on</a> ·
+    <a href="/punkbc.html">Shows board</a>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var SHOWS  = '/punkbc-shows.json';
+  var DATES  = '/data/open-dates.json';
+  var ASKED  = '/data/asked-bands.json';
+  var FORM   = 'https://formspree.io/f/xpqgrqvb';
+  var RSVP   = 'https://www.mikidrummer.ca/play-with-us.html';
+
+  var K_ME = 'askBand:me', K_MINE = 'askBand:mine', K_EDITED = 'askBand:edited';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var openDate = null, acts = {}, shared = [], mine = [], lastChannel = '';
+
+  function norm(s) { return String(s || '').toLowerCase().trim(); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c];
+    });
+  }
+  function load(k, d) {
+    try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; }
+    catch (e) { return d; }
+  }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function today() {
+    var d = new Date();
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  }
+  function say(el, msg, kind) {
+    var e = $(el); e.textContent = msg; e.className = 'said' + (kind ? ' ' + kind : '');
+  }
+  // An @handle is not an address.
+  function mailable(v) {
+    v = String(v || '').trim();
+    return v[0] !== '@' && v.indexOf('@') > 0 && v.indexOf('.') > v.indexOf('@');
+  }
+
+  // Same reading of the board as /find-bands.html: the band column is the
+  // headline, and the support acts hide in "With A, B, C" — usually the ones
+  // worth asking.
+  function actsFrom(show) {
+    var out = String(show.band || '').split(' / ');
+    var n = String(show.notes || '').trim();
+    if (/^with /i.test(n)) out = out.concat(n.slice(5).split(','));
+    return out.map(function (s) {
+      return s.replace(/\.\s*(19\+|all ages)\.?$/i, '').trim();
+    }).filter(function (s) { return s.length > 1 && s.length < 60; });
+  }
+
+  function whenText(long) {
+    if (!openDate) return 'a date we have coming up';
+    var d = new Date(openDate.date + 'T12:00:00');
+    if (isNaN(d)) return openDate.date;
+    return d.toLocaleDateString('en-CA', long
+      ? { weekday:'long', day:'numeric', month:'long', year:'numeric' }
+      : { weekday:'long', day:'numeric', month:'long' });
+  }
+
+  function messageFor(name) {
+    var who = $('me').value.trim();
+    var where = openDate && openDate.venue ? ' at ' + openDate.venue
+              : (openDate && openDate.city ? ' in ' + openDate.city : '');
+    return 'Hey ' + (name || 'there') + ' — ' + (who ? who + ' here, ' : '') +
+           'from Lift the Anchor.\n\n' +
+           'We\'ve got ' + whenText(false) + where + ' and room on the bill. ' +
+           'Saw you\'re playing around town and reckoned you\'d be a good fit.\n\n' +
+           'If you\'re in, hit the button here and we\'ll sort the rest:\n' + RSVP +
+           '\n\nEither way, good luck with the shows.' +
+           (who ? '\n— ' + who : '');
+  }
+
+  // Rewriting the message by hand and then having it wiped by the next
+  // keystroke in the band field would be maddening, so once it is touched it
+  // is left alone. But a message written for Tuesday's band still says
+  // Tuesday's band, and sending that is worse than not sending — so a message
+  // that doesn't mention who you're looking at says so, with a way out.
+  function fillMessage() {
+    if (!load(K_EDITED, false)) $('msg').value = messageFor($('band').value.trim());
+    checkStale();
+  }
+
+  function checkStale() {
+    var v = $('band').value.trim();
+    var text = $('msg').value;
+    var bad = load(K_EDITED, false) && v && text.toLowerCase().indexOf(v.toLowerCase()) < 0;
+    $('stale').hidden = !bad;
+    if (bad) $('staleWhy').textContent = 'This doesn\'t mention ' + v + ' anywhere.';
+  }
+
+  $('rewrite').addEventListener('click', function () {
+    save(K_EDITED, false);
+    $('msg').value = messageFor($('band').value.trim());
+    checkStale();
+    say('said', 'Written fresh for ' + ($('band').value.trim() || 'them') + '.', 'ok');
+  });
+
+  function askedEntry(name) {
+    var k = norm(name);
+    var all = shared.concat(mine);
+    for (var i = 0; i < all.length; i++) if (norm(all[i].band) === k) return all[i];
+    return null;
+  }
+
+  function bandChanged() {
+    var v = $('band').value.trim();
+    $('log').disabled = !v;
+    fillMessage();
+
+    var a = acts[norm(v)];
+    $('hit').innerHTML = !v ? ''
+      : a ? 'On the board — next <b>' + esc(a.next) + '</b>' +
+            (a.venue ? ' at <b>' + esc(a.venue) + '</b>' : '')
+          : 'Not on our board — that\'s fine, send it anyway.';
+
+    var e = askedEntry(v);
+    $('dupe').classList.toggle('show', !!e);
+    if (e) $('dupe').textContent = (e.by || 'Someone') + ' already asked them' +
+      (e.on ? ' on ' + e.on : '') + (e.channel ? ' (' + e.channel + ')' : '') +
+      '. Send it again only if you know something they don\'t.';
+  }
+
+  function renderAsked() {
+    var all = shared.concat(mine).slice().sort(function (a, b) {
+      return (b.on || '') < (a.on || '') ? -1 : 1;
+    });
+    var box = $('asked');
+    box.textContent = '';
+    if (!all.length) {
+      box.innerHTML = '<li class="empty">Nobody yet.</li>';
+      return;
+    }
+    all.slice(0, 40).forEach(function (a) {
+      var li = document.createElement('li');
+      li.innerHTML = '<span class="b">' + esc(a.band) + '</span>' +
+        '<span class="m">' + esc(a.by || '') +
+        (a.on ? ' · ' + esc(a.on) : '') +
+        (a.pending ? ' · sending' : '') + '</span>';
+      box.appendChild(li);
+    });
+  }
+
+  function copy(text, done) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+    } else fallback(text, done);
+  }
+  function fallback(text, done) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    ta.remove();
+  }
+
+  // ---- the send buttons ---------------------------------------------------
+  // None of these send anything by themselves. Instagram has no way to post a
+  // DM from a page like this, and an ask between bands lands better coming
+  // from a person than from a website. What they do is take the typing out of
+  // it: the message is on the clipboard and the app is already open on them.
+
+  $('copy').addEventListener('click', function () {
+    var self = this;
+    copy($('msg').value, function () {
+      lastChannel = 'copied';
+      var was = self.textContent; self.textContent = 'Copied';
+      setTimeout(function () { self.textContent = was; }, 1500);
+      say('said', 'On the clipboard — paste it wherever you talk to them.', 'ok');
+    });
+  });
+
+  $('insta').addEventListener('click', function () {
+    var v = $('band').value.trim();
+    if (!v) { say('said', 'Type a band first.', 'warn'); $('band').focus(); return; }
+    lastChannel = 'instagram';
+    copy($('msg').value, function () {
+      say('said', 'Message copied. Instagram\'s opening — find them and paste it.', 'ok');
+    });
+    var handle = /^@/.test(v)
+      ? 'https://www.instagram.com/' + encodeURIComponent(v.slice(1)) + '/'
+      : 'https://www.instagram.com/explore/search/keyword/?q=' + encodeURIComponent(v);
+    window.open(handle, '_blank', 'noopener');
+  });
+
+  $('mail').addEventListener('click', function () {
+    var v = $('band').value.trim();
+    var addr = mailable(v) ? v : prompt('Their email address:', '');
+    if (!addr) return;
+    if (!mailable(addr)) { say('said', 'That doesn\'t look like an email address.', 'warn'); return; }
+    lastChannel = 'email';
+    location.href = 'mailto:' + encodeURIComponent(addr) +
+      '?subject=' + encodeURIComponent('Playing together' + (openDate ? ' — ' + whenText(false) : '')) +
+      '&body=' + encodeURIComponent($('msg').value);
+    say('said', 'Your mail app should be opening with it written out.', 'ok');
+  });
+
+  $('find').addEventListener('click', function () {
+    var v = $('band').value.trim();
+    if (!v) { say('said', 'Type a band first.', 'warn'); $('band').focus(); return; }
+    window.open('https://duckduckgo.com/?q=' +
+      encodeURIComponent(v + ' band Vancouver contact instagram'), '_blank', 'noopener');
+  });
+
+  // ---- logging it ---------------------------------------------------------
+  // This page carries no credential of any kind, so it cannot write to the
+  // site. The record goes out as a form submission; the entry shows up here
+  // straight away either way, marked as sending until it lands.
+
+  $('log').addEventListener('click', function () {
+    var band = $('band').value.trim(), who = $('me').value.trim();
+    if (!band) { say('logSaid', 'Which band?', 'warn'); $('band').focus(); return; }
+    if (!who)  { say('logSaid', 'Put your name at the top so we know who asked.', 'warn');
+                 $('me').focus(); return; }
+
+    var entry = { band: band, by: who, on: today(),
+                  channel: lastChannel || 'sent', pending: true };
+    mine.push(entry);
+    save(K_MINE, mine);
+    renderAsked();
+    bandChanged();
+
+    var btn = $('log'), was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Telling the others…';
+    say('logSaid', '');
+
+    fetch(FORM, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: who + ' asked ' + band,
+        band: band,
+        asked_by: who,
+        channel: entry.channel,
+        sent_on: entry.on,
+        for_date: openDate ? openDate.date : '',
+        for_date_readable: whenText(true),
+        _gotcha: $('company').value
+      })
+    }).then(function (r) {
+      btn.textContent = was;
+      if (r.ok) {
+        delete entry.pending;
+        save(K_MINE, mine);
+        renderAsked();
+        say('logSaid', band + ' logged. Next one?', 'ok');
+        $('band').value = '';
+        bandChanged();
+        $('band').focus();
+        return;
+      }
+      btn.disabled = false;
+      say('logSaid', 'That didn\'t reach us — it\'s saved on this phone, tell the others directly.', 'err');
+    }).catch(function () {
+      btn.textContent = was; btn.disabled = false;
+      say('logSaid', 'No connection. It\'s saved on this phone — tap again when you\'re back online.', 'err');
+    });
+  });
+
+  // ---- wiring -------------------------------------------------------------
+
+  $('me').value = load(K_ME, '');
+  mine = load(K_MINE, []);
+
+  $('me').addEventListener('input', function () {
+    save(K_ME, $('me').value.trim());
+    fillMessage();
+  });
+  $('band').addEventListener('input', bandChanged);
+  $('msg').addEventListener('input', function () { save(K_EDITED, true); checkStale(); });
+
+  renderAsked();
+
+  Promise.all([
+    fetch(DATES, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; }),
+    fetch(SHOWS, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; }),
+    fetch(ASKED, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+  ]).then(function (all) {
+    var d = all[0], s = all[1], a = all[2];
+    var t = today();
+
+    openDate = (((d || {}).dates) || [])
+      .filter(function (x) { return x && x.date >= t && (x.status || 'open') === 'open'; })
+      .sort(function (x, y) { return x.date < y.date ? -1 : 1; })[0] || null;
+
+    if (openDate) {
+      $('when').textContent = whenText(false);
+      $('where').textContent = openDate.venue
+        ? openDate.venue + (openDate.city ? ' · ' + openDate.city : '')
+        : (openDate.city ? openDate.city + ' · venue to be confirmed' : 'Venue to be confirmed');
+      $('date').hidden = false;
+    }
+
+    ((s || {}).shows || []).filter(function (x) { return x.date >= t; })
+      .forEach(function (show) {
+        actsFrom(show).forEach(function (name) {
+          var k = norm(name);
+          if (!acts[k] || show.date < acts[k].next) {
+            acts[k] = { name: name, next: show.date, venue: show.venue || '' };
+          }
+        });
+      });
+    var list = $('acts');
+    Object.keys(acts).sort().forEach(function (k) {
+      list.appendChild(new Option(acts[k].name));
+    });
+
+    // Entries the band has confirmed centrally. Anything logged on this phone
+    // that has since made it into the file would show twice, so it drops out
+    // of the local copy once the shared one carries it.
+    shared = ((a || {}).asked || []).filter(function (x) { return x && x.band; });
+    var known = {};
+    shared.forEach(function (x) { known[norm(x.band)] = true; });
+    var before = mine.length;
+    mine = mine.filter(function (x) { return !known[norm(x.band)]; });
+    if (mine.length !== before) save(K_MINE, mine);
+
+    renderAsked();
+    fillMessage();
+  }).catch(function () {
+    say('said', 'Couldn\'t load the date — the message still works, check it reads right.', 'warn');
+    fillMessage();
+  });
+})();
+</script>
+</body>
+</html>

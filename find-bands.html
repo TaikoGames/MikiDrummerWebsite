@@ -136,6 +136,12 @@
       handle takes a second. Paste an email or handle next to a band and it is
       remembered, so the second time you only press send.
     </p>
+    <p class="note" style="margin-top:10px">
+      Not just you: send the others <a href="/ask-a-band.html">/ask-a-band.html</a>.
+      It's the same message on one screen — type a name, send it, tap once so we
+      all know. No login, works on a phone. Their sends turn up here as
+      <em>asked</em> once they're in <code>data/asked-bands.json</code>.
+    </p>
     <div class="filters" style="margin-top:12px">
       <button id="export">Export the contacts</button>
       <button id="import">Import contacts</button>
@@ -160,6 +166,7 @@
 
   var SHOWS = '/punkbc-shows.json';
   var DATES = '/data/open-dates.json';
+  var SHARED = '/data/asked-bands.json';
   var K_MSG = 'findBands:msg', K_CONTACTS = 'findBands:contacts', K_ASKED = 'findBands:asked';
   var K_CHOSEN = 'findBands:chosen', K_EXTRA = 'findBands:extra';
 
@@ -171,6 +178,7 @@
 
   var $ = function (id) { return document.getElementById(id); };
   var bands = [], contacts = {}, asked = {}, openDate = null;
+  var sentBy = {};      // band -> whoever in the band sent it, from the shared file
   // The shortlist is built over days, not in one sitting — a band comes to mind
   // on the bus, another after a show. Both survive closing the tab.
   var chosen = {};      // band name -> true
@@ -334,7 +342,9 @@
       head.appendChild(nm);
       if (asked[norm(b.name)]) {
         var tag = document.createElement('span');
-        tag.className = 'askedtag'; tag.textContent = 'asked ' + asked[norm(b.name)];
+        tag.className = 'askedtag';
+        tag.textContent = (sentBy[norm(b.name)] ? sentBy[norm(b.name)] + ' asked ' : 'asked ') +
+                          asked[norm(b.name)];
         head.appendChild(tag);
       }
       var fit = document.createElement('span');
@@ -533,9 +543,21 @@
   Promise.all([
     fetch(DATES, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
       .catch(function () { return null; }),
-    fetch(SHOWS, { cache: 'no-store' }).then(function (r) { return r.json(); })
+    fetch(SHOWS, { cache: 'no-store' }).then(function (r) { return r.json(); }),
+    fetch(SHARED, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
   ]).then(function (both) {
     var d = both[0], shows = (both[1] || {}).shows || [];
+
+    // Anyone in the band can send an ask from /ask-a-band.html. Their sends
+    // land in the shared file, and this board has to know about them or it
+    // will happily suggest a band who was messaged on Tuesday.
+    ((both[2] || {}).asked || []).forEach(function (a) {
+      if (!a || !a.band) return;
+      var k = norm(a.band);
+      if (!asked[k]) asked[k] = a.on || 'already';
+      if (a.by) sentBy[k] = a.by;
+    });
     var t = new Date().toISOString().slice(0, 10);
     openDate = ((d || {}).dates || [])
       .filter(function (x) { return x.date >= t && (x.status || 'open') === 'open'; })
