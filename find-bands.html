@@ -161,6 +161,7 @@
   var SHOWS = '/punkbc-shows.json';
   var DATES = '/data/open-dates.json';
   var K_MSG = 'findBands:msg', K_CONTACTS = 'findBands:contacts', K_ASKED = 'findBands:asked';
+  var K_CHOSEN = 'findBands:chosen', K_EXTRA = 'findBands:extra';
 
   // The rooms a DIY punk bill actually happens in. A band that plays these is a
   // realistic ask; one that only plays the Commodore is not.
@@ -170,7 +171,9 @@
 
   var $ = function (id) { return document.getElementById(id); };
   var bands = [], contacts = {}, asked = {}, openDate = null;
-  var chosen = {};      // band name -> true, the shortlist for Claude
+  // The shortlist is built over days, not in one sitting — a band comes to mind
+  // on the bus, another after a show. Both survive closing the tab.
+  var chosen = {};      // band name -> true
   var extra = [];       // bands typed in that are not on the board
 
   function load(k, d) {
@@ -288,7 +291,12 @@
       if (hide && asked[norm(b.name)] && !chosen[b.name]) return false;
       return true;
     });
+    // Chosen bands always come first. Otherwise one you typed in has no fit
+    // score, sorts to the bottom, and falls past the 60-card cap — so the list
+    // says you chose it while the card is nowhere on the page.
     rows.sort(function (a, b) {
+      var ca = chosen[a.name] ? 0 : 1, cb = chosen[b.name] ? 0 : 1;
+      if (ca !== cb) return ca - cb;
       if (sort === 'az') return a.name.localeCompare(b.name);
       if (sort === 'soon') return (a.next || '9') < (b.next || '9') ? -1 : 1;
       return b.score - a.score || a.name.localeCompare(b.name);
@@ -317,6 +325,7 @@
       pick.title = 'Add to the list for Claude';
       pick.addEventListener('change', function () {
         if (pick.checked) chosen[b.name] = true; else delete chosen[b.name];
+        save(K_CHOSEN, chosen);
         el.classList.toggle('chosen', pick.checked);
         basket();
       });
@@ -458,7 +467,7 @@
     });
   });
   $('clearPick').addEventListener('click', function () {
-    chosen = {}; basket(); render();
+    chosen = {}; save(K_CHOSEN, chosen); basket(); render();
   });
 
   // A band worth asking is often not on the board at all.
@@ -471,6 +480,7 @@
       bands = bands.concat(extra[extra.length - 1]);
     }
     chosen[v] = true;
+    save(K_CHOSEN, chosen); save(K_EXTRA, extra);
     $('own').value = '';
     basket(); render();
   }
@@ -483,6 +493,8 @@
 
   contacts = load(K_CONTACTS, {});
   asked = load(K_ASKED, {});
+  chosen = load(K_CHOSEN, {});
+  extra = load(K_EXTRA, []);
 
   $('q').addEventListener('input', render);
   ['room','genre','sort'].forEach(function (id) {
@@ -532,6 +544,11 @@
     $('msg').value = load(K_MSG, '') || defaultMsg();
 
     bands = build(shows);
+    // Bands typed in on an earlier visit are not on the board, so nothing else
+    // would bring them back.
+    extra.forEach(function (e) {
+      if (!bands.some(function (b) { return norm(b.name) === norm(e.name); })) bands.push(e);
+    });
     var rooms = {}, genres = {};
     bands.forEach(function (b) {
       b.rooms.forEach(function (r) { rooms[r] = true; });
@@ -544,6 +561,9 @@
       $('genre').add(new Option(g, g));
     });
     render();
+    var back = Object.keys(chosen).length;
+    if (back) $('msgSaid').innerHTML = '<b style="color:var(--ok)">' + back +
+      ' still chosen from last time</b> — down the bottom, ready to hand over.';
   }).catch(function () {
     $('list').innerHTML = '<p class="empty">Could not load the shows board.</p>';
   });
