@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C75363M813"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C75363M813');
+</script>
+
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Services – Miki Drummer | Drum Recording, Lessons & Live</title>
@@ -55,6 +65,31 @@
             .setup-dialog{padding:16px 12px 14px}
             .kit-view{aspect-ratio:1/1;min-height:360px}
             .kv-piece span{font-size:13px}
+          }
+
+          /* The footer's album art is absolutely positioned 100px above the
+             footer and hangs into the bottom of this column. Left alone it
+             covers the share button and eats the click, so the block keeps
+             clear of it and outranks it if the layout ever shifts. */
+          .share-kit{margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);
+            position:relative;z-index:3;margin-bottom:28px}
+          @media(min-width:768px){.share-kit{margin-bottom:120px}}
+          @media(min-width:992px){.share-kit{margin-bottom:170px}}
+          .share-head{font-weight:800;font-size:15px;color:#eef1f4;margin-bottom:12px}
+          .share-btn{font:inherit;font-size:13px;cursor:pointer;color:#eef1f4;background:#12161a;
+            border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:9px 14px}
+          .share-btn:hover{border-color:#e8672a;color:#fff}
+          .share-btn.primary{background:#e8672a;border-color:#e8672a;color:#180a03;font-weight:800;
+            font-size:14.5px;padding:13px 22px;border-radius:100px;
+            box-shadow:0 10px 26px rgba(232,103,42,.28)}
+          .share-btn.primary:hover{color:#180a03;transform:translateY(-1px)}
+          .share-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+          .share-said{font-size:12.5px;color:#8a929c;margin-top:10px;min-height:1.2em}
+          .share-said.ok{color:#7ee787}
+          @media(max-width:560px){
+            .share-btn.primary{width:100%}
+            .share-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+            .share-row .share-btn{width:100%}
           }
         </style>
     </head>
@@ -214,6 +249,19 @@
                                 <li><a href="#" class="main-text">🚚 Drums Rental (Contact for inventory and pricing)</a></li>
                                 <li><a href="#" class="main-text" id="setupLink">🥁 Check out my setup</a></li>
                             </ul>
+
+                            <div class="share-kit">
+                              <div class="share-head">Know someone who needs drums?</div>
+                              <button type="button" class="share-btn primary" id="shareGo">Share this page</button>
+                              <div class="share-row">
+                                <button type="button" class="share-btn" data-share="whatsapp">WhatsApp</button>
+                                <button type="button" class="share-btn" data-share="facebook">Facebook</button>
+                                <button type="button" class="share-btn" data-share="x">X</button>
+                                <button type="button" class="share-btn" data-share="email">Email</button>
+                                <button type="button" class="share-btn" data-share="copy">Copy link</button>
+                              </div>
+                              <p class="share-said" id="shareSaid" role="status" aria-live="polite"></p>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -263,6 +311,114 @@
                 </div>
             </div>
         </footer>
+
+        <script>
+        // ---- share, and the counting of it -------------------------------
+        // Two halves, and the second is the one worth having:
+        //   1. a "share" event per tap, so you can see how often anyone bothers;
+        //   2. utm tags on the shared link, so when someone follows it you see
+        //      the visit land and which channel carried it. A share nobody
+        //      clicks and a share that brings ten people look identical
+        //      otherwise.
+        (function () {
+          'use strict';
+
+          var PAGE  = 'https://www.mikidrummer.ca/services.html';
+          var TITLE = 'Miki Drummer — drum recording, tracks and lessons';
+          var BLURB = 'Remote drum recording, custom tracks and lessons, out of Vancouver.';
+          var said  = document.getElementById('shareSaid');
+
+          function link(medium) {
+            return PAGE + '?utm_source=share&utm_medium=' + encodeURIComponent(medium) +
+                   '&utm_campaign=services';
+          }
+          // Analytics gets blocked for a good share of visitors, so this is a
+          // floor on the real number, never the whole of it.
+          function track(method) {
+            if (typeof gtag === 'function') {
+              gtag('event', 'share', { method: method, content_type: 'page', item_id: 'services' });
+            }
+          }
+          function tell(msg, ok) {
+            said.textContent = msg;
+            said.className = 'share-said' + (ok ? ' ok' : '');
+          }
+          function copy(text, done) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+            } else fallback(text, done);
+          }
+          function fallback(text, done) {
+            var ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); done(); } catch (e) {}
+            ta.remove();
+          }
+
+          var go = document.getElementById('shareGo');
+          go.addEventListener('click', function () {
+            // Tag the link with what actually carried it, or the visits that
+            // come back report a share sheet that was never opened.
+            var url = link(navigator.share ? 'web_share' : 'copy');
+            if (navigator.share) {
+              // Which app they picked is deliberately not exposed by the
+              // browser, so this counts as one bucket. Cancelling rejects,
+              // which is why nothing is counted until it resolves.
+              navigator.share({ title: TITLE, text: BLURB, url: url }).then(function () {
+                track('web_share');
+                tell('Shared — thank you.', true);
+              }).catch(function () {});
+              return;
+            }
+            copy(url, function () {
+              track('copy_fallback');
+              tell('Link copied — paste it anywhere.', true);
+            });
+          });
+          if (!navigator.share) {
+            // On a desktop the big button already is the copy button, so the
+            // chip saying the same thing is just clutter.
+            go.textContent = 'Copy the link';
+            var dup = document.querySelector('[data-share="copy"]');
+            if (dup) dup.remove();
+          }
+
+          var WHERE = {
+            whatsapp: function (u) { return 'https://wa.me/?text=' + encodeURIComponent(BLURB + ' ' + u); },
+            facebook: function (u) { return 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(u); },
+            x:        function (u) { return 'https://twitter.com/intent/tweet?text=' +
+                                     encodeURIComponent(BLURB) + '&url=' + encodeURIComponent(u); },
+            email:    function (u) { return 'mailto:?subject=' + encodeURIComponent(TITLE) +
+                                     '&body=' + encodeURIComponent(BLURB + '\n\n' + u); }
+          };
+
+          Array.prototype.forEach.call(document.querySelectorAll('[data-share]'), function (btn) {
+            btn.addEventListener('click', function () {
+              var how = btn.getAttribute('data-share'), url = link(how);
+              track(how);
+              if (how === 'copy') {
+                copy(url, function () { tell('Link copied — paste it anywhere.', true); });
+                var was = btn.textContent;
+                btn.textContent = 'Copied';
+                setTimeout(function () { btn.textContent = was; }, 1500);
+                return;
+              }
+              if (how === 'email') {
+                // mailto hands off to another app; a clicked link is the form
+                // every phone honours.
+                var a = document.createElement('a');
+                a.href = WHERE.email(url);
+                document.body.appendChild(a); a.click(); a.remove();
+                tell('Your mail app should be opening.', true);
+                return;
+              }
+              window.open(WHERE[how](url), '_blank', 'noopener');
+              tell('Opening ' + how + '…', true);
+            });
+          });
+        })();
+        </script>
 
         <div class="setup-modal" id="setupModal" aria-hidden="true">
           <div class="setup-dialog">
