@@ -324,12 +324,17 @@
           var PING = 'https://formspree.io/f/xpqgrqvb';
           var K_PING = 'mdSharePing';
 
+          // /services.html?sharetest=1 sends every time and says on the page
+          // what came back, so a missing email can be told apart from a
+          // rejected one without opening a console.
+          var TEST = /[?&]sharetest=1/.test(location.search);
+
           function notify(method) {
             var day = new Date().toISOString().slice(0, 10);
             try {
-              if (localStorage.getItem(K_PING) === day) return;
-              localStorage.setItem(K_PING, day);
+              if (!TEST && localStorage.getItem(K_PING) === day) return;
             } catch (e) { /* private browsing — send it, better twice than never */ }
+
             // keepalive so it still goes out if the share sheet takes the page
             // away mid-request.
             fetch(PING, {
@@ -342,7 +347,23 @@
                 when: new Date().toLocaleString('en-CA', { timeZone: 'America/Vancouver' }),
                 link: link(method)
               })
-            }).catch(function () {});
+            }).then(function (r) {
+              // Only remember the day once it actually went. Stamping first
+              // meant one rejected send silenced the whole day.
+              if (r.ok) { try { localStorage.setItem(K_PING, day); } catch (e) {} }
+              if (TEST) show(r.ok ? 'Sent — check your inbox.' : 'Refused: HTTP ' + r.status);
+              if (!r.ok && window.console) console.warn('share ping refused', r.status);
+            }).catch(function (e) {
+              if (TEST) show('Never left the phone: ' + e);
+              if (window.console) console.warn('share ping failed', e);
+            });
+          }
+
+          function show(msg) {
+            var p = document.createElement('p');
+            p.style.cssText = 'margin-top:10px;font-size:12.5px;color:#e8672a;font-weight:700';
+            p.textContent = msg;
+            btn.parentNode.appendChild(p);
           }
 
           var btn = document.getElementById('shareGo');
