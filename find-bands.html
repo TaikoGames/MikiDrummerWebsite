@@ -64,6 +64,20 @@
        font-size:12px}
   .note{font-size:12.5px;color:var(--muted);background:rgba(0,0,0,.25);
         border-left:3px solid var(--accent);padding:11px 13px;border-radius:6px;line-height:1.6}
+
+  .pick{margin-top:4px;accent-color:var(--accent);width:17px;height:17px;flex:none;cursor:pointer}
+  .band.chosen{border-color:var(--accent)}
+
+  /* The basket sits over the list so the count is visible while scrolling —
+     choosing twenty bands should not mean scrolling back up to check. */
+  .basket{position:fixed;left:0;right:0;bottom:0;z-index:40;
+          background:rgba(16,11,12,.97);border-top:1px solid var(--accent);
+          backdrop-filter:blur(8px);padding:12px 16px;display:none}
+  .basket.show{display:block}
+  .basket .in{max-width:1040px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .basket .who{flex:1;min-width:220px;font-size:13px;color:var(--muted);line-height:1.5}
+  .basket .who b{color:var(--ink)}
+  .basket button{padding:10px 16px}
 </style>
 </head>
 <body>
@@ -106,6 +120,11 @@
     </div>
     <div class="count" id="count"></div>
     <div id="list"><p class="empty">Loading the board…</p></div>
+    <div class="filters" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
+      <input type="text" id="own" placeholder="A band that isn't on the board — type a name"
+             autocomplete="off" style="flex:1;min-width:240px">
+      <button id="ownAdd">Add to the list</button>
+    </div>
   </div>
 
   <div class="card">
@@ -127,6 +146,14 @@
 
 </div>
 
+<div class="basket" id="basket">
+  <div class="in">
+    <div class="who" id="who"></div>
+    <button class="go" id="handoff">Copy for Claude</button>
+    <button id="clearPick">Clear</button>
+  </div>
+</div>
+
 <script>
 (function () {
   'use strict';
@@ -143,6 +170,8 @@
 
   var $ = function (id) { return document.getElementById(id); };
   var bands = [], contacts = {}, asked = {}, openDate = null;
+  var chosen = {};      // band name -> true, the shortlist for Claude
+  var extra = [];       // bands typed in that are not on the board
 
   function load(k, d) {
     try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; }
@@ -256,7 +285,7 @@
       if (q && norm(b.name).indexOf(q) < 0) return false;
       if (room && b.rooms.indexOf(room) < 0) return false;
       if (genre && b.genres.indexOf(genre) < 0) return false;
-      if (hide && asked[norm(b.name)]) return false;
+      if (hide && asked[norm(b.name)] && !chosen[b.name]) return false;
       return true;
     });
     rows.sort(function (a, b) {
@@ -277,10 +306,21 @@
 
     rows.slice(0, 60).forEach(function (b) {
       var el = document.createElement('div');
-      el.className = 'band' + (asked[norm(b.name)] ? ' asked' : '');
+      el.className = 'band' + (asked[norm(b.name)] ? ' asked' : '') +
+                     (chosen[b.name] ? ' chosen' : '');
 
       var head = document.createElement('div');
       head.className = 'bhead';
+      var pick = document.createElement('input');
+      pick.type = 'checkbox'; pick.className = 'pick';
+      pick.checked = !!chosen[b.name];
+      pick.title = 'Add to the list for Claude';
+      pick.addEventListener('change', function () {
+        if (pick.checked) chosen[b.name] = true; else delete chosen[b.name];
+        el.classList.toggle('chosen', pick.checked);
+        basket();
+      });
+      head.appendChild(pick);
       var nm = document.createElement('span'); nm.className = 'bname'; nm.textContent = b.name;
       head.appendChild(nm);
       if (asked[norm(b.name)]) {
@@ -368,6 +408,8 @@
       box.appendChild(el);
     });
 
+    basket();
+
     if (rows.length > 60) {
       var more = document.createElement('p');
       more.className = 'empty';
@@ -375,6 +417,67 @@
       box.appendChild(more);
     }
   }
+
+  function chosenNames() { return Object.keys(chosen); }
+
+  function basket() {
+    var names = chosenNames();
+    $('basket').classList.toggle('show', names.length > 0);
+    if (!names.length) return;
+    $('who').innerHTML = '<b>' + names.length + ' chosen</b> — ' +
+      names.map(function (n) {
+        return n.replace(/[&<>]/g, function (c) {
+          return { '&':'&amp;','<':'&lt;','>':'&gt;' }[c];
+        });
+      }).join(', ');
+  }
+
+  // What Claude needs is the names and the date. Everything else — finding the
+  // address, wording the note — happens on that side, so the handoff stays one
+  // line you can paste without editing.
+  function handoffText() {
+    var when = openDate
+      ? new Date(openDate.date + 'T12:00:00').toLocaleDateString('en-CA',
+          { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+      : 'our open date';
+    var where = openDate && openDate.venue ? ' at ' + openDate.venue : '';
+    var known = chosenNames().filter(function (n) { return contacts[norm(n)]; })
+      .map(function (n) { return n + ' (' + contacts[norm(n)] + ')'; });
+    return 'Find contacts and send the RSVP invite for ' + when + where + ' to:\n' +
+      chosenNames().map(function (n) { return '- ' + n; }).join('\n') +
+      (known.length ? '\n\nContacts I already have:\n' +
+        known.map(function (k) { return '- ' + k; }).join('\n') : '');
+  }
+
+  $('handoff').addEventListener('click', function () {
+    var self = this;
+    copy(handoffText(), function () {
+      var was = self.textContent;
+      self.textContent = 'Copied — paste it to Claude';
+      setTimeout(function () { self.textContent = was; }, 2200);
+    });
+  });
+  $('clearPick').addEventListener('click', function () {
+    chosen = {}; basket(); render();
+  });
+
+  // A band worth asking is often not on the board at all.
+  function addOwn() {
+    var v = $('own').value.trim();
+    if (!v) return;
+    if (!bands.some(function (b) { return norm(b.name) === norm(v); })) {
+      extra.push({ name: v, shows: 0, rooms: [], genres: [], next: '',
+                   with: [], score: 0, why: 'typed in — not on the board' });
+      bands = bands.concat(extra[extra.length - 1]);
+    }
+    chosen[v] = true;
+    $('own').value = '';
+    basket(); render();
+  }
+  $('ownAdd').addEventListener('click', addOwn);
+  $('own').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); addOwn(); }
+  });
 
   // ---- wiring -------------------------------------------------------------
 
