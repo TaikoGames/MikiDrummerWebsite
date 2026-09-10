@@ -2,44 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Earth Altar",
-      "date": "2026-09-09",
-      "time": "19:00",
-      "venue": "Astoria Pub",
-      "city": "Vancouver",
-      "price": "$19.55 adv",
-      "ticket": "https://astoria.pub/",
-      "genre": "Doom/Sludge",
-      "notes": "With Empress, Lumivore, Goblin Vessel. 19+",
-      "image": "https://orangetickets.ca/admin/img_flayers/2271-51392177.jpg",
-      "curated": ""
-    },
-    {
-      "band": "Goetia",
-      "date": "2026-09-09",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://thecobalt.ca",
-      "genre": "Death Metal",
-      "notes": "With Asphyxiated, Empalement. 19+",
-      "image": "https://i0.wp.com/toiletovhell.com/wp-content/uploads/2025/04/goetia.jpg?w=500&ssl=1",
-      "curated": ""
-    },
-    {
-      "band": "Satanic Surfers",
-      "date": "2026-09-09",
-      "time": "19:00",
-      "venue": "lucky Bar",
-      "city": "Victoria, BC",
-      "price": "",
-      "ticket": "https://www.eventbrite.ca/e/satanic-surfers-for-i-am-with-brutal-youth-blackout-tickets-1992489936035",
-      "genre": "Punk",
-      "notes": "",
-      "image": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F1188031941%2F376658818745%2F1%2Foriginal.20260701-200933?crop=focalpoint&fit=crop&w=940&auto=format%2Ccompress&q=75&sharp=10&fp-x=0.494&fp-y=0.014&s=79c2703d3585726112e5c672817ff5bb"
-    },
-    {
       "band": "Mortuary Cave",
       "date": "2026-09-11",
       "time": "19:00",
