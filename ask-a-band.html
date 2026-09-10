@@ -263,25 +263,36 @@
   }
 
   // Rewriting the message by hand and then having it wiped by the next
-  // keystroke in the band field would be maddening, so once it is touched it
-  // is left alone. But a message written for Tuesday's band still says
-  // Tuesday's band, and sending that is worse than not sending — so a message
-  // that doesn't mention who you're looking at says so, with a way out.
+  // keystroke in the band field would be maddening, so a hand-written message
+  // is left alone -- but only for the band it was written for.
+  //
+  // This used to be a plain boolean in localStorage, which meant one edit ever
+  // switched auto-writing off permanently, for every band, on every later
+  // visit. The page just stopped filling anything in and the only way back was
+  // the Rewrite button. Storing *who* it was written for instead means moving
+  // to a different band resumes writing on its own, which is what you want:
+  // a message written for Tuesday's band is stale for today's anyway.
+  function editedFor() { return norm(load(K_EDITED, '') || ''); }
+
   function fillMessage() {
-    if (!load(K_EDITED, false)) $('msg').value = messageFor($('band').value.trim());
+    var v = $('band').value.trim();
+    if (!editedFor() || editedFor() !== norm(v)) {
+      $('msg').value = messageFor(v);
+      save(K_EDITED, '');
+    }
     checkStale();
   }
 
   function checkStale() {
     var v = $('band').value.trim();
     var text = $('msg').value;
-    var bad = load(K_EDITED, false) && v && text.toLowerCase().indexOf(v.toLowerCase()) < 0;
+    var bad = !!editedFor() && v && text.toLowerCase().indexOf(v.toLowerCase()) < 0;
     $('stale').hidden = !bad;
     if (bad) $('staleWhy').textContent = 'This doesn\'t mention ' + v + ' anywhere.';
   }
 
   $('rewrite').addEventListener('click', function () {
-    save(K_EDITED, false);
+    save(K_EDITED, '');
     $('msg').value = messageFor($('band').value.trim());
     checkStale();
     say('said', 'Written fresh for ' + ($('band').value.trim() || 'them') + '.', 'ok');
@@ -577,7 +588,12 @@
     ? 'Opens everything on your phone — Messages, WhatsApp, Instagram, Signal — and you pick the contact there.'
     : 'On a phone this opens your apps and contacts. On here it copies instead.';
   contactChanged();
-  $('msg').addEventListener('input', function () { save(K_EDITED, true); checkStale(); });
+  // Remember which band this hand-written message belongs to, not just that
+  // one was written -- see fillMessage().
+  $('msg').addEventListener('input', function () {
+    save(K_EDITED, $('band').value.trim());
+    checkStale();
+  });
 
   renderAsked();
 
