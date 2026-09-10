@@ -396,7 +396,7 @@
       if (mailable(addr)) {
         btn('Email', function () {
           var sub = 'Playing together' + (openDate ? ' — ' + openDate.date : '');
-          location.href = 'mailto:' + encodeURIComponent(addr) +
+          location.href = 'mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') +
             '?subject=' + encodeURIComponent(sub) +
             '&body=' + encodeURIComponent(messageFor(b));
           markAsked(b, true);

@@ -4,8 +4,11 @@
     "band": "who was asked",
     "by": "which of us sent it",
     "on": "YYYY-MM-DD",
-    "channel": "instagram | email | copied | sent",
+    "channel": "shared | sms | whatsapp | email | instagram | copied",
+    "contact": "optional — how they were reached, shared with everyone",
     "reply": "optional — what came back"
   },
+  "_contacts": "The shared address book below: band name -> email, number or @handle. It fills the contact field on everyone's phone, so nobody hunts for the same address twice. A contact someone typed on their own phone wins over it.",
+  "contacts": {},
   "asked": []
 }

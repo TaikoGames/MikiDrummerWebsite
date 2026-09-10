@@ -46,8 +46,13 @@
   button:disabled{opacity:.5;cursor:default}
   .go{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:800;
       width:100%;padding:15px;font-size:15px;letter-spacing:.03em}
-  .chans{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-  .chans button{width:100%}
+  .chans{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+  .chans button{width:100%;padding:12px 6px}
+  /* The channel we can actually reach them on, given what's in the contact
+     field. Not a disabled state — the others still work, they just ask. */
+  .chans button.lit{border-color:var(--accent);color:#fff;
+                    background:linear-gradient(180deg,rgba(232,55,42,.22),rgba(232,55,42,.10))}
+  .opt{font-weight:600;letter-spacing:0;text-transform:none;opacity:.7}
   .said{font-size:12.5px;color:var(--muted);margin-top:10px;min-height:1.1em}
   .said.ok{color:var(--ok)} .said.warn{color:var(--warn)} .said.err{color:#ff8f8f}
 
@@ -105,15 +110,24 @@
       <div class="hit" id="hit"></div>
       <div class="dupe" id="dupe"></div>
     </div>
+    <div class="row">
+      <label for="contact">How you reach them <span class="opt">if you know</span></label>
+      <input id="contact" type="text" placeholder="email, number or @handle" autocomplete="off">
+      <div class="hit" id="chit"></div>
+    </div>
   </div>
 
   <div class="card">
     <h2>The message</h2>
     <textarea id="msg" spellcheck="true"></textarea>
-    <div class="chans" style="margin-top:12px">
-      <button type="button" id="copy">Copy it</button>
-      <button type="button" id="insta">Instagram</button>
+    <button type="button" class="go" id="share" style="margin-top:12px">Send it →</button>
+    <p class="said" id="shareHint" style="margin-top:8px"></p>
+    <div class="chans" style="margin-top:10px">
+      <button type="button" id="text">Text</button>
+      <button type="button" id="wa">WhatsApp</button>
       <button type="button" id="mail">Email</button>
+      <button type="button" id="insta">Instagram</button>
+      <button type="button" id="copy">Copy it</button>
       <button type="button" id="find">Find them</button>
     </div>
     <p class="said" id="said">Pick a band and this fills in with their name.</p>
@@ -160,9 +174,11 @@
   var RSVP   = 'https://www.mikidrummer.ca/play-with-us.html';
 
   var K_ME = 'askBand:me', K_MINE = 'askBand:mine', K_EDITED = 'askBand:edited';
+  var K_CONTACTS = 'askBand:contacts';
 
   var $ = function (id) { return document.getElementById(id); };
   var openDate = null, acts = {}, shared = [], mine = [], lastChannel = '';
+  var contacts = {};    // band -> however you reach them, kept on this phone
 
   function norm(s) { return String(s || '').toLowerCase().trim(); }
   function esc(s) {
@@ -186,6 +202,30 @@
   function mailable(v) {
     v = String(v || '').trim();
     return v[0] !== '@' && v.indexOf('@') > 0 && v.indexOf('.') > v.indexOf('@');
+  }
+
+  // What kind of thing did they paste? One field takes all of them, because
+  // asking someone to pick "email / phone / handle" from a menu before they
+  // can paste is a step that earns nothing.
+  function kindOf(v) {
+    v = String(v || '').trim();
+    if (!v) return '';
+    if (mailable(v)) return 'email';
+    if (v[0] === '@' || /instagram\.com\//i.test(v)) return 'instagram';
+    if (/^\+?[\d\s().-]{9,}$/.test(v) && digits(v).length >= 10) return 'phone';
+    return 'other';
+  }
+  function digits(v) { return String(v || '').replace(/\D/g, ''); }
+  function handleOf(v) {
+    v = String(v || '').trim();
+    var m = v.match(/instagram\.com\/([^/?#]+)/i);
+    return (m ? m[1] : v.replace(/^@/, '')).trim();
+  }
+  // wa.me wants a country code. Ten digits with none on the front is a local
+  // number, and everyone we are messaging is in BC.
+  function waNumber(v) {
+    var d = digits(v);
+    return d.length === 10 ? '1' + d : d;
   }
 
   // Same reading of the board as /find-bands.html: the band column is the
@@ -259,6 +299,12 @@
     $('log').disabled = !v;
     fillMessage();
 
+    // The address belongs to the band, not to the form — switch band and the
+    // field follows, so you never send Terminal City Rats' invite to the last
+    // band's number.
+    var saved = contacts[norm(v)] || '';
+    if (saved !== contactFor()) { $('contact').value = saved; contactChanged(); }
+
     var a = acts[norm(v)];
     $('hit').innerHTML = !v ? ''
       : a ? 'On the board — next <b>' + esc(a.next) + '</b>' +
@@ -306,52 +352,156 @@
   }
 
   // ---- the send buttons ---------------------------------------------------
-  // None of these send anything by themselves. Instagram has no way to post a
-  // DM from a page like this, and an ask between bands lands better coming
-  // from a person than from a website. What they do is take the typing out of
-  // it: the message is on the clipboard and the app is already open on them.
+  // A web page cannot post an Instagram DM or an SMS by itself, and it should
+  // not want to — an ask between bands lands better from a person. What it can
+  // do is hand the finished message to the app that will send it, with the
+  // recipient already filled in, so sending is one tap and no typing.
+  //
+  // "Send it" is the share sheet: every messaging app on the phone, and every
+  // contact inside them. It is the only button that reaches somewhere we have
+  // no address for.
+
+  var canShare = !!(navigator.share);
+
+  function need() {
+    if ($('band').value.trim()) return false;
+    say('said', 'Type a band first.', 'warn');
+    $('band').focus();
+    return true;
+  }
+  function open(url) { window.open(url, '_blank', 'noopener'); }
+  // sms: and mailto: hand off to another app rather than loading a page. A
+  // clicked link is the form every phone honours; assigning location.href is
+  // ignored outright by some iOS versions.
+  function go(url) {
+    var a = document.createElement('a');
+    a.href = url;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  // A deep link that leaves the page has nothing to report back, so the
+  // channel is recorded on the way out — that is what "I sent it" logs.
+  function heading(channel, note) {
+    lastChannel = channel;
+    if (note) say('said', note, 'ok');
+  }
+
+  $('share').addEventListener('click', function () {
+    if (need()) return;
+    var band = $('band').value.trim();
+    if (canShare) {
+      navigator.share({ text: $('msg').value })
+        .then(function () { heading('shared', 'Sent. Tap “I sent it” so the rest of us know.'); })
+        .catch(function () { /* they backed out of the sheet — say nothing */ });
+      lastChannel = 'shared';
+      return;
+    }
+    // Desktop, mostly. The clipboard is the share sheet here.
+    copy($('msg').value, function () {
+      heading('copied', 'No share sheet on this browser — it\'s copied instead. ' +
+                        'Paste it wherever you talk to ' + band + '.');
+    });
+  });
+
+  $('text').addEventListener('click', function () {
+    if (need()) return;
+    var num = digits(contactFor()) || digits(prompt('Their number:', '') || '');
+    if (num.length < 10) { say('said', 'That doesn\'t look like a phone number.', 'warn'); return; }
+    remember(num);
+    heading('sms', 'Messages should be opening with it written out.');
+    // iOS wants ?& before body, Android is happy with either. This form works
+    // on both; a plain ? drops the message on some iPhones.
+    go('sms:' + num + '?&body=' + encodeURIComponent($('msg').value));
+  });
+
+  $('wa').addEventListener('click', function () {
+    if (need()) return;
+    var num = waNumber(contactFor() || prompt('Their WhatsApp number:', '') || '');
+    if (num.length < 10) { say('said', 'WhatsApp needs a phone number.', 'warn'); return; }
+    remember(num);
+    heading('whatsapp', 'WhatsApp\'s opening with the message in it.');
+    open('https://wa.me/' + num + '?text=' + encodeURIComponent($('msg').value));
+  });
+
+  $('mail').addEventListener('click', function () {
+    if (need()) return;
+    var c = contactFor();
+    var addr = mailable(c) ? c : (prompt('Their email address:', '') || '').trim();
+    if (!addr) return;
+    if (!mailable(addr)) { say('said', 'That doesn\'t look like an email address.', 'warn'); return; }
+    remember(addr);
+    heading('email', 'Your mail app should be opening with it written out.');
+    // %40 in place of @ shows up literally in a few mail apps.
+    go('mailto:' + encodeURIComponent(addr).replace(/%40/g, '@') +
+       '?subject=' + encodeURIComponent('Playing together' + (openDate ? ' — ' + whenText(false) : '')) +
+       '&body=' + encodeURIComponent($('msg').value));
+  });
+
+  $('insta').addEventListener('click', function () {
+    if (need()) return;
+    var band = $('band').value.trim(), c = contactFor();
+    var known = kindOf(c) === 'instagram' ? handleOf(c) : '';
+    copy($('msg').value, function () {
+      say('said', known
+        ? 'Copied. Their DMs are opening — paste and send.'
+        : 'Copied. Instagram\'s searching for ' + band + ' — open their DMs and paste.', 'ok');
+    });
+    lastChannel = 'instagram';
+    // ig.me opens the message thread itself in the app. Without a handle the
+    // best we can do is put the search in front of them.
+    open(known ? 'https://ig.me/m/' + encodeURIComponent(known)
+               : 'https://www.instagram.com/explore/search/keyword/?q=' + encodeURIComponent(band));
+  });
 
   $('copy').addEventListener('click', function () {
     var self = this;
     copy($('msg').value, function () {
-      lastChannel = 'copied';
+      heading('copied', 'On the clipboard — paste it wherever you talk to them.');
       var was = self.textContent; self.textContent = 'Copied';
       setTimeout(function () { self.textContent = was; }, 1500);
-      say('said', 'On the clipboard — paste it wherever you talk to them.', 'ok');
     });
-  });
-
-  $('insta').addEventListener('click', function () {
-    var v = $('band').value.trim();
-    if (!v) { say('said', 'Type a band first.', 'warn'); $('band').focus(); return; }
-    lastChannel = 'instagram';
-    copy($('msg').value, function () {
-      say('said', 'Message copied. Instagram\'s opening — find them and paste it.', 'ok');
-    });
-    var handle = /^@/.test(v)
-      ? 'https://www.instagram.com/' + encodeURIComponent(v.slice(1)) + '/'
-      : 'https://www.instagram.com/explore/search/keyword/?q=' + encodeURIComponent(v);
-    window.open(handle, '_blank', 'noopener');
-  });
-
-  $('mail').addEventListener('click', function () {
-    var v = $('band').value.trim();
-    var addr = mailable(v) ? v : prompt('Their email address:', '');
-    if (!addr) return;
-    if (!mailable(addr)) { say('said', 'That doesn\'t look like an email address.', 'warn'); return; }
-    lastChannel = 'email';
-    location.href = 'mailto:' + encodeURIComponent(addr) +
-      '?subject=' + encodeURIComponent('Playing together' + (openDate ? ' — ' + whenText(false) : '')) +
-      '&body=' + encodeURIComponent($('msg').value);
-    say('said', 'Your mail app should be opening with it written out.', 'ok');
   });
 
   $('find').addEventListener('click', function () {
-    var v = $('band').value.trim();
-    if (!v) { say('said', 'Type a band first.', 'warn'); $('band').focus(); return; }
-    window.open('https://duckduckgo.com/?q=' +
-      encodeURIComponent(v + ' band Vancouver contact instagram'), '_blank', 'noopener');
+    if (need()) return;
+    open('https://duckduckgo.com/?q=' +
+      encodeURIComponent($('band').value.trim() + ' band Vancouver contact instagram'));
   });
+
+  // ---- the contact field --------------------------------------------------
+
+  function contactFor() { return $('contact').value.trim(); }
+
+  // Typed into the prompt rather than the field? Keep it anyway — nobody
+  // should have to find that number twice.
+  function remember(v) {
+    if (!v || contactFor()) { saveContact(); return; }
+    $('contact').value = v;
+    saveContact();
+    contactChanged();
+  }
+  function saveContact() {
+    var band = norm($('band').value), v = contactFor();
+    if (!band) return;
+    if (v) contacts[band] = v; else delete contacts[band];
+    save(K_CONTACTS, contacts);
+  }
+
+  function contactChanged() {
+    var k = kindOf(contactFor());
+    var on = { text: k === 'phone', wa: k === 'phone', mail: k === 'email',
+               insta: k === 'instagram' };
+    ['text','wa','mail','insta'].forEach(function (id) {
+      $(id).classList.toggle('lit', !!on[id]);
+    });
+    $('chit').textContent =
+      k === 'email' ? 'Email — that one sends straight out.' :
+      k === 'phone' ? 'A number — Text and WhatsApp are live.' :
+      k === 'instagram' ? 'A handle — Instagram opens their DMs, not a search.' :
+      k === 'other' ? 'Not sure what that is. The buttons will still ask you.' : '';
+  }
 
   // ---- logging it ---------------------------------------------------------
   // This page carries no credential of any kind, so it cannot write to the
@@ -382,6 +532,9 @@
         _subject: who + ' asked ' + band,
         band: band,
         asked_by: who,
+        // Whoever tracked this address down did the hard part. Sending it with
+        // the log is what puts it in front of the rest of the band.
+        contact: contactFor(),
         channel: entry.channel,
         sent_on: entry.on,
         for_date: openDate ? openDate.date : '',
@@ -412,12 +565,18 @@
 
   $('me').value = load(K_ME, '');
   mine = load(K_MINE, []);
+  contacts = load(K_CONTACTS, {});
 
   $('me').addEventListener('input', function () {
     save(K_ME, $('me').value.trim());
     fillMessage();
   });
   $('band').addEventListener('input', bandChanged);
+  $('contact').addEventListener('input', function () { saveContact(); contactChanged(); });
+  $('shareHint').textContent = canShare
+    ? 'Opens everything on your phone — Messages, WhatsApp, Instagram, Signal — and you pick the contact there.'
+    : 'On a phone this opens your apps and contacts. On here it copies instead.';
+  contactChanged();
   $('msg').addEventListener('input', function () { save(K_EDITED, true); checkStale(); });
 
   renderAsked();
@@ -462,6 +621,18 @@
     // Entries the band has confirmed centrally. Anything logged on this phone
     // that has since made it into the file would show twice, so it drops out
     // of the local copy once the shared one carries it.
+    // Addresses the band has collected centrally. A contact typed on this
+    // phone is the one you trust — it may be newer — so the shared book only
+    // fills the gaps.
+    var book = (a || {}).contacts || {};
+    Object.keys(book).forEach(function (k) {
+      if (!contacts[norm(k)]) contacts[norm(k)] = book[k];
+    });
+    ((a || {}).asked || []).forEach(function (x) {
+      if (x && x.band && x.contact && !contacts[norm(x.band)]) contacts[norm(x.band)] = x.contact;
+    });
+    save(K_CONTACTS, contacts);
+
     shared = ((a || {}).asked || []).filter(function (x) { return x && x.band; });
     var known = {};
     shared.forEach(function (x) { known[norm(x.band)] = true; });
