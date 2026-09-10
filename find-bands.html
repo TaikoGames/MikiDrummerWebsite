@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Who to ask — Punk BC</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  :root{
+    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2c2023;
+    --accent:#e8372a; --gold:#e7b53c; --ink:#f4efe6; --muted:#a2938c; --ok:#7ee787;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1100px 620px at 50% -10%, #3a0a0a 0%, transparent 60%),
+       linear-gradient(#0d0b0c,#140d0d 70%,#170c0c);
+       color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+       min-height:100vh;padding:24px 16px 70px}
+  .wrap{max-width:1040px;margin:0 auto}
+  .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{font-size:23px} a{color:var(--gold)}
+  .sub{color:var(--muted);font-size:13.5px;margin:6px 0 18px;line-height:1.6;max-width:74ch}
+  .back{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);
+        border-radius:20px;padding:6px 12px}
+  .back:hover{color:var(--ink);border-color:var(--accent)}
+
+  .card{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);
+        border-radius:16px;padding:18px;margin-bottom:16px}
+  h2{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+     margin-bottom:12px;font-weight:700}
+
+  input,select,textarea{font:inherit;font-size:13.5px;color:var(--ink);background:var(--panel2);
+    border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  textarea{width:100%;min-height:120px;resize:vertical;line-height:1.6;
+           font-family:ui-monospace,Menlo,monospace;font-size:13px}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .filters input[type=search]{flex:1;min-width:200px}
+
+  button{font:inherit;font-size:13px;cursor:pointer;border:1px solid var(--line);
+    background:transparent;color:var(--ink);border-radius:9px;padding:8px 13px}
+  button:hover{border-color:var(--accent)}
+  button.go{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:800}
+  .said{font-size:12.5px;margin-top:10px;min-height:1.1em;color:var(--muted)}
+  .said.ok{color:var(--ok)}
+
+  .band{border:1px solid var(--line);border-radius:12px;background:var(--panel2);
+        padding:14px 16px;margin-top:10px}
+  .band.asked{opacity:.55}
+  .bhead{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+  .bname{font-size:16px;font-weight:800}
+  .why{color:var(--muted);font-size:12.5px}
+  .why b{color:var(--gold);font-weight:600}
+  .fit{margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:11px;
+       color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:2px 9px}
+  .fit.hot{color:var(--accent);border-color:rgba(232,55,42,.5)}
+  .chans{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px;align-items:center}
+  .chans .contact{min-width:190px;flex:1}
+  .askedtag{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ok);
+            border:1px solid rgba(126,231,135,.4);border-radius:100px;padding:3px 9px}
+  .empty{color:var(--muted);font-size:14px;padding:10px 0}
+  .count{color:var(--muted);font-size:12.5px;margin-top:10px}
+  code{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;
+       font-size:12px}
+  .note{font-size:12.5px;color:var(--muted);background:rgba(0,0,0,.25);
+        border-left:3px solid var(--accent);padding:11px 13px;border-radius:6px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <h1>🔎 Who to ask</h1>
+    <a class="back" href="/admin.html">← Admin</a>
+  </div>
+  <p class="sub">
+    Every act playing BC in the next few months, pulled off your own shows board —
+    including the support acts buried in the notes. Sorted by how well they fit a
+    bill with you. Write the message once; each band gets it with their name in it
+    and a button per channel.
+  </p>
+
+  <div class="card">
+    <h2>The message</h2>
+    <textarea id="msg"></textarea>
+    <div class="filters" style="margin-top:10px">
+      <button id="reset">Reset to the default</button>
+      <span class="said" id="msgSaid"><code>{band}</code> becomes their name. Saved in this browser.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Who's out there</h2>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Search a band…" autocomplete="off">
+      <select id="room"><option value="">Any room</option></select>
+      <select id="genre"><option value="">Any genre</option></select>
+      <select id="sort">
+        <option value="fit">Best fit first</option>
+        <option value="soon">Playing soonest</option>
+        <option value="az">A–Z</option>
+      </select>
+      <label style="display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)">
+        <input type="checkbox" id="hideAsked" checked style="accent-color:var(--accent)"> hide asked
+      </label>
+    </div>
+    <div class="count" id="count"></div>
+    <div id="list"><p class="empty">Loading the board…</p></div>
+  </div>
+
+  <div class="card">
+    <p class="note">
+      Nothing here sends on your behalf. Instagram and Facebook have no way to
+      send a message from a page like this, and a band-to-band ask lands better
+      from you than from a robot anyway. Copy takes the message with their name
+      in it; the channel buttons open a search for that band so finding the
+      handle takes a second. Paste an email or handle next to a band and it is
+      remembered, so the second time you only press send.
+    </p>
+    <div class="filters" style="margin-top:12px">
+      <button id="export">Export the contacts</button>
+      <button id="import">Import contacts</button>
+      <input type="file" id="file" accept="application/json" hidden>
+      <span class="said" id="ioSaid"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var SHOWS = '/punkbc-shows.json';
+  var DATES = '/data/open-dates.json';
+  var K_MSG = 'findBands:msg', K_CONTACTS = 'findBands:contacts', K_ASKED = 'findBands:asked';
+
+  // The rooms a DIY punk bill actually happens in. A band that plays these is a
+  // realistic ask; one that only plays the Commodore is not.
+  var OUR_ROOMS = ['the cobalt','the astoria','red gate arts society','green auto',
+                   "lanalou's",'the wise hall','the portside pub','biltmore cabaret'];
+  var OUR_GENRES = ['punk','hardcore','ska','oi','powerviolence','crust','garage','post-hardcore'];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var bands = [], contacts = {}, asked = {}, openDate = null;
+
+  function load(k, d) {
+    try { var v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; }
+    catch (e) { return d; }
+  }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function norm(s) { return String(s || '').toLowerCase().trim(); }
+  // An @handle is not an address. Only a real one gets an Email button.
+  function mailable(v) {
+    v = String(v || '').trim();
+    return v[0] !== '@' && v.indexOf('@') > 0 && v.indexOf('.') > v.indexOf('@');
+  }
+
+  // The board hides half the bands in plain sight: the "band" column is the
+  // headline bill, and the notes carry "With A, B, C" — the support acts, who
+  // are usually the ones worth asking.
+  function actsFrom(show) {
+    var out = String(show.band || '').split(' / ');
+    var n = String(show.notes || '').trim();
+    if (/^with /i.test(n)) out = out.concat(n.slice(5).split(','));
+    return out.map(function (s) {
+      return s.replace(/\.\s*(19\+|all ages)\.?$/i, '').trim();
+    }).filter(function (s) { return s.length > 1 && s.length < 60; });
+  }
+
+  function build(shows) {
+    var t = new Date(); t = new Date(t.getTime() - t.getTimezoneOffset() * 60000)
+                            .toISOString().slice(0, 10);
+    var by = {};
+    shows.filter(function (s) { return s.date >= t; }).forEach(function (s) {
+      actsFrom(s).forEach(function (name) {
+        var k = norm(name);
+        var b = by[k] || (by[k] = { name: name, shows: 0, rooms: {}, genres: {},
+                                    next: '', with: {} });
+        b.shows++;
+        if (s.venue) b.rooms[s.venue] = true;
+        if (s.genre) b.genres[s.genre] = true;
+        if (!b.next || s.date < b.next) b.next = s.date;
+        actsFrom(s).forEach(function (o) { if (norm(o) !== k) b.with[o] = true; });
+      });
+    });
+
+    return Object.keys(by).map(function (k) {
+      var b = by[k];
+      b.rooms = Object.keys(b.rooms);
+      b.genres = Object.keys(b.genres);
+      b.with = Object.keys(b.with);
+
+      // Why, not just how much: every point is a reason shown on the card.
+      var score = 0, why = [];
+      var ours = b.rooms.filter(function (r) { return OUR_ROOMS.indexOf(norm(r)) >= 0; });
+      if (ours.length) { score += 3 * ours.length; why.push('plays <b>' + ours.join(', ') + '</b>'); }
+      var g = b.genres.filter(function (x) {
+        return OUR_GENRES.some(function (o) { return norm(x).indexOf(o) >= 0; });
+      });
+      if (g.length) { score += 3; why.push('<b>' + g.join(', ') + '</b>'); }
+      else if (b.genres.length) why.push(b.genres.join(', '));
+      if (b.shows > 1) { score += 2; why.push('<b>' + b.shows + ' shows</b> coming up'); }
+      if (b.with.length) why.push('shared a bill with ' + b.with.slice(0, 3).join(', ') +
+                                  (b.with.length > 3 ? ' +' + (b.with.length - 3) : ''));
+      b.score = score;
+      b.why = why.join(' · ');
+      return b;
+    });
+  }
+
+  function defaultMsg() {
+    var when = openDate
+      ? new Date(openDate.date + 'T12:00:00').toLocaleDateString('en-CA',
+          { weekday: 'long', day: 'numeric', month: 'long' })
+      : 'a date we have coming up';
+    var where = openDate && openDate.venue ? ' at ' + openDate.venue
+              : (openDate && openDate.city ? ' in ' + openDate.city : '');
+    return 'Hey {band} — Miki here, I drum in Lift the Anchor.\n\n' +
+           'We\'ve got ' + when + where + ' and room on the bill. ' +
+           'Saw you\'re playing around town and reckoned you\'d be a good fit.\n\n' +
+           'If you\'re in, hit the button here and I\'ll sort the rest:\n' +
+           'https://www.mikidrummer.ca/play-with-us.html\n\n' +
+           'Either way, good luck with the shows.\n— Miki';
+  }
+
+  function messageFor(b) {
+    return ($('msg').value || '').split('{band}').join(b.name);
+  }
+
+  function copy(text, done) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(text, done); });
+    } else fallback(text, done);
+  }
+  function fallback(text, done) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    ta.remove();
+  }
+
+  function markAsked(b, on) {
+    if (on) asked[norm(b.name)] = new Date().toISOString().slice(0, 10);
+    else delete asked[norm(b.name)];
+    save(K_ASKED, asked);
+    render();
+  }
+
+  function render() {
+    var q = norm($('q').value), room = $('room').value, genre = $('genre').value;
+    var sort = $('sort').value, hide = $('hideAsked').checked;
+
+    var rows = bands.filter(function (b) {
+      if (q && norm(b.name).indexOf(q) < 0) return false;
+      if (room && b.rooms.indexOf(room) < 0) return false;
+      if (genre && b.genres.indexOf(genre) < 0) return false;
+      if (hide && asked[norm(b.name)]) return false;
+      return true;
+    });
+    rows.sort(function (a, b) {
+      if (sort === 'az') return a.name.localeCompare(b.name);
+      if (sort === 'soon') return (a.next || '9') < (b.next || '9') ? -1 : 1;
+      return b.score - a.score || a.name.localeCompare(b.name);
+    });
+
+    $('count').textContent = rows.length + ' of ' + bands.length + ' acts' +
+      (Object.keys(asked).length ? ' · ' + Object.keys(asked).length + ' already asked' : '');
+
+    var box = $('list');
+    box.textContent = '';
+    if (!rows.length) {
+      box.innerHTML = '<p class="empty">Nothing matches. Widen the filters, or untick “hide asked”.</p>';
+      return;
+    }
+
+    rows.slice(0, 60).forEach(function (b) {
+      var el = document.createElement('div');
+      el.className = 'band' + (asked[norm(b.name)] ? ' asked' : '');
+
+      var head = document.createElement('div');
+      head.className = 'bhead';
+      var nm = document.createElement('span'); nm.className = 'bname'; nm.textContent = b.name;
+      head.appendChild(nm);
+      if (asked[norm(b.name)]) {
+        var tag = document.createElement('span');
+        tag.className = 'askedtag'; tag.textContent = 'asked ' + asked[norm(b.name)];
+        head.appendChild(tag);
+      }
+      var fit = document.createElement('span');
+      fit.className = 'fit' + (b.score >= 6 ? ' hot' : '');
+      fit.textContent = 'fit ' + b.score;
+      head.appendChild(fit);
+      el.appendChild(head);
+
+      var why = document.createElement('div');
+      why.className = 'why';
+      why.innerHTML = (b.next ? 'next ' + b.next + ' · ' : '') + b.why;
+      el.appendChild(why);
+
+      var chans = document.createElement('div');
+      chans.className = 'chans';
+
+      var addr = contacts[norm(b.name)] || '';
+      var c = document.createElement('input');
+      c.className = 'contact'; c.type = 'text';
+      c.placeholder = 'email or @handle — saved once you type it';
+      c.value = contacts[norm(b.name)] || '';
+      // Save as they type, and only rebuild the list when the row would
+      // actually look different. Re-rendering on blur destroys the button they
+      // are on their way to clicking, and the click lands on nothing.
+      c.addEventListener('input', function () {
+        var v = c.value.trim();
+        if (v) contacts[norm(b.name)] = v; else delete contacts[norm(b.name)];
+        save(K_CONTACTS, contacts);
+        if (mailable(v) !== mailable(addr)) render();
+      });
+      chans.appendChild(c);
+
+      function btn(label, fn) {
+        var x = document.createElement('button');
+        x.type = 'button'; x.textContent = label;
+        x.addEventListener('click', fn);
+        chans.appendChild(x);
+        return x;
+      }
+
+      btn('Copy message', function () {
+        var self = this;
+        copy(messageFor(b), function () {
+          var was = self.textContent; self.textContent = 'Copied';
+          setTimeout(function () { self.textContent = was; }, 1400);
+        });
+      });
+
+      if (mailable(addr)) {
+        btn('Email', function () {
+          var sub = 'Playing together' + (openDate ? ' — ' + openDate.date : '');
+          location.href = 'mailto:' + encodeURIComponent(addr) +
+            '?subject=' + encodeURIComponent(sub) +
+            '&body=' + encodeURIComponent(messageFor(b));
+          markAsked(b, true);
+        });
+      }
+
+      btn('Instagram', function () {
+        var handle = (contacts[norm(b.name)] || '').trim();
+        var url = handle[0] === '@'
+          ? 'https://www.instagram.com/' + encodeURIComponent(handle.slice(1)) + '/'
+          : 'https://www.instagram.com/explore/search/keyword/?q=' + encodeURIComponent(b.name);
+        window.open(url, '_blank', 'noopener');
+      });
+      btn('Bandcamp', function () {
+        window.open('https://bandcamp.com/search?q=' + encodeURIComponent(b.name),
+                    '_blank', 'noopener');
+      });
+      btn('Search', function () {
+        window.open('https://duckduckgo.com/?q=' +
+          encodeURIComponent(b.name + ' band Vancouver contact'), '_blank', 'noopener');
+      });
+
+      btn(asked[norm(b.name)] ? 'Not asked' : 'Mark asked', function () {
+        markAsked(b, !asked[norm(b.name)]);
+      });
+
+      el.appendChild(chans);
+      box.appendChild(el);
+    });
+
+    if (rows.length > 60) {
+      var more = document.createElement('p');
+      more.className = 'empty';
+      more.textContent = 'Showing the first 60 — narrow it with the search.';
+      box.appendChild(more);
+    }
+  }
+
+  // ---- wiring -------------------------------------------------------------
+
+  contacts = load(K_CONTACTS, {});
+  asked = load(K_ASKED, {});
+
+  $('q').addEventListener('input', render);
+  ['room','genre','sort'].forEach(function (id) {
+    $(id).addEventListener('change', render);
+  });
+  $('hideAsked').addEventListener('change', render);
+  $('msg').addEventListener('input', function () { save(K_MSG, $('msg').value); });
+  $('reset').addEventListener('click', function () {
+    $('msg').value = defaultMsg(); save(K_MSG, $('msg').value);
+  });
+
+  $('export').addEventListener('click', function () {
+    var blob = new Blob([JSON.stringify({ contacts: contacts, asked: asked }, null, 2)],
+                        { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'band-contacts.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 3000);
+    $('ioSaid').textContent = Object.keys(contacts).length + ' contacts saved to a file.';
+  });
+  $('import').addEventListener('click', function () { $('file').click(); });
+  $('file').addEventListener('change', function () {
+    var f = this.files[0]; if (!f) return;
+    f.text().then(function (t) {
+      try {
+        var d = JSON.parse(t);
+        Object.keys(d.contacts || {}).forEach(function (k) { contacts[k] = d.contacts[k]; });
+        Object.keys(d.asked || {}).forEach(function (k) { asked[k] = d.asked[k]; });
+        save(K_CONTACTS, contacts); save(K_ASKED, asked); render();
+        $('ioSaid').textContent = 'Merged in ' + Object.keys(d.contacts || {}).length + ' contacts.';
+      } catch (e) { $('ioSaid').textContent = 'That file was not readable.'; }
+    });
+  });
+
+  Promise.all([
+    fetch(DATES, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; }),
+    fetch(SHOWS, { cache: 'no-store' }).then(function (r) { return r.json(); })
+  ]).then(function (both) {
+    var d = both[0], shows = (both[1] || {}).shows || [];
+    var t = new Date().toISOString().slice(0, 10);
+    openDate = ((d || {}).dates || [])
+      .filter(function (x) { return x.date >= t && (x.status || 'open') === 'open'; })
+      .sort(function (a, b) { return a.date < b.date ? -1 : 1; })[0] || null;
+
+    $('msg').value = load(K_MSG, '') || defaultMsg();
+
+    bands = build(shows);
+    var rooms = {}, genres = {};
+    bands.forEach(function (b) {
+      b.rooms.forEach(function (r) { rooms[r] = true; });
+      b.genres.forEach(function (g) { genres[g] = true; });
+    });
+    Object.keys(rooms).sort().forEach(function (r) {
+      $('room').add(new Option(r, r));
+    });
+    Object.keys(genres).sort().forEach(function (g) {
+      $('genre').add(new Option(g, g));
+    });
+    render();
+  }).catch(function () {
+    $('list').innerHTML = '<p class="empty">Could not load the shows board.</p>';
+  });
+})();
+</script>
+</body>
+</html>
