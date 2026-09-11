@@ -312,6 +312,35 @@
         }
       ],
       "note": "UNCONFIRMED. At least three bands use this name (a Seattle pop punk band, a queer mom-rock band, and a Gold Class song). None could be tied to the Oct 3 Red Gate bill with The Fomites. Check with The Fomites before reaching out."
+    },
+    {
+      "band": "Brehdren",
+      "checked": "2026-09-10",
+      "email": "info@brehdren.com",
+      "email_source": "https://brehdren.com/brehdren/",
+      "profiles": [
+        {
+          "name": "Official site contact page",
+          "url": "https://brehdren.com/brehdren/",
+          "found": "email"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/brehdren/",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/Brehdren",
+          "found": "profile"
+        },
+        {
+          "name": "Bandcamp",
+          "url": "https://brehdren.bandcamp.com/",
+          "found": "profile"
+        }
+      ],
+      "note": "Vancouver ska band, 8-11 members. Contact is Scott Hastings; the site also lists a phone number."
     }
   ]
 }

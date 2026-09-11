@@ -335,6 +335,29 @@
                 profile: 'profile, no address', none: 'nothing' };
   var CLS   = { email: 'ok', form: 'form', profile: 'no', none: 'no' };
 
+  // ---- bands nobody has looked up yet ----
+  //
+  // A static page can't search the web itself: the free CORS proxies are gone
+  // (allorigins no longer answers, corsproxy.io now wants a paid key), and even
+  // when they worked most band sites refused them. So instead of a dead end,
+  // hand over one-tap searches. Paste what you find into the field above and
+  // this phone remembers it for that band.
+  function liveLookup(name) {
+    var q = encodeURIComponent(name);
+    var guess = 'https://' + name.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]/g, '') + '.bandcamp.com/';
+    termLine('<span class="no">not looked up yet — one tap each:</span>');
+    [['Email / contact', 'https://duckduckgo.com/?q=' + encodeURIComponent('"' + name + '" band contact email')],
+     ['Their Bandcamp',  guess],
+     ['Bandcamp search', 'https://bandcamp.com/search?item_type=b&q=' + q],
+     ['Instagram',       'https://www.instagram.com/explore/search/keyword/?q=' + q],
+     ['Facebook',        'https://www.facebook.com/search/pages/?q=' + q]
+    ].forEach(function (l) {
+      termLine('  <a href="' + l[1] + '" target="_blank" rel="noopener">' + l[0] + ' →</a>');
+    });
+    termLine('<span class="form">found an email or @handle? paste it above — it sticks for next time.</span>');
+    $('scan').disabled = false;
+  }
+
   function runLookup() {
     var name = $('band').value.trim();
     if (!name) return;
@@ -345,12 +368,7 @@
 
     termLine('<b>' + esc(name) + '</b>');
 
-    if (!rec) {
-      termLine('<span class="no">no lookup on file.</span>');
-      termLine('<span class="form">ask Claude to look them up, then this fills in.</span>');
-      $('scan').disabled = false;
-      return;
-    }
+    if (!rec) { liveLookup(name); return; }
 
     var i = 0, best = '';
     (function step() {
