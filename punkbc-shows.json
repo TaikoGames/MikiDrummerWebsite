@@ -2,19 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Mortuary Cave",
-      "date": "2026-09-11",
-      "time": "19:00",
-      "venue": "Astoria Pub",
-      "city": "Vancouver",
-      "price": "$23 adv",
-      "ticket": "https://astoria.pub/",
-      "genre": "Sludge",
-      "notes": "With Voltage, Balkan, Wet Rot. Album release show. 19+",
-      "image": "https://f4.bcbits.com/img/0042512315_16.jpg",
-      "curated": ""
-    },
-    {
       "band": "The Exit Strategy / Puddy Waters / Examine the Bore",
       "date": "2026-09-12",
       "time": "",
