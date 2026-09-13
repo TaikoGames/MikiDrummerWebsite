@@ -39,6 +39,21 @@
       "note": "Vancouver d-beat / hardcore punk, together since 2016."
     },
     {
+      "band": "Anciients",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://anciients.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Bloodlines",
       "checked": "2026-09-10",
       "email": "bloodlinestexas@gmail.com",
@@ -145,6 +160,21 @@
       "note": "Vancouver power pop / punk."
     },
     {
+      "band": "Dark Thoughts",
+      "checked": "2026-09-13",
+      "email": "support@darkthoughts.bandcamp.com",
+      "email_source": "darkthoughts.bandcamp.com",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://darkthoughts.bandcamp.com/",
+          "found": "email"
+        }
+      ],
+      "note": "",
+      "by": "auto"
+    },
+    {
       "band": "Dead Pioneers",
       "checked": "2026-09-09",
       "email": "",
@@ -216,6 +246,36 @@
         }
       ],
       "note": "East Vancouver melodic punk on Kinda Cool Records. Band address and label address both published."
+    },
+    {
+      "band": "Dismal Outlook",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://dismaloutlook.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Examine the Bore",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://examinethebore.bandcamp.com/",
+          "found": "email"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Kids on Fire",
@@ -290,6 +350,21 @@
       "note": "Vancouver punk. No address published anywhere, including their Linktree - Instagram @nightcourtpunk is the route. A search summary claimed nightcourtpunk@gmail.com; it does not appear on any of their pages, so it is not used."
     },
     {
+      "band": "Puddy Waters",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://puddywaters.bandcamp.com/",
+          "found": "email"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Terminal City Rats",
       "checked": "2026-09-10",
       "email": "terminalcityrats@gmail.com",
@@ -307,6 +382,21 @@
         }
       ],
       "note": "Vancouver punk. Did a split with The Fomites."
+    },
+    {
+      "band": "The Exit Strategy",
+      "checked": "2026-09-13",
+      "email": "support@theexitstrategy.bandcamp.com",
+      "email_source": "theexitstrategy.bandcamp.com",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://theexitstrategy.bandcamp.com/",
+          "found": "email"
+        }
+      ],
+      "note": "",
+      "by": "auto"
     },
     {
       "band": "The Fomites",
