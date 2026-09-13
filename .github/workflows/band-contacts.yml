@@ -19,6 +19,10 @@ on:
       band:
         description: "One band by name (optional — skips the queue)"
         default: ""
+      dump:
+        description: "Show every page read and every address refused"
+        type: boolean
+        default: false
 
 concurrency:
   group: band-contacts
@@ -39,7 +43,8 @@ jobs:
       - name: Look them up
         run: |
           if [ -n "${{ github.event.inputs.band }}" ]; then
-            python3 tools/find_band_contact.py --band "${{ github.event.inputs.band }}" --limit 1
+            python3 tools/find_band_contact.py --band "${{ github.event.inputs.band }}" --limit 1 \
+              ${{ github.event.inputs.dump == 'true' && '--dump --dry-run' || '' }}
           else
             python3 tools/find_band_contact.py --limit "${{ github.event.inputs.limit || 12 }}"
           fi

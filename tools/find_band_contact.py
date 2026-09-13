@@ -115,25 +115,31 @@ def bad_domain(domain):
     return False
 
 
-def plausible(addr):
-    """Could this address belong to a band at all?"""
+def why_not(addr):
+    """Why this address was refused, or '' if it was not. A refusal you cannot
+    see is indistinguishable from a page that had nothing on it — which is
+    exactly how a filter quietly eating the right answer goes unnoticed."""
     addr = addr.strip().strip(".,;:<>()[]'\"").lower()
     if not addr or addr.count("@") != 1 or len(addr) > 80:
-        return False
+        return "not shaped like an address"
     local, _, domain = addr.partition("@")
     if not local or not domain or ".." in domain or domain.startswith("."):
-        return False
+        return "malformed domain"
     if local in JUNK_LOCALS or local.startswith("sentry"):
-        return False
+        return "boilerplate local part (%s@)" % local
     if bad_domain(domain):
-        return False
+        return "belongs to %s, not the band" % domain
     tld = domain.rsplit(".", 1)[-1]
     if tld in JUNK_DOMAINS or len(tld) < 2:
-        return False
-    # "logo@2x.png" and friends survive the regex otherwise.
+        return "not a real tld (.%s)" % tld
     if re.search(r"\.(png|jpe?g|gif|svg|webp|css|js)$", addr):
-        return False
-    return True
+        return "a filename, not an address"
+    return ""
+
+
+def plausible(addr):
+    """Could this address belong to a band at all?"""
+    return why_not(addr) == ""
 
 
 def emails_in(html):
@@ -204,6 +210,24 @@ def stale(rec, today, days=RECHECK_DAYS):
 
 # ------------------------------------------------------------------- the world
 
+def get_traced(url):
+    """Fetch and remember what was on it, refusals included."""
+    try:
+        html = get(url)
+    except Exception as e:
+        trace(url=url, status=type(e).__name__)
+        raise
+    raw = set()
+    for m in re.finditer(r'mailto:([^"\'>?\s]+)', html, re.I):
+        raw.add(urllib.parse.unquote(m.group(1)).strip().lower())
+    for m in EMAIL_RE.finditer(html):
+        raw.add(m.group(0).strip().lower())
+    trace(url=url, status="%d bytes" % len(html),
+          emails=sorted((a, why_not(a)) for a in raw),
+          links=links_out(html))
+    return html
+
+
 def get(url, timeout=TIMEOUT):
     req = urllib.request.Request(url, headers={
         "User-Agent": UA,
@@ -264,6 +288,25 @@ def links_out(html):
     return out
 
 
+TRACE = []
+
+
+def trace(**kw):
+    TRACE.append(kw)
+
+
+def dump_trace():
+    print("\n  ---- everything seen ----")
+    for t in TRACE:
+        print("  %s  (%s)" % (t["url"], t.get("status", "")))
+        for a, reason in t.get("emails", []):
+            print("      %-44s %s" % (a, reason or "KEPT"))
+        for u in t.get("links", [])[:12]:
+            print("      link  %s" % u)
+        if not t.get("emails") and not t.get("links"):
+            print("      (nothing)")
+
+
 def look_up(band):
     """Walk the places a band's address tends to live. Returns a record in the
     same shape the research-by-hand entries use, so the page replays both
@@ -280,7 +323,7 @@ def look_up(band):
     #    publishes an address, but it does link out to everywhere they do.
     bc = "https://%s.bandcamp.com/" % slug(band)
     try:
-        html = get(bc)
+        html = get_traced(bc)
         outbound = links_out(html)
         note("Bandcamp", bc, "form")
         for u in outbound:
@@ -298,7 +341,7 @@ def look_up(band):
     hubs = [u for u in list(social) if any(h in host_of(u) for h in HUB_HOSTS)]
     for hub in hubs[:1]:
         try:
-            hub_html = get(hub)
+            hub_html = get_traced(hub)
             for u in links_out(hub_html):
                 h = host_of(u)
                 if any(sh in h for sh in SOCIAL_HOSTS):
@@ -343,7 +386,7 @@ def look_up(band):
         for path in CONTACT_PATHS:
             url = root + path
             try:
-                html = get(url)
+                html = get_traced(url)
             except Exception:
                 continue
             found = emails_in(html)
@@ -466,6 +509,8 @@ def main():
     ap.add_argument("--limit", type=int, default=8)
     ap.add_argument("--band", action="append", default=[])
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--dump", action="store_true",
+                    help="print every page read and every address refused")
     args = ap.parse_args()
 
     if args.selftest:
@@ -490,7 +535,10 @@ def main():
                 seen.add(k)
                 rec = have.get(k)
                 # Anything a person looked up by hand is left alone.
-                if rec and (rec.get("by") != "auto" or not stale(rec, today)):
+                # Only an address is worth protecting. A record of "nothing
+                # found", by hand or otherwise, should not stop a better
+                # crawler from having a go later.
+                if rec and (rec.get("email") or not stale(rec, today)):
                     continue
                 wanted.append(a)
 
@@ -504,6 +552,9 @@ def main():
             print("    gave up:", e)
             continue
         print("    ->", rec["email"] or "(no address published)")
+        if args.dump:
+            dump_trace()
+        TRACE[:] = []
         k = band.lower().strip()
         if k in have:
             data["bands"][data["bands"].index(have[k])] = rec
