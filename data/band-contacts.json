@@ -40,7 +40,7 @@
     },
     {
       "band": "Anciients",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -50,7 +50,7 @@
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -236,17 +236,22 @@
     },
     {
       "band": "Dark Thoughts",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://darkthoughts.bandcamp.com/",
-          "found": "email"
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43353664-dark-thoughts-at-cobalt-cabaret?utm_source=1471&utm_medium=partner",
+          "found": "profile"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -324,7 +329,7 @@
     },
     {
       "band": "Dismal Outlook",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -334,22 +339,22 @@
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
       "band": "Examine the Bore",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://examinethebore.bandcamp.com/",
-          "found": "email"
+          "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -521,17 +526,17 @@
     },
     {
       "band": "Puddy Waters",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://puddywaters.bandcamp.com/",
-          "found": "email"
+          "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -615,17 +620,17 @@
     },
     {
       "band": "The Exit Strategy",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://theexitstrategy.bandcamp.com/",
-          "found": "email"
+          "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
