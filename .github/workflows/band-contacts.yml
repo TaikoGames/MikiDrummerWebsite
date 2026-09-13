@@ -1,0 +1,69 @@
+name: Band contacts
+
+# Fills in how to reach the acts on the shows board, so /ask-a-band.html has an
+# address ready before anyone types the name. A browser cannot do the finding
+# itself; a runner can.
+#
+# Deliberately small batches. This reads other people's sites, and there is no
+# hurry — the board is 130-odd acts and a nightly dozen covers it inside a
+# fortnight, then only new arrivals are left.
+
+on:
+  schedule:
+    - cron: "40 11 * * *"        # 04:40 Vancouver, nobody's peak hours
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "How many bands to look up this run"
+        default: "12"
+      band:
+        description: "One band by name (optional — skips the queue)"
+        default: ""
+
+concurrency:
+  group: band-contacts
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  find:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the rules still hold
+        run: python3 tools/find_band_contact.py --selftest
+
+      - name: Look them up
+        run: |
+          if [ -n "${{ github.event.inputs.band }}" ]; then
+            python3 tools/find_band_contact.py --band "${{ github.event.inputs.band }}" --limit 1
+          else
+            python3 tools/find_band_contact.py --limit "${{ github.event.inputs.limit || 12 }}"
+          fi
+
+      - name: Commit what was found
+        run: |
+          if git diff --quiet -- data/band-contacts.json; then
+            echo "Nothing new." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          b = json.load(open('data/band-contacts.json'))['bands']
+          withmail = [x for x in b if x.get('email')]
+          print("| | |")
+          print("|---|---|")
+          print("| bands on file | %d |" % len(b))
+          print("| with an address | %d |" % len(withmail))
+          print("")
+          for x in sorted(b, key=lambda x: x['checked'], reverse=True)[:12]:
+              print("- **%s** — %s" % (x['band'], x['email'] or '_no address published_'))
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/band-contacts.json
+          git commit -m "Band contacts: found on $(date -u +%Y-%m-%d)"
+          git push origin "HEAD:$GITHUB_REF_NAME"

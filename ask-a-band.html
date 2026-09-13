@@ -325,6 +325,30 @@
     if (el) el.hidden = !$('band').value.trim();
   }
 
+  // Runs as the name is typed. Only ever fills an empty field: someone who
+  // pasted a number they were given should not have it swapped out from
+  // under them by a stale address off the board.
+  var autoDone = '';
+  function autoLookup(name) {
+    if (!lookups || !name) return;
+    var k = norm(name);
+    if (k === autoDone) return;
+    var rec = lookupFor(name);
+    if (!rec) { autoDone = ''; return; }
+    autoDone = k;
+    if (rec.email && !contactFor()) {
+      $('contact').value = rec.email;
+      contactChanged();
+      saveContact();
+      $('chit').innerHTML = 'Found for you — <b>' + esc(rec.email) + '</b>' +
+        (rec.email_source ? ' (' + esc(rec.email_source) + ')' : '') +
+        '. Email is one tap.';
+    } else if (!rec.email) {
+      $('chit').textContent = 'Looked up ' + rec.checked +
+        ' — no address published. Instagram or a form is the way in.';
+    }
+  }
+
   function termLine(html) {
     var t = $('term');
     t.innerHTML += html + '\n';
@@ -445,6 +469,11 @@
     // band's number.
     var saved = contacts[norm(v)] || '';
     if (saved !== contactFor()) { $('contact').value = saved; contactChanged(); }
+
+    // Typing the name is the whole instruction. If we already know how to
+    // reach them, say so and fill it in — making someone press "Look them up"
+    // to be told something already on file is a tap for nothing.
+    autoLookup(v);
 
     var a = acts[norm(v)];
     $('hit').innerHTML = !v ? ''

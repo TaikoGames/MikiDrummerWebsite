@@ -10,38 +10,57 @@
   },
   "bands": [
     {
-      "band": "Die Job",
-      "checked": "2026-09-09",
-      "email": "diejobpunk@gmail.com",
-      "email_source": "https://www.kindacoolrecords.com/diejob",
+      "band": "Alien Boys",
+      "checked": "2026-09-10",
+      "email": "alienboysvancouver@gmail.com",
+      "email_source": "https://alienboys.ca/",
       "profiles": [
         {
-          "name": "Label page (Kinda Cool Records)",
-          "url": "https://www.kindacoolrecords.com/diejob",
-          "found": "email"
-        },
-        {
-          "name": "Label contact",
-          "url": "mailto:kindacoolrecords@gmail.com",
+          "name": "Official site",
+          "url": "https://alienboys.ca/",
           "found": "email"
         },
         {
           "name": "Instagram",
-          "url": "https://www.instagram.com/diejobpunk/",
+          "url": "https://www.instagram.com/alienboysvancouver",
           "found": "profile"
         },
         {
           "name": "Facebook",
-          "url": "https://www.facebook.com/diejobpunk",
+          "url": "https://www.facebook.com/alienboysvancouver/",
           "found": "profile"
         },
         {
           "name": "Bandcamp",
-          "url": "https://kindacoolrecords.bandcamp.com/album/hazards-of-occupation",
+          "url": "https://alienboys.bandcamp.com",
           "found": "profile"
         }
       ],
-      "note": "East Vancouver melodic punk on Kinda Cool Records. Band address and label address both published."
+      "note": "Vancouver d-beat / hardcore punk, together since 2016."
+    },
+    {
+      "band": "Bloodlines",
+      "checked": "2026-09-10",
+      "email": "bloodlinestexas@gmail.com",
+      "email_source": "https://facedownrecords.com/family/bloodlines/",
+      "profiles": [
+        {
+          "name": "Label page (Facedown Records)",
+          "url": "https://facedownrecords.com/family/bloodlines/",
+          "found": "email"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/bloodlinestexas/",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/BloodlinesTexas/",
+          "found": "profile"
+        }
+      ],
+      "note": "Gulf Coast, Texas metalcore on Facedown Records. Supporting Demon Hunter on the Storm the Gates of Hell anniversary tour, so in town for one night only."
     },
     {
       "band": "Bound By None",
@@ -76,6 +95,54 @@
         }
       ],
       "note": "No address published anywhere. Miki drummed for them, so a direct text beats any of this. Do not confuse with 'Bound To None', a different band."
+    },
+    {
+      "band": "Brehdren",
+      "checked": "2026-09-10",
+      "email": "info@brehdren.com",
+      "email_source": "https://brehdren.com/brehdren/",
+      "profiles": [
+        {
+          "name": "Official site contact page",
+          "url": "https://brehdren.com/brehdren/",
+          "found": "email"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/brehdren/",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/Brehdren",
+          "found": "profile"
+        },
+        {
+          "name": "Bandcamp",
+          "url": "https://brehdren.bandcamp.com/",
+          "found": "profile"
+        }
+      ],
+      "note": "Vancouver ska band, 8-11 members. Contact is Scott Hastings; the site also lists a phone number."
+    },
+    {
+      "band": "Corner Boys",
+      "checked": "2026-09-10",
+      "email": "cornerboyscanada@gmail.com",
+      "email_source": "https://cornerboys.bandcamp.com/",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://cornerboys.bandcamp.com/",
+          "found": "email"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/CornerBoysBC",
+          "found": "profile"
+        }
+      ],
+      "note": "Vancouver power pop / punk."
     },
     {
       "band": "Dead Pioneers",
@@ -117,47 +184,57 @@
       "note": "On Alternative Tentacles and Hassle Records, so likely booked through management. Contact form is the only direct route published."
     },
     {
-      "band": "Bloodlines",
-      "checked": "2026-09-10",
-      "email": "bloodlinestexas@gmail.com",
-      "email_source": "https://facedownrecords.com/family/bloodlines/",
+      "band": "Die Job",
+      "checked": "2026-09-09",
+      "email": "diejobpunk@gmail.com",
+      "email_source": "https://www.kindacoolrecords.com/diejob",
       "profiles": [
         {
-          "name": "Label page (Facedown Records)",
-          "url": "https://facedownrecords.com/family/bloodlines/",
+          "name": "Label page (Kinda Cool Records)",
+          "url": "https://www.kindacoolrecords.com/diejob",
+          "found": "email"
+        },
+        {
+          "name": "Label contact",
+          "url": "mailto:kindacoolrecords@gmail.com",
           "found": "email"
         },
         {
           "name": "Instagram",
-          "url": "https://www.instagram.com/bloodlinestexas/",
+          "url": "https://www.instagram.com/diejobpunk/",
           "found": "profile"
         },
         {
           "name": "Facebook",
-          "url": "https://www.facebook.com/BloodlinesTexas/",
+          "url": "https://www.facebook.com/diejobpunk",
           "found": "profile"
-        }
-      ],
-      "note": "Gulf Coast, Texas metalcore on Facedown Records. Supporting Demon Hunter on the Storm the Gates of Hell anniversary tour, so in town for one night only."
-    },
-    {
-      "band": "Terminal City Rats",
-      "checked": "2026-09-10",
-      "email": "terminalcityrats@gmail.com",
-      "email_source": "https://terminalcityrats.bandcamp.com/",
-      "profiles": [
+        },
         {
           "name": "Bandcamp",
-          "url": "https://terminalcityrats.bandcamp.com/",
-          "found": "email"
-        },
-        {
-          "name": "Facebook",
-          "url": "https://www.facebook.com/TerminalCityRats/",
+          "url": "https://kindacoolrecords.bandcamp.com/album/hazards-of-occupation",
           "found": "profile"
         }
       ],
-      "note": "Vancouver punk. Did a split with The Fomites."
+      "note": "East Vancouver melodic punk on Kinda Cool Records. Band address and label address both published."
+    },
+    {
+      "band": "Kids on Fire",
+      "checked": "2026-09-10",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Seattle band (Bandcamp)",
+          "url": "https://kidsonfireseattle.bandcamp.com/",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook @kidsonfirepnw",
+          "url": "https://www.facebook.com/kidsonfirepnw/",
+          "found": "profile"
+        }
+      ],
+      "note": "UNCONFIRMED. At least three bands use this name (a Seattle pop punk band, a queer mom-rock band, and a Gold Class song). None could be tied to the Oct 3 Red Gate bill with The Fomites. Check with The Fomites before reaching out."
     },
     {
       "band": "Mean Bikini",
@@ -189,52 +266,47 @@
       "note": "Cumberland, BC skate punk / hardcore. The address is their label's, not the band's own - Instagram may reach them faster."
     },
     {
-      "band": "Alien Boys",
+      "band": "Night Court",
       "checked": "2026-09-10",
-      "email": "alienboysvancouver@gmail.com",
-      "email_source": "https://alienboys.ca/",
+      "email": "",
+      "email_source": "",
       "profiles": [
         {
-          "name": "Official site",
-          "url": "https://alienboys.ca/",
-          "found": "email"
+          "name": "Bandcamp",
+          "url": "https://nightcourtpunk.bandcamp.com/",
+          "found": "profile"
+        },
+        {
+          "name": "Linktree (22 links)",
+          "url": "https://linktr.ee/nightcourt",
+          "found": "profile"
         },
         {
           "name": "Instagram",
-          "url": "https://www.instagram.com/alienboysvancouver",
-          "found": "profile"
-        },
-        {
-          "name": "Facebook",
-          "url": "https://www.facebook.com/alienboysvancouver/",
-          "found": "profile"
-        },
-        {
-          "name": "Bandcamp",
-          "url": "https://alienboys.bandcamp.com",
+          "url": "https://www.instagram.com/nightcourtpunk/",
           "found": "profile"
         }
       ],
-      "note": "Vancouver d-beat / hardcore punk, together since 2016."
+      "note": "Vancouver punk. No address published anywhere, including their Linktree - Instagram @nightcourtpunk is the route. A search summary claimed nightcourtpunk@gmail.com; it does not appear on any of their pages, so it is not used."
     },
     {
-      "band": "Corner Boys",
+      "band": "Terminal City Rats",
       "checked": "2026-09-10",
-      "email": "cornerboyscanada@gmail.com",
-      "email_source": "https://cornerboys.bandcamp.com/",
+      "email": "terminalcityrats@gmail.com",
+      "email_source": "https://terminalcityrats.bandcamp.com/",
       "profiles": [
         {
           "name": "Bandcamp",
-          "url": "https://cornerboys.bandcamp.com/",
+          "url": "https://terminalcityrats.bandcamp.com/",
           "found": "email"
         },
         {
           "name": "Facebook",
-          "url": "https://www.facebook.com/CornerBoysBC",
+          "url": "https://www.facebook.com/TerminalCityRats/",
           "found": "profile"
         }
       ],
-      "note": "Vancouver power pop / punk."
+      "note": "Vancouver punk. Did a split with The Fomites."
     },
     {
       "band": "The Fomites",
@@ -269,78 +341,6 @@
         }
       ],
       "note": "Vancouver three-piece punk, same label as Die Job. Their Oct 3 Red Gate show is an album release party."
-    },
-    {
-      "band": "Night Court",
-      "checked": "2026-09-10",
-      "email": "",
-      "email_source": "",
-      "profiles": [
-        {
-          "name": "Bandcamp",
-          "url": "https://nightcourtpunk.bandcamp.com/",
-          "found": "profile"
-        },
-        {
-          "name": "Linktree (22 links)",
-          "url": "https://linktr.ee/nightcourt",
-          "found": "profile"
-        },
-        {
-          "name": "Instagram",
-          "url": "https://www.instagram.com/nightcourtpunk/",
-          "found": "profile"
-        }
-      ],
-      "note": "Vancouver punk. No address published anywhere, including their Linktree - Instagram @nightcourtpunk is the route. A search summary claimed nightcourtpunk@gmail.com; it does not appear on any of their pages, so it is not used."
-    },
-    {
-      "band": "Kids on Fire",
-      "checked": "2026-09-10",
-      "email": "",
-      "email_source": "",
-      "profiles": [
-        {
-          "name": "Seattle band (Bandcamp)",
-          "url": "https://kidsonfireseattle.bandcamp.com/",
-          "found": "profile"
-        },
-        {
-          "name": "Facebook @kidsonfirepnw",
-          "url": "https://www.facebook.com/kidsonfirepnw/",
-          "found": "profile"
-        }
-      ],
-      "note": "UNCONFIRMED. At least three bands use this name (a Seattle pop punk band, a queer mom-rock band, and a Gold Class song). None could be tied to the Oct 3 Red Gate bill with The Fomites. Check with The Fomites before reaching out."
-    },
-    {
-      "band": "Brehdren",
-      "checked": "2026-09-10",
-      "email": "info@brehdren.com",
-      "email_source": "https://brehdren.com/brehdren/",
-      "profiles": [
-        {
-          "name": "Official site contact page",
-          "url": "https://brehdren.com/brehdren/",
-          "found": "email"
-        },
-        {
-          "name": "Instagram",
-          "url": "https://www.instagram.com/brehdren/",
-          "found": "profile"
-        },
-        {
-          "name": "Facebook",
-          "url": "https://www.facebook.com/Brehdren",
-          "found": "profile"
-        },
-        {
-          "name": "Bandcamp",
-          "url": "https://brehdren.bandcamp.com/",
-          "found": "profile"
-        }
-      ],
-      "note": "Vancouver ska band, 8-11 members. Contact is Scott Hastings; the site also lists a phone number."
     }
   ]
 }
