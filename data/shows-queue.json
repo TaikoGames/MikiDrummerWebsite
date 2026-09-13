@@ -114,6 +114,20 @@
       "first_seen": "2026-09-10"
     },
     {
+      "band": "SELFIST, Dead Streets, Aanthems, Dusty Pines - Punk Community Celebration of Love",
+      "date": "2026-09-27",
+      "time": "18:00",
+      "venue": "The WISE Hall",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/selfist-dead-streets-aanthems-/1557863922756248/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-09-13"
+    },
+    {
       "band": "EOR Presents: Dave Hause & The Mermaid, American Steel, Dead End Drive-In",
       "date": "2026-10-01",
       "time": "",
@@ -168,6 +182,20 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "vancouver-punk-calendar",
       "first_seen": "2026-09-10"
+    },
+    {
+      "band": "Concrete Vehicles with Hillsboro, WAIT//LESS, and LöLä",
+      "date": "2026-10-08",
+      "time": "",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-09-13"
     },
     {
       "band": "Longshot Night 1",
@@ -268,6 +296,20 @@
       "first_seen": "2026-09-10"
     },
     {
+      "band": "Protest The Hero",
+      "date": "2026-12-03",
+      "time": "",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/protest-the-hero-vancouver/28163987296544234/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-09-13"
+    },
+    {
       "band": "The Bouncing Souls, Suicide Machines, The Aggrolites, Dead Bars",
       "date": "2027-02-21",
       "time": "",
@@ -284,7 +326,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1103
+    "vancouver-punk-calendar": 1106
   },
-  "updated": "2026-09-12"
+  "updated": "2026-09-13"
 }
