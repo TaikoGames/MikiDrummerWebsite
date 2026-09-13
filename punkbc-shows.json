@@ -2,43 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "The Exit Strategy / Puddy Waters / Examine the Bore",
-      "date": "2026-09-12",
-      "time": "",
-      "venue": "Green Auto",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://gigpit.ca/shows/event:jrlo5lxr5m8",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/images/shows/the-exit-strategy-2026-09-12.jpg",
-      "image_source": "https://api.gigpit.ca/services/images/9VkZjxLNvXo?height=1200"
-    },
-    {
-      "band": "Anciients",
-      "date": "2026-09-12",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$24",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Progressive Metal",
-      "notes": "10 Years Of Voice Of The Void. With Tribunal, WORSE, Franklin. 19+",
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzNWTfUCyCatVKUuiVEZ9jexmUNCHwG85CvRJAU8QhA5XOT5lBQXB-ixYn4wzH15rOczst-xNi3jBAz6WGnBviAx8m5g8KjsQit4TrC27J7w&s=10"
-    },
-    {
-      "band": "Dismal Outlook",
-      "date": "2026-09-12",
-      "time": "21:00",
-      "venue": "Capital Ballroom",
-      "city": "Victoria",
-      "price": "$15",
-      "ticket": "",
-      "genre": "Hardcore",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
       "band": "Dark Thoughts / Schedule 1 / Pill Mill",
       "date": "2026-09-15",
       "time": "",
