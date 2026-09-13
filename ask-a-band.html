@@ -334,8 +334,17 @@
     var k = norm(name);
     if (k === autoDone) return;
     var rec = lookupFor(name);
-    if (!rec) { autoDone = ''; return; }
     autoDone = k;
+    if (!rec) {
+      // Whatever the last band's line said, it is not about this one. Leaving
+      // it up reads as "looked up, nothing found" for a band nobody has
+      // checked at all.
+      if (!contactFor()) {
+        $('chit').textContent = 'Nobody has looked them up yet — "Find them" below, ' +
+                                'and anything you paste here is kept.';
+      }
+      return;
+    }
     if (rec.email && !contactFor()) {
       $('contact').value = rec.email;
       contactChanged();

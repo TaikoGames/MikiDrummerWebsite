@@ -162,8 +162,8 @@
     {
       "band": "Dark Thoughts",
       "checked": "2026-09-13",
-      "email": "support@darkthoughts.bandcamp.com",
-      "email_source": "darkthoughts.bandcamp.com",
+      "email": "",
+      "email_source": "",
       "profiles": [
         {
           "name": "Bandcamp",
@@ -171,7 +171,7 @@
           "found": "email"
         }
       ],
-      "note": "",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -386,8 +386,8 @@
     {
       "band": "The Exit Strategy",
       "checked": "2026-09-13",
-      "email": "support@theexitstrategy.bandcamp.com",
-      "email_source": "theexitstrategy.bandcamp.com",
+      "email": "",
+      "email_source": "",
       "profiles": [
         {
           "name": "Bandcamp",
@@ -395,7 +395,7 @@
           "found": "email"
         }
       ],
-      "note": "",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {

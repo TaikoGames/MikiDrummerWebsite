@@ -91,6 +91,19 @@ def acts_from(show):
     return cleaned
 
 
+def bad_domain(domain):
+    """bandcamp.com was in the list and support@theexitstrategy.bandcamp.com
+    still got through, because the check was for the domain exactly. Anything
+    hanging off one of these hosts belongs to the host."""
+    domain = domain.lower().strip(".")
+    parts = domain.split(".")
+    for i in range(len(parts) - 1):
+        suffix = ".".join(parts[i:])
+        if suffix in JUNK_DOMAINS or suffix in NOT_THE_BAND:
+            return True
+    return False
+
+
 def plausible(addr):
     """Could this address belong to a band at all?"""
     addr = addr.strip().strip(".,;:<>()[]'\"").lower()
@@ -101,7 +114,7 @@ def plausible(addr):
         return False
     if local in JUNK_LOCALS or local.startswith("sentry"):
         return False
-    if domain in JUNK_DOMAINS or domain in NOT_THE_BAND:
+    if bad_domain(domain):
         return False
     tld = domain.rsplit(".", 1)[-1]
     if tld in JUNK_DOMAINS or len(tld) < 2:
@@ -134,9 +147,13 @@ def score(addr, band, page_host):
     s = 0
     sl = slug(band)
     bare = domain.rsplit(".", 2)[0]
-    if sl and (sl in slug(domain) or slug(domain) in sl):
+    # Compare against the registered domain, not the whole host: a band's own
+    # name appears in <band>.bandcamp.com, which is Bandcamp's address, not
+    # theirs.
+    root = ".".join(domain.split(".")[-2:])
+    if sl and (sl in slug(root) or slug(root) in sl):
         s += 6                                   # band@theirownband.com
-    if page_host and slug(page_host) and slug(page_host) in slug(domain):
+    if page_host and slug(page_host) and slug(page_host) in slug(root):
         s += 3                                   # matches the site it is on
     if local in ("booking", "bookings", "contact", "info", "band", "mail"):
         s += 2
@@ -217,6 +234,25 @@ def host_of(url):
     return urllib.parse.urlparse(url).netloc.lower().replace("www.", "")
 
 
+def links_out(html):
+    """The links a band puts on their own Bandcamp page: their site, their
+    Instagram, their linktree. More reliable than a search engine, and it is
+    the band saying where they are rather than a guess."""
+    out, seen = [], set()
+    for m in re.finditer(r'href="(https?://[^"]+)"', html):
+        u = urllib.parse.unquote(m.group(1).replace("&amp;", "&"))
+        # Bandcamp wraps outbound links: /redirect?url=<encoded>
+        rm = re.search(r"[?&]url=([^&]+)", u)
+        if rm:
+            u = urllib.parse.unquote(rm.group(1))
+        h = host_of(u)
+        if not h or "bandcamp.com" in h or h in seen:
+            continue
+        seen.add(h)
+        out.append(u)
+    return out
+
+
 def look_up(band):
     """Walk the places a band's address tends to live. Returns a record in the
     same shape the research-by-hand entries use, so the page replays both
@@ -227,40 +263,57 @@ def look_up(band):
         profiles.append({"name": name, "url": url, "found": found})
         print("    %-26s %-46s %s" % (name[:26], url[:46], found))
 
-    # 1. Their own Bandcamp, at the address bands nearly always have.
+    official, social = [], []
+
+    # 1. Their own Bandcamp, at the address bands nearly always have. It never
+    #    publishes an address, but it does link out to everywhere they do.
     bc = "https://%s.bandcamp.com/" % slug(band)
     try:
         html = get(bc)
-        found = emails_in(html)
-        # Bandcamp never publishes the address, but it confirms the band and
-        # carries links out to wherever they do.
-        for a in found:
-            cands.append((a, host_of(bc)))
-        note("Bandcamp", bc, "email" if found else "form")
+        outbound = links_out(html)
+        note("Bandcamp", bc, "form")
+        for u in outbound:
+            h = host_of(u)
+            if any(sh in h for sh in SOCIAL_HOSTS):
+                social.append(u)
+            elif h not in NOT_THE_BAND:
+                official.append(u)
     except Exception:
         note("Bandcamp", bc, "none")
+        outbound = []
     time.sleep(PAUSE)
 
-    # 2. Whatever the web says is theirs.
+    # 2. A search, when one answers. It is a bonus, not the spine — the lite
+    #    endpoint returns nothing from a runner often enough that relying on
+    #    it would mean finding nothing at all.
     hits = search('"%s" band contact email booking' % band)
-    official = []
+    print("    search returned %d" % len(hits))
     for u in hits:
         h = host_of(u)
-        if any(s in h for s in SOCIAL_HOSTS):
-            kind = "profile"
-            if "instagram.com" in h or "facebook.com" in h:
-                note("Instagram" if "instagram" in h else "Facebook", u, kind)
-            continue
-        if h.endswith("bandcamp.com") or h in NOT_THE_BAND:
-            continue
-        official.append(u)
+        if any(sh in h for sh in SOCIAL_HOSTS):
+            social.append(u)
+        elif not h.endswith("bandcamp.com") and h not in NOT_THE_BAND:
+            official.append(u)
     time.sleep(PAUSE)
 
-    # 3. Read the first couple of real sites, and their contact pages.
-    for site in official[:2]:
-        root = "%s://%s" % (urllib.parse.urlparse(site).scheme, urllib.parse.urlparse(site).netloc)
+    for u in social[:3]:
+        h = host_of(u)
+        name = ("Instagram" if "instagram" in h else
+                "Facebook" if "facebook" in h else
+                "Linktree" if "linktr.ee" in h else h)
+        note(name, u, "profile")
+
+    # 3. Read their own sites, and the pages a contact tends to sit on.
+    seen_site = set()
+    for site in official[:3]:
+        parsed = urllib.parse.urlparse(site)
+        root = "%s://%s" % (parsed.scheme, parsed.netloc)
+        if root in seen_site:
+            continue
+        seen_site.add(root)
+        got = False
         for path in CONTACT_PATHS:
-            url = site if path == "" else root + path
+            url = root + path
             try:
                 html = get(url)
             except Exception:
@@ -270,11 +323,11 @@ def look_up(band):
                 cands.append((a, host_of(url)))
             if found:
                 note("Site", url, "email")
-                break
-            if re.search(r"<form|contact", html, re.I) and path:
-                note("Site", url, "form")
+                got = True
                 break
             time.sleep(PAUSE)
+        if not got:
+            note("Site", root, "form" if root else "none")
         time.sleep(PAUSE)
 
     email = best_email(cands, band)
@@ -311,6 +364,16 @@ def selftest():
     ok(not plausible("support@eventbrite.com"), "ticketing address let through")
     ok(not plausible("hello@bandcamp.com"), "bandcamp address let through")
     ok(plausible("diejobpunk@gmail.com"), "real address rejected")
+    # Shipped for real on the first run: the blocklist matched bandcamp.com
+    # exactly, so a subdomain sailed past, and the band's name inside that
+    # subdomain scored it as their own domain.
+    ok(not plausible("support@theexitstrategy.bandcamp.com"),
+       "bandcamp subdomain let through")
+    ok(not plausible("a@x.wixpress.com"), "wixpress subdomain let through")
+    ok(best_email([("support@darkthoughts.bandcamp.com", "darkthoughts.bandcamp.com")],
+                  "Dark Thoughts") == "", "bandcamp subdomain ranked as the band's")
+    ok(bad_domain("mail.eventbrite.com") and not bad_domain("goodband.ca"),
+       "suffix matching")
     ok(plausible("booking@thefomites.ca"), "real address rejected")
 
     # mailto: wins over a bare string further up the page.
@@ -336,6 +399,12 @@ def selftest():
     # One-character names are noise from a split, not bands.
     ok(acts_from({"band": "X / Real Band"}) == ["Real Band"], "single letter kept")
 
+    page = ('<a href="https://bandcamp.com/redirect?url=https%3A%2F%2Fmyband.ca%2F">site</a>'
+            '<a href="https://www.instagram.com/myband/">ig</a>'
+            '<a href="https://myband.bandcamp.com/album/x">album</a>')
+    ok(links_out(page) == ["https://myband.ca/", "https://www.instagram.com/myband/"],
+       "links_out: %r" % links_out(page))
+
     ok(slug("Bound By None") == "boundbynone", "slug")
     ok(slug("Sh*t & Shine") == "shtandshine", "slug with symbols")
 
@@ -347,7 +416,7 @@ def selftest():
     ok(not stale({"email": "", "checked": "2026-09-01"}, today), "fresh empty retried")
     ok(stale({"email": "", "checked": "nonsense"}, today), "bad date not retried")
 
-    print("selftest: %d checks, %d failed" % (17, len(fails)))
+    print("selftest: %d checks, %d failed" % (22, len(fails)))
     for f in fails:
         print("  FAIL:", f)
     return 1 if fails else 0
