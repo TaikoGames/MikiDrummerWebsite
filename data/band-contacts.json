@@ -40,7 +40,7 @@
     },
     {
       "band": "Anciients",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -50,7 +50,7 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
@@ -113,7 +113,7 @@
     },
     {
       "band": "Brasser",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -133,7 +133,7 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
@@ -167,7 +167,7 @@
     },
     {
       "band": "Burnt Lung",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -197,7 +197,7 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
@@ -221,7 +221,7 @@
     },
     {
       "band": "Curb Zombie",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -231,12 +231,12 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
       "band": "Dark Thoughts",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -246,7 +246,7 @@
           "found": "email"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
@@ -324,7 +324,7 @@
     },
     {
       "band": "Dismal Outlook",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -334,12 +334,12 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
       "band": "Examine the Bore",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -349,7 +349,7 @@
           "found": "email"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
@@ -373,7 +373,7 @@
     },
     {
       "band": "Mares of Thrace",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -408,7 +408,7 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
@@ -466,7 +466,7 @@
     },
     {
       "band": "Out Of Order",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -491,12 +491,12 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
       "band": "Pill Mill",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -516,12 +516,12 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
       "band": "Puddy Waters",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -531,12 +531,12 @@
           "found": "email"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
       "band": "Schedule 1",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -561,12 +561,12 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
       "band": "Teratoma",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -591,7 +591,7 @@
           "found": "form"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {
@@ -615,7 +615,7 @@
     },
     {
       "band": "The Exit Strategy",
-      "checked": "2026-09-13",
+      "checked": "2000-01-01",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -625,7 +625,7 @@
           "found": "email"
         }
       ],
-      "note": "Found automatically; no address published.",
+      "note": "Re-checking: the first crawl only reached Bandcamp.",
       "by": "auto"
     },
     {

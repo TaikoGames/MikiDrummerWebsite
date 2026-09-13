@@ -62,6 +62,17 @@ NOT_THE_BAND = {
     "songkick.com", "bandsintown.com", "ticketweb.ca", "dice.fm",
     "stripe.com", "paypal.com", "instagram.com", "facebook.com",
 }
+# Bandcamp's own CDN, help desk and image hosts. They appear as outbound links
+# on every artist page, and the first run happily read all three as "their
+# site".
+ASSET_HOSTS = ("bcbits.com", "bandcamp.help", "bandcamp.com", "gstatic.com",
+               "googleapis.com", "cloudfront.net", "cdn.", "fonts.")
+
+# Link hubs. Not the destination — but the band chose what is on them, so what
+# they list is worth following.
+HUB_HOSTS = ("linktr.ee", "lnk.bio", "beacons.ai", "allmylinks.com",
+             "linkin.bio", "solo.to", "campsite.bio", "hoo.be")
+
 SOCIAL_HOSTS = ("instagram.com", "facebook.com", "twitter.com", "x.com",
                 "tiktok.com", "youtube.com", "spotify.com", "apple.com",
                 "linktr.ee", "soundcloud.com", "bandsintown.com", "songkick.com")
@@ -246,7 +257,7 @@ def links_out(html):
         if rm:
             u = urllib.parse.unquote(rm.group(1))
         h = host_of(u)
-        if not h or "bandcamp.com" in h or h in seen:
+        if not h or h in seen or any(a in h for a in ASSET_HOSTS):
             continue
         seen.add(h)
         out.append(u)
@@ -274,7 +285,7 @@ def look_up(band):
         note("Bandcamp", bc, "form")
         for u in outbound:
             h = host_of(u)
-            if any(sh in h for sh in SOCIAL_HOSTS):
+            if any(sh in h for sh in SOCIAL_HOSTS) or any(hh in h for hh in HUB_HOSTS):
                 social.append(u)
             elif h not in NOT_THE_BAND:
                 official.append(u)
@@ -283,7 +294,24 @@ def look_up(band):
         outbound = []
     time.sleep(PAUSE)
 
-    # 2. A search, when one answers. It is a bonus, not the spine — the lite
+    # 2. Anything the band points at through a link hub counts as theirs.
+    hubs = [u for u in list(social) if any(h in host_of(u) for h in HUB_HOSTS)]
+    for hub in hubs[:1]:
+        try:
+            hub_html = get(hub)
+            for u in links_out(hub_html):
+                h = host_of(u)
+                if any(sh in h for sh in SOCIAL_HOSTS):
+                    social.append(u)
+                elif h not in NOT_THE_BAND:
+                    official.append(u)
+            for a in emails_in(hub_html):
+                cands.append((a, host_of(hub)))
+        except Exception:
+            pass
+        time.sleep(PAUSE)
+
+    # 3. A search, when one answers. It is a bonus, not the spine — the lite
     #    endpoint returns nothing from a runner often enough that relying on
     #    it would mean finding nothing at all.
     hits = search('"%s" band contact email booking' % band)
@@ -303,7 +331,7 @@ def look_up(band):
                 "Linktree" if "linktr.ee" in h else h)
         note(name, u, "profile")
 
-    # 3. Read their own sites, and the pages a contact tends to sit on.
+    # 4. Read their own sites, and the pages a contact tends to sit on.
     seen_site = set()
     for site in official[:3]:
         parsed = urllib.parse.urlparse(site)
@@ -405,6 +433,14 @@ def selftest():
     ok(links_out(page) == ["https://myband.ca/", "https://www.instagram.com/myband/"],
        "links_out: %r" % links_out(page))
 
+    # Every Bandcamp page links its own CDN and help desk. The first run read
+    # all three as the band's website and then reported "no address".
+    plumbing = ('<a href="https://s4.bcbits.com/img/x.jpg">art</a>'
+                '<a href="https://get.bandcamp.help/">help</a>'
+                '<a href="http://linktr.ee/theband">links</a>')
+    ok(links_out(plumbing) == ["http://linktr.ee/theband"],
+       "bandcamp plumbing followed as a site: %r" % links_out(plumbing))
+
     ok(slug("Bound By None") == "boundbynone", "slug")
     ok(slug("Sh*t & Shine") == "shtandshine", "slug with symbols")
 
@@ -416,7 +452,7 @@ def selftest():
     ok(not stale({"email": "", "checked": "2026-09-01"}, today), "fresh empty retried")
     ok(stale({"email": "", "checked": "nonsense"}, today), "bad date not retried")
 
-    print("selftest: %d checks, %d failed" % (22, len(fails)))
+    print("selftest: %d checks, %d failed" % (23, len(fails)))
     for f in fails:
         print("  FAIL:", f)
     return 1 if fails else 0
