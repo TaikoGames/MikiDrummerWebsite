@@ -55,6 +55,46 @@
       "by": "auto"
     },
     {
+      "band": "Baron",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://baron.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "soundcloud.com",
+          "url": "https://soundcloud.com/ubaron",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Bloodlines",
       "checked": "2026-09-10",
       "email": "bloodlinestexas@gmail.com",
@@ -115,7 +155,7 @@
     },
     {
       "band": "Brasser",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -125,17 +165,27 @@
           "found": "form"
         },
         {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
           "name": "Site",
-          "url": "https://s4.bcbits.com",
+          "url": "http://opengraphprotocol.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://get.bandcamp.help",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -168,10 +218,45 @@
       "note": "Vancouver ska band, 8-11 members. Contact is Scott Hastings; the site also lists a phone number."
     },
     {
-      "band": "Burnt Lung",
-      "checked": "2000-01-01",
+      "band": "Burn Pattern",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://burnpattern.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Burnt Lung",
+      "checked": "2026-09-13",
+      "email": "burntlung420@gmail.com",
+      "email_source": "linktr.ee",
       "profiles": [
         {
           "name": "Bandcamp",
@@ -179,27 +264,72 @@
           "found": "form"
         },
         {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
           "name": "Linktree",
           "url": "http://linktr.ee/burntlung",
           "found": "profile"
         },
         {
+          "name": "Linktree",
+          "url": "https://linktr.ee/burntlung",
+          "found": "profile"
+        },
+        {
           "name": "Site",
-          "url": "https://s4.bcbits.com",
+          "url": "http://opengraphprotocol.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://f4.bcbits.com",
+          "url": "https://js.stripe.com",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://get.bandcamp.help",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "",
+      "by": "auto"
+    },
+    {
+      "band": "Cheap Flavor",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://cheapflavor.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -223,7 +353,7 @@
     },
     {
       "band": "Curb Zombie",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -233,7 +363,7 @@
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -379,8 +509,48 @@
       "note": "UNCONFIRMED. At least three bands use this name (a Seattle pop punk band, a queer mom-rock band, and a Gold Class song). None could be tied to the Oct 3 Red Gate bill with The Fomites. Check with The Fomites before reaching out."
     },
     {
+      "band": "Manicouagan",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://manicouagan.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://instagram.com/themanicouagan",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Mares of Thrace",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -391,7 +561,7 @@
         },
         {
           "name": "Facebook",
-          "url": "https://www.facebook.com/maresofthraceca",
+          "url": "http://www.facebook.com/2008/fbml",
           "found": "profile"
         },
         {
@@ -406,16 +576,21 @@
         },
         {
           "name": "Site",
-          "url": "https://f4.bcbits.com",
+          "url": "http://opengraphprotocol.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://s4.bcbits.com",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -473,7 +648,7 @@
     },
     {
       "band": "Out Of Order",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -483,27 +658,32 @@
           "found": "form"
         },
         {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
           "name": "Site",
-          "url": "https://f4.bcbits.com",
+          "url": "http://opengraphprotocol.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://s4.bcbits.com",
+          "url": "https://schema.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://get.bandcamp.help",
+          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
       "band": "Pill Mill",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -513,17 +693,27 @@
           "found": "form"
         },
         {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
           "name": "Site",
-          "url": "https://s4.bcbits.com",
+          "url": "http://opengraphprotocol.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://get.bandcamp.help",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -543,7 +733,7 @@
     },
     {
       "band": "Schedule 1",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -553,27 +743,32 @@
           "found": "form"
         },
         {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
           "name": "Site",
-          "url": "https://f4.bcbits.com",
+          "url": "http://opengraphprotocol.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://s4.bcbits.com",
+          "url": "https://schema.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://get.bandcamp.help",
+          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
       "band": "Teratoma",
-      "checked": "2000-01-01",
+      "checked": "2026-09-13",
       "email": "",
       "email_source": "",
       "profiles": [
@@ -583,22 +778,27 @@
           "found": "form"
         },
         {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
           "name": "Site",
-          "url": "https://f4.bcbits.com",
+          "url": "http://opengraphprotocol.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://s4.bcbits.com",
+          "url": "https://schema.org",
           "found": "form"
         },
         {
           "name": "Site",
-          "url": "https://get.bandcamp.help",
+          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
-      "note": "Re-checking: the first crawl only reached Bandcamp.",
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
