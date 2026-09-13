@@ -112,6 +112,31 @@
       "note": "No address published anywhere. Miki drummed for them, so a direct text beats any of this. Do not confuse with 'Bound To None', a different band."
     },
     {
+      "band": "Brasser",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://brasser.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://s4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://get.bandcamp.help",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Brehdren",
       "checked": "2026-09-10",
       "email": "info@brehdren.com",
@@ -141,6 +166,41 @@
       "note": "Vancouver ska band, 8-11 members. Contact is Scott Hastings; the site also lists a phone number."
     },
     {
+      "band": "Burnt Lung",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://burntlung.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Linktree",
+          "url": "http://linktr.ee/burntlung",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "https://s4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://f4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://get.bandcamp.help",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Corner Boys",
       "checked": "2026-09-10",
       "email": "cornerboyscanada@gmail.com",
@@ -158,6 +218,21 @@
         }
       ],
       "note": "Vancouver power pop / punk."
+    },
+    {
+      "band": "Curb Zombie",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://curbzombie.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Dark Thoughts",
@@ -297,6 +372,46 @@
       "note": "UNCONFIRMED. At least three bands use this name (a Seattle pop punk band, a queer mom-rock band, and a Gold Class song). None could be tied to the Oct 3 Red Gate bill with The Fomites. Check with The Fomites before reaching out."
     },
     {
+      "band": "Mares of Thrace",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://maresofthrace.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/maresofthraceca",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/mares_of_thrace/",
+          "found": "profile"
+        },
+        {
+          "name": "Linktree",
+          "url": "https://linktr.ee/maresofthrace",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "https://f4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://s4.bcbits.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Mean Bikini",
       "checked": "2026-09-10",
       "email": "Outhousepr@gmail.com",
@@ -350,6 +465,61 @@
       "note": "Vancouver punk. No address published anywhere, including their Linktree - Instagram @nightcourtpunk is the route. A search summary claimed nightcourtpunk@gmail.com; it does not appear on any of their pages, so it is not used."
     },
     {
+      "band": "Out Of Order",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://outoforder.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://f4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://s4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://get.bandcamp.help",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Pill Mill",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://pillmill.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://s4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://get.bandcamp.help",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Puddy Waters",
       "checked": "2026-09-13",
       "email": "",
@@ -359,6 +529,66 @@
           "name": "Bandcamp",
           "url": "https://puddywaters.bandcamp.com/",
           "found": "email"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Schedule 1",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://schedule1.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://f4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://s4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://get.bandcamp.help",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Teratoma",
+      "checked": "2026-09-13",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://teratoma.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://f4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://s4.bcbits.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://get.bandcamp.help",
+          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
