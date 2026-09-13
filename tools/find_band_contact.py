@@ -269,13 +269,23 @@ def host_of(url):
     return urllib.parse.urlparse(url).netloc.lower().replace("www.", "")
 
 
+URL_RE = re.compile(r'https?://[^\s"\'<>\\)]+')
+
+
 def links_out(html):
-    """The links a band puts on their own Bandcamp page: their site, their
-    Instagram, their linktree. More reliable than a search engine, and it is
-    the band saying where they are rather than a guess."""
+    """The links a band puts on their own page: their site, their Instagram,
+    their linktree. The band saying where they are, rather than a guess.
+
+    Not just href attributes. Bandcamp renders an artist's own links from a
+    JSON blob in the page, so an href-only reader comes back empty from a
+    157KB page that plainly has them — which is what it did."""
+    # JSON inside the page escapes every slash: https:\/\/instagram.com\/band.
+    # Unescape first — matching afterwards is too late, the pattern has already
+    # stopped dead at the first backslash.
+    html = html.replace("\\/", "/").replace("&amp;", "&")
     out, seen = [], set()
-    for m in re.finditer(r'href="(https?://[^"]+)"', html):
-        u = urllib.parse.unquote(m.group(1).replace("&amp;", "&"))
+    for m in URL_RE.finditer(html):
+        u = urllib.parse.unquote(m.group(0).rstrip('\\",;.'))
         # Bandcamp wraps outbound links: /redirect?url=<encoded>
         rm = re.search(r"[?&]url=([^&]+)", u)
         if rm:
@@ -481,6 +491,12 @@ def selftest():
     plumbing = ('<a href="https://s4.bcbits.com/img/x.jpg">art</a>'
                 '<a href="https://get.bandcamp.help/">help</a>'
                 '<a href="http://linktr.ee/theband">links</a>')
+    # Bandcamp keeps the band's own links in JSON, escaped, with no href in
+    # sight. Reading only href="" came back empty from a 157KB page.
+    blob = '{"sites":[{"url":"https:\\/\\/www.instagram.com\\/theband\\/"},' \
+           '{"url":"https://theband.ca/"}]}'
+    ok(links_out(blob) == ["https://www.instagram.com/theband/", "https://theband.ca/"],
+       "json links missed: %r" % links_out(blob))
     ok(links_out(plumbing) == ["http://linktr.ee/theband"],
        "bandcamp plumbing followed as a site: %r" % links_out(plumbing))
 
@@ -495,7 +511,7 @@ def selftest():
     ok(not stale({"email": "", "checked": "2026-09-01"}, today), "fresh empty retried")
     ok(stale({"email": "", "checked": "nonsense"}, today), "bad date not retried")
 
-    print("selftest: %d checks, %d failed" % (23, len(fails)))
+    print("selftest: %d checks, %d failed" % (24, len(fails)))
     for f in fails:
         print("  FAIL:", f)
     return 1 if fails else 0

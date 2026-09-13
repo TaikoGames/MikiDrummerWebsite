@@ -6,7 +6,8 @@
     "email": "best direct address, or empty if none is published",
     "email_source": "where the address came from, so it can be re-verified",
     "profiles": "every place checked, in order: {name, url, found} -- found is 'email' | 'form' | 'profile' | 'none'",
-    "note": "anything worth knowing before reaching out"
+    "note": "anything worth knowing before reaching out",
+    "by": "who put this here: 'miki' or a bandmate means a person vouched for it and no crawl may overwrite it; 'auto' means the finder did"
   },
   "bands": [
     {
@@ -79,9 +80,9 @@
     },
     {
       "band": "Bound By None",
-      "checked": "2026-09-09",
-      "email": "",
-      "email_source": "",
+      "checked": "2026-09-13",
+      "email": "dg1company@gmail.com",
+      "email_source": "the band",
       "profiles": [
         {
           "name": "Bandcamp",
@@ -109,7 +110,8 @@
           "found": "profile"
         }
       ],
-      "note": "No address published anywhere. Miki drummed for them, so a direct text beats any of this. Do not confuse with 'Bound To None', a different band."
+      "note": "Address given by the band. Not on any page a crawler can read, so nothing automatic will ever find it — leave it alone.",
+      "by": "miki"
     },
     {
       "band": "Brasser",
