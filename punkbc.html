@@ -2932,7 +2932,14 @@
     .logo-icon {
       font-size: 36px;
       line-height: 1;
+      /* Tapped five times it opens the slideshow. Deliberately unadvertised —
+         no pointer cursor, no tooltip — but it answers each tap so anyone who
+         starts does not think the page is dead. */
+      user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+      transition: transform .12s ease, filter .12s ease;
     }
+    .logo-icon.tapped { transform: scale(1.22) rotate(-7deg); filter: drop-shadow(0 0 12px rgba(232,55,42,.75)); }
+    .logo-icon.armed  { filter: drop-shadow(0 0 16px rgba(232,55,42,.95)); }
     .logo-text h1 {
       font-size: clamp(24px, 5vw, 40px);
       font-weight: 900;
@@ -4735,6 +4742,42 @@
   })
 
   boot()
+</script>
+
+<script>
+// Five taps on the horns opens the full-screen board. It is for the moment
+// when the screen at the merch table needs turning on and nobody wants to type
+// a URL on a phone with cold hands.
+(function () {
+  'use strict';
+  var horns = document.querySelector('.logo-icon');
+  if (!horns) return;
+
+  var NEEDED = 5, GAP = 1200;   // a tap more than a second after the last starts again
+  var count = 0, last = 0, timer = 0;
+
+  horns.addEventListener('click', function () {
+    var now = Date.now();
+    count = (now - last > GAP) ? 1 : count + 1;
+    last = now;
+
+    horns.classList.remove('tapped');
+    void horns.offsetWidth;            // restart the animation on a fast repeat
+    horns.classList.add('tapped');
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      horns.classList.remove('tapped', 'armed');
+    }, 220);
+
+    // The last tap before it fires glows, so the five is learnable.
+    if (count === NEEDED - 1) horns.classList.add('armed');
+
+    if (count >= NEEDED) {
+      count = 0;
+      location.href = '/slideshow.html';
+    }
+  });
+})();
 </script>
 </body>
 </html>
