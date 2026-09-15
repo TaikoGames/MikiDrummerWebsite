@@ -865,6 +865,9 @@ def build_venue_links(shows: list[dict]) -> str:
       <div class="venue-links">
 {links}
       </div>
+      <p style="margin-top:18px">Looking for one band in particular?
+        <a href="/bands/" style="color:#e8672a">Every act with a date coming up</a>,
+        A to Z, with who they are playing with.</p>
       <p style="margin-top:18px">Running a screen at a venue or a merch table?
         <a href="/slideshow.html" style="color:#e8672a">Put the board on it</a> —
         full screen, one show at a time, and it keeps itself current.</p>
