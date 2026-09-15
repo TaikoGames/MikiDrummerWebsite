@@ -27,7 +27,10 @@ SRC = os.path.join(ROOT, "images", "brand.png")
 BG = (11, 13, 16, 255)              # the site's near-black
 
 ICO_SIZES = [16, 24, 32, 48, 64, 128, 256]
-PNG_SIZES = [16, 32, 48, 180, 192, 512]
+# 48, 96 and 192 are there for Google: it wants a square whose sides are a
+# multiple of 48px for the icon beside a search result, and ignores what it
+# cannot use.
+PNG_SIZES = [16, 32, 48, 96, 180, 192, 512]
 PLAIN_BELOW = 32                     # under this, the wordmark comes out
 
 
@@ -158,6 +161,10 @@ def main():
 
     for s in PNG_SIZES:
         t = tile(art_for(s), s)
+        # icon-<size>.png is the name the pages point at, with no version on
+        # it. Google asks for a favicon URL that does not move, and a query
+        # string that changes every time we fiddle is the opposite of that.
+        t.save(os.path.join(ROOT, "images", "icon-%d.png" % s))
         t.save(os.path.join(ROOT, "images", "tab-icon-%d.png" % s))
         t.save(os.path.join(ROOT, "images", "miki-icon-%d.png" % s))
     tile(src, 512).save(os.path.join(ROOT, "images", "miki-icon-maskable.png"))
