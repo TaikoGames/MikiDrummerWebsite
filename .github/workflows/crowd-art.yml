@@ -1,0 +1,124 @@
+name: Crowd art
+
+# The board falls back to one crowd photo, hotlinked off Wikimedia. Two
+# problems with that: it repeats down the page, and hotlinking upload.wikimedia
+# is something Wikimedia asks people not to do -- it can be throttled or moved,
+# and then the board has holes in it.
+#
+# This finds photos that are genuinely public domain, checks the licence rather
+# than assuming it, and commits them to the repo so they are ours to serve.
+
+on:
+  workflow_dispatch:
+    inputs:
+      queries:
+        description: "What to search Commons for"
+        default: "mosh pit;punk concert crowd;hardcore concert audience;stage diving"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --quiet pillow
+
+      - name: Find public-domain crowd photos
+        run: |
+          python3 - <<'PY'
+          import json, os, re, urllib.parse, urllib.request
+          from PIL import Image
+
+          API = "https://commons.wikimedia.org/w/api.php"
+          UA = {"User-Agent": "PunkBC/1.0 (https://www.mikidrummer.ca; board art)"}
+
+          def api(**params):
+              params.update(format="json")
+              url = API + "?" + urllib.parse.urlencode(params)
+              req = urllib.request.Request(url, headers=UA)
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.load(r)
+
+          # Public domain only. CC BY and BY-SA are free too, but they carry
+          # attribution conditions that a card on a listings page will not
+          # honour, so they are not worth the risk here.
+          PD = re.compile(r"^(public domain|cc0|pd-\w+|no restrictions)", re.I)
+
+          queries = os.environ.get("QUERIES", "mosh pit").split(";")
+          seen, keep = set(), []
+          for q in queries:
+              q = q.strip()
+              if not q:
+                  continue
+              res = api(action="query", generator="search", gsrsearch=f"{q} filetype:bitmap",
+                        gsrnamespace=6, gsrlimit=25, prop="imageinfo",
+                        iiprop="url|extmetadata|size", iiurlwidth=1400)
+              for page in (res.get("query", {}).get("pages") or {}).values():
+                  info = (page.get("imageinfo") or [{}])[0]
+                  meta = info.get("extmetadata") or {}
+                  lic = (meta.get("LicenseShortName", {}).get("value") or "").strip()
+                  title = page.get("title", "")
+                  if title in seen:
+                      continue
+                  seen.add(title)
+                  if not PD.match(lic):
+                      continue
+                  if (info.get("width") or 0) < 900:
+                      continue
+                  keep.append({
+                      "title": title,
+                      "license": lic,
+                      "usage": re.sub("<[^>]+>", "", meta.get("UsageTerms", {}).get("value") or ""),
+                      "artist": re.sub("<[^>]+>", "", meta.get("Artist", {}).get("value") or "")[:120],
+                      "descurl": info.get("descriptionurl"),
+                      "src": info.get("thumburl") or info.get("url"),
+                      "w": info.get("width"), "h": info.get("height"),
+                      "query": q,
+                  })
+
+          print("%d public-domain candidates" % len(keep))
+          out = "images/crowd"
+          os.makedirs(out, exist_ok=True)
+          saved = []
+          for i, k in enumerate(keep[:8]):
+              name = "cand-%02d.jpg" % i
+              try:
+                  req = urllib.request.Request(k["src"], headers=UA)
+                  with urllib.request.urlopen(req, timeout=60) as r:
+                      data = r.read()
+                  open("/tmp/x", "wb").write(data)
+                  im = Image.open("/tmp/x").convert("RGB")
+                  im.thumbnail((1400, 1400), Image.LANCZOS)
+                  im.save(os.path.join(out, name), quality=86, optimize=True)
+                  k["file"] = "images/crowd/" + name
+                  saved.append(k)
+                  print("  saved %s  %-52s %s" % (name, k["title"][:52], k["license"]))
+              except Exception as e:
+                  print("  failed %s: %s" % (k["title"][:40], e))
+
+          json.dump(saved, open(os.path.join(out, "candidates.json"), "w"),
+                    indent=2, ensure_ascii=False)
+
+          # The photo the board currently hotlinks -- worth knowing what its
+          # licence actually says, since nobody has checked.
+          cur = api(action="query", titles="File:Moshpit2.jpg",
+                    prop="imageinfo", iiprop="extmetadata")
+          for page in (cur.get("query", {}).get("pages") or {}).values():
+              meta = (page.get("imageinfo") or [{}])[0].get("extmetadata") or {}
+              print("\ncurrently hotlinked Moshpit2.jpg -> %s | %s" % (
+                  meta.get("LicenseShortName", {}).get("value"),
+                  re.sub("<[^>]+>", "", meta.get("UsageTerms", {}).get("value") or "")))
+          PY
+        env:
+          QUERIES: ${{ github.event.inputs.queries }}
+
+      - name: Commit the candidates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add images/crowd
+          git diff --cached --quiet && { echo "nothing new"; exit 0; }
+          git commit -m "Crowd art: public-domain candidates for review"
+          git push origin "HEAD:$GITHUB_REF_NAME"
