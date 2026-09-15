@@ -1,0 +1,21 @@
+{
+  "_readme": "Crowd photos used when a show has no art of its own. Public domain / CC0 only, checked against the Commons API by .github/workflows/crowd-art.yml, and hosted here rather than hotlinked.",
+  "images": [
+    {
+      "file": "images/punkbc-crowd-1.jpg",
+      "title": "File:Turnstile mosh pit.jpg",
+      "license": "CC0",
+      "usage": "Creative Commons Zero, Public Domain Dedication",
+      "artist": "Mollystarkdean",
+      "source": "https://commons.wikimedia.org/wiki/File:Turnstile_mosh_pit.jpg"
+    },
+    {
+      "file": "images/punkbc-crowd-2.jpg",
+      "title": "File:Crowd surfing Hatebreed 2009.JPG",
+      "license": "Public domain",
+      "usage": "Public domain",
+      "artist": "Steven Lek",
+      "source": "https://commons.wikimedia.org/wiki/File:Crowd_surfing_Hatebreed_2009.JPG"
+    }
+  ]
+}

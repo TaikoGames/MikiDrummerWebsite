@@ -39,7 +39,21 @@ DATA = ROOT / "punkbc-shows.json"
 SITEMAP = ROOT / "sitemap.xml"
 SITE = "https://www.mikidrummer.ca"
 PAGE_URL = f"{SITE}/punkbc.html"
-FALLBACK_IMG = "https://upload.wikimedia.org/wikipedia/commons/9/90/Moshpit2.jpg"
+# Two crowd shots, ours to serve. There used to be one, hotlinked off
+# upload.wikimedia.org: it repeated the whole way down the board, and
+# hotlinking is what Wikimedia asks people not to do -- throttled or moved and
+# the cards go blank. Both are public domain or CC0, checked against the
+# Commons API rather than assumed, credited in images/crowd-credits.json.
+FALLBACK_IMGS = [
+    "https://www.mikidrummer.ca/images/punkbc-crowd-1.jpg",
+    "https://www.mikidrummer.ca/images/punkbc-crowd-2.jpg",
+]
+
+
+def fallback_img(i: int) -> str:
+    """Alternate, so two art-less shows never sit next to each other wearing
+    the same photograph."""
+    return FALLBACK_IMGS[i % len(FALLBACK_IMGS)]
 
 # Venue → ticket/info link (mirrors the client-side venueMap).
 VENUE_LINK = {
@@ -285,7 +299,7 @@ def build_show_cards(shows: list[dict]) -> str:
                 'Be the first to submit one!</p>\n'
                 '      </div>')
     cards = []
-    for s in shows:
+    for i, s in enumerate(shows):
         band = html.escape(s["band"])
         venue = html.escape(s.get("venue") or "Venue")
         city = html.escape(s.get("city") or "BC")
@@ -305,7 +319,7 @@ def build_show_cards(shows: list[dict]) -> str:
             f'        <div style="position:relative;overflow:visible">'
             f'<img class="show-card-img" src="{img}" alt="{band} live in {city}" '
             f'referrerpolicy="no-referrer" loading="lazy" '
-            f'onerror="this.src=\'{FALLBACK_IMG}\';this.referrerPolicy=\'no-referrer\'"></div>\n'
+            f'onerror="this.src=\'{fallback_img(i)}\';this.onerror=null"></div>\n'
             f'        <div class="show-card-body">\n'
             f'          <div class="show-date">{date_label(s)}</div>\n'
             f'          <div class="show-name">{band}</div>\n'
