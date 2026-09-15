@@ -70,6 +70,51 @@
       "by": "auto"
     },
     {
+      "band": "Author & Punisher",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://authorandpunisher.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://instagram.com/authorandpunisher",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "https://twitter.com/authorpunisher",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.authorandpunisher.com",
+          "found": "email"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Baron",
       "checked": "2026-09-13",
       "email": "",
@@ -407,6 +452,51 @@
       "note": "Vancouver power pop / punk."
     },
     {
+      "band": "Covenant Festival XI — Night One",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://covenantfestivalxinightone.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Covenant Festival XI — Night Three",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://covenantfestivalxinightthree.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Covenant Festival XI — Night Two",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://covenantfestivalxinighttwo.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Curb Zombie",
       "checked": "2026-09-13",
       "email": "",
@@ -645,6 +735,51 @@
       "by": "auto"
     },
     {
+      "band": "Ensiferum",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://ensiferum.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43173936-ensiferum-at-mercury-music-lounge?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "https://twitter.com/EnsiferumMetal",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Examine the Bore",
       "checked": "2026-09-13",
       "email": "",
@@ -653,6 +788,21 @@
         {
           "name": "Bandcamp",
           "url": "https://examinethebore.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Firewind & Atavistia",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://firewindandatavistia.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -692,6 +842,51 @@
         }
       ],
       "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Guiltless",
+      "checked": "2026-09-15",
+      "email": "info@evilgreed.net",
+      "email_source": "evilgreed.com",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://guiltless.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/guiltlessband/",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43263200-author-and-punisher-at-golddiggers?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://music.neurotrecordings.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://evilgreed.com",
+          "found": "email"
+        }
+      ],
+      "note": "",
       "by": "auto"
     },
     {
@@ -922,6 +1117,21 @@
       "by": "auto"
     },
     {
+      "band": "Powermönger. Members of Tribulation/Enforcer",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://powermngermembersoftribulationenforcer.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Puddy Waters",
       "checked": "2026-09-13",
       "email": "",
@@ -930,6 +1140,21 @@
         {
           "name": "Bandcamp",
           "url": "https://puddywaters.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Quicksand & Fucked Up",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://quicksandandfuckedup.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -1062,6 +1287,41 @@
       "by": "auto"
     },
     {
+      "band": "Speed Reaper",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://speedreaper.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Teratoma",
       "checked": "2026-09-13",
       "email": "",
@@ -1165,6 +1425,46 @@
       "note": "Vancouver three-piece punk, same label as Die Job. Their Oct 3 Red Gate show is an album release party."
     },
     {
+      "band": "The Growlers",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://thegrowlers.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43009245-growlers-at-catalyst?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;The",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "The Spits",
       "checked": "2026-09-14",
       "email": "",
@@ -1193,6 +1493,21 @@
         {
           "name": "Site",
           "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Tyrann",
+      "checked": "2026-09-15",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://tyrann.bandcamp.com/",
           "found": "form"
         }
       ],
