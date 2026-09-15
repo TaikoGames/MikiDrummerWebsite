@@ -1,0 +1,62 @@
+name: What the live site serves
+
+# The favicon looked unchanged even in a private window, which rules out one
+# browser's cache and points at the site. Nothing here can see www.mikidrummer.ca
+# directly, so a runner fetches it and prints what the world actually gets:
+# the bytes, their checksum against the repo, and the headers that say who
+# served them and how old it is.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  look:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the icons and compare them with the repo
+        run: |
+          set +e
+          SITE=https://www.mikidrummer.ca
+          echo "## What www.mikidrummer.ca is serving" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| file | status | bytes | md5 served | md5 in repo | same |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+
+          for f in favicon.ico images/miki-icon-32.png images/miki-icon-16.png \
+                   images/miki-icon-180.png; do
+            code=$(curl -sS -o /tmp/got -w '%{http_code}' "$SITE/$f")
+            got=$(md5sum /tmp/got | cut -d' ' -f1)
+            size=$(wc -c < /tmp/got)
+            repo=$(md5sum "$f" 2>/dev/null | cut -d' ' -f1)
+            same=$([ "$got" = "$repo" ] && echo "yes" || echo "**NO**")
+            echo "| $f | $code | $size | ${got:0:10} | ${repo:0:10} | $same |" >> "$GITHUB_STEP_SUMMARY"
+            echo "$f -> $code $size $got (repo $repo)"
+          done
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Who served it" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          curl -sSI "$SITE/favicon.ico" | grep -iE 'http/|server|age|cache-control|etag|last-modified|via|cf-|x-' \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          echo "### The icon tags in the live homepage" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          curl -sS "$SITE/" | grep -iE 'rel="(shortcut )?icon"|apple-touch-icon' \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          echo "### Sizes inside the served favicon.ico" >> "$GITHUB_STEP_SUMMARY"
+          curl -sS -o /tmp/live.ico "$SITE/favicon.ico"
+          python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          from PIL import Image
+          try:
+              im = Image.open('/tmp/live.ico')
+              print("served:", sorted(im.info.get('sizes') or [im.size]))
+          except Exception as e:
+              print("could not read the served icon:", e)
+          im2 = Image.open('favicon.ico')
+          print("in repo:", sorted(im2.info.get('sizes') or [im2.size]))
+          PY
