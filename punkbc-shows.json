@@ -24,7 +24,7 @@
       "ticket": "https://facebook.com/events/s/brasser-curb-zombie-brehdren/1561399485461074/",
       "genre": "",
       "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+      "image": "https://cdn-az.allevents.in/events2/banners/ce5054d9090069a8b68f9353f55355fb7f9ad31f6b96b340c62c0d561ad3429a-rimg-w1200-h1855-dcc8c8b8-gmir?v=1789187345"
     },
     {
       "band": "Out Of Order / Night Court / Terminal City Rats / Teratoma",
@@ -86,7 +86,7 @@
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Doom/Stoner Metal",
       "notes": "Only Canadian date on their fall North America tour",
-      "image": "/images/shows/sleep-2026-09-20.jpg",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sleep_at_the_Filmore_Detroit%2C_March_31%2C_2018.jpg?width=600",
       "curated": ""
     },
     {
@@ -111,7 +111,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Noise Rock",
       "notes": "19+ event",
-      "image": "/images/shows/unsane-2026-09-20.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Unsane_2005_red.jpg?width=600"
     },
     {
       "band": "Elder",
@@ -123,7 +123,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Stoner Metal",
       "notes": "With Blackwater Holylight. 19+",
-      "image": "/images/shows/elder-2026-09-21.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
       "band": "Revocation",
@@ -135,7 +135,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Death Metal",
       "notes": "With Defeated Sanity, Fuming Mouth, Weeping. 19+",
-      "image": "/images/shows/revocation-2026-09-22.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Revocation_at_Alchemica,_Bologna_2.jpg?width=600"
     },
     {
       "band": "Delilah Bon",
@@ -147,7 +147,7 @@
       "ticket": "https://facebook.com/events/s/delilah-bon-live-in-vancouver-/1645162889870380/",
       "genre": "Punk",
       "notes": "",
-      "image": "/images/shows/delilah-bon-2026-09-22.jpg"
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg/500px-Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg"
     },
     {
       "band": "Quicksand & Fucked Up",
@@ -172,7 +172,7 @@
       "ticket": "https://www.ticketweb.ca/event/quicksand-and-fucked-up-the-pearl-tickets/15034213",
       "genre": "Post-Hardcore/Punk",
       "notes": "Presented by MODO-Live & Rickshaw. Same tour as the Sept 22 Victoria date. 19+",
-      "image": "/images/shows/quicksand-fucked-up-2026-09-23.jpg",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Quicksand_Rock_am_Ring_2014_%28113%29.JPG?width=600",
       "curated": ""
     },
     {
@@ -185,7 +185,7 @@
       "ticket": "https://astoria.pub/",
       "genre": "Heavy Metal",
       "notes": "With Speed Reaper, Powermönger. Members of Tribulation/Enforcer. 19+",
-      "image": "/images/shows/tyrann-2026-09-23.jpg",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
       "curated": ""
     },
     {
@@ -198,7 +198,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Metal",
       "notes": "Misthyrming, Abyssal, Brazen Horde, Diabolic Oath, Fire Magic, Living Evil. 3-day pass $280. 19+",
-      "image": "/images/shows/covenant-festival-xi-night-one-2026-09-24.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
       "band": "The Growlers",
@@ -222,7 +222,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Metal",
       "notes": "Ruim, Volahn, Egregore and more. 3-day pass $280. 19+",
-      "image": "/images/shows/covenant-festival-xi-night-two-2026-09-25.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
       "band": "Ensiferum",
@@ -258,7 +258,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Metal",
       "notes": "The Ruins of Beverast, Spite, Barshasketh, Lokabrenna, Tsalal, Zulxaxeku. 3-day pass $280. 19+",
-      "image": "/images/shows/covenant-festival-xi-night-three-2026-09-26.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
       "band": "Author & Punisher",
@@ -270,7 +270,7 @@
       "ticket": "https://thecobalt.ca",
       "genre": "Industrial Metal",
       "notes": "With Guiltless",
-      "image": "/images/shows/author-punisher-2026-09-26.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Author_%26_Punisher_%40_Roadburn_Festival_2017_02.jpg?width=600"
     },
     {
       "band": "Judge",
@@ -282,7 +282,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Hardcore",
       "notes": "With Integrity, Earth Crisis, Witness Chamber, Juice. 19+",
-      "image": "/images/shows/judge-2026-09-27.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/MUSIC_Judge_2.jpg?width=600"
     },
     {
       "band": "Messa",
@@ -294,7 +294,7 @@
       "ticket": "https://thecobalt.ca",
       "genre": "Doom Metal",
       "notes": "",
-      "image": "/images/shows/messa-2026-09-27.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Messa_%40_Roadburn,_April_12,_2019.jpg?width=600"
     },
     {
       "band": "Dave Hause & The Mermaid",
@@ -318,7 +318,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Alt Rock",
       "notes": "With Quannnic. 19+",
-      "image": "/images/shows/failure-2026-10-02.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Failure_band_2014.jpg?width=600"
     },
     {
       "band": "BRASS / WAIT//LESS / sundress",
@@ -343,7 +343,7 @@
       "ticket": "https://facebook.com/events/s/the-fomites-album-release-part/1780733306596620/",
       "genre": "",
       "notes": "Smoke a Joint About It release party",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+      "image": "https://cdn-az.allevents.in/events8/banners/c2b9218e24874f1e20c9b455b3c276c6af5e320834f8723619dc831ba50583ce-rimg-w1200-h1500-dc080808-gmir?v=1789187351"
     },
     {
       "band": "Nekrogoblikon",
@@ -355,7 +355,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Melodic Death Metal",
       "notes": "With Rivers of Nihil, Cyborg Octopus. 19+",
-      "image": "/images/shows/nekrogoblikon-2026-10-06.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/13-06-09_RaR_Nekrogoblikon_01.jpg?width=600"
     },
     {
       "band": "Dead Pioneers",
@@ -380,7 +380,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Power Metal",
       "notes": "With Evergrey, Elvenking. 19+",
-      "image": "/images/shows/hammerfall-2026-10-07.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hammerfall_-_Wacken_Open_Air_2023_37_(cropped).jpg?width=600"
     },
     {
       "band": "Shiner",
@@ -442,7 +442,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Punk",
       "notes": "With Softcult, Shady Nasty, Dazy. 19+",
-      "image": "/images/shows/militarie-gun-2026-10-10.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Militarie-Gun-Roll-4_031.jpg?width=500"
     },
     {
       "band": "Corner Boys",
@@ -491,7 +491,7 @@
       "ticket": "https://www.livenation.com",
       "genre": "Metalcore",
       "notes": "HOOMAN World Tour. With Zero 9:36",
-      "image": "/images/shows/sim-2026-10-17.jpg",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
       "curated": ""
     },
     {
@@ -504,7 +504,7 @@
       "ticket": "https://theastoria.ca",
       "genre": "Black Metal",
       "notes": "Verbolgen 2026 Tour. With Antichrist Siege Machine",
-      "image": "/images/shows/hulder-2026-10-17.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
       "band": "Demon Hunter",
@@ -516,7 +516,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Metalcore",
       "notes": "With Wolves At The Gate, Bloodlines. 19+",
-      "image": "/images/shows/demon-hunter-2026-10-20.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Demon_Hunter_Band_Lineup_Collage.jpg?width=600"
     },
     {
       "band": "Die Job / Mean Bikini",
@@ -565,7 +565,7 @@
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Mathcore",
       "notes": "Final Calculating Infinity shows. With Squid Pisser, XCOMM",
-      "image": "/images/shows/the-dillinger-escape-plan-2026-10-26.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Dillinger_Escape_Plan_Furnace_Fest_2025_Birmingham_Alabama_3.png?width=300"
     },
     {
       "band": "Pain of Truth",
@@ -590,7 +590,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Thrash",
       "notes": "Japan — Western Canadian debut. With Ares Kingdom, Witches Hammer, Powermonger, Decadence. 19+",
-      "image": "/images/shows/sabbat-2026-10-31.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sabbat_live.jpg?width=600"
     },
     {
       "band": "Antifa Dance Party",
@@ -614,7 +614,7 @@
       "ticket": "https://www.livenation.com",
       "genre": "Drone Metal",
       "notes": "19+",
-      "image": "/images/shows/sunn-o-2026-11-01.jpg",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sunn_O%29%29%29_%40_Roskilde_%2705_%28327956477%29.jpg?width=600",
       "curated": ""
     },
     {
@@ -687,7 +687,7 @@
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Melodic Death Metal",
       "notes": "Wrath Across North America tour. With The Black Dahlia Murder, Septicflesh, Crypta, Thrown Into Exile",
-      "image": "/images/shows/arch-enemy-2026-11-14.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Arch_Enemy_since_2026_collage.jpg?width=500"
     },
     {
       "band": "Metal Church",
@@ -699,7 +699,7 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Heavy Metal",
       "notes": "With Armored Saint, Livekill. 19+",
-      "image": "/images/shows/metal-church-2026-11-15.jpg"
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Metal_Church-_Wacken_Open_Air_2016-AL3427.jpg?width=600"
     },
     {
       "band": "Metal Church / Armored Saint",
