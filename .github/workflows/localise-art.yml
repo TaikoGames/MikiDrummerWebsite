@@ -1,0 +1,132 @@
+name: Bring Wikimedia show art home
+
+# Twenty-six shows point their card image straight at upload.wikimedia.org.
+# Wikimedia asks people not to hotlink: it can be throttled, and files get
+# renamed or deleted, which leaves holes in the board.
+#
+# Only Wikimedia art is brought across. The rest of the remote images are promo
+# shots on ticketing sites, and there hotlinking is the safer thing: linking to
+# someone's poster is not copying it, and copying it onto our own server would
+# be. Wikimedia is different because the licence is stated and permissive --
+# but most of it still demands credit, so the credit is collected here and
+# published, and anything whose terms we cannot meet is left where it is.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  localise:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --quiet pillow
+
+      - name: Fetch, credit and rewrite
+        run: |
+          python3 - <<'PY'
+          import json, os, re, urllib.parse, urllib.request
+          from PIL import Image
+
+          API = "https://commons.wikimedia.org/w/api.php"
+          UA = {"User-Agent": "PunkBC/1.0 (https://www.mikidrummer.ca; show art)"}
+          OUT = "images/shows"
+          os.makedirs(OUT, exist_ok=True)
+
+          def api(**p):
+              p.update(format="json")
+              req = urllib.request.Request(API + "?" + urllib.parse.urlencode(p), headers=UA)
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.load(r)
+
+          def file_title(url):
+              """Commons serves the same file under several URL shapes."""
+              u = urllib.parse.unquote(url)
+              m = re.search(r"Special:FilePath/([^?]+)", u)
+              if m:
+                  return "File:" + m.group(1)
+              m = re.search(r"/commons/(?:thumb/)?[0-9a-f]/[0-9a-f]{2}/([^/?]+)", u)
+              if m:
+                  return "File:" + m.group(1)
+              return None
+
+          def strip(s):
+              return re.sub("<[^>]+>", "", s or "").strip()
+
+          def slug(s):
+              return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+
+          data = json.load(open("punkbc-shows.json"))
+          shows = data["shows"]
+          credits = {}
+          if os.path.exists("images/show-art-credits.json"):
+              credits = json.load(open("images/show-art-credits.json")).get("images", {})
+
+          moved = skipped = 0
+          for s in shows:
+              url = s.get("image") or ""
+              if "wikimedia.org" not in url and "wikipedia.org" not in url:
+                  continue
+              title = file_title(url)
+              if not title:
+                  print("  ? could not name the file:", url[:70]); skipped += 1; continue
+
+              info = api(action="query", titles=title, prop="imageinfo",
+                         iiprop="url|extmetadata|size", iiurlwidth=700)
+              page = next(iter((info.get("query", {}).get("pages") or {}).values()), {})
+              ii = (page.get("imageinfo") or [{}])[0]
+              if not ii:
+                  print("  ? no such file:", title[:60]); skipped += 1; continue
+              meta = ii.get("extmetadata") or {}
+              lic = strip(meta.get("LicenseShortName", {}).get("value"))
+              author = strip(meta.get("Artist", {}).get("value"))[:160]
+              licurl = strip(meta.get("LicenseUrl", {}).get("value"))
+
+              # Free licences only. Anything fair-use or non-commercial stays
+              # where it is: a copy on our server would not be covered.
+              if not re.match(r"^(cc[ -]|public domain|pd-|cc0|no restrictions)", lic, re.I):
+                  print("  - leaving hotlinked (%s): %s" % (lic or "unknown", title[:50]))
+                  skipped += 1
+                  continue
+
+              name = "%s-%s.jpg" % (slug(s.get("band", "show"))[:40], s.get("date", ""))
+              path = os.path.join(OUT, name)
+              try:
+                  req = urllib.request.Request(ii.get("thumburl") or ii["url"], headers=UA)
+                  with urllib.request.urlopen(req, timeout=60) as r:
+                      open("/tmp/img", "wb").write(r.read())
+                  im = Image.open("/tmp/img").convert("RGB")
+                  im.thumbnail((700, 700), Image.LANCZOS)
+                  im.save(path, quality=85, optimize=True)
+              except Exception as e:
+                  print("  ! download failed:", title[:40], e); skipped += 1; continue
+
+              s["image"] = "/" + path
+              credits[name] = {"title": title, "license": lic, "author": author,
+                               "license_url": licurl, "source": ii.get("descriptionurl")}
+              moved += 1
+              print("  + %-44s %s" % (name[:44], lic))
+
+          json.dump(data, open("punkbc-shows.json", "w"), indent=2, ensure_ascii=False)
+          open("punkbc-shows.json", "a").write("\n")
+          json.dump({"_readme": "Where each locally hosted show photo came from, and the "
+                                "licence it is used under. Published at /photo-credits.html "
+                                "because most of these licences require the credit to be "
+                                "given.",
+                     "images": credits},
+                    open("images/show-art-credits.json", "w"), indent=2, ensure_ascii=False)
+          print("\n%d brought across · %d left hotlinked" % (moved, skipped))
+          PY
+
+      - name: Rebuild the board and commit
+        run: |
+          python3 tools/build_punkbc.py
+          python3 tools/build_band_pages.py
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && { echo "nothing changed"; exit 0; }
+          git commit -m "Show art: host the Wikimedia photos instead of hotlinking them"
+          git push origin "HEAD:$GITHUB_REF_NAME"
