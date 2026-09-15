@@ -24,8 +24,8 @@ jobs:
           echo "| file | status | bytes | md5 served | md5 in repo | same |" >> "$GITHUB_STEP_SUMMARY"
           echo "|---|---|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
 
-          for f in favicon.ico images/miki-icon-32.png images/miki-icon-16.png \
-                   images/miki-icon-180.png; do
+          for f in site-icon.ico favicon.ico images/tab-icon-32.png images/tab-icon-16.png \
+                   images/tab-icon-180.png; do
             code=$(curl -sS -o /tmp/got -w '%{http_code}' "$SITE/$f")
             got=$(md5sum /tmp/got | cut -d' ' -f1)
             size=$(wc -c < /tmp/got)
@@ -38,7 +38,7 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "### Who served it" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          curl -sSI "$SITE/favicon.ico" | grep -iE 'http/|server|age|cache-control|etag|last-modified|via|cf-|x-' \
+          curl -sSI "$SITE/site-icon.ico" | grep -iE 'http/|server|age|cache-control|etag|last-modified|via|cf-|x-' \
             | tee -a "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
@@ -49,14 +49,16 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
           echo "### Sizes inside the served favicon.ico" >> "$GITHUB_STEP_SUMMARY"
-          curl -sS -o /tmp/live.ico "$SITE/favicon.ico"
+          curl -sS -o /tmp/live.ico "$SITE/site-icon.ico"
           python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
-          from PIL import Image
-          try:
-              im = Image.open('/tmp/live.ico')
-              print("served:", sorted(im.info.get('sizes') or [im.size]))
-          except Exception as e:
-              print("could not read the served icon:", e)
-          im2 = Image.open('favicon.ico')
-          print("in repo:", sorted(im2.info.get('sizes') or [im2.size]))
+          import struct
+          # Read the container directly. Pillow's ICO reader hands back frame
+          # zero whatever size you ask it for, which made a correct file look
+          # broken once already.
+          raw = open('/tmp/live.ico','rb').read()
+          _, _, n = struct.unpack('<HHH', raw[:6])
+          print("frames served:", n)
+          for i in range(n):
+              w,h,_c,_r,_p,_b,size,off = struct.unpack('<BBBBHHII', raw[6+16*i:6+16*(i+1)])
+              print("  %sx%s  %s bytes" % (w or 256, h or 256, size))
           PY
