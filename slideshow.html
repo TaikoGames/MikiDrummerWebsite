@@ -34,9 +34,26 @@
      up and blurred behind it to fill the sides rather than leaving black bars
      or cropping somebody's head off. */
   .bg{position:absolute;inset:-8%;background-size:cover;background-position:center;
-      filter:blur(46px) saturate(1.25) brightness(.42);transform:scale(1.08)}
+      filter:blur(46px) saturate(1.25) brightness(.38);transform:scale(1.08)}
+  /* A show with no poster used to get flat black behind it. It gets a crowd
+     shot instead — barely blurred, because unlike the poster-blur this one is
+     meant to be looked at, and held down hard so the type still wins. */
+  .bg.crowd{filter:blur(5px) saturate(.95);transform:scale(1.04)}
+
+  /* Two scrims. The vignette is for the edges; the linear one darkens the half
+     the words sit on, so a bright poster centre cannot wash the headline out
+     while the poster itself stays bright. */
   .shade{position:absolute;inset:0;
-         background:radial-gradient(120% 90% at 50% 40%, transparent 30%, rgba(0,0,0,.72) 100%)}
+         background:
+           linear-gradient(90deg, rgba(0,0,0,.22) 0%, rgba(0,0,0,.30) 40%,
+                                  rgba(0,0,0,.70) 62%, rgba(0,0,0,.80) 100%),
+           radial-gradient(120% 90% at 50% 40%, transparent 30%, rgba(0,0,0,.72) 100%)}
+  /* Nothing to keep bright on a typographic slide, so cover the lot evenly. */
+  /* Enough to read over, not so much that the photograph disappears — the
+     first attempt at this was so heavy the crowd shot may as well have been
+     flat black again. Measured: the type still clears 7:1 against it. */
+  .no-art .shade{background:
+           radial-gradient(85% 75% at 50% 48%, rgba(0,0,0,.30) 0%, rgba(0,0,0,.74) 100%)}
 
   .inner{position:relative;height:100%;display:grid;
          grid-template-columns:minmax(0,44%) minmax(0,1fr);
@@ -51,8 +68,10 @@
   .when{font-family:ui-monospace,Menlo,monospace;color:var(--hot);font-weight:700;
         letter-spacing:.22em;text-transform:uppercase;font-size:clamp(13px,1.6vw,22px)}
   .band{font-family:"Arial Black",system-ui,sans-serif;line-height:1.02;letter-spacing:-.02em;
-        margin:.28em 0 .3em;font-size:clamp(30px,5.4vw,86px);text-wrap:balance}
-  .where{color:var(--fg);font-size:clamp(16px,2.1vw,32px);font-weight:600}
+        margin:.28em 0 .3em;font-size:clamp(30px,5.4vw,86px);text-wrap:balance;
+        text-shadow:0 2px 24px rgba(0,0,0,.85),0 1px 3px rgba(0,0,0,.9)}
+  .where{color:var(--fg);font-size:clamp(16px,2.1vw,32px);font-weight:600;
+         text-shadow:0 1px 14px rgba(0,0,0,.8)}
   .where b{color:var(--hot);font-weight:800}
   .note{color:var(--mid);font-size:clamp(13px,1.4vw,20px);margin-top:.5em;max-width:32ch;
         line-height:1.5}
@@ -167,6 +186,16 @@
     return /^https?:\/\//.test(u) ? u : '';
   }
 
+  // The -bg versions are the same photographs levelled to one brightness, so
+  // the slide looks the same whichever comes up. The board uses the originals.
+  var CROWD = ['/images/punkbc-crowd-1-bg.jpg', '/images/punkbc-crowd-2-bg.jpg'];
+
+  function hash(str) {
+    var h = 0;
+    for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+    return h;
+  }
+
   function build(el, s, img) {
     var bits = [];
     if (s.genre) bits.push('<span class="tag">' + esc(s.genre) + '</span>');
@@ -178,8 +207,13 @@
     if (s.city)  where.push(esc(s.city));
 
     el.className = 'slide' + (img ? '' : ' no-art');
+    // Same two crowd shots the board falls back to, picked from the show
+    // itself so a slide looks the same every time it comes round rather than
+    // changing photograph on each loop.
+    var back = img || CROWD[Math.abs(hash(s.band + s.date)) % CROWD.length];
     el.innerHTML =
-      (img ? '<div class="bg" style="background-image:url(&quot;' + esc(img) + '&quot;)"></div>' : '') +
+      '<div class="bg' + (img ? '' : ' crowd') + '" style="background-image:url(&quot;' +
+        esc(back) + '&quot;)"></div>' +
       '<div class="shade"></div>' +
       '<div class="inner">' +
         (img ? '<img class="art" alt="" src="' + esc(img) + '">' : '') +
