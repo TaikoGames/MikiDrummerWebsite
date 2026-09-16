@@ -1,13 +1,17 @@
-/* Raining pumpkins.
+/* Weather for the seasons: pumpkins at Halloween, snow at Christmas.
  *
- * Decoration on a page people actually work on, so the rules are: never take a
+ * Decoration on pages people actually use, so the rules are: never take a
  * click, never cost anything while nobody is looking, and get out of the way
  * entirely for anyone who has asked their machine to stop animating things.
  *
- *   Pumpkins.start()         turn it on
- *   Pumpkins.stop()          turn it off
- *   Pumpkins.toggle()        ... and back
- *   Pumpkins.inSeason()      true in the week before Halloween
+ *   Seasonal.start('snow')   turn it on
+ *   Seasonal.stop()          turn it off
+ *   Seasonal.auto()          whatever suits today, or '' for most of the year
+ *   Seasonal.apply(setting)  'off' | 'auto' | 'pumpkins' | 'snow'
+ *
+ * The site reads the setting from config.json, which the admin page writes, so
+ * one switch there changes every page. Nothing is per-browser: a visitor sees
+ * what the setting says.
  *
  * One canvas, not a heap of DOM nodes: forty falling elements each with their
  * own transform is forty style recalculations a frame, and on a phone that is
@@ -16,9 +20,19 @@
 (function (global) {
   'use strict';
 
-  var CHARS = ['🎃', '🎃', '🎃', '👻', '🦇'];   // mostly pumpkins, the odd friend
+  // Snow is smaller, slower, denser and quieter than a pumpkin: the same
+  // motion, but it should read as weather rather than as a gag.
+  var KINDS = {
+    pumpkins: { chars: ['🎃', '🎃', '🎃', '👻', '🦇'], max: 34,
+                size: [18, 48], speed: [26, 80], spin: 40, alpha: [.35, .75] },
+    snow:     { chars: ['❄', '❅', '❆', '•'],          max: 70,
+                size: [7, 22], speed: [14, 44], spin: 14, alpha: [.35, .85] }
+  };
+  var kind = KINDS.pumpkins, kindName = '';
   var MAX = 34;
   var canvas = null, ctx = null, bits = [], raf = 0, last = 0, dpr = 1;
+
+  function between(pair) { return pair[0] + Math.random() * (pair[1] - pair[0]); }
 
   function reduced() {
     return global.matchMedia &&
@@ -26,7 +40,7 @@
   }
 
   function make(seedTop) {
-    var size = 18 + Math.random() * 30;
+    var size = between(kind.size);
     return {
       x: Math.random() * canvas.clientWidth,
       // On the first frame they are spread down the screen, so it looks like
@@ -36,12 +50,12 @@
       y: seedTop ? Math.random() * canvas.clientHeight
                  : -size - Math.random() * 200,
       size: size,
-      speed: 26 + Math.random() * 54,          // px per second, not per frame
+      speed: between(kind.speed),              // px per second, not per frame
       drift: (Math.random() - 0.5) * 26,
-      spin: (Math.random() - 0.5) * 40,
+      spin: (Math.random() - 0.5) * kind.spin,
       angle: Math.random() * 360,
-      alpha: 0.35 + Math.random() * 0.4,
-      char: CHARS[(Math.random() * CHARS.length) | 0],
+      alpha: between(kind.alpha),
+      char: kind.chars[(Math.random() * kind.chars.length) | 0],
       sway: Math.random() * Math.PI * 2
     };
   }
@@ -81,6 +95,9 @@
       ctx.translate(p.x, p.y);
       ctx.rotate(p.angle * Math.PI / 180);
       ctx.font = p.size + 'px serif';
+      // Snowflake glyphs render black on most systems; pumpkins carry their
+      // own colour and must not be painted over.
+      if (kindName === 'snow') ctx.fillStyle = '#eef3f8';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(p.char, 0, 0);
@@ -88,10 +105,16 @@
     }
   }
 
-  function start() {
-    if (canvas || reduced()) return false;
+  function start(which) {
+    which = which || 'pumpkins';
+    if (!KINDS[which] || reduced()) return false;
+    if (canvas && kindName === which) return true;
+    if (canvas) stop();
+    kind = KINDS[which];
+    kindName = which;
+    MAX = kind.max;
     canvas = document.createElement('canvas');
-    canvas.id = 'pumpkin-rain';
+    canvas.id = 'seasonal-fall';
     canvas.setAttribute('aria-hidden', 'true');
     // In front of the page, not behind it. Behind was the first attempt and it
     // may as well have been off: the admin page is opaque cards nearly all the
@@ -136,18 +159,28 @@
     return true;
   }
 
-  function inSeason(d) {
+  function auto(d) {
     d = d || new Date();
     var m = d.getMonth(), day = d.getDate();
-    return (m === 9 && day >= 24) || (m === 10 && day === 1);   // Oct 24 – Nov 1
+    if ((m === 9 && day >= 24) || (m === 10 && day === 1)) return 'pumpkins';
+    // Snow runs from the start of December to Twelfth Night.
+    if (m === 11 || (m === 0 && day <= 6)) return 'snow';
+    return '';
   }
 
-  global.Pumpkins = {
+  function apply(setting) {
+    var want = setting === 'auto' ? auto()
+             : (setting === 'pumpkins' || setting === 'snow') ? setting : '';
+    if (!want) { stop(); return ''; }
+    return start(want) ? want : '';
+  }
+
+  global.Seasonal = {
     start: start,
     stop: stop,
-    toggle: function () { return canvas ? (stop(), false) : start(); },
-    running: function () { return !!canvas; },
-    reduced: reduced,
-    inSeason: inSeason
+    apply: apply,
+    auto: auto,
+    running: function () { return canvas ? kindName : ''; },
+    reduced: reduced
   };
 })(window);

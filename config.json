@@ -7,5 +7,6 @@
   "liveAuto": "yes",
   "liveNow": "no",
   "overlayManual": "",
-  "overlayManualUntil": ""
+  "overlayManualUntil": "",
+  "season": "auto"
 }
