@@ -2,19 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Dark Thoughts / Schedule 1 / Pill Mill",
-      "date": "2026-09-15",
-      "time": "",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/images/shows/dark-thoughts-2026-09-15.jpg",
-      "image_source": "https://f4.bcbits.com/img/a0250865153_5.jpg"
-    },
-    {
       "band": "Brasser / Curb Zombie / Brehdren",
       "date": "2026-09-18",
       "time": "",
