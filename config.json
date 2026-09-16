@@ -1,9 +1,7 @@
 {
   "showOverlay": "no",
-  "posterUrl": "https://api.gigpit.ca/services/images/tz7briFiGVc?height=1200",
-  "posterSeconds": 5,
   "graniteFilter": "warm",
-  "season": "off",
+  "season": "pumpkins",
   "liveAuto": "yes",
   "liveNow": "no"
 }
