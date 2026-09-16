@@ -40,6 +40,21 @@
       "note": "Vancouver d-beat / hardcore punk, together since 2016."
     },
     {
+      "band": "American Steel & Dead End Drive-In",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://americansteelanddeadenddrivein.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Anciients",
       "checked": "2026-09-13",
       "email": "",
@@ -252,6 +267,41 @@
       ],
       "note": "Address given by the band. Not on any page a crawler can read, so nothing automatic will ever find it — leave it alone.",
       "by": "miki"
+    },
+    {
+      "band": "BRASS",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://brass.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://instargam.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://vk.com",
+          "found": "email"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Brasser",
@@ -532,6 +582,21 @@
       "by": "auto"
     },
     {
+      "band": "Dave Hause & The Mermaid",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://davehauseandthemermaid.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Dead Pioneers",
       "checked": "2026-09-09",
       "email": "",
@@ -695,6 +760,46 @@
       "by": "auto"
     },
     {
+      "band": "Earth Crisis",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://earthcrisis.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://www.instagram.com/earthcrisisofficial",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Elder",
       "checked": "2026-09-14",
       "email": "",
@@ -795,6 +900,41 @@
       "by": "auto"
     },
     {
+      "band": "Failure",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://failure.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Firewind & Atavistia",
       "checked": "2026-09-15",
       "email": "",
@@ -887,6 +1027,126 @@
         }
       ],
       "note": "",
+      "by": "auto"
+    },
+    {
+      "band": "Integrity",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://integrity.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43393112-integrity-at-baroeg?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Baroeg&quot;,&quot;utc_date&quot;:1790726400,&quot;event_date&quot;:&quot;30",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Judge",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://judge.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43283233-merauder-at-underground-music-cafe?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Juice",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://juice.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43343856-mersiv-at-hb-social-club?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;HB",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -1023,6 +1283,51 @@
       "note": "Cumberland, BC skate punk / hardcore. The address is their label's, not the band's own - Instagram may reach them faster."
     },
     {
+      "band": "Messa",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://messa.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43251932-uncle-acid-and-the-deadbeats-at-la-rosa?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;La",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/messa_band",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Night Court",
       "checked": "2026-09-10",
       "email": "",
@@ -1140,6 +1445,41 @@
         {
           "name": "Bandcamp",
           "url": "https://puddywaters.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Quannnic",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://quannnic.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
         }
       ],
@@ -1550,6 +1890,41 @@
       "by": "auto"
     },
     {
+      "band": "WAIT//LESS",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://waitless.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Weeping",
       "checked": "2026-09-14",
       "email": "",
@@ -1613,6 +1988,21 @@
         {
           "name": "Site",
           "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Witness Chamber",
+      "checked": "2026-09-16",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://witnesschamber.bandcamp.com/",
           "found": "form"
         }
       ],
