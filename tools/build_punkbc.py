@@ -228,7 +228,15 @@ def performers(show: dict) -> list[str]:
 
 
 def href_for(show: dict) -> str:
-    return show.get("ticket") or VENUE_LINK.get(show.get("venue", ""), "https://www.eventbrite.ca")
+    # Whatever is in the ticket field has to be a link before it goes in an
+    # href. One show reached the live board with a ticket link of "Column 1" --
+    # a spreadsheet header that leaked into a data row on import -- and it
+    # rendered as a clickable card on three pages that went nowhere. Anything
+    # that is not a URL falls back to the venue, same as a blank field.
+    ticket = (show.get("ticket") or "").strip()
+    if not ticket.startswith(("http://", "https://")):
+        ticket = ""
+    return ticket or VENUE_LINK.get(show.get("venue", ""), "https://www.eventbrite.ca")
 
 
 def date_label(show: dict) -> str:
