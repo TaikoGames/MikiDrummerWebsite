@@ -562,6 +562,51 @@
       "by": "auto"
     },
     {
+      "band": "Cyborg Octopus",
+      "checked": "2026-09-17",
+      "email": "cyborgoctopusband@gmail.com",
+      "email_source": "cyborgoctopusband.com",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://cyborgoctopus.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "youtube.com",
+          "url": "http://youtube.com/cyborgoctopus",
+          "found": "profile"
+        },
+        {
+          "name": "soundcloud.com",
+          "url": "http://soundcloud.com/cyborg-octopus",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://cyborgoctopusband.com",
+          "found": "email"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        }
+      ],
+      "note": "",
+      "by": "auto"
+    },
+    {
       "band": "Dark Thoughts",
       "checked": "2026-09-13",
       "email": "",
@@ -840,6 +885,21 @@
       "by": "auto"
     },
     {
+      "band": "Elvenking",
+      "checked": "2026-09-17",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://elvenking.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Ensiferum",
       "checked": "2026-09-15",
       "email": "",
@@ -882,6 +942,51 @@
         }
       ],
       "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Evergrey",
+      "checked": "2026-09-17",
+      "email": "management@evergrey.net",
+      "email_source": "evergrey.net",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://evergrey.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/evergreyofficial/",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43018443-hammerfall-at-tupelo-music-hall?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://lnk.to",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://evergrey.net/contact",
+          "found": "email"
+        }
+      ],
+      "note": "",
       "by": "auto"
     },
     {
@@ -950,6 +1055,51 @@
       "by": "auto"
     },
     {
+      "band": "Fotocrime",
+      "checked": "2026-09-17",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://fotocrime.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/fotocrime/",
+          "found": "profile"
+        },
+        {
+          "name": "youtube.com",
+          "url": "https://www.youtube.com/fotocrime",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://fotocrime.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://shirtkiller.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Fuming Mouth",
       "checked": "2026-09-14",
       "email": "",
@@ -963,6 +1113,46 @@
         {
           "name": "Facebook",
           "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Good Riddance",
+      "checked": "2026-09-17",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://goodriddance.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/festivals/115151-riot-fest/id/43237147-riot-fest-2026?utm_source=1471&utm_medium=partner",
           "found": "profile"
         },
         {
@@ -1027,6 +1217,46 @@
         }
       ],
       "note": "",
+      "by": "auto"
+    },
+    {
+      "band": "HammerFall",
+      "checked": "2026-09-17",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://hammerfall.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43018443-hammerfall-at-tupelo-music-hall?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
@@ -1167,6 +1397,41 @@
         }
       ],
       "note": "UNCONFIRMED. At least three bands use this name (a Seattle pop punk band, a queer mom-rock band, and a Gold Class song). None could be tied to the Oct 3 Red Gate bill with The Fomites. Check with The Fomites before reaching out."
+    },
+    {
+      "band": "Longshot",
+      "checked": "2026-09-17",
+      "email": "info@morsecoderecordings.com",
+      "email_source": "morsecoderecordings.limitedrun.com",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://longshot.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://morsecoderecordings.limitedrun.com",
+          "found": "email"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        }
+      ],
+      "note": "",
+      "by": "auto"
     },
     {
       "band": "Manicouagan",
@@ -1321,6 +1586,46 @@
         {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Nekrogoblikon",
+      "checked": "2026-09-17",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://nekrogoblikon.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/festivals/745774-monster-energy-aftershock/id/43083197-monster-energy-aftershock-2026?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -1547,6 +1852,46 @@
       "by": "auto"
     },
     {
+      "band": "Rivers of Nihil",
+      "checked": "2026-09-17",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://riversofnihil.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "https://twitter.com/riversofnihil",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Schedule 1",
       "checked": "2026-09-13",
       "email": "",
@@ -1555,6 +1900,41 @@
         {
           "name": "Bandcamp",
           "url": "https://schedule1.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Shiner",
+      "checked": "2026-09-17",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://shiner.bandcamp.com/",
           "found": "form"
         },
         {
@@ -1627,6 +2007,21 @@
       "by": "auto"
     },
     {
+      "band": "SLOFX",
+      "checked": "2026-09-17",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://slofx.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Speed Reaper",
       "checked": "2026-09-15",
       "email": "",
@@ -1655,6 +2050,46 @@
         {
           "name": "Site",
           "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "sundress",
+      "checked": "2026-09-17",
+      "email": "",
+      "email_source": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://sundress.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "http://www.twitter.com/sundressnation",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.sundressnation.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.myspace.com",
           "found": "form"
         }
       ],
