@@ -430,6 +430,8 @@
                    in person around Vancouver, tune and set up kits, and rent out backline when
                    a band rolls into town without one.</p>
                 <p><a href="/services.html">All of it is on the services page.</a></p>
+                <p>Vancouver, BC. Remote work goes anywhere.
+                   <a href="/about.html">More about me →</a></p>
               </div>
 
               <div class="mk-col">
@@ -444,16 +446,6 @@
                    <a href="/bands/">by band</a> if you're following someone in particular.
                    Playing a show that isn't on there?
                    <a href="/punkbc.html">Send it in.</a> 🤘</p>
-              </div>
-
-              <div class="mk-col">
-                <h2>Free stuff</h2>
-                <p>Things I built for myself and left open: an <a href="/bpm/">online metronome</a>
-                   that doesn't make you install anything, a
-                   <a href="/gig-checklist.html">gig checklist</a> so you stop leaving the snare in
-                   the garage, and a <a href="/cymbal-designer.html">cymbal setup designer</a>.</p>
-                <p>Vancouver, BC. Remote work goes anywhere.
-                   <a href="/about.html">More about me →</a></p>
               </div>
 
             </div>
@@ -487,10 +479,14 @@
           .mk-more > summary:hover{color:#f0ede8}
           .mk-more[open] > summary{margin-bottom:28px}
           .mk-more > summary:focus-visible{outline:2px solid #e8372a;outline-offset:4px}
-          /* Two columns, not auto-fit: there are four blocks, and auto-fit made
-             three of them a row and left the fourth stranded on its own. */
+          /* Three blocks, so the column count is set by hand rather than left
+             to auto-fit: three across on a wide screen is one clean row, and
+             two across would leave one of them stranded underneath. Stepped
+             down instead of collapsing straight to one, because a single
+             column on a 900px screen is far too wide a line to read. */
           .mk-grid{display:grid;grid-template-columns:1fr;gap:34px 44px}
           @media (min-width:768px){ .mk-grid{grid-template-columns:1fr 1fr} }
+          @media (min-width:1100px){ .mk-grid{grid-template-columns:1fr 1fr 1fr} }
           .mk-col h2{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#e8372a;
                      font-weight:700;margin:0 0 14px;padding:0;line-height:1.5}
           .mk-col p{margin:0 0 14px;font-size:14.5px;letter-spacing:0;line-height:1.72;color:#cfc9c5}
