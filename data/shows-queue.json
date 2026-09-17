@@ -142,6 +142,20 @@
       "first_seen": "2026-09-10"
     },
     {
+      "band": "Jonny Bones Movie Marathon Memorial @ Rickshaw",
+      "date": "2026-10-02",
+      "time": "01:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/jonny-bones-movie-marathon-mem/1038425179246160/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-09-17"
+    },
+    {
       "band": "BRASS, WAIT//LESS, sundress",
       "date": "2026-10-03",
       "time": "",
@@ -326,7 +340,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1106
+    "vancouver-punk-calendar": 1107
   },
-  "updated": "2026-09-16"
+  "updated": "2026-09-17"
 }
