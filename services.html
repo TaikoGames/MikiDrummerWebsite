@@ -344,6 +344,8 @@
                anywhere, in person around Vancouver and the Lower Mainland. Twenty years behind
                the kit, most of it in punk, hardcore and rock.</p>
 
+            <details class="mk-more" id="mk-detail">
+              <summary>What each one involves</summary>
             <div class="mk-grid">
 
               <article class="mk-item" id="remote-recording">
@@ -417,6 +419,7 @@
               </article>
 
             </div>
+            </details>
 
             <div class="mk-cta">
               <h2>Getting started</h2>
@@ -430,10 +433,29 @@
           </div>
         </section>
         <style>
-          .mk-svc{background:#0b0908;border-top:1px solid #1e1a18;padding:52px 0 46px;color:#cfc9c5;
-                  font-family:'Space Mono','Courier New',monospace;font-size:14.5px;line-height:1.72}
-          .mk-svc .mk-lead{font-size:16px;line-height:1.7;color:#f0ede8;max-width:70ch;margin:0 0 38px;
+          /* Bottom padding clears the footer's album art, which is absolutely
+             positioned ~100px above the footer and hangs into whatever sits
+             there. See the note on .share-kit above -- same art, same problem. */
+          .mk-svc{background:#0b0908;border-top:1px solid #1e1a18;padding:30px 0 120px;color:#cfc9c5;
+                  font-family:'Space Mono','Courier New',monospace;font-size:14.5px;line-height:1.72;
+                  position:relative;z-index:2}
+          .mk-svc .mk-lead{font-size:16px;line-height:1.7;color:#f0ede8;max-width:70ch;margin:0 0 20px;
                            letter-spacing:0}
+
+          /* Nine services described in full is a lot of type to sit open under
+             a page that is mostly a photo and two lists, so it folds away. The
+             lead and the contact block stay visible -- burying the only route
+             to hiring him would be a strange thing to do to a services page. */
+          .mk-more > summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;
+            gap:10px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#8a8279;
+            font-weight:700;padding:6px 0;transition:color .18s}
+          .mk-more > summary::-webkit-details-marker{display:none}
+          .mk-more > summary::before{content:"▸";font-size:13px;color:#e8372a;
+            transition:transform .18s;display:inline-block}
+          .mk-more[open] > summary::before{transform:rotate(90deg)}
+          .mk-more > summary:hover{color:#f0ede8}
+          .mk-more[open] > summary{margin-bottom:26px}
+          .mk-more > summary:focus-visible{outline:2px solid #e8372a;outline-offset:4px}
           .mk-svc .mk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
                            gap:30px 44px}
           .mk-svc .mk-item{scroll-margin-top:80px}
@@ -444,9 +466,49 @@
           .mk-svc a{color:#f0ede8;text-decoration:underline;text-underline-offset:3px;
                     text-decoration-color:#e8372a}
           .mk-svc a:hover{color:#e8372a}
-          .mk-cta{margin-top:44px;padding-top:30px;border-top:1px solid #1e1a18;max-width:70ch}
-          @media (max-width:575px){ .mk-svc{padding:38px 0 32px} .mk-svc .mk-grid{gap:26px} }
+          .mk-cta{margin-top:30px;padding-top:26px;border-top:1px solid #1e1a18;max-width:70ch}
+          @media (max-width:575px){ .mk-svc{padding:26px 0 24px} .mk-svc .mk-grid{gap:26px} }
         </style>
+        <script>
+        // The service lists at the top link to anchors that now live inside a
+        // collapsed <details>. A browser will not scroll to a target it is not
+        // displaying, so without this every one of those links would appear
+        // dead again -- which is the exact bug they were just fixed from.
+        //
+        // Recent Chrome and Safari do open <details> for a fragment on their
+        // own; plenty of browsers in use do not, so it is done here explicitly.
+        (function () {
+          'use strict';
+          var box = document.getElementById('mk-detail');
+          if (!box) return;
+
+          function reveal(hash) {
+            if (!hash || hash.length < 2) return false;
+            var target;
+            try { target = box.querySelector(hash); } catch (e) { return false; }
+            if (!target) return false;
+            box.open = true;
+            return target;
+          }
+
+          document.addEventListener('click', function (e) {
+            var a = e.target.closest && e.target.closest('a[href^="#"]');
+            if (!a) return;
+            var target = reveal(a.getAttribute('href'));
+            if (!target) return;
+            // Opened above, so the anchor is laid out and can be scrolled to.
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.replaceState(null, '', a.getAttribute('href'));
+          });
+
+          // Arriving with a fragment already in the URL, e.g. a shared link.
+          if (location.hash) {
+            var t = reveal(location.hash);
+            if (t) requestAnimationFrame(function () { t.scrollIntoView(); });
+          }
+        })();
+        </script>
 
         <footer>
             <div class="footer-main">

@@ -400,6 +400,8 @@
         -->
         <section class="mk-intro">
           <div class="container">
+            <details class="mk-more">
+              <summary>More about Miki</summary>
             <div class="mk-grid">
 
               <div class="mk-col">
@@ -455,11 +457,36 @@
               </div>
 
             </div>
+            </details>
           </div>
         </section>
         <style>
-          .mk-intro{background:#0b0908;border-top:1px solid #1e1a18;padding:56px 0 46px;color:#cfc9c5;
-                    font-family:'Space Mono','Courier New',monospace;font-size:14.5px;line-height:1.72}
+          /* The footer's album art is absolutely positioned and hangs ~100px
+             above the footer, i.e. straight into the bottom of this section.
+             Collapsed, that put it flush against the toggle -- a zero-pixel
+             gap under a control whose whole job is being clicked. The bottom
+             padding gives it room and the stacking context keeps the summary
+             on top if the layout ever shifts again. */
+          .mk-intro{background:#0b0908;border-top:1px solid #1e1a18;padding:26px 0 120px;color:#cfc9c5;
+                    font-family:'Space Mono','Courier New',monospace;font-size:14.5px;line-height:1.72;
+                    position:relative;z-index:2}
+
+          /* Collapsed by default: the page is photo-led and sparse, and four
+             blocks of prose sitting open underneath it were too much. <details>
+             rather than a JS toggle because the text stays in the DOM either
+             way -- which is the point, it is there to be crawled -- and this
+             works with JS off and announces its state to a screen reader for
+             free. */
+          .mk-more > summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;
+            gap:10px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#8a8279;
+            font-weight:700;padding:6px 0;transition:color .18s}
+          .mk-more > summary::-webkit-details-marker{display:none}
+          .mk-more > summary::before{content:"▸";font-size:13px;color:#e8372a;
+            transition:transform .18s;display:inline-block}
+          .mk-more[open] > summary::before{transform:rotate(90deg)}
+          .mk-more > summary:hover{color:#f0ede8}
+          .mk-more[open] > summary{margin-bottom:28px}
+          .mk-more > summary:focus-visible{outline:2px solid #e8372a;outline-offset:4px}
           /* Two columns, not auto-fit: there are four blocks, and auto-fit made
              three of them a row and left the fourth stranded on its own. */
           .mk-grid{display:grid;grid-template-columns:1fr;gap:34px 44px}
