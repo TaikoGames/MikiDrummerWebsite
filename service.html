@@ -1,241 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Include FontAwesome for icons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/responsive.css">
-        <title>Mirkidrummer</title>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
-        <link rel="icon" type="image/png" sizes="48x48" href="/images/icon-48.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/images/icon-32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/images/icon-16.png">
-        <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-192.png">
-        <link rel="apple-touch-icon" href="/images/icon-180.png">
-    </head>
-    <body>
-        <header>
-            <div class="container">
-                <nav class="navbar navbar-expand-lg">
-                    <a class="navbar-brand" href="index.html">
-                        <img src="images/brand.png" alt="">
-                    </a>
-                    <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                        <span class="navbar-toggler-icon"></span>
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link" href="about.html">About</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " aria-current="page" href="video.html">Videos</a>
-                                <!-- Active link -->
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="service.html">Service</a>
-                            </li>
-                        </ul>
-                        <div class="nav-social">
-                            <ul>
-                               
-                                <li>
-                                    <a href="https://www.tiktok.com/@mikibdrummer">
-                                        <img src="images/twitter.png" alt="miki drummer tik tok">
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.instagram.com/mikibdrummer/">
-                                        <img src="images/instagram.png" alt="miki drummer insta IG">
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.youtube.com/@MikiDrummerBC">
-                                        <img src="images/youtube.png" alt="miki drummer Youtube channel videos">
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        </header>
-        <div class="news-pra">
-          <marquee id="newsMarquee">Loading news...</marquee>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script>
-      async function fetchNews() {
-          try {
-              const response = await fetch('news.txt');
-              const data = await response.text();
+<!-- This page was an older, rougher copy of /services.html: 56 words, every
+     service linking nowhere, and a <title> of "Mirkidrummer" -- the brand name
+     misspelled, sitting in Google's index. Nothing on the site linked to it,
+     so it was an orphan competing with the real page for the same terms.
 
-              // Process the text file and extract both titles and descriptions
-              const newsArray = data.split('\n').filter(line => line.trim() !== ''); // Removing empty lines
+     GitHub Pages serves static files and cannot issue a 301, so this is the
+     strongest redirect available: a canonical pointing at the real page, an
+     instant meta refresh, and a JS replace() so the dead URL does not end up
+     in the visitor's back button. Deleting the file would have 404'd instead,
+     which throws away whatever ranking the URL had rather than passing it on.
 
-              let newsItems = [];
-              let currentNews = {};
+     Do not add noindex here. It contradicts the canonical -- one says "index
+     the other page instead", the other says "index nothing" -- and Google
+     resolves the conflict by dropping the URL rather than consolidating it. -->
 
-              // Loop through each line and extract title and description
-              for (let line of newsArray) {
-                  if (line.startsWith('Title:')) {
-                      if (currentNews.title) {
-                          // Push the previous news item
-                          newsItems.push(currentNews);
-                      }
-                      // Start a new news item
-                      currentNews = { title: line.replace('Title: ', '').trim() };
-                  } else if (line.startsWith('Description:')) {
-                      // Add description to the current news item
-                      currentNews.description = line.replace('Description: ', '').trim();
-                  }
-              }
+<title>Services – Miki Drummer</title>
+<link rel="canonical" href="https://www.mikidrummer.ca/services.html">
+<meta http-equiv="refresh" content="0; url=/services.html">
+<meta name="description" content="Miki Drummer's services have moved to /services.html — remote drum recording, custom drum tracks, online and in-person drum lessons, live setup and tuning, and drum rental in Vancouver.">
 
-              // Push the last news item
-              if (currentNews.title) {
-                  newsItems.push(currentNews);
-              }
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
 
-              // Format the news items into a string for the marquee
-              const newsContent = newsItems.map(news => `${news.title} - ${news.description}`).join(' | ');
-
-              // Display the news titles and descriptions in the marquee
-              document.getElementById('newsMarquee').innerText = `${newsContent}`;
-
-          } catch (error) {
-              document.getElementById('newsMarquee').innerText = 'Error loading news';
-          }
-      }
-
-      // Fetch and display news on page load
-      fetchNews();
-  </script>
-        </div>
-        <section class="hero">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 col-resp">
-                        <h1 class="main-text"></h1>
-                        <div class="hero-left">
-                            <h2 class="main-text">Online:</h2>
-                            <ul>
-                                <li>
-                                    <a href="#" class="main-text">Remote Drum Recording</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="main-text">Custom Drum Tracks</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="main-text">Arranging and Composing Drum Parts</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="main-text">Online Drum Lessons</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="main-text">Video Editing</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="main-text">Drum Gear Consultation</a>
-                                </li>
-                                
-                            </ul>
-                            
-                            <h2 class="main-text">In-Person:</h2>
-                            <ol>
-                                <li>
-                                    <a href="#" class="main-text">Presencial Drum Lessons</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="main-text">Live Drum Setup and Tuning</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="main-text">Live Sound Support</a>
-                                </li>
-                               
-                                <li>
-                                    <a href="#" class="main-text">Drums Rental (Contact for inventory and pricing)</a>
-                                </li>
-                            </ol>
-                        <ul>
-                            
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="hero-right">
-                            <img src="images/band2.png" alt="">
-                            <div class="text-box">
-                                <p class="main-text">
-                                    .
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <footer>
-            <div class="footer-main">
-                <div class="container">
-                    <div class="footer-audio-main">
-                        <div class="audio-player">
-                            <audio id="audio" src="audio/audio1.mp3"></audio>
-                            <div class="thumbnail">
-                                <img id="thumbnail-img" src="images/music-img1.png" alt="Song Thumbnail">
-                            </div>
-                            <div class="controls">
-                                <button id="prev" class="control-button">
-                                    <i class="fas fa-backward"></i>
-                                </button>
-                                <button id="playPause" class="control-button">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button id="next" class="control-button">
-                                    <i class="fas fa-forward"></i>
-                                </button>
-                                <input
-                                    type="range"
-                                    id="seekBar"
-                                    value="0"
-                                    min="0"
-                                    max="100"
-                                    step="1"
-                                >
-                                <span id="currentTime">0:00</span>
-                                <span id="duration">0:00</span>
-                                <button id="playlist" class="control-button">
-                                    <i class="fas fa-list"></i>
-                                </button>
-                                <button id="volume" class="control-button">
-                                    <i class="fas fa-volume-up"></i>
-                                </button>
-                            </div>
-                            <div class="playlist">
-                                <ul id="playlist-songs">
-                                    <li data-src="audio/audio1.mp3" data-thumbnail="images/music-img1.png" class="active">Song 1</li>
-                                    <li data-src="audio/audio2.mp3" data-thumbnail="images/thumbnail-img2.jpg">Song 2</li>
-                                    <li data-src="audio/LandSea.mp3" data-thumbnail="images/thumbnail-img3.jpg">Song 3</li>
-                                    <li data-src="audio/04 - Skamen.mp3" data-thumbnail="images/thumbnail-img4.jpg">Song 4</li>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/custom.js"></script>
-    </body>
+<style>
+  body{background:#080605;color:#cfc9c5;font-family:'Space Mono','Courier New',monospace;
+       display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;
+       padding:24px;text-align:center;line-height:1.7}
+  a{color:#f0ede8;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#e8372a}
+  a:hover{color:#e8372a}
+</style>
+</head>
+<body>
+  <p>This page has moved.<br>
+     <a href="/services.html">Continue to Miki Drummer's services →</a></p>
+  <script>location.replace('/services.html');</script>
+</body>
 </html>

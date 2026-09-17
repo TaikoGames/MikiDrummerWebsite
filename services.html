@@ -27,6 +27,56 @@
         <meta name="twitter:title" content="Services – Miki Drummer | Drum Recording, Lessons & Live">
         <meta name="twitter:description" content="Remote drum recording, custom tracks, online lessons, live sound support and more.">
         <meta name="twitter:image" content="https://www.mikidrummer.ca/images/band2.png">
+
+        <!-- Each service named as its own Offer so a search for one of them has
+             something specific to match, rather than one page vaguely about
+             drums. No prices: they vary per job, and a made-up number in
+             structured data is worse than none. areaServed splits deliberately
+             -- the remote work is worldwide, the in-person work is not. -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "ProfessionalService",
+          "name": "Miki Drummer",
+          "description": "Remote drum recording, custom drum tracks, drum part arranging, online and in-person drum lessons, live drum setup and tuning, live sound support and drum rental.",
+          "url": "https://www.mikidrummer.ca/services.html",
+          "image": "https://www.mikidrummer.ca/images/band2.png",
+          "priceRange": "$$",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Vancouver",
+            "addressRegion": "BC",
+            "addressCountry": "CA"
+          },
+          "provider": {
+            "@type": "Person",
+            "name": "Miki Drummer",
+            "jobTitle": "Professional Drummer",
+            "url": "https://www.mikidrummer.ca/",
+            "sameAs": [
+              "https://www.instagram.com/mikibdrummer/",
+              "https://www.youtube.com/@MikiDrummerBC",
+              "https://www.tiktok.com/@mikibdrummer"
+            ]
+          },
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Drum services",
+            "itemListElement": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Remote drum recording", "serviceType": "Remote drum recording", "description": "Real acoustic drums recorded to your track and delivered as separate tracks for mixing.", "areaServed": "Worldwide" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom drum tracks", "serviceType": "Custom drum tracks", "description": "Grooves and beats built to a brief and a tempo, played on an acoustic kit.", "areaServed": "Worldwide" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Arranging and composing drum parts", "serviceType": "Drum arrangement", "description": "Writing the drum part for a song that does not have one yet.", "areaServed": "Worldwide" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Online drum lessons", "serviceType": "Online drum lessons", "description": "One-to-one drum lessons over video, for beginners through to players working on punk and hardcore technique.", "areaServed": "Worldwide" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Drum gear consultation", "serviceType": "Drum gear consultation", "description": "Advice on what drum gear to buy, and what to tune instead of replacing.", "areaServed": "Worldwide" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "In-person drum lessons", "serviceType": "In-person drum lessons", "description": "One-to-one drum lessons in Vancouver and the Lower Mainland.", "areaServed": { "@type": "City", "name": "Vancouver" } } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Live drum setup and tuning", "serviceType": "Drum tuning", "description": "Kit setup, tuning and heads sorted before a show, session or rehearsal.", "areaServed": { "@type": "City", "name": "Vancouver" } } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Live sound support", "serviceType": "Live sound support", "description": "Getting the drums to translate from stage to room, working with front of house.", "areaServed": { "@type": "City", "name": "Vancouver" } } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Drums rental", "serviceType": "Drum kit rental", "description": "Backline drum kit rental for bands playing shows without their own kit.", "areaServed": { "@type": "City", "name": "Vancouver" } } }
+            ]
+          }
+        }
+        </script>
+
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
@@ -67,14 +117,26 @@
             .kv-piece span{font-size:13px}
           }
 
+          /* .hero is a fixed calc(100vh - 277.33px) site-wide, and this page's
+             two service lists are taller than that, so the column used to spill
+             out of the bottom of the section and land on top of whatever came
+             next. It went unnoticed while the footer was next -- the footer has
+             its own dark background and the overlap looked like padding -- but
+             the moment real content followed, the share button sat on top of a
+             paragraph. min-height keeps the full-viewport hero when the content
+             is short and lets the section grow when it is not. Scoped to this
+             page: other pages use the fixed height deliberately. */
+          .hero{height:auto;min-height:calc(100vh - 277.33px)}
+
           /* The footer's album art is absolutely positioned 100px above the
              footer and hangs into the bottom of this column. Left alone it
              covers the share button and eats the click, so the block keeps
-             clear of it and outranks it if the layout ever shifts. */
+             clear of it and outranks it if the layout ever shifts. The large
+             bottom margins were sized for that footer being the next thing
+             down; it is not any more, so they only need to breathe. */
           .share-kit{margin-top:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);
             position:relative;z-index:3;margin-bottom:28px}
-          @media(min-width:768px){.share-kit{margin-bottom:120px}}
-          @media(min-width:992px){.share-kit{margin-bottom:170px}}
+          @media(min-width:768px){.share-kit{margin-bottom:36px}}
           .page-share{display:inline-flex;align-items:center;gap:9px;
             font:800 15px/1 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;letter-spacing:.02em;
             color:#180a03;background:#e8672a;border:0;border-radius:999px;padding:16px 30px;
@@ -229,25 +291,25 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 col-resp">
-                        <h1 class="main-text"></h1>
+                        <h1 class="main-text">Drum Services</h1>
                         <div class="hero-left">
                             <h2 class="main-text">Online:</h2>
                             <ul>
-                                <li><a href="#" class="main-text">🎙️ Remote Drum Recording</a></li>
-                                <li><a href="#" class="main-text">🥁 Custom Drum Tracks</a></li>
-                                <li><a href="#" class="main-text">🎵 Arranging and Composing Drum Parts</a></li>
-                                <li><a href="#" class="main-text">🎓 Online Drum Lessons</a></li>
+                                <li><a href="#remote-recording" class="main-text">🎙️ Remote Drum Recording</a></li>
+                                <li><a href="#custom-tracks" class="main-text">🥁 Custom Drum Tracks</a></li>
+                                <li><a href="#arranging" class="main-text">🎵 Arranging and Composing Drum Parts</a></li>
+                                <li><a href="#online-lessons" class="main-text">🎓 Online Drum Lessons</a></li>
                                 <li><a href="https://youtu.be/BgibPRWl6R0?si=XL2xzd4CqpnGBKma" target="_blank" class="main-text">🎬 Video Editing</a></li>
-                                <li><a href="#" class="main-text">🎧 Drum Gear Consultation</a></li>
+                                <li><a href="#gear" class="main-text">🎧 Drum Gear Consultation</a></li>
                                 <li><a href="/bpm/" class="main-text">🎚️ Free Online Metronome</a></li>
                             </ul>
 
                             <h2 class="main-text">In-Person:</h2>
                             <ul>
-                                <li><a href="#" class="main-text">🧑‍🎤 Presencial Drum Lessons</a></li>
-                                <li><a href="#" class="main-text">🔧 Live Drum Setup and Tuning</a></li>
-                                <li><a href="#" class="main-text">🔊 Live Sound Support</a></li>
-                                <li><a href="#" class="main-text">🚚 Drums Rental (Contact for inventory and pricing)</a></li>
+                                <li><a href="#in-person-lessons" class="main-text">🧑‍🎤 In-Person Drum Lessons</a></li>
+                                <li><a href="#setup-tuning" class="main-text">🔧 Live Drum Setup and Tuning</a></li>
+                                <li><a href="#live-sound" class="main-text">🔊 Live Sound Support</a></li>
+                                <li><a href="#rental" class="main-text">🚚 Drums Rental (Contact for inventory and pricing)</a></li>
                                 <li><a href="#" class="main-text" id="setupLink">🥁 Check out my setup</a></li>
                             </ul>
 
@@ -267,6 +329,124 @@
                 </div>
             </div>
         </section>
+
+        <!-- ===================== WHAT EACH ONE INVOLVES =====================
+             This page used to be an empty <h1>, twelve list items and 128 words
+             -- and ten of those twelve items linked to "#", so clicking the
+             thing you wanted to buy did nothing at all. The list above now
+             points down here, where each service says what it actually is.
+             Prices are deliberately absent: they vary per job and quoting one
+             here would be a guess.
+        -->
+        <section class="mk-svc">
+          <div class="container">
+            <p class="mk-lead">Drums recorded, written, taught and tuned — remotely for anyone
+               anywhere, in person around Vancouver and the Lower Mainland. Twenty years behind
+               the kit, most of it in punk, hardcore and rock.</p>
+
+            <div class="mk-grid">
+
+              <article class="mk-item" id="remote-recording">
+                <h2>Remote drum recording</h2>
+                <p>Send the track — a demo, a scratch take, a programmed sketch, whatever exists —
+                   and it comes back with real drums played to it. Recorded on an acoustic kit,
+                   played by a person, arranged to serve the song rather than filling every bar.</p>
+                <p>Delivered as separate tracks so your mixer has something to work with, not a
+                   bounced stereo file. Revisions are part of the job, not an upsell.</p>
+              </article>
+
+              <article class="mk-item" id="custom-tracks">
+                <h2>Custom drum tracks</h2>
+                <p>For when there is no song to play along to yet — a beat, a groove, a loop built
+                   to a brief and a tempo. Useful for producers, for writers working out an
+                   arrangement, and for anyone who wants a human feel that a sample library keeps
+                   failing to fake.</p>
+              </article>
+
+              <article class="mk-item" id="arranging">
+                <h2>Arranging and composing drum parts</h2>
+                <p>The part itself, not just the performance. If a song has guitars and vocals and
+                   nobody has worked out what the drums should be doing, this is that job: where
+                   the fills go, where the kit drops out, what the chorus needs to lift.</p>
+              </article>
+
+              <article class="mk-item" id="online-lessons">
+                <h2>Online drum lessons</h2>
+                <p>One to one, over video, anywhere with a connection. Built around what you are
+                   trying to play rather than a fixed curriculum — technique and timing if that is
+                   what is holding you back, or a specific song taken apart bar by bar if that is
+                   what you came for.</p>
+                <p>Beginners welcome, and so are players who have been going for years and want
+                   the punk and hardcore vocabulary specifically: speed, endurance, d-beat,
+                   blast-adjacent things, playing fast without falling apart by the third song.</p>
+              </article>
+
+              <article class="mk-item" id="gear">
+                <h2>Drum gear consultation</h2>
+                <p>Honest advice on what to buy before you buy it. What is worth the money, what is
+                   marketing, what will actually fix the problem you have, and what you already own
+                   that would sound better with a tune-up instead of a replacement.</p>
+              </article>
+
+              <article class="mk-item" id="in-person-lessons">
+                <h2>In-person drum lessons</h2>
+                <p>Same as the online lessons, in the same room — around Vancouver and the Lower
+                   Mainland. Some things are much faster to fix when someone can watch your grip
+                   and your posture from two feet away, and hear the kit in the air rather than
+                   through a microphone.</p>
+              </article>
+
+              <article class="mk-item" id="setup-tuning">
+                <h2>Live drum setup and tuning</h2>
+                <p>A kit that sounds wrong on stage is usually a kit nobody tuned. Setup, tuning
+                   and heads sorted before doors — for a show, a session, a rehearsal room that has
+                   been slowly getting worse for a year.</p>
+              </article>
+
+              <article class="mk-item" id="live-sound">
+                <h2>Live sound support</h2>
+                <p>Help getting the drums to translate from the stage to the room, working with
+                   whoever is running sound. Mic placement, gating, what to ask for in the monitors
+                   and what to stop asking for.</p>
+              </article>
+
+              <article class="mk-item" id="rental">
+                <h2>Drums rental</h2>
+                <p>Backline for bands who need a kit for a show and have not got one in the van.
+                   Inventory and pricing depend on the date and what you need — ask.</p>
+              </article>
+
+            </div>
+
+            <div class="mk-cta">
+              <h2>Getting started</h2>
+              <p>Tell me what the song is, or what you are stuck on, and you will get a straight
+                 answer on whether I am the right person for it and what it would cost. No forms
+                 with eleven fields.</p>
+              <p><a href="https://www.instagram.com/mikibdrummer/" target="_blank" rel="noopener">Message on
+                 Instagram</a> is the fastest route. Based in Vancouver, BC — remote work goes
+                 anywhere in the world.</p>
+            </div>
+          </div>
+        </section>
+        <style>
+          .mk-svc{background:#0b0908;border-top:1px solid #1e1a18;padding:52px 0 46px;color:#cfc9c5;
+                  font-family:'Space Mono','Courier New',monospace;font-size:14.5px;line-height:1.72}
+          .mk-svc .mk-lead{font-size:16px;line-height:1.7;color:#f0ede8;max-width:70ch;margin:0 0 38px;
+                           letter-spacing:0}
+          .mk-svc .mk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+                           gap:30px 44px}
+          .mk-svc .mk-item{scroll-margin-top:80px}
+          .mk-svc h2{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#e8372a;
+                     font-weight:700;margin:0 0 12px;padding:0;line-height:1.5}
+          .mk-svc p{margin:0 0 13px;font-size:14.5px;letter-spacing:0;line-height:1.72;color:#cfc9c5}
+          .mk-svc p:last-child{margin-bottom:0}
+          .mk-svc a{color:#f0ede8;text-decoration:underline;text-underline-offset:3px;
+                    text-decoration-color:#e8372a}
+          .mk-svc a:hover{color:#e8372a}
+          .mk-cta{margin-top:44px;padding-top:30px;border-top:1px solid #1e1a18;max-width:70ch}
+          @media (max-width:575px){ .mk-svc{padding:38px 0 32px} .mk-svc .mk-grid{gap:26px} }
+        </style>
 
         <footer>
             <div class="footer-main">
