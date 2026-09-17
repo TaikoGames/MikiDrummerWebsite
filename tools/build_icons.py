@@ -6,10 +6,21 @@ The logo is a wordmark inside a ring. At 16 pixels the wordmark cannot render
 this replaced had exactly that problem, which is why swapping it appeared to
 change nothing at all: both were the same artwork at the same hopeless size.
 
-So below 32px the wordmark is taken out and the ring, the lugs and the sticks
-are left to carry it. That is a subtraction from the original artwork, not a
-redrawing of it: every pixel that survives came out of brand.png. From 32px up
-the full lockup is used, wordmark and all, because there it reads.
+So for the small icons the wordmark is taken out and the ring, the lugs and the
+sticks are left to carry it. That is a subtraction from the original artwork,
+not a redrawing of it: every pixel that survives came out of brand.png.
+
+The cut is at 128px, and that number is about Google rather than about tabs.
+Google will only take a favicon whose sides are a multiple of 48, so it asks
+for the 48 or the 96 -- and then paints the result at about eighteen pixels
+beside the search result. Sending it a 96px lockup does not send it a readable
+lockup; it sends it a 96px file that Google itself shrinks into the same grey
+smudge. The first cut here was at 32px, which meant every size Google was
+allowed to use was the one size that could not survive being shrunk.
+
+So: ring and sticks up to 96, full lockup at 128 and above. Above 128 nothing
+gets downscaled by someone else -- those are home screen and Windows tile
+icons, drawn near their real size, where the lettering genuinely reads.
 
     python3 tools/build_icons.py [--check]
 """
@@ -31,7 +42,7 @@ ICO_SIZES = [16, 24, 32, 48, 64, 128, 256]
 # multiple of 48px for the icon beside a search result, and ignores what it
 # cannot use.
 PNG_SIZES = [16, 32, 48, 96, 180, 192, 512]
-PLAIN_BELOW = 32                     # under this, the wordmark comes out
+PLAIN_BELOW = 128                    # under this, the wordmark comes out
 
 
 def artwork():
@@ -172,7 +183,7 @@ def main():
     # The conventional paths a browser probes on its own, so a phone looking
     # for /apple-touch-icon.png does not get the August one.
     tile(src, 180).save(os.path.join(ROOT, "apple-touch-icon.png"))
-    tile(src, 32).save(os.path.join(ROOT, "favicon-32.png"))
+    tile(art_for(32), 32).save(os.path.join(ROOT, "favicon-32.png"))
 
     print("written. verifying:")
     return check()

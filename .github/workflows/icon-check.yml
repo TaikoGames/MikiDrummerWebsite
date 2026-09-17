@@ -24,7 +24,10 @@ jobs:
           echo "| file | status | bytes | md5 served | md5 in repo | same |" >> "$GITHUB_STEP_SUMMARY"
           echo "|---|---|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
 
-          for f in site-icon.ico favicon.ico images/tab-icon-32.png images/tab-icon-16.png \
+          # icon-48 and icon-96 matter most: Google will only take a favicon
+          # whose sides are a multiple of 48, so those two are what it fetches.
+          for f in site-icon.ico favicon.ico images/icon-48.png images/icon-96.png \
+                   images/tab-icon-32.png images/tab-icon-16.png \
                    images/tab-icon-180.png; do
             code=$(curl -sS -o /tmp/got -w '%{http_code}' "$SITE/$f")
             got=$(md5sum /tmp/got | cut -d' ' -f1)
@@ -62,3 +65,13 @@ jobs:
               w,h,_c,_r,_p,_b,size,off = struct.unpack('<BBBBHHII', raw[6+16*i:6+16*(i+1)])
               print("  %sx%s  %s bytes" % (w or 256, h or 256, size))
           PY
+
+          # Google keeps one favicon per hostname. If the bare domain answers on
+          # its own instead of redirecting to www, it is a second site as far as
+          # Google is concerned, with its own icon to win over separately.
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Does the bare domain redirect to www" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          curl -sSI https://mikidrummer.ca/ | grep -iE 'http/|location' \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
