@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C75363M813"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C75363M813');
+</script>
+
+<title>QR Code Maker — free, in your browser | Punk BC</title>
+<meta name="description" content="Make a QR code for a link, in your browser. Pick the size and error correction, drop a logo in the middle, and save it as PNG or SVG. Free, nothing to install, nothing uploaded.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.mikidrummer.ca/qr.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mikidrummer.ca/qr.html">
+<meta property="og:title" content="QR Code Maker — free, in your browser">
+<meta property="og:description" content="A QR code for any link. Size, error correction, a logo in the middle, PNG or SVG out. Runs entirely in your browser.">
+<meta property="og:site_name" content="Punk BC">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
+
+<style>
+  :root{ --bg:#0b0c0e; --card:#131518; --edge:#2b2f34; --edge2:#3a4046;
+         --dim:#7d848d; --mid:#a6adb6; --fg:#e9ebee; --hot:#e8672a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);line-height:1.55;padding:0 18px 70px;
+       font-family:'Helvetica Neue',system-ui,Arial,sans-serif}
+  .wrap{max-width:1080px;margin:0 auto}
+  a{color:var(--hot);text-decoration:none} a:hover{text-decoration:underline}
+  header{padding:38px 0 20px;border-bottom:1px solid var(--edge)}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--hot);font-weight:700}
+  h1{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(24px,5vw,36px);letter-spacing:-.02em;margin:9px 0 10px}
+  .lead{color:var(--mid);font-size:15px;max-width:66ch}
+  .grid{display:grid;grid-template-columns:1fr;gap:24px;margin-top:26px}
+  @media(min-width:900px){ .grid{grid-template-columns:minmax(0,420px) 1fr;align-items:start} }
+  .panel{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:18px}
+  .panel + .panel{margin-top:16px}
+  h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:12px}
+  label{display:block;font-size:12px;color:var(--mid);margin:12px 0 5px}
+  label:first-of-type{margin-top:0}
+  input[type=text],input[type=url],select,textarea{width:100%;background:#0e1013;border:1px solid var(--edge2);
+    color:var(--fg);border-radius:8px;padding:10px 11px;font:inherit;font-size:14px}
+  textarea{min-height:76px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--hot);outline-offset:1px;border-color:transparent}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hint{font-size:11.5px;color:var(--dim);margin-top:5px}
+  .btn{display:inline-flex;align-items:center;gap:7px;background:#1b1e22;border:1px solid var(--edge2);
+       color:var(--fg);border-radius:999px;padding:9px 16px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .btn:hover{border-color:var(--hot);color:var(--hot)}
+  .btn.go{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .btn.go:hover{filter:brightness(1.08);color:#160802}
+  .btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+  .chip{background:#0e1013;border:1px solid var(--edge2);color:var(--mid);border-radius:999px;
+        padding:6px 12px;font-size:12px;cursor:pointer}
+  .chip[aria-pressed=true]{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:700}
+  .slider{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .slider input[type=range]{flex:1;accent-color:var(--hot)}
+  .slider output{font-size:12px;color:var(--mid);min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
+  .swatches{display:flex;gap:10px;align-items:center;margin-top:8px}
+  .swatches input[type=color]{width:46px;height:34px;padding:2px;background:#0e1013;
+    border:1px solid var(--edge2);border-radius:8px;cursor:pointer}
+  .stage{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:18px;
+         position:sticky;top:16px;text-align:center}
+  .plate{display:inline-block;padding:14px;border-radius:12px;background:#fff}
+  canvas{display:block;width:100%;max-width:340px;height:auto;image-rendering:pixelated}
+  .meta{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:var(--dim)}
+  .warn{color:#ffb38a;font-size:12.5px;margin-top:10px;min-height:1.2em}
+  .ok{color:#8ad6a0}
+  footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Punk BC · Tools</span>
+    <h1>QR code maker</h1>
+    <p class="lead">Point it at a link and get a code you can print on a flyer, a poster or a
+       merch tag. Nothing uploads anywhere — it is generated in this browser and saved straight
+       to your device.</p>
+  </header>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <h2>The link</h2>
+        <label for="text">Where it should go</label>
+        <textarea id="text" spellcheck="false" autocomplete="off">https://www.mikidrummer.ca/punkbc.html</textarea>
+        <div class="hint" id="len"></div>
+        <div class="chips" id="presets"></div>
+      </div>
+
+      <div class="panel">
+        <h2>How it is built</h2>
+        <label>Error correction</label>
+        <div class="chips" id="ecc">
+          <button class="chip" type="button" data-ecc="L" aria-pressed="false">L · 7%</button>
+          <button class="chip" type="button" data-ecc="M" aria-pressed="false">M · 15%</button>
+          <button class="chip" type="button" data-ecc="Q" aria-pressed="true">Q · 25%</button>
+          <button class="chip" type="button" data-ecc="H" aria-pressed="false">H · 30%</button>
+        </div>
+        <div class="hint">How much of the code can be damaged and still scan. Q is a good
+           default for anything printed; go to H if you put a logo in the middle, because the
+           logo <em>is</em> the damage.</div>
+
+        <label for="size" style="margin-top:14px">Size</label>
+        <div class="slider">
+          <input type="range" id="size" min="256" max="2048" step="64" value="1024">
+          <output id="sizeOut">1024 px</output>
+        </div>
+
+        <label for="quiet">Quiet zone</label>
+        <div class="slider">
+          <input type="range" id="quiet" min="0" max="8" step="1" value="4">
+          <output id="quietOut">4 modules</output>
+        </div>
+        <div class="hint">The blank margin. The spec asks for 4; below that, scanners start to
+           struggle to find the code at all.</div>
+      </div>
+
+      <div class="panel">
+        <h2>Colour</h2>
+        <div class="swatches">
+          <input type="color" id="fg" value="#000000" aria-label="Code colour">
+          <input type="color" id="bg" value="#ffffff" aria-label="Background colour">
+          <button class="btn" id="swap" type="button">Swap</button>
+          <button class="btn" id="resetCol" type="button">Reset</button>
+        </div>
+        <div class="warn" id="contrast"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Logo in the middle</h2>
+        <div class="chips" id="logoChips"></div>
+        <div class="btns">
+          <button class="btn" id="uploadLogo" type="button">Upload…</button>
+          <input type="file" id="logoFile" accept="image/*" hidden>
+          <button class="btn" id="noLogo" type="button">None</button>
+        </div>
+        <label for="logoSize" style="margin-top:12px">Logo size</label>
+        <div class="slider">
+          <input type="range" id="logoSize" min="10" max="40" step="1" value="20">
+          <output id="logoSizeOut">20%</output>
+        </div>
+        <div class="warn" id="logoWarn"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="stage">
+        <div class="plate" id="plate"><canvas id="qr" width="1024" height="1024"></canvas></div>
+        <div class="meta">
+          <span id="info">—</span>
+        </div>
+        <div class="btns" style="justify-content:center">
+          <button class="btn go" id="savePng">↓ PNG</button>
+          <button class="btn" id="saveSvg">↓ SVG</button>
+          <button class="btn" id="copy">Copy image</button>
+          <button class="btn" id="share">⤴ Share</button>
+        </div>
+        <div class="warn" id="said"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>.
+    Built with <a href="/vendor/qrcode/qrcode.js">qrcode-generator</a> (MIT), served from this
+    site rather than a CDN. QR Code is a registered trademark of DENSO WAVE INCORPORATED.
+  </footer>
+</div>
+
+<script src="/vendor/qrcode/qrcode.js"></script>
+<script src="/js/share-ping.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var cv = $('qr'), ctx = cv.getContext('2d');
+
+  var state = { ecc: 'Q', size: 1024, quiet: 4, fg: '#000000', bg: '#ffffff',
+                logo: null, logoName: '', logoPct: 0.20, cells: 0, version: 0 };
+
+  // Links worth having one tap away, since most of what this gets used for is
+  // somewhere on this site.
+  var PRESETS = [
+    ['Punk BC', 'https://www.mikidrummer.ca/punkbc.html'],
+    ['Granite EPK', 'https://www.mikidrummer.ca/granite-epk.html'],
+    ['Lift the Anchor EPK', 'https://www.mikidrummer.ca/lift-the-anchor-epk.html'],
+    ['Poster maker', 'https://www.mikidrummer.ca/poster.html'],
+    ['Services', 'https://www.mikidrummer.ca/services.html'],
+    ['Home', 'https://www.mikidrummer.ca/']
+  ];
+  var LOGOS = [
+    ['Miki mark', '/images/brand.png'],
+    ['Granite', '/images/granite/logo-black.png']
+  ];
+
+  // ---- colour -------------------------------------------------------------
+  function rgb(hex) {
+    var h = hex.replace('#', '');
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+  function lum(c) {
+    var s = c.map(function (v) {
+      v /= 255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+    });
+    return 0.2126*s[0] + 0.7152*s[1] + 0.0722*s[2];
+  }
+  function ratio(a, b) {
+    var l1 = lum(rgb(a)), l2 = lum(rgb(b));
+    if (l1 < l2) { var t = l1; l1 = l2; l2 = t; }
+    return (l1 + 0.05) / (l2 + 0.05);
+  }
+
+  // ---- build --------------------------------------------------------------
+  function draw() {
+    var data = $('text').value.trim();
+    $('len').textContent = data.length + ' characters';
+    if (!data) { ctx.clearRect(0,0,cv.width,cv.height); $('info').textContent = '—'; return; }
+
+    // Version 0 lets the library pick the smallest that fits. If the data is
+    // too long for even version 40 it throws, and saying so is better than a
+    // blank square.
+    var qr;
+    try {
+      qr = qrcode(0, state.ecc);
+      qr.addData(data);
+      qr.make();
+    } catch (e) {
+      $('info').textContent = 'Too long for one code at ' + state.ecc + ' correction';
+      ctx.clearRect(0,0,cv.width,cv.height);
+      return;
+    }
+
+    var cells = qr.getModuleCount();
+    state.cells = cells;
+    var quiet = state.quiet;
+    var total = cells + quiet * 2;
+
+    // Round the module size to a whole number of pixels and let the canvas be
+    // whatever that multiplies to. A fractional module is what makes a printed
+    // code scan on one phone and not another: the edges land mid-pixel and the
+    // scanner cannot tell where one module stops.
+    var mod = Math.max(1, Math.floor(state.size / total));
+    var px = mod * total;
+    cv.width = px; cv.height = px;
+
+    ctx.fillStyle = state.bg;
+    ctx.fillRect(0, 0, px, px);
+    ctx.fillStyle = state.fg;
+    for (var r = 0; r < cells; r++) {
+      for (var c = 0; c < cells; c++) {
+        if (qr.isDark(r, c)) {
+          ctx.fillRect((c + quiet) * mod, (r + quiet) * mod, mod, mod);
+        }
+      }
+    }
+
+    if (state.logo) {
+      var side = Math.round(px * state.logoPct);
+      var x = Math.round((px - side) / 2);
+      // A plate behind it, in the background colour. Painting a logo straight
+      // onto the modules leaves fragments of code poking out around it, which
+      // reads as noise to a scanner rather than as a gap it can correct for.
+      var padPx = Math.max(mod, Math.round(side * 0.09));
+      ctx.fillStyle = state.bg;
+      ctx.fillRect(x - padPx, x - padPx, side + padPx*2, side + padPx*2);
+      var lw = state.logo.width, lh = state.logo.height;
+      var sc = Math.min(side / lw, side / lh);
+      var dw = lw * sc, dh = lh * sc;
+      ctx.drawImage(state.logo, Math.round((px - dw)/2), Math.round((px - dh)/2), dw, dh);
+    }
+
+    // Module count and version are different numbers: a version 2 code is
+    // 25x25. cells = 17 + 4 x version, so the version falls out of it.
+    var version = (cells - 17) / 4;
+    state.version = version;
+    $('info').textContent = 'version ' + version + ' · ' + cells + '×' + cells
+                          + ' modules · ' + px + '×' + px + ' px · ' + state.ecc;
+    checkWarnings();
+  }
+
+  function checkWarnings() {
+    var r = ratio(state.fg, state.bg);
+    var el = $('contrast');
+    // Scanners want a big luminance gap, not merely a legible one. Under about
+    // 7:1 the failures start being camera-and-lighting dependent, which is the
+    // worst kind: it works on your phone and not on theirs.
+    if (r < 4) {
+      el.textContent = 'Contrast ' + r.toFixed(1) + ':1 — too close. Many scanners will refuse this.';
+      el.className = 'warn';
+    } else if (r < 7) {
+      el.textContent = 'Contrast ' + r.toFixed(1) + ':1 — scannable in good light, unreliable in bad.';
+      el.className = 'warn';
+    } else {
+      el.textContent = 'Contrast ' + r.toFixed(1) + ':1 — fine.';
+      el.className = 'warn ok';
+    }
+    if (lum(rgb(state.fg)) > lum(rgb(state.bg))) {
+      el.textContent += ' Light code on a dark background: some older scanners only look for the inverse.';
+      el.className = 'warn';
+    }
+
+    var lw = $('logoWarn');
+    if (!state.logo) { lw.textContent = ''; return; }
+    // Width, not area. Comparing the logo's area against the correction budget
+    // is arithmetically tidy and useless in practice: at 30% of the width a
+    // square logo is only 9% of the area, so an area test never fires however
+    // far the slider goes. Decoding real codes back is what settles it -- at H
+    // a centred logo survived to 32% of the width and failed at 35%, so the
+    // thresholds below are measured rather than reasoned.
+    var pct = Math.round(state.logoPct * 100);
+    var ceiling = { L: 14, M: 20, Q: 26, H: 32 }[state.ecc];
+    if (pct > ceiling) {
+      lw.textContent = 'Logo is ' + pct + '% of the width. Past about ' + ceiling
+                     + '% at ' + state.ecc + ' correction, codes stop decoding'
+                     + (state.ecc === 'H' ? '.' : ' — H buys you more room.');
+      lw.className = 'warn';
+    } else if (pct > ceiling - 6) {
+      lw.textContent = 'Logo is ' + pct + '% of the width — close to the limit for '
+                     + state.ecc + ' (about ' + ceiling + '%). Test it before printing.';
+      lw.className = 'warn';
+    } else {
+      lw.textContent = 'Logo is ' + pct + '% of the width — comfortable at ' + state.ecc + '.';
+      lw.className = 'warn ok';
+    }
+  }
+
+  // ---- svg ----------------------------------------------------------------
+  function svg() {
+    var data = $('text').value.trim();
+    var qr = qrcode(0, state.ecc); qr.addData(data); qr.make();
+    var cells = qr.getModuleCount(), q = state.quiet, total = cells + q*2;
+    var path = [];
+    for (var r = 0; r < cells; r++)
+      for (var c = 0; c < cells; c++)
+        if (qr.isDark(r, c)) path.push('M' + (c+q) + ' ' + (r+q) + 'h1v1h-1z');
+    return '<?xml version="1.0" encoding="UTF-8"?>\n'
+         + '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + total + ' ' + total + '" '
+         + 'width="' + state.size + '" height="' + state.size + '" shape-rendering="crispEdges">\n'
+         + '  <rect width="' + total + '" height="' + total + '" fill="' + state.bg + '"/>\n'
+         + '  <path fill="' + state.fg + '" d="' + path.join('') + '"/>\n'
+         + '</svg>\n';
+  }
+
+  function filename(ext) {
+    var t = $('text').value.trim().replace(/^https?:\/\//,'').replace(/[^a-z0-9]+/gi,'-')
+              .replace(/^-|-$/g,'').toLowerCase().slice(0, 48) || 'qr';
+    return t + '-qr.' + ext;
+  }
+  function save(blob, name) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
+  function say(m, good) {
+    var e = $('said'); e.textContent = m; e.className = good ? 'warn ok' : 'warn';
+    setTimeout(function () { e.textContent = ''; }, 3500);
+  }
+
+  // ---- wiring -------------------------------------------------------------
+  PRESETS.forEach(function (p) {
+    var b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.textContent = p[0];
+    b.addEventListener('click', function () { $('text').value = p[1]; draw(); });
+    $('presets').appendChild(b);
+  });
+  LOGOS.forEach(function (l) {
+    var b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.textContent = l[0];
+    b.addEventListener('click', function () {
+      var im = new Image();
+      im.onload = function () { state.logo = im; state.logoName = l[0];
+        if (state.ecc !== 'H') { setEcc('H'); } else { draw(); } };
+      im.src = l[1];
+    });
+    $('logoChips').appendChild(b);
+  });
+
+  function setEcc(v) {
+    state.ecc = v;
+    Array.prototype.forEach.call($('ecc').querySelectorAll('.chip'), function (c) {
+      c.setAttribute('aria-pressed', String(c.dataset.ecc === v));
+    });
+    draw();
+  }
+  $('ecc').addEventListener('click', function (e) {
+    var b = e.target.closest('.chip'); if (b) setEcc(b.dataset.ecc);
+  });
+
+  $('text').addEventListener('input', draw);
+  $('size').addEventListener('input', function () {
+    state.size = +this.value; $('sizeOut').textContent = this.value + ' px'; draw();
+  });
+  $('quiet').addEventListener('input', function () {
+    state.quiet = +this.value;
+    $('quietOut').textContent = this.value + ' module' + (this.value === '1' ? '' : 's');
+    draw();
+  });
+  $('fg').addEventListener('input', function () { state.fg = this.value; draw(); });
+  $('bg').addEventListener('input', function () { state.bg = this.value; draw(); });
+  $('swap').addEventListener('click', function () {
+    var f = state.fg; state.fg = state.bg; state.bg = f;
+    $('fg').value = state.fg; $('bg').value = state.bg; draw();
+  });
+  $('resetCol').addEventListener('click', function () {
+    state.fg = '#000000'; state.bg = '#ffffff';
+    $('fg').value = '#000000'; $('bg').value = '#ffffff'; draw();
+  });
+  $('logoSize').addEventListener('input', function () {
+    state.logoPct = (+this.value)/100; $('logoSizeOut').textContent = this.value + '%'; draw();
+  });
+  $('noLogo').addEventListener('click', function () { state.logo = null; state.logoName=''; draw(); });
+  $('uploadLogo').addEventListener('click', function () { $('logoFile').click(); });
+  $('logoFile').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      var im = new Image();
+      im.onload = function () { state.logo = im; state.logoName = f.name;
+        if (state.ecc !== 'H') setEcc('H'); else draw(); };
+      im.src = fr.result;                 // stays in this browser
+    };
+    fr.readAsDataURL(f);
+    this.value = '';
+  });
+
+  $('savePng').addEventListener('click', function () {
+    cv.toBlob(function (b) { save(b, filename('png')); say('Saved PNG', true); }, 'image/png');
+  });
+  $('saveSvg').addEventListener('click', function () {
+    if (state.logo) say('SVG is the code only — the logo is not included.');
+    save(new Blob([svg()], {type:'image/svg+xml'}), filename('svg'));
+  });
+  $('copy').addEventListener('click', function () {
+    if (!navigator.clipboard || !window.ClipboardItem) { say('This browser cannot copy images.'); return; }
+    cv.toBlob(function (b) {
+      var item = {}; item[b.type] = b;
+      navigator.clipboard.write([new ClipboardItem(item)])
+        .then(function () { say('Copied', true); })
+        .catch(function () { say('Copy refused by the browser.'); });
+    }, 'image/png');
+  });
+  $('share').addEventListener('click', function () {
+    cv.toBlob(function (b) {
+      var file = new File([b], filename('png'), { type: b.type });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], text: $('text').value.trim() })
+          .then(function () {
+            say('Shared', true);
+            if (typeof gtag === 'function') gtag('event','share',{method:'web_share',content_type:'qr'});
+          })
+          .catch(function (e) { if (!e || e.name !== 'AbortError') say('Share refused.'); });
+      } else {
+        save(b, filename('png')); say('This browser cannot share files — saved instead.');
+      }
+    }, 'image/png');
+  });
+
+  draw();
+})();
+</script>
+</body>
+</html>
