@@ -73,6 +73,22 @@
       "instagram": ""
     },
     {
+      "band": "Antifa Dance Party",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://antifadanceparty.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "ATD, Scatterbox and more",
       "checked": "2026-09-14",
       "email": "",
@@ -215,6 +231,58 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Blasphamagoatachrist",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://blasphamagoatachrist.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Blasphemy",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://blasphemy.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Bloodlines",
@@ -890,6 +958,52 @@
       "by": "auto"
     },
     {
+      "band": "Devouring Void",
+      "checked": "2026-09-18",
+      "email": "devouringvoidbcoffical@gmail.com",
+      "email_source": "linktr.ee",
+      "instagram": "devouringvoidofficial",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://devouringvoid.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://instagram.com/devouringvoidofficial",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Linktree",
+          "url": "https://linktr.ee/devouringvoid",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://undercover-records.de",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        }
+      ],
+      "note": "",
+      "by": "auto"
+    },
+    {
       "band": "Die Job",
       "checked": "2026-09-09",
       "email": "diejobpunk@gmail.com",
@@ -1181,6 +1295,52 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Exhumed",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "exhumed_official",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://exhumed.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/exhumed_official/",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "http://www.twitter.com/exhumedofficial",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.gorefuckingmetal.blogspot.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Failure",
@@ -1481,6 +1641,47 @@
       "instagram": ""
     },
     {
+      "band": "Hellwitch",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://hellwitch.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43206710-ride-for-revenge-at-rickshaw-theatre?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Rickshaw",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Hot Water Music",
       "checked": "2026-09-18",
       "email": "",
@@ -1648,6 +1849,42 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Jarhead Fertilizer",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://jarheadfertilizer.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Judge",
@@ -2137,6 +2374,42 @@
       "by": "auto"
     },
     {
+      "band": "Molder",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://molder.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Nekrogoblikon",
       "checked": "2026-09-17",
       "email": "",
@@ -2421,6 +2694,47 @@
       "instagram": "revocation"
     },
     {
+      "band": "Ride For Revenge",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://rideforrevenge.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43206710-ride-for-revenge-at-rickshaw-theatre?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Rickshaw",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Rivers of Nihil",
       "checked": "2026-09-17",
       "email": "",
@@ -2491,6 +2805,42 @@
         {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Savage Master",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://savagemaster.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -2827,6 +3177,52 @@
       "instagram": ""
     },
     {
+      "band": "Sunn O)))",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "sunnobleue",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://sunno.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/sunnobleue",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "soundcloud.com",
+          "url": "https://soundcloud.com/soundofsunno",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Teratoma",
       "checked": "2026-09-13",
       "email": "",
@@ -3112,6 +3508,47 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Tsalal",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://tsalal.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43206710-ride-for-revenge-at-rickshaw-theatre?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Rickshaw",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Tyrann",
