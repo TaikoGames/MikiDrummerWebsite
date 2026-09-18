@@ -3,6 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C75363M813"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C75363M813');
+</script>
+
 <title>Gig Poster Maker — free, in your browser | Punk BC</title>
 <meta name="description" content="Make a gig poster in your browser: set the bill, date and venue, pick a public-domain background, and save it sized for Instagram or A4. Free, nothing to install, nothing uploaded.">
 <meta name="robots" content="index, follow">
@@ -222,6 +232,10 @@
   </div>
 
   <footer>
+    <div style="margin-bottom:18px">
+      <button class="btn go" id="shareTool" role="status" aria-live="polite">⤴ <span id="shareToolLabel">Share this tool</span></button>
+      <span class="hint" id="shareToolHint" style="display:block"></span>
+    </div>
     A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>.
     Backgrounds marked <em>public domain</em> are CC0 or PD and free to use — the credit is on
     <a href="/photo-credits.html">the credits page</a>. Your own photos and uploads never leave this browser.
@@ -426,14 +440,21 @@
     }
 
     // --- headliner
-    var head = $('headliner').value.trim() || 'YOUR BAND';
-    var fit = fitLines(head.toUpperCase(), Math.round(W * 0.155), Math.round(W * 0.055), inner, 3);
-    y += Math.round(fit.px * 0.92);
-    ctx.fillStyle = '#f6f3f0';
-    for (var i = 0; i < fit.lines.length; i++) {
-      ctx.font = disp(fit.px);
-      ctx.fillText(fit.lines[i], pad, y);
-      y += Math.round(fit.px * 1.0);
+    // Empty means empty. This used to fall back to "YOUR BAND" at draw time,
+    // which made the field impossible to actually clear -- no way to build a
+    // poster that carries a logo and nothing else. The starting value is set
+    // once on load instead, so the canvas is not blank on arrival but the
+    // field still does what deleting its contents ought to do.
+    var head = $('headliner').value.trim();
+    if (head) {
+      var fit = fitLines(head.toUpperCase(), Math.round(W * 0.155), Math.round(W * 0.055), inner, 3);
+      y += Math.round(fit.px * 0.92);
+      ctx.fillStyle = '#f6f3f0';
+      for (var i = 0; i < fit.lines.length; i++) {
+        ctx.font = disp(fit.px);
+        ctx.fillText(fit.lines[i], pad, y);
+        y += Math.round(fit.px * 1.0);
+      }
     }
 
     // --- support, each on its own line
@@ -787,12 +808,73 @@
     });
   })();
 
+  // ---- share the tool itself ---------------------------------------------
+  // Separate from the button on the canvas, which sends a poster. This one
+  // sends the page, so a band that likes the thing can pass it on. UTM tags
+  // on the link mean a visit arriving from a share is distinguishable from
+  // one arriving from search, which is the only way to tell whether sharing
+  // it ever does anything.
+  (function () {
+    var btn = $('shareTool'), label = $('shareToolLabel'), hint = $('shareToolHint');
+    var original = label.textContent, timer = 0;
+    var TITLE = 'Gig Poster Maker — free, in your browser';
+    var BLURB = 'Make a gig poster in a couple of minutes. Free, nothing to install.';
+
+    function url(medium) {
+      return 'https://www.mikidrummer.ca/poster.html'
+           + '?utm_source=share&utm_medium=' + medium + '&utm_campaign=poster_tool';
+    }
+
+    function track(method) {
+      if (typeof gtag === 'function') {
+        gtag('event', 'share', { method: method, content_type: 'tool', item_id: 'poster' });
+      }
+    }
+
+    function say(msg, note) {
+      label.textContent = msg;
+      hint.textContent = note || '';
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        label.textContent = original;
+        hint.textContent = '';
+      }, 4000);
+    }
+
+    btn.addEventListener('click', function () {
+      if (navigator.share) {
+        navigator.share({ title: TITLE, text: BLURB, url: url('web_share') })
+          .then(function () { track('web_share'); say('Shared 🤘'); })
+          .catch(function (e) {
+            // Dismissed, not failed.
+            if (e && e.name === 'AbortError') { label.textContent = original; hint.textContent = ''; return; }
+            copy();
+          });
+        return;
+      }
+      copy();
+    });
+
+    function copy() {
+      var link = url('copy');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(function () {
+          track('copy');
+          say('Link copied 📋', 'Paste it anywhere.');
+        }).catch(function () { say('Could not copy', link); });
+      } else {
+        say('Copy this link', link);
+      }
+    }
+  })();
+
   // ---- live redraw -------------------------------------------------------
   ['headliner', 'support', 'kicker', 'date', 'time', 'venue', 'city', 'price', 'foot']
     .forEach(function (id) { $(id).addEventListener('input', draw); });
 
   // sensible defaults so the canvas is never blank on arrival
   $('kicker').value = 'Punk BC presents';
+  $('headliner').value = 'Your Band';
   var soon = new Date(Date.now() + 14 * 864e5);
   $('date').value = soon.toISOString().slice(0, 10);
 
