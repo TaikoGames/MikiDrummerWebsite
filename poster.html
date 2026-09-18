@@ -77,6 +77,21 @@
   .thumb .tag{position:absolute;left:3px;bottom:3px;font-size:8.5px;letter-spacing:.06em;
               background:rgba(0,0,0,.72);color:#fff;padding:1px 4px;border-radius:3px}
 
+  /* Nine anchors laid out as the poster itself, so the control looks like the
+     thing it controls rather than a list of compass directions. */
+  .pos{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:132px;margin-top:8px}
+  .pos button{aspect-ratio:1;background:#0e1013;border:1px solid var(--edge2);border-radius:6px;
+              cursor:pointer;position:relative;padding:0}
+  .pos button::after{content:"";position:absolute;width:11px;height:7px;border-radius:2px;
+                     background:var(--dim);top:50%;left:50%;transform:translate(-50%,-50%)}
+  .pos button:hover{border-color:var(--hot)}
+  .pos button[aria-pressed=true]{border-color:var(--hot);background:#241309}
+  .pos button[aria-pressed=true]::after{background:var(--hot)}
+  .slider{display:flex;align-items:center;gap:10px;margin-top:12px}
+  .slider input[type=range]{flex:1;accent-color:var(--hot)}
+  .slider output{font-size:12px;color:var(--mid);min-width:44px;text-align:right;
+                 font-variant-numeric:tabular-nums}
+
   .stage{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:16px;
          position:sticky;top:16px}
   canvas{width:100%;height:auto;display:block;border-radius:8px;background:#000}
@@ -154,6 +169,28 @@
           <button class="btn" id="uploadLogo">Upload a logo…</button>
           <input type="file" id="logoFile" accept="image/*" hidden>
         </div>
+
+        <label style="margin-top:14px">Position</label>
+        <div class="pos" id="logoPos">
+          <button type="button" data-pos="tl" aria-pressed="false" aria-label="Top left"></button>
+          <button type="button" data-pos="tc" aria-pressed="false" aria-label="Top centre"></button>
+          <button type="button" data-pos="tr" aria-pressed="true"  aria-label="Top right"></button>
+          <button type="button" data-pos="ml" aria-pressed="false" aria-label="Middle left"></button>
+          <button type="button" data-pos="mc" aria-pressed="false" aria-label="Middle centre"></button>
+          <button type="button" data-pos="mr" aria-pressed="false" aria-label="Middle right"></button>
+          <button type="button" data-pos="bl" aria-pressed="false" aria-label="Bottom left"></button>
+          <button type="button" data-pos="bc" aria-pressed="false" aria-label="Bottom centre"></button>
+          <button type="button" data-pos="br" aria-pressed="false" aria-label="Bottom right"></button>
+        </div>
+
+        <label for="logoScale" style="margin-top:14px">Size</label>
+        <div class="slider">
+          <input type="range" id="logoScale" min="6" max="70" value="20" step="1">
+          <output id="logoScaleOut">20%</output>
+        </div>
+        <div class="hint">Percentage of the poster's width. The logo sits under the type, so
+           text stays readable wherever you put it.</div>
+
         <p class="warn">Only Granite has a logo file on the site. For any other band or venue,
            upload the file they gave you — I am not going to lift someone else's mark off the web.</p>
       </div>
@@ -221,6 +258,7 @@
 
   var state = {
     bg: null, bgCredit: '', logo: null,
+    logoPos: 'tr', logoScale: 0.20,
     w: 1080, h: 1350, tab: 'pd'
   };
 
@@ -326,8 +364,53 @@
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
 
-    // --- top: kicker and logo
-    var y = pad + Math.round(H * 0.035);
+    var logoFloor = 0;          // where the type has to start to clear the logo
+    var logoCeiling = 0;        // and where the bottom block has to stop
+
+    // --- the logo, before any type
+    // Under all of it, deliberately. Nine anchors and a size slider mean it
+    // can be put anywhere, including straight behind the headline, and the
+    // one thing that must never happen is a poster where the band's name is
+    // unreadable. Drawing it first was not enough on its own -- it used to go
+    // after the kicker, which swallowed "PUNK BC PRESENTS" whole at top-left.
+    if (state.logo) {
+      // Fitted inside the scale box rather than stretched to it: a wide
+      // wordmark and a square mark set to the same percentage should both come
+      // out at that width undistorted, and a tall logo must not run off the
+      // bottom of the poster.
+      var box = W * state.logoScale;
+      var sc = Math.min(box / state.logo.width, box / state.logo.height);
+      var lw = state.logo.width * sc, lh = state.logo.height * sc;
+      var pos = state.logoPos;
+      var lx = pos[1] === 'l' ? pad
+             : pos[1] === 'c' ? (W - lw) / 2
+             : W - pad - lw;
+      var ly = pos[0] === 't' ? pad
+             : pos[0] === 'm' ? (H - lh) / 2
+             : H - pad - lh;
+      ctx.globalAlpha = 0.96;
+      ctx.drawImage(state.logo, Math.round(lx), Math.round(ly),
+                    Math.round(lw), Math.round(lh));
+      ctx.globalAlpha = 1;
+      // All the type is left-aligned from the padding, so a logo on the top
+      // left or top centre lands exactly where the kicker and headline start.
+      // Drawing them on top keeps them readable but leaves a mess; starting
+      // the text below the logo is what anyone would do by hand. A top-right
+      // logo clears the column on its own and is left alone.
+      if (pos === 'tl' || pos === 'tc') {
+        logoFloor = ly + lh + Math.round(W * 0.035);
+      } else if (pos[0] === 'b') {
+        // Mirror of the above: the date and venue block is built upward from
+        // the bottom padding and lands on a logo sitting there. All three
+        // bottom anchors need it -- the price is right-aligned, so a
+        // bottom-right logo is caught by it just as a left one catches the
+        // date. The credit line is handled separately, further down.
+        logoCeiling = ly - Math.round(W * 0.03);
+      }
+    }
+
+    // --- top: kicker
+    var y = Math.max(pad + Math.round(H * 0.035), logoFloor);
     var kicker = $('kicker').value.trim();
     if (kicker) {
       ctx.font = text(Math.round(W * 0.026));
@@ -336,13 +419,6 @@
       ctx.fillText(kicker.toUpperCase(), pad, y);
       ctx.letterSpacing = '0px';
       y += Math.round(W * 0.03);
-    }
-    if (state.logo) {
-      var lw = Math.round(W * 0.20);
-      var lh = state.logo.height * (lw / state.logo.width);
-      ctx.globalAlpha = 0.96;
-      ctx.drawImage(state.logo, W - pad - lw, pad, lw, lh);
-      ctx.globalAlpha = 1;
     }
 
     // --- headliner
@@ -372,7 +448,12 @@
     }
 
     // --- bottom block: rule, date, venue, price
-    var by = H - pad;
+    // The credit line is drawn last at H - pad, right-aligned. The bottom
+    // block has to start above it or the price -- also right-aligned -- lands
+    // straight on top of it, which is what happened on any poster without a
+    // footer line, since nothing else was pushing the block up.
+    var creditRoom = Math.round(W * 0.045);
+    var by = (logoCeiling ? Math.min(H - pad, logoCeiling) : H - pad) - creditRoom;
     var foot = $('foot').value.trim();
     if (foot) {
       ctx.font = text(Math.round(W * 0.024));
@@ -414,12 +495,20 @@
     ctx.fillStyle = '#e8672a';
     ctx.fillRect(pad, by, Math.round(W * 0.14), Math.max(4, Math.round(W * 0.007)));
 
-    // --- the mark, bottom right
+    // --- the mark, bottom right -- unless the logo is already sitting there,
+    // in which case it swaps to the left rather than printing over it. The
+    // bottom-left and bottom-centre cases are handled by raising the block
+    // above; this is the one corner that cannot be solved by moving up.
     ctx.font = text(Math.round(W * 0.021));
     ctx.fillStyle = 'rgba(160,154,148,.85)';
-    ctx.textAlign = 'right';
-    ctx.fillText('mikidrummer.ca/punkbc', W - pad, H - pad);
-    ctx.textAlign = 'left';
+    if (state.logo && state.logoPos === 'br') {
+      ctx.textAlign = 'left';
+      ctx.fillText('mikidrummer.ca/punkbc', pad, H - pad);
+    } else {
+      ctx.textAlign = 'right';
+      ctx.fillText('mikidrummer.ca/punkbc', W - pad, H - pad);
+      ctx.textAlign = 'left';
+    }
   }
 
   // ---- background picker -------------------------------------------------
@@ -514,6 +603,22 @@
       loadImage(l.src).then(function (im) { state.logo = im; draw(); });
     });
     $('logoChips').appendChild(b);
+  });
+
+  // ---- logo position and size -------------------------------------------
+  $('logoPos').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-pos]'); if (!b) return;
+    Array.prototype.forEach.call(this.querySelectorAll('button'), function (c) {
+      c.setAttribute('aria-pressed', String(c === b));
+    });
+    state.logoPos = b.dataset.pos;
+    draw();
+  });
+
+  $('logoScale').addEventListener('input', function () {
+    state.logoScale = (+this.value) / 100;
+    $('logoScaleOut').textContent = this.value + '%';
+    draw();
   });
 
   // ---- size chips --------------------------------------------------------
