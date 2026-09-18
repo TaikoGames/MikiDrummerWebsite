@@ -35,6 +35,12 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://www.mikidrummer.ca/tools.html</loc>
+    <lastmod>2026-09-18</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://www.mikidrummer.ca/gig-checklist.html</loc>
     <lastmod>2026-08-13</lastmod>
     <priority>0.7</priority>
