@@ -1,0 +1,65 @@
+name: Merch photos
+
+# /merch.html prints a band's artwork onto a blank. The first cut drew those
+# blanks as vectors, and they read as vectors -- which defeats a mockup, whose
+# only job is to show what the thing will actually look like.
+#
+# So it needs photographs, and photographs need a licence that lets a finished
+# mockup be sent to a printer or posted to Instagram without conditions
+# following it. This finds public-domain ones, reads the licence off the file
+# instead of trusting the search, and drops them in a candidates folder for a
+# human to pick from. Nothing here goes near the site by itself.
+
+on:
+  workflow_dispatch:
+    inputs:
+      products:
+        description: "Which products (comma-separated slugs, blank = all)"
+        default: ""
+      per_product:
+        description: "How many photos to keep per product"
+        default: "6"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: merch-photos
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --quiet pillow
+
+      - name: Check the licence filter still holds
+        run: python3 tools/fetch_merch_photos.py --self-test
+
+      - name: Find public-domain blanks
+        env:
+          PRODUCTS: ${{ github.event.inputs.products }}
+          PER_PRODUCT: ${{ github.event.inputs.per_product }}
+        run: |
+          python3 tools/fetch_merch_photos.py | tee /tmp/fetch.log
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo '## Merch blanks'
+            echo
+            echo '```'
+            cat /tmp/fetch.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit the candidates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add images/merch/candidates
+          git diff --cached --quiet && { echo "nothing new"; exit 0; }
+          git commit -m "Merch: public-domain blank photos for review"
+          git push origin "HEAD:$GITHUB_REF_NAME"
