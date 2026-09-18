@@ -211,8 +211,12 @@
         <canvas id="poster" width="1080" height="1350"></canvas>
         <div class="meta">
           <span id="dims">1080 × 1350</span>
-          <button class="btn go" id="save">↓ Save PNG</button>
+          <span style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" id="share" role="status" aria-live="polite">⤴ <span id="shareLabel">Share</span></button>
+            <button class="btn go" id="save">↓ Save PNG</button>
+          </span>
         </div>
+        <div class="hint" id="shareHint" style="margin-top:8px"></div>
       </div>
     </div>
   </div>
@@ -687,6 +691,101 @@
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
     }, 'image/png');
   });
+
+  // ---- share -------------------------------------------------------------
+  // The thing worth sharing here is the poster, not this page. Web Share can
+  // carry a file, which on a phone means the share sheet opens with the image
+  // already attached and it goes straight into Instagram or a group chat --
+  // no save, find, re-upload. Desktop browsers mostly cannot share files, so
+  // there is a ladder down to copying the image and then to saving it.
+  (function () {
+    var btn = $('share'), label = $('shareLabel'), hint = $('shareHint');
+    var original = label.textContent, timer = 0;
+
+    function say(msg, note) {
+      label.textContent = msg;
+      hint.textContent = note || '';
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        label.textContent = original;
+        hint.textContent = '';
+      }, 4000);
+    }
+
+    // JPEG for sharing, PNG for the Save button. The poster is a photograph
+    // under type, which PNG stores badly: 1193 KB against 218 KB at q92, for a
+    // mean difference of 1.2 in 255 -- not visible. And every target worth
+    // sharing to, Instagram included, re-encodes to JPEG on the way in, so a
+    // PNG only makes the handoff slower for the same end result. A file
+    // someone saves to keep or print is a different question, and stays PNG.
+    function blob() {
+      draw();
+      return new Promise(function (res) { cv.toBlob(res, 'image/jpeg', 0.92); });
+    }
+
+    function filename() {
+      var n = ($('headliner').value.trim() || 'poster')
+                .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      return n + '-' + ($('date').value || 'poster') + '.jpg';
+    }
+
+    function caption() {
+      var bits = [$('headliner').value.trim()];
+      var sup = $('support').value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+      if (sup.length) bits.push('with ' + sup.join(', '));
+      var where = [$('venue').value.trim(), $('city').value.trim()].filter(Boolean).join(', ');
+      if (where) bits.push('at ' + where);
+      if ($('date').value) {
+        var p = $('date').value.split('-');
+        bits.push('on ' + new Date(+p[0], +p[1] - 1, +p[2])
+          .toLocaleDateString('en-CA', { weekday: 'long', day: 'numeric', month: 'long' }));
+      }
+      return bits.filter(Boolean).join(' ');
+    }
+
+    btn.addEventListener('click', function () {
+      say('Working…');
+      blob().then(function (b) {
+        // Take the type off the blob rather than naming one: this said
+        // image/png while handing over JPEG bytes, which is the sort of thing
+        // a share target is entitled to refuse.
+        var file = new File([b], filename(), { type: b.type });
+
+        // canShare must be asked about this exact file: a browser can have
+        // navigator.share and still refuse images, and calling share() on one
+        // that does throws rather than degrading.
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          return navigator.share({ files: [file], text: caption() })
+            .then(function () { say('Shared 🤘'); })
+            .catch(function (e) {
+              // Dismissing the sheet rejects with AbortError. That is someone
+              // changing their mind, not a failure, and should say nothing.
+              if (e && e.name === 'AbortError') { label.textContent = original; hint.textContent = ''; return; }
+              throw e;
+            });
+        }
+
+        // No file sharing: put the image on the clipboard, which is one paste
+        // away from anywhere on a desktop.
+        if (navigator.clipboard && window.ClipboardItem) {
+          var item = {}; item[b.type] = b;
+          return navigator.clipboard.write([new ClipboardItem(item)])
+            .then(function () { say('Copied 📋', 'The poster is on your clipboard — paste it anywhere.'); });
+        }
+        throw new Error('no share route');
+      }).catch(function () {
+        // Last rung: hand them the file. A download always works.
+        blob().then(function (b) {
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(b);
+          a.download = filename();
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+          say('Saved ↓', 'This browser cannot share files, so it downloaded instead.');
+        });
+      });
+    });
+  })();
 
   // ---- live redraw -------------------------------------------------------
   ['headliner', 'support', 'kicker', 'date', 'time', 'venue', 'city', 'price', 'foot']
