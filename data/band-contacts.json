@@ -628,6 +628,42 @@
       "instagram": ""
     },
     {
+      "band": "Danger Box",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://dangerbox.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Dark Thoughts",
       "checked": "2026-09-13",
       "email": "",
@@ -663,6 +699,42 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Dazy",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://dazy.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Dead Pioneers",
@@ -782,6 +854,42 @@
       "instagram": ""
     },
     {
+      "band": "Demon Hunter",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://demonhunter.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Die Job",
       "checked": "2026-09-09",
       "email": "diejobpunk@gmail.com",
@@ -831,6 +939,42 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Dusty Pines",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://dustypines.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://dustypinesmusic.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Earth Crisis",
@@ -1075,6 +1219,42 @@
       "instagram": ""
     },
     {
+      "band": "Fatal Realm",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://fatalrealm.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Firewind & Atavistia",
       "checked": "2026-09-15",
       "email": "",
@@ -1301,6 +1481,134 @@
       "instagram": ""
     },
     {
+      "band": "Hot Water Music",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://hotwatermusic.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43171338-frank-turner-and-the-sleeping-souls-at-south-side-ballroom?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Hulder",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://hulder.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43344951-hulder-at-star-theater?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Star",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Infinexhuma",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "infinexhuma",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://infinexhuma.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://instagram.com/infinexhuma",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "http://twitter.com/infinexhuma",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Integrity",
       "checked": "2026-09-16",
       "email": "",
@@ -1442,6 +1750,84 @@
       ],
       "note": "UNCONFIRMED. At least three bands use this name (a Seattle pop punk band, a queer mom-rock band, and a Gold Class song). None could be tied to the Oct 3 Red Gate bill with The Fomites. Check with The Fomites before reaching out.",
       "instagram": ""
+    },
+    {
+      "band": "Kostnatění",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://kostnatn.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Liminal Shroud",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "liminalshroud",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://liminalshroud.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/liminalshroud/",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://instagram.com/liminalshroud?igshid=OTJhZDVkZWE=",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://new.express.adobe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Locked Shut. Touring on new self-titled album",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://lockedshuttouringonnewselftitledalbum.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Longshot",
@@ -1643,6 +2029,114 @@
       "instagram": "messa_band"
     },
     {
+      "band": "Miles to Nowhere",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://milestonowhere.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Militarie Gun",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://militariegun.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Missing Link",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://missinglink.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Nekrogoblikon",
       "checked": "2026-09-17",
       "email": "",
@@ -1743,6 +2237,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Pain of Truth",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://painoftruth.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Pill Mill",
@@ -1952,6 +2462,42 @@
       "instagram": ""
     },
     {
+      "band": "Sabbat",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://sabbat.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Schedule 1",
       "checked": "2026-09-13",
       "email": "",
@@ -1988,6 +2534,42 @@
       "instagram": ""
     },
     {
+      "band": "Shady Nasty",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://shadynasty.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Shiner",
       "checked": "2026-09-17",
       "email": "",
@@ -2022,6 +2604,52 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "SiM",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "bandcamp",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://sim.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/bandcamp",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/Bandcamp",
+          "found": "profile"
+        },
+        {
+          "name": "tiktok.com",
+          "url": "https://www.tiktok.com/@bandcamp",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.w3.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://42c34b06f2ca6504b0c9f52ac8d6fd03@o363271.ingest.us.sentry.io",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://bsky.app",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Sleep",
@@ -2084,6 +2712,42 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Softcult",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://softcult.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Speed Reaper",
@@ -2219,6 +2883,68 @@
       "instagram": ""
     },
     {
+      "band": "The Corps",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "thecorps2814",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://thecorps.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/thecorps2814/",
+          "found": "profile"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "open.spotify.com",
+          "url": "https://open.spotify.com/artist/4FjyhVV0npeLb8IKkpX8tK",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "The Dillinger Escape Plan",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://thedillingerescapeplan.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "The Exit Strategy",
       "checked": "2026-09-13",
       "email": "",
@@ -2309,6 +3035,47 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "The Menzingers",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://themenzingers.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "https://twitter.com/themenzingers",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://themenzingers.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "The Spits",
@@ -2521,6 +3288,104 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Wolves At The Gate",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://wolvesatthegate.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "https://twitter.com/wolvesatthegate",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Xiphoid Dementia",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://xiphoiddementia.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Youth Fountain",
+      "checked": "2026-09-18",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://youthfountain.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "http://www.facebook.com/2008/fbml",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43292417-youth-fountain-at-paddys-underground?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://opengraphprotocol.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://schema.org",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://js.stripe.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     }
   ]
 }
