@@ -31,8 +31,8 @@
      logo exists for Lift the Anchor, Bound By None or Diera, and none for any
      of the 78 acts on the board or any venue. Those belong to other people --
      naming a band on a poster for a gig they are playing is ordinary, pasting
-     their trademark into a generator is not. So: names set big, and a slot for
-     a logo file where one is actually to hand. -->
+     their trademark into a generator is not. So: names set big, and logo slots
+     for the files actually to hand -- as many as a bill needs. -->
 
 <style>
   :root{
@@ -101,6 +101,20 @@
   .slider input[type=range]{flex:1;accent-color:var(--hot)}
   .slider output{font-size:12px;color:var(--mid);min-width:44px;text-align:right;
                  font-variant-numeric:tabular-nums}
+
+  /* Added logos. Each carries its own position and size, so the list doubles
+     as the selector for which one the controls below are editing. */
+  .loaded{list-style:none;margin-top:12px}
+  .loaded li{display:flex;align-items:center;gap:9px;padding:7px;border-radius:8px;
+             border:1px solid var(--edge2);background:#0e1013;margin-bottom:6px;cursor:pointer}
+  .loaded li[aria-selected=true]{border-color:var(--hot);background:#241309}
+  .loaded li img{width:34px;height:26px;object-fit:contain;flex:none;background:#000;border-radius:4px}
+  .loaded li .nm{flex:1;font-size:12.5px;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .loaded li .sub{font-size:10.5px;color:var(--dim);letter-spacing:.04em;text-transform:uppercase}
+  .loaded li .kill{background:none;border:0;color:var(--dim);font-size:16px;cursor:pointer;
+                   padding:2px 6px;line-height:1;border-radius:5px}
+  .loaded li .kill:hover{color:#ff7a5c;background:rgba(255,122,92,.12)}
+  .empty{font-size:12px;color:var(--dim);padding:8px 2px}
 
   .stage{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:16px;
          position:sticky;top:16px}
@@ -173,14 +187,16 @@
       </div>
 
       <div class="panel">
-        <h2>Logo</h2>
+        <h2>Logos</h2>
         <div class="chips" id="logoChips"></div>
         <div class="btns">
           <button class="btn" id="uploadLogo">Upload a logo…</button>
-          <input type="file" id="logoFile" accept="image/*" hidden>
+          <input type="file" id="logoFile" accept="image/*" multiple hidden>
         </div>
 
-        <label style="margin-top:14px">Position</label>
+        <ul class="loaded" id="logoList"></ul>
+
+        <label style="margin-top:14px" id="posLabel">Position</label>
         <div class="pos" id="logoPos">
           <button type="button" data-pos="tl" aria-pressed="false" aria-label="Top left"></button>
           <button type="button" data-pos="tc" aria-pressed="false" aria-label="Top centre"></button>
@@ -198,11 +214,13 @@
           <input type="range" id="logoScale" min="6" max="70" value="20" step="1">
           <output id="logoScaleOut">20%</output>
         </div>
-        <div class="hint">Percentage of the poster's width. The logo sits under the type, so
-           text stays readable wherever you put it.</div>
+        <div class="hint">Percentage of the poster's width, for whichever logo is selected above.
+           Logos sit under the type, so the bill stays readable wherever you put them, and two
+           in the same corner stack rather than overlap.</div>
 
         <p class="warn">Only Granite has a logo file on the site. For any other band or venue,
-           upload the file they gave you — I am not going to lift someone else's mark off the web.</p>
+           upload the file they gave you — several at once is fine. I am not going to lift
+           someone else's mark off the web.</p>
       </div>
 
       <div class="panel">
@@ -275,11 +293,36 @@
     { id: 'miki', name: 'Miki mark', src: '/images/brand.png' }
   ];
 
+  // logos is a list: a bill with a headliner's mark and a promoter's, or a
+  // band and a venue, needs more than one, and each wants its own corner and
+  // its own size. sel is the one the position grid and slider are editing.
   var state = {
-    bg: null, bgCredit: '', logo: null,
-    logoPos: 'tr', logoScale: 0.20,
+    bg: null, bgCredit: '', logos: [], sel: -1,
     w: 1080, h: 1350, tab: 'pd'
   };
+
+  function current() { return state.logos[state.sel] || null; }
+
+  // Nine anchors, and more logos than anchors is allowed, so two in the same
+  // corner stack rather than sit on top of each other.
+  function place(L, i, W, H, pad) {
+    var box = W * L.scale;
+    var sc = Math.min(box / L.img.width, box / L.img.height);
+    var w = L.img.width * sc, h = L.img.height * sc;
+    var stack = 0;
+    for (var j = 0; j < i; j++) {
+      if (state.logos[j].pos === L.pos) {
+        var pb = W * state.logos[j].scale;
+        var ps = Math.min(pb / state.logos[j].img.width, pb / state.logos[j].img.height);
+        stack += state.logos[j].img.height * ps + Math.round(W * 0.018);
+      }
+    }
+    var x = L.pos[1] === 'l' ? pad : L.pos[1] === 'c' ? (W - w) / 2 : W - pad - w;
+    var y = L.pos[0] === 't' ? pad + stack
+          : L.pos[0] === 'm' ? (H - h) / 2 + stack
+          : H - pad - h - stack;
+    return { x: x, y: y, w: w, h: h };
+  }
 
   // ---- fonts -------------------------------------------------------------
   // Canvas will silently fall back to a default face if it draws before the
@@ -386,47 +429,41 @@
     var logoFloor = 0;          // where the type has to start to clear the logo
     var logoCeiling = 0;        // and where the bottom block has to stop
 
-    // --- the logo, before any type
-    // Under all of it, deliberately. Nine anchors and a size slider mean it
-    // can be put anywhere, including straight behind the headline, and the
-    // one thing that must never happen is a poster where the band's name is
-    // unreadable. Drawing it first was not enough on its own -- it used to go
-    // after the kicker, which swallowed "PUNK BC PRESENTS" whole at top-left.
-    if (state.logo) {
-      // Fitted inside the scale box rather than stretched to it: a wide
-      // wordmark and a square mark set to the same percentage should both come
-      // out at that width undistorted, and a tall logo must not run off the
-      // bottom of the poster.
-      var box = W * state.logoScale;
-      var sc = Math.min(box / state.logo.width, box / state.logo.height);
-      var lw = state.logo.width * sc, lh = state.logo.height * sc;
-      var pos = state.logoPos;
-      var lx = pos[1] === 'l' ? pad
-             : pos[1] === 'c' ? (W - lw) / 2
-             : W - pad - lw;
-      var ly = pos[0] === 't' ? pad
-             : pos[0] === 'm' ? (H - lh) / 2
-             : H - pad - lh;
+    // --- the logos, before any type
+    // Under all of it, deliberately. Nine anchors and a size slider mean one
+    // can be put anywhere, including straight behind the headline, and the one
+    // thing that must never happen is a poster whose band name is unreadable.
+    // Drawing them first was not enough on its own -- they used to go after
+    // the kicker, which swallowed "PUNK BC PRESENTS" whole at top-left.
+    var bottomRightTaken = false;
+    state.logos.forEach(function (L, i) {
+      var r = place(L, i, W, H, pad);
       ctx.globalAlpha = 0.96;
-      ctx.drawImage(state.logo, Math.round(lx), Math.round(ly),
-                    Math.round(lw), Math.round(lh));
+      ctx.drawImage(L.img, Math.round(r.x), Math.round(r.y),
+                    Math.round(r.w), Math.round(r.h));
       ctx.globalAlpha = 1;
+
       // All the type is left-aligned from the padding, so a logo on the top
       // left or top centre lands exactly where the kicker and headline start.
       // Drawing them on top keeps them readable but leaves a mess; starting
       // the text below the logo is what anyone would do by hand. A top-right
       // logo clears the column on its own and is left alone.
-      if (pos === 'tl' || pos === 'tc') {
-        logoFloor = ly + lh + Math.round(W * 0.035);
-      } else if (pos[0] === 'b') {
+      //
+      // With several logos the lowest top one and the highest bottom one win,
+      // or the second would undo the room the first asked for.
+      if (L.pos === 'tl' || L.pos === 'tc') {
+        logoFloor = Math.max(logoFloor, r.y + r.h + Math.round(W * 0.035));
+      } else if (L.pos[0] === 'b') {
         // Mirror of the above: the date and venue block is built upward from
         // the bottom padding and lands on a logo sitting there. All three
         // bottom anchors need it -- the price is right-aligned, so a
         // bottom-right logo is caught by it just as a left one catches the
         // date. The credit line is handled separately, further down.
-        logoCeiling = ly - Math.round(W * 0.03);
+        var c = r.y - Math.round(W * 0.03);
+        logoCeiling = logoCeiling ? Math.min(logoCeiling, c) : c;
+        if (L.pos === 'br') bottomRightTaken = true;
       }
-    }
+    });
 
     // --- top: kicker
     var y = Math.max(pad + Math.round(H * 0.035), logoFloor);
@@ -527,7 +564,7 @@
     // above; this is the one corner that cannot be solved by moving up.
     ctx.font = text(Math.round(W * 0.021));
     ctx.fillStyle = 'rgba(160,154,148,.85)';
-    if (state.logo && state.logoPos === 'br') {
+    if (bottomRightTaken) {
       ctx.textAlign = 'left';
       ctx.fillText('mikidrummer.ca/punkbc', pad, H - pad);
     } else {
@@ -591,14 +628,24 @@
     }, 0);
   });
 
-  function wireUpload(btnId, inputId, onLoad) {
+  function wireUpload(btnId, inputId, onLoad, many) {
     $(btnId).addEventListener('click', function () { $(inputId).click(); });
     $(inputId).addEventListener('change', function () {
-      var f = this.files && this.files[0];
-      if (!f) return;
-      var fr = new FileReader();
-      fr.onload = function () { loadImage(fr.result).then(onLoad).catch(function () {}); };
-      fr.readAsDataURL(f);      // stays in this browser; nothing is uploaded
+      var files = this.files ? Array.prototype.slice.call(this.files) : [];
+      if (!files.length) return;
+      // The logo input takes several at once; the background takes one.
+      (many ? files : files.slice(0, 1)).forEach(function (f) {
+        var fr = new FileReader();
+        fr.onload = function () {
+          loadImage(fr.result)
+            .then(function (im) { onLoad(im, f.name.replace(/\.[^.]+$/, '')); })
+            .catch(function () {});
+        };
+        fr.readAsDataURL(f);    // stays in this browser; nothing is uploaded
+      });
+      // Clear it, or picking the same file twice fires no change event and the
+      // second logo silently never arrives.
+      this.value = '';
     });
   }
   wireUpload('uploadBg', 'bgFile', function (im) {
@@ -608,43 +655,102 @@
     });
     draw();
   });
-  wireUpload('uploadLogo', 'logoFile', function (im) {
-    state.logo = im;
-    Array.prototype.forEach.call($('logoChips').querySelectorAll('.chip'), function (c) {
-      c.setAttribute('aria-pressed', 'false');
-    });
-    draw();
-  });
+  wireUpload('uploadLogo', 'logoFile', function (im, name) {
+    addLogo(im, name || 'Uploaded');
+  }, true);
 
-  // ---- logo chips --------------------------------------------------------
-  LOGOS.forEach(function (l, i) {
-    var b = document.createElement('button');
-    b.className = 'chip'; b.type = 'button'; b.textContent = l.name;
-    b.setAttribute('aria-pressed', String(i === 0));
-    b.addEventListener('click', function () {
-      Array.prototype.forEach.call($('logoChips').querySelectorAll('.chip'), function (c) {
-        c.setAttribute('aria-pressed', String(c === b));
+  // ---- the list of logos -------------------------------------------------
+  // A bill often needs more than one mark -- the headliner's and the
+  // promoter's, or a band and the venue -- and each wants its own corner and
+  // its own size, so they are a list rather than a slot. Selecting one in the
+  // list is what the position grid and the slider below act on.
+  function addLogo(img, name) {
+    state.logos.push({ img: img, name: name, pos: 'tr', scale: 0.20 });
+    state.sel = state.logos.length - 1;
+    renderLogos();
+    draw();
+  }
+
+  function renderLogos() {
+    var box = $('logoList');
+    box.innerHTML = '';
+    if (!state.logos.length) {
+      var e = document.createElement('li');
+      e.className = 'empty';
+      e.style.cssText = 'border:0;background:none;cursor:default';
+      e.textContent = 'No logos yet — pick one above or upload your own.';
+      box.appendChild(e);
+      $('posLabel').textContent = 'Position';
+      return;
+    }
+    state.logos.forEach(function (L, i) {
+      var li = document.createElement('li');
+      li.setAttribute('aria-selected', String(i === state.sel));
+      var im = document.createElement('img');
+      im.src = L.img.src; im.alt = '';
+      var nm = document.createElement('span');
+      nm.className = 'nm';
+      nm.innerHTML = '<span class="nm">' + L.name + '</span>';
+      nm.textContent = L.name;
+      var sub = document.createElement('span');
+      sub.className = 'sub';
+      sub.textContent = L.pos.toUpperCase() + ' · ' + Math.round(L.scale * 100) + '%';
+      var kill = document.createElement('button');
+      kill.className = 'kill'; kill.type = 'button';
+      kill.setAttribute('aria-label', 'Remove ' + L.name);
+      kill.textContent = '\u00d7';
+      kill.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        state.logos.splice(i, 1);
+        if (state.sel >= state.logos.length) state.sel = state.logos.length - 1;
+        renderLogos(); draw();
       });
-      if (!l.src) { state.logo = null; draw(); return; }
-      loadImage(l.src).then(function (im) { state.logo = im; draw(); });
+      li.addEventListener('click', function () {
+        state.sel = i; renderLogos(); syncControls(); draw();
+      });
+      li.appendChild(im); li.appendChild(nm); li.appendChild(sub); li.appendChild(kill);
+      box.appendChild(li);
+    });
+    var c = current();
+    $('posLabel').textContent = c ? 'Position — ' + c.name : 'Position';
+  }
+
+  function syncControls() {
+    var c = current();
+    if (!c) return;
+    Array.prototype.forEach.call($('logoPos').querySelectorAll('button'), function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.pos === c.pos));
+    });
+    $('logoScale').value = Math.round(c.scale * 100);
+    $('logoScaleOut').textContent = Math.round(c.scale * 100) + '%';
+  }
+
+  // ---- logo chips: each one adds, rather than replacing ------------------
+  LOGOS.filter(function (l) { return l.src; }).forEach(function (l) {
+    var b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.textContent = '+ ' + l.name;
+    b.addEventListener('click', function () {
+      loadImage(l.src).then(function (im) { addLogo(im, l.name); });
     });
     $('logoChips').appendChild(b);
   });
 
-  // ---- logo position and size -------------------------------------------
+  // ---- logo position and size act on the selected one --------------------
   $('logoPos').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-pos]'); if (!b) return;
-    Array.prototype.forEach.call(this.querySelectorAll('button'), function (c) {
-      c.setAttribute('aria-pressed', String(c === b));
+    var c = current(); if (!c) return;
+    Array.prototype.forEach.call(this.querySelectorAll('button'), function (x) {
+      x.setAttribute('aria-pressed', String(x === b));
     });
-    state.logoPos = b.dataset.pos;
-    draw();
+    c.pos = b.dataset.pos;
+    renderLogos(); draw();
   });
 
   $('logoScale').addEventListener('input', function () {
-    state.logoScale = (+this.value) / 100;
+    var c = current(); if (!c) return;
+    c.scale = (+this.value) / 100;
     $('logoScaleOut').textContent = this.value + '%';
-    draw();
+    renderLogos(); draw();
   });
 
   // ---- size chips --------------------------------------------------------
@@ -895,6 +1001,7 @@
   var soon = new Date(Date.now() + 14 * 864e5);
   $('date').value = soon.toISOString().slice(0, 10);
 
+  renderLogos();
   loadFonts().then(function () { renderThumbs(); draw(); });
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(function () { fontsReady = true; draw(); });
