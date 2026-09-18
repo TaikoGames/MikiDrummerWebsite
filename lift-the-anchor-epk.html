@@ -333,6 +333,26 @@
         transition: filter 0.15s ease, transform 0.05s ease;
     }
     .pdf-btn:hover { filter: brightness(1.08); }
+
+    /* Bandcamp and YouTube embeds are iframes, and an iframe prints as
+       nothing. Without this the PDF a promoter files has no music in it. */
+    .print-only, .print-contact { display: none; }
+    @media print {
+        .print-only { display: block; margin-top: 4px; }
+        /* A form is interactive; printed it is a page of empty boxes where the
+           contact details should be. Swap it for the route itself. */
+        .book-btn, .book-panel, .socials, .reach { display: none !important; }
+        /* The old one-track print fallback; the full list below replaces it. */
+        .print-listen { display: none !important; }
+        .print-contact { display: block !important; margin-top: 10px; font-size: 13.5px; line-height: 1.7; }
+        .print-contact .u { color: var(--stone-400); word-break: break-all; }
+        .bc-list, .videos, .sc-list { display: none !important; }
+        .print-only ul { list-style: none; margin: 0; padding: 0; }
+        .print-only li { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.14);
+                         font-size: 12.5px; line-height: 1.5; }
+        .print-only .t { font-weight: 700; }
+        .print-only .u { color: var(--stone-400); word-break: break-all; }
+    }
     /* Secondary to the PDF button: the same shape, but it should not compete
        with the thing most people came to press. */
     .share-btn {
@@ -478,7 +498,19 @@
         </div>
         <a class="print-listen" href="https://lifttheanchor.bandcamp.com">Listen at lifttheanchor.bandcamp.com</a>
     </div>
-</section>
+
+        <div class="print-only">
+          <ul>
+            <li><span class="t">Hello RPM (demo)</span><br><span class="u">https://lifttheanchor.bandcamp.com/track/hello-rpm-demo</span></li>
+            <li><span class="t">Aurora (demo)</span><br><span class="u">https://lifttheanchor.bandcamp.com/track/aurora-demo</span></li>
+            <li><span class="t">Full catalogue</span><br><span class="u">https://lifttheanchor.bandcamp.com</span></li>
+            <li><span class="t">Live video</span><br><span class="u">https://youtu.be/BgibPRWl6R0</span></li>
+            <li><span class="t">Short — clip 1</span><br><span class="u">https://youtu.be/YX76jUSHKAk</span></li>
+            <li><span class="t">Short — clip 2</span><br><span class="u">https://youtu.be/gMM0lI1rHws</span></li>
+          </ul>
+          <p class="note">Streaming links, in case you are reading this on paper.</p>
+        </div>
+    </section>
 
 <!-- ===================== LIVE ===================== -->
 <!-- Switched off for now. Baked hidden as well as set live.show=false in
@@ -609,6 +641,12 @@
                 <p class="book-said" id="bookSaid" role="status" aria-live="polite"></p>
                 <p class="book-alt">Prefer a DM? <a href="https://www.instagram.com/lifttheanchor/" target="_blank" rel="noopener">@lifttheanchor</a> on Instagram.</p>
             </form>
+        </div>
+
+        <div class="print-contact">
+          <b>Booking and press</b><br>
+          Instagram: <span class="u">@lifttheanchor</span><br>
+          Or use the enquiry form at <span class="u">https://www.mikidrummer.ca/lift-the-anchor-epk.html#book</span>
         </div>
 
         <div class="socials" style="margin-top:32px">
