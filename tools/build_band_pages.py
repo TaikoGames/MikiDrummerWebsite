@@ -138,6 +138,12 @@ def page_html(info: dict, today: str) -> str:
             f"{'s' if n != 1 else ''} in {where}. Dates, venues, door times, "
             f"ticket prices and who else is on the bill.")
 
+    # These pages exist for the bands themselves to share, which is the whole
+    # argument for a page per act -- so the thing a share renders has to be
+    # worth looking at. Without a card it is a grey rectangle, and in a DM or
+    # a story that reads as nothing at all. Built by tools/build_band_cards.py.
+    card = f"{SITE}/images/bands/{slug}.jpg"
+
     events = []
     for s in rows:
         ev = {
@@ -240,7 +246,12 @@ def page_html(info: dict, today: str) -> str:
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc, quote=True)}">
 <meta property="og:site_name" content="Punk BC">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="{card}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{html.escape(name, quote=True)} — upcoming shows on Punk BC">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{card}">
 <script type="application/ld+json">
 {json.dumps(graph, indent=2, ensure_ascii=False)}
 </script>
@@ -478,9 +489,23 @@ def main() -> int:
             page_html(info, today), encoding="utf-8")
     (OUT_DIR / "index.html").write_text(index_html(keep, today), encoding="utf-8")
 
+    # An act whose last date has passed stops earning a page, but the file it
+    # was given stays on disk unless something removes it. Three had already
+    # built up this way -- live and indexable, dropped from the sitemap, linked
+    # from nowhere, one of them ("Schedule 1") never a band in the first place.
+    # That is the same orphan problem as /files/, arriving on a schedule.
+    wanted = {f"{slugify(i['name'])}.html" for i in keep} | {"index.html"}
+    stale = sorted(p for p in OUT_DIR.glob("*.html") if p.name not in wanted)
+    for p in stale:
+        p.unlink()
+
     n = update_sitemap([slugify(i["name"]) for i in keep], today)
     print("%d acts on the board · %d pages written · %d too thin to earn one"
           % (len(by), len(keep), skipped))
+    if stale:
+        print("removed %d page%s for acts no longer on the board: %s"
+              % (len(stale), "" if len(stale) == 1 else "s",
+                 ", ".join(p.stem for p in stale)))
     print("sitemap: %d band URLs" % n)
     return 0
 

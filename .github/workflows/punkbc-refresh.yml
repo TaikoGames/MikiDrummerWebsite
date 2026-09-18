@@ -41,21 +41,38 @@ jobs:
         with:
           python-version: "3.x"
 
+      # Pillow draws the share cards; fontTools reads the site's woff2 so they
+      # use the real typeface, and it needs brotli to decompress it.
+      - name: Install what the builders need
+        run: python -m pip install --quiet Pillow fonttools brotli
+
       - name: Check the parsing still holds
         run: python tools/refresh_punkbc.py --self-test
 
       - name: Pull the sheet and re-bake the board
         run: python tools/refresh_punkbc.py
 
+      # The band pages and their share cards are derived from the board, so a
+      # board that moved without them moving leaves a band page advertising a
+      # gig that has passed. This used to run only in localise-art.yml, which
+      # is why three pages for acts long off the board were still live.
+      - name: Rebuild the band pages and their share cards
+        run: |
+          python tools/build_band_pages.py --selftest
+          python tools/build_band_pages.py
+          python tools/build_band_cards.py
+          python tools/build_band_cards.py --check
+
       - name: Commit if the board changed
         run: |
-          if [ -z "$(git status --porcelain punkbc.html punkbc-shows.json sitemap.xml)" ]; then
+          TRACKED="punkbc.html punkbc-shows.json sitemap.xml shows bands images/bands"
+          if [ -z "$(git status --porcelain $TRACKED)" ]; then
             echo "no change"
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add punkbc.html punkbc-shows.json sitemap.xml
+          git add $TRACKED
           git commit -m "Punk BC: refresh shows board ($(python -c "import json;print(len(json.load(open('punkbc-shows.json'))['shows']))") upcoming)"
           # someone may have pushed while this ran; rebase rather than fail
           git pull --rebase --autostash origin main
