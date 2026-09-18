@@ -21,6 +21,23 @@ This container cannot reach Commons, so it runs on a runner: see
 .github/workflows/merch-photos.yml. It downloads to images/merch/candidates/
 for review -- nothing goes near the site until a human has looked at it.
 
+WHAT IT FOUND, so nobody spends an afternoon repeating the search: nothing
+usable. 14 products, 47 queries, 72 files that passed the licence and framing
+checks, and not one blank garment among them. The reason is structural rather
+than a matter of better search terms -- public domain means pre-1930 prints,
+government work and museum holdings, and nobody was shooting blank t-shirt
+flat lays in 1910. What came back was exactly that: engravings from tailoring
+catalogues, a knight's vigil, mug shots, a Nestle Drumstick, bees. The two
+near misses were a plain white mug and a pair of drumsticks on white.
+
+The tool is kept because the conclusion is worth being able to re-derive, and
+because the licence filter is the reusable part. If it is ever run again, run
+it expecting to confirm the same thing.
+
+So /merch.html asks the band for the photograph instead, which is a better
+answer anyway: it is the actual garment, in the actual colour, from the
+supplier they are actually going to order from.
+
     python3 tools/fetch_merch_photos.py --self-test
 """
 

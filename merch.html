@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C75363M813"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C75363M813');
+</script>
+
+<title>Band Merch Mockup Maker — free, in your browser | Punk BC</title>
+<meta name="description" content="See your band's logo on a shirt, hoodie, tote, cap, drum head, sticks, sticker or pin before you order any. Free, runs in your browser, nothing uploaded.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.mikidrummer.ca/merch.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mikidrummer.ca/merch.html">
+<meta property="og:title" content="Band Merch Mockup Maker — free, in your browser">
+<meta property="og:description" content="Drop your logo on a shirt, hoodie, drum head or a pair of sticks and see it before you order. Runs entirely in your browser.">
+<meta property="og:site_name" content="Punk BC">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
+
+<style>
+  :root{ --bg:#0b0c0e; --card:#131518; --edge:#2b2f34; --edge2:#3a4046;
+         --dim:#7d848d; --mid:#a6adb6; --fg:#e9ebee; --hot:#e8672a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);line-height:1.55;padding:0 18px 70px;
+       font-family:'Helvetica Neue',system-ui,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto}
+  a{color:var(--hot);text-decoration:none} a:hover{text-decoration:underline}
+  header{padding:38px 0 20px;border-bottom:1px solid var(--edge)}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--hot);font-weight:700}
+  h1{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(24px,5vw,36px);letter-spacing:-.02em;margin:9px 0 10px}
+  .lead{color:var(--mid);font-size:15px;max-width:68ch}
+  .grid{display:grid;grid-template-columns:1fr;gap:24px;margin-top:26px}
+  @media(min-width:920px){ .grid{grid-template-columns:minmax(0,400px) 1fr;align-items:start} }
+  .panel{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:18px}
+  .panel + .panel{margin-top:16px}
+  h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:12px}
+  label{display:block;font-size:12px;color:var(--mid);margin:12px 0 5px}
+  label:first-of-type{margin-top:0}
+  .hint{font-size:11.5px;color:var(--dim);margin-top:6px}
+  .btn{display:inline-flex;align-items:center;gap:7px;background:#1b1e22;border:1px solid var(--edge2);
+       color:var(--fg);border-radius:999px;padding:9px 16px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .btn:hover{border-color:var(--hot);color:var(--hot)}
+  .btn.go{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .btn[disabled]{opacity:.42;cursor:not-allowed}
+  .btn[disabled]:hover{border-color:var(--edge2);color:var(--fg)}
+  .btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+  .chip{background:#0e1013;border:1px solid var(--edge2);color:var(--mid);border-radius:999px;
+        padding:6px 12px;font-size:12px;cursor:pointer}
+  .chip[aria-pressed=true]{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:700}
+  .swatch-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;align-items:center}
+  .sw{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  .sw[aria-pressed=true]{border-color:var(--hot)}
+  input[type=color]{width:42px;height:30px;padding:2px;background:#0e1013;border:1px solid var(--edge2);
+    border-radius:8px;cursor:pointer}
+  .slider{display:flex;align-items:center;gap:10px;margin-top:8px}
+  .slider input[type=range]{flex:1;accent-color:var(--hot)}
+  .slider output{font-size:12px;color:var(--mid);min-width:52px;text-align:right;font-variant-numeric:tabular-nums}
+  .pos{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:126px;margin-top:8px}
+  .pos button{aspect-ratio:1;background:#0e1013;border:1px solid var(--edge2);border-radius:6px;
+              cursor:pointer;color:var(--mid);font-size:14px;line-height:1;padding:0}
+  .pos button:hover{border-color:var(--hot);color:var(--hot)}
+  .stage{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:16px;
+         position:sticky;top:16px;text-align:center}
+  canvas{width:100%;height:auto;display:block;border-radius:8px;background:#15171a}
+  /* The print-area handles live in the DOM on top of the canvas rather than
+     being painted into it, so they cannot end up in a saved or shared PNG. */
+  .frame{position:relative;line-height:0}
+  .marks{position:absolute;inset:0;pointer-events:none}
+  .marks.off{display:none}
+  .marks svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .grab{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;
+        background:rgba(232,103,42,.9);border:2px solid #fff;cursor:grab;pointer-events:auto;
+        touch-action:none;padding:0;box-shadow:0 1px 5px rgba(0,0,0,.45)}
+  .grab:active{cursor:grabbing}
+  .grab.mid{width:30px;height:30px;margin:-15px 0 0 -15px;background:rgba(20,20,22,.82);
+            color:#fff;font-size:14px;cursor:move}
+  .grab:focus-visible{outline:3px solid #fff;outline-offset:2px}
+  .meta{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--dim)}
+  .said{color:#ffb38a;font-size:12.5px;margin-top:8px;min-height:1.2em}
+  .said.ok{color:#8ad6a0}
+  footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Punk BC · Tools</span>
+    <h1>Merch mockup maker</h1>
+    <p class="lead">Drop your logo on a shirt, a hoodie, a drum head or a pair of sticks and see
+       what it looks like before you order a box of them. Best of all, photograph the actual
+       garment you are going to print — drag the four corners onto it and the artwork is mapped
+       into the photo in perspective, picking up the fabric's own folds and light.
+       Nothing uploads: every photo you choose stays in this browser.</p>
+  </header>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <h2>Blank</h2>
+        <div class="chips" id="source">
+          <button class="chip" type="button" data-src="drawn" aria-pressed="true">Drawn blanks</button>
+          <button class="chip" type="button" data-src="photo" aria-pressed="false">My photo</button>
+        </div>
+
+        <div id="drawnPane">
+          <label>Product</label>
+          <div class="chips" id="products"></div>
+        </div>
+
+        <div id="photoPane" hidden>
+          <div class="btns">
+            <button class="btn" id="upPhoto" type="button">Choose a photo…</button>
+            <input type="file" id="photoFile" accept="image/*" hidden>
+          </div>
+          <div class="hint">Shoot the real thing: lay the shirt flat or hang it, fill the frame,
+             and use even light. Then drag the four orange corners onto the area you are printing.
+             An angled shot is fine — that is what the corners are for.</div>
+          <div class="btns">
+            <button class="btn" id="resetQuad" type="button">Reset print area</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="colourPanel">
+        <h2>Blank colour</h2>
+        <div class="swatch-row" id="swatches"></div>
+        <div class="swatch-row" style="margin-top:12px">
+          <input type="color" id="custom" value="#1b1b1e" aria-label="Custom blank colour">
+          <span class="hint" style="margin:0">or pick your own</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Your artwork</h2>
+        <div class="chips" id="artChips"></div>
+        <div class="btns">
+          <button class="btn" id="upload" type="button">Upload artwork…</button>
+          <input type="file" id="artFile" accept="image/*" hidden>
+          <button class="btn" id="clearArt" type="button">Clear</button>
+        </div>
+        <div class="hint">A PNG with a transparent background gives the best result — the same
+           file you would send a printer.</div>
+
+        <label for="scale">Size</label>
+        <div class="slider">
+          <input type="range" id="scale" min="20" max="100" step="1" value="82">
+          <output id="scaleOut">82%</output>
+        </div>
+
+        <label>Nudge</label>
+        <div class="pos" id="nudge">
+          <span></span><button type="button" data-dx="0" data-dy="-1" aria-label="Up">↑</button><span></span>
+          <button type="button" data-dx="-1" data-dy="0" aria-label="Left">←</button>
+          <button type="button" data-reset="1" aria-label="Centre">◎</button>
+          <button type="button" data-dx="1" data-dy="0" aria-label="Right">→</button>
+          <span></span><button type="button" data-dx="0" data-dy="1" aria-label="Down">↓</button><span></span>
+        </div>
+
+        <label for="blend" style="margin-top:14px">Ink</label>
+        <div class="chips" id="blend">
+          <button class="chip" type="button" data-blend="print" aria-pressed="true">Screen print</button>
+          <button class="chip" type="button" data-blend="flat" aria-pressed="false">Flat</button>
+        </div>
+        <div class="hint">Screen print lets a little of the fabric shading through, which is what
+           ink on cloth actually looks like. Flat is truer for stickers, pins and vinyl.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="stage">
+        <div class="frame">
+          <canvas id="mock" width="1200" height="1200"></canvas>
+          <div class="marks off" id="marks">
+            <svg aria-hidden="true"><polygon id="quadLine" fill="none" stroke="rgba(232,103,42,.85)"
+                 stroke-width="2" stroke-dasharray="7 5"></polygon></svg>
+            <button class="grab" type="button" data-c="0" aria-label="Print area: top-left corner"></button>
+            <button class="grab" type="button" data-c="1" aria-label="Print area: top-right corner"></button>
+            <button class="grab" type="button" data-c="2" aria-label="Print area: bottom-right corner"></button>
+            <button class="grab" type="button" data-c="3" aria-label="Print area: bottom-left corner"></button>
+            <button class="grab mid" type="button" data-c="m" aria-label="Move the whole print area">✥</button>
+          </div>
+        </div>
+        <div class="meta"><span id="info">—</span></div>
+        <div class="btns" style="justify-content:center">
+          <button class="btn go" id="savePng">↓ Save PNG</button>
+          <button class="btn" id="sheet">↓ All products</button>
+          <button class="btn" id="share">⤴ Share</button>
+        </div>
+        <div class="said" id="said"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>.
+    A mockup is not a proof, even one made on a photograph of the real garment — ink on cloth
+    and light on a screen are different things, and screen printing has its own tolerances.
+    Ask your printer for a physical sample before you commit to a run.
+  </footer>
+</div>
+
+<script src="/js/merch-blanks.js"></script>
+<script src="/js/merch-photo.js"></script>
+<script src="/js/share-ping.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var cv = $('mock'), ctx = cv.getContext('2d');
+  var B = window.MerchBlanks;
+
+  var COLOURS = [
+    ['#141416', 'Black'], ['#f4f2ee', 'White'], ['#2b2f36', 'Charcoal'],
+    ['#8d9095', 'Sport grey'], ['#5a2d2d', 'Maroon'], ['#28402f', 'Forest'],
+    ['#26354f', 'Navy'], ['#7a4520', 'Rust'], ['#c8b487', 'Sand'], ['#e8672a', 'Molten']
+  ];
+  var ART = [
+    ['Miki mark', '/images/brand.png'],
+    ['Granite', '/images/granite/logo.png'],
+    ['Granite (black)', '/images/granite/logo-black.png']
+  ];
+
+  var state = { src: 'drawn', product: 'tee', colour: '#141416',
+                photo: null, photoName: '',
+                // The print area, as the four corners of a quad in 0..1 of the
+                // canvas. A rectangle is the special case where the corners
+                // happen to line up; keeping it general is what lets an angled
+                // photograph work at all.
+                quad: null,
+                art: null, artName: '',
+                scale: 0.82, dx: 0, dy: 0, blend: 'print' };
+
+  function defaultQuad() {
+    return [[0.32,0.34],[0.68,0.34],[0.68,0.66],[0.32,0.66]];
+  }
+
+  // The drawn blanks declare their print area as a rectangle; the engine wants
+  // corners. Same thing, said in the form everything downstream uses.
+  function rectQuad(r) {
+    return [[r.x,r.y],[r.x+r.w,r.y],[r.x+r.w,r.y+r.h],[r.x,r.y+r.h]];
+  }
+
+  function activeQuad() {
+    var q = state.src === 'photo' ? (state.quad || (state.quad = defaultQuad()))
+                                  : rectQuad(B[state.product].print);
+    return q.map(function (p) { return [p[0]*cv.width, p[1]*cv.height]; });
+  }
+
+  function backdrop(W, H) {
+    // A light studio backdrop, not a dark one. The first pass used the site's
+    // own near-black and every black garment -- which is most band merch --
+    // vanished into it. A mockup has to show the product, not the brand.
+    var g = ctx.createRadialGradient(W/2, H*0.40, W*0.08, W/2, H*0.52, W*0.78);
+    g.addColorStop(0, '#e9e6e1'); g.addColorStop(1, '#bdb8b1');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    // A soft contact shadow under the product so it sits on the surface
+    // rather than floating over it.
+    var sh = ctx.createRadialGradient(W/2, H*0.88, W*0.02, W/2, H*0.88, W*0.34);
+    sh.addColorStop(0, 'rgba(60,54,48,0.30)'); sh.addColorStop(1, 'rgba(60,54,48,0)');
+    ctx.fillStyle = sh; ctx.fillRect(0, H*0.72, W, H*0.28);
+  }
+
+  function draw() {
+    var W = cv.width, H = cv.height;
+    ctx.clearRect(0, 0, W, H);
+    var label;
+
+    if (state.src === 'photo' && state.photo) {
+      // Cover, not contain: a letterboxed photo with grey bars down the side
+      // is not a mockup anyone would send to a printer. The canvas is already
+      // sized to the photo's aspect, so this is a whole-pixel fill.
+      var s = Math.max(W / state.photo.width, H / state.photo.height);
+      var dw = state.photo.width * s, dh = state.photo.height * s;
+      ctx.drawImage(state.photo, (W-dw)/2, (H-dh)/2, dw, dh);
+      label = state.photoName;
+    } else if (state.src === 'photo') {
+      backdrop(W, H);
+      ctx.fillStyle = 'rgba(40,36,32,.6)';
+      ctx.font = '600 34px "Helvetica Neue", Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Choose a photo of the blank', W/2, H/2);
+      label = 'no photo yet';
+    } else {
+      backdrop(W, H);
+      B[state.product].draw(ctx, W, H, state.colour);
+      label = B[state.product].name;
+    }
+
+    // One path for both sources. The artwork is warped into the print area in
+    // perspective and then multiplied by the surface's own brightness, so ink
+    // darkens in a crease and lifts on a lit ridge -- the difference between
+    // printed-on and pasted-on.
+    if (state.art) {
+      MerchPhoto.print(ctx, state.art, activeQuad(), {
+        ink: state.blend === 'flat' ? 'flat' : 'print',
+        scale: state.scale,
+        du: state.dx, dv: state.dy
+      });
+    }
+
+    $('info').textContent = label + ' · ' + W + '×' + H
+      + (state.art ? ' · ' + state.artName : ' · no artwork yet');
+    placeMarks();
+  }
+
+  // ---- the print-area handles ---------------------------------------------
+  var marks = $('marks');
+  function placeMarks() {
+    var on = state.src === 'photo' && !!state.photo;
+    marks.classList.toggle('off', !on);
+    if (!on) return;
+    var q = state.quad;
+    Array.prototype.forEach.call(marks.querySelectorAll('.grab'), function (g) {
+      var c = g.dataset.c;
+      var p = c === 'm'
+        ? [(q[0][0]+q[1][0]+q[2][0]+q[3][0])/4, (q[0][1]+q[1][1]+q[2][1]+q[3][1])/4]
+        : q[+c];
+      g.style.left = (p[0]*100) + '%';
+      g.style.top  = (p[1]*100) + '%';
+    });
+    $('quadLine').setAttribute('points', q.map(function (p) {
+      return (p[0]*cv.clientWidth) + ',' + (p[1]*cv.clientHeight);
+    }).join(' '));
+  }
+
+  (function wireHandles() {
+    var drag = null;
+    marks.addEventListener('pointerdown', function (e) {
+      var g = e.target.closest('.grab'); if (!g) return;
+      var r = cv.getBoundingClientRect();
+      drag = { c: g.dataset.c, r: r,
+               from: [(e.clientX-r.left)/r.width, (e.clientY-r.top)/r.height],
+               start: state.quad.map(function (p) { return p.slice(); }) };
+      g.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    marks.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      var u = (e.clientX-drag.r.left)/drag.r.width;
+      var v = (e.clientY-drag.r.top)/drag.r.height;
+      var clamp = function (n) { return n < -0.2 ? -0.2 : n > 1.2 ? 1.2 : n; };
+      if (drag.c === 'm') {
+        var du = u - drag.from[0], dv = v - drag.from[1];
+        state.quad = drag.start.map(function (p) {
+          return [clamp(p[0]+du), clamp(p[1]+dv)];
+        });
+      } else {
+        state.quad[+drag.c] = [clamp(u), clamp(v)];
+      }
+      draw();
+    });
+    ['pointerup','pointercancel'].forEach(function (t) {
+      marks.addEventListener(t, function () { drag = null; });
+    });
+    // Keyboard: the handles are buttons, so they are already in the tab order.
+    // Without this they would be reachable and useless.
+    marks.addEventListener('keydown', function (e) {
+      var g = e.target.closest('.grab'); if (!g) return;
+      var d = { ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0] }[e.key];
+      if (!d) return;
+      var step = (e.shiftKey ? 0.05 : 0.01);
+      if (g.dataset.c === 'm') {
+        state.quad = state.quad.map(function (p) {
+          return [p[0]+d[0]*step, p[1]+d[1]*step];
+        });
+      } else {
+        var p = state.quad[+g.dataset.c];
+        state.quad[+g.dataset.c] = [p[0]+d[0]*step, p[1]+d[1]*step];
+      }
+      e.preventDefault(); draw();
+    });
+  })();
+
+  // ---- controls -----------------------------------------------------------
+  $('source').addEventListener('click', function (e) {
+    var b = e.target.closest('.chip'); if (!b) return;
+    Array.prototype.forEach.call(this.querySelectorAll('.chip'), function (c) {
+      c.setAttribute('aria-pressed', String(c === b));
+    });
+    state.src = b.dataset.src;
+    $('drawnPane').hidden = state.src !== 'drawn';
+    $('photoPane').hidden = state.src !== 'photo';
+    // A photograph already has its colour: the swatches would do nothing, so
+    // they go away rather than sit there inert.
+    $('colourPanel').hidden = state.src === 'photo';
+    $('sheet').disabled = state.src === 'photo';
+    state.dx = 0; state.dy = 0;
+    if (state.src === 'photo') fitCanvas(state.photo); else fitCanvas(null);
+    draw();
+  });
+
+  // The canvas takes the photo's shape. A shirt shot in portrait squeezed into
+  // a square would be the tool's own distortion added to the mockup.
+  function fitCanvas(photo) {
+    var long = 1200;
+    if (!photo) { cv.width = long; cv.height = long; return; }
+    var r = photo.width / photo.height;
+    cv.width  = Math.round(r >= 1 ? long : long * r);
+    cv.height = Math.round(r >= 1 ? long / r : long);
+  }
+
+  $('upPhoto').addEventListener('click', function () { $('photoFile').click(); });
+  $('photoFile').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        state.photo = im;
+        state.photoName = f.name.replace(/\.[^.]+$/, '');
+        state.quad = defaultQuad();
+        fitCanvas(im);
+        draw();
+      };
+      im.onerror = function () { say('That file could not be read as an image.'); };
+      im.src = fr.result;                    // stays in this browser
+    };
+    fr.readAsDataURL(f);
+    this.value = '';                         // so the same file can be picked twice
+  });
+  $('resetQuad').addEventListener('click', function () {
+    state.quad = defaultQuad(); state.dx = 0; state.dy = 0; draw();
+  });
+
+  Object.keys(B).forEach(function (k, i) {
+    var b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.textContent = B[k].name;
+    b.setAttribute('aria-pressed', String(i === 0));
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call($('products').querySelectorAll('.chip'), function (c) {
+        c.setAttribute('aria-pressed', String(c === b));
+      });
+      state.product = k; state.dx = 0; state.dy = 0; draw();
+    });
+    $('products').appendChild(b);
+  });
+
+  COLOURS.forEach(function (c, i) {
+    var b = document.createElement('button');
+    b.className = 'sw'; b.type = 'button'; b.style.background = c[0];
+    b.title = c[1]; b.setAttribute('aria-label', c[1]);
+    b.setAttribute('aria-pressed', String(i === 0));
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call($('swatches').querySelectorAll('.sw'), function (s) {
+        s.setAttribute('aria-pressed', String(s === b));
+      });
+      state.colour = c[0]; $('custom').value = c[0]; draw();
+    });
+    $('swatches').appendChild(b);
+  });
+  $('custom').addEventListener('input', function () {
+    state.colour = this.value;
+    Array.prototype.forEach.call($('swatches').querySelectorAll('.sw'), function (s) {
+      s.setAttribute('aria-pressed', 'false');
+    });
+    draw();
+  });
+
+  function setArt(img, name) { state.art = img; state.artName = name; draw(); }
+  ART.forEach(function (a) {
+    var b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.textContent = a[0];
+    b.addEventListener('click', function () {
+      var im = new Image();
+      im.onload = function () { setArt(im, a[0]); };
+      im.src = a[1];
+    });
+    $('artChips').appendChild(b);
+  });
+  $('upload').addEventListener('click', function () { $('artFile').click(); });
+  $('artFile').addEventListener('change', function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      var im = new Image();
+      im.onload = function () { setArt(im, f.name.replace(/\.[^.]+$/,'')); };
+      im.src = fr.result;                    // stays in this browser
+    };
+    fr.readAsDataURL(f);
+    this.value = '';
+  });
+  $('clearArt').addEventListener('click', function () { state.art = null; state.artName=''; draw(); });
+
+  $('scale').addEventListener('input', function () {
+    state.scale = (+this.value)/100; $('scaleOut').textContent = this.value + '%'; draw();
+  });
+  $('nudge').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.reset) { state.dx = 0; state.dy = 0; }
+    else {
+      // A step of the print area, not of the screen. On an angled photo that
+      // means the artwork slides along the garment rather than across the
+      // picture, which is the only version that makes sense to the eye.
+      state.dx += (+b.dataset.dx) * 0.03;
+      state.dy += (+b.dataset.dy) * 0.03;
+    }
+    draw();
+  });
+  $('blend').addEventListener('click', function (e) {
+    var b = e.target.closest('.chip'); if (!b) return;
+    Array.prototype.forEach.call(this.querySelectorAll('.chip'), function (c) {
+      c.setAttribute('aria-pressed', String(c === b));
+    });
+    state.blend = b.dataset.blend; draw();
+  });
+
+  // ---- output -------------------------------------------------------------
+  function name(ext) {
+    var a = (state.artName || 'merch').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    var on = state.src === 'photo' ? (state.photoName || 'photo') : state.product;
+    return a + '-' + on.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '.' + ext;
+  }
+  function save(blob, fn) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = fn;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+  }
+  function say(m, good) {
+    var e = $('said'); e.textContent = m; e.className = good ? 'said ok' : 'said';
+    setTimeout(function(){ e.textContent=''; }, 3500);
+  }
+
+  $('savePng').addEventListener('click', function () {
+    cv.toBlob(function (b) { save(b, name('png')); say('Saved', true); }, 'image/png');
+  });
+
+  // One sheet with every product on it -- what you actually send a printer or
+  // put in front of the rest of the band.
+  $('sheet').addEventListener('click', function () {
+    var keys = Object.keys(B), cols = 4;
+    var rows = Math.ceil(keys.length / cols), cell = 600;
+    var out = document.createElement('canvas');
+    out.width = cols * cell; out.height = rows * cell;
+    var o = out.getContext('2d');
+    o.fillStyle = '#d6d2cc'; o.fillRect(0, 0, out.width, out.height);
+    var was = state.product, wasSrc = state.src;
+    state.src = 'drawn'; fitCanvas(null);
+    keys.forEach(function (k, i) {
+      state.product = k; draw();
+      o.drawImage(cv, (i % cols) * cell, Math.floor(i / cols) * cell, cell, cell);
+      o.font = '600 20px "Helvetica Neue", Arial, sans-serif';
+      o.fillStyle = 'rgba(40,36,32,.78)';
+      o.textAlign = 'center';
+      o.fillText(B[k].name, (i % cols) * cell + cell/2, Math.floor(i / cols) * cell + cell - 18);
+    });
+    state.product = was; state.src = wasSrc;
+    fitCanvas(state.src === 'photo' ? state.photo : null);
+    draw();
+    out.toBlob(function (b) {
+      save(b, ((state.artName||'merch').toLowerCase().replace(/[^a-z0-9]+/g,'-')) + '-merch-sheet.png');
+      say('Saved a sheet of all ' + keys.length, true);
+    }, 'image/png');
+  });
+
+  $('share').addEventListener('click', function () {
+    cv.toBlob(function (b) {
+      var f = new File([b], name('png'), { type: b.type });
+      if (navigator.canShare && navigator.canShare({ files: [f] })) {
+        navigator.share({ files: [f], text: B[state.product].name + ' mockup' })
+          .then(function () {
+            say('Shared', true);
+            if (typeof gtag === 'function') gtag('event','share',{method:'web_share',content_type:'merch'});
+          })
+          .catch(function (e) { if (!e || e.name !== 'AbortError') say('Share refused.'); });
+      } else { save(b, name('png')); say('This browser cannot share files — saved instead.'); }
+    }, 'image/png');
+  });
+
+  draw();
+})();
+</script>
+</body>
+</html>
