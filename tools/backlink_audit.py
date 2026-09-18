@@ -182,20 +182,79 @@ def targets():
     return out
 
 
+# Where a link to a drummer actually lives on someone else's site. A cymbal
+# maker credits its players on an artist roster, a venue on a links or
+# partners page, a band on a friends page -- almost never on the homepage. A
+# homepage-only crawl would report "nobody links to you" and be wrong for the
+# exact targets that matter most.
+LIKELY = re.compile(
+    r"(artist|roster|player|endors|team|famil|links?|friends?|partner|"
+    r"supporter|sponsor|about|contact|press|credits?|thanks)", re.I)
+MAX_PAGES = 6
+
+
+def same_site(a, b):
+    ha, hb = host(a), host(b)
+    return ha == hb or ha.endswith("." + hb) or hb.endswith("." + ha)
+
+
+def worth_following(base, href, anchor):
+    """Pick the handful of inner pages most likely to carry the credit."""
+    try:
+        url = urllib.parse.urljoin(base, href)
+    except ValueError:
+        return None
+    if not url.startswith("http") or not same_site(base, url):
+        return None
+    url = url.split("#")[0]
+    if re.search(r"\.(jpg|jpeg|png|gif|svg|pdf|zip|mp3|mp4|css|js)$", url, re.I):
+        return None
+    return url if (LIKELY.search(url) or LIKELY.search(anchor or "")) else None
+
+
 def check(t):
     rec = dict(t)
+    rec.update(links=[], follow=[], mention_only=False, pages=0)
     try:
         final, html = fetch(t["url"])
-        rec["status"] = "ok"
-        rec["final"] = final
-        found = links_to_us(html)
-        rec["links"] = found
-        rec["follow"] = [l for l in found if "nofollow" not in l["rel"]]
-        rec["mention_only"] = (not found) and mentions_us(html)
     except urllib.error.HTTPError as e:
-        rec.update(status="http %s" % e.code, links=[], follow=[], mention_only=False)
+        rec["status"] = "http %s" % e.code
+        return rec
     except Exception as e:
-        rec.update(status=type(e).__name__, links=[], follow=[], mention_only=False)
+        rec["status"] = type(e).__name__
+        return rec
+
+    rec["status"] = "ok"
+    rec["final"] = final
+
+    queue, seen = [final], {final}
+    for m in re.finditer(r'<a\b[^>]*href\s*=\s*["\']([^"\']+)["\'][^>]*>(.*?)</a>',
+                         html, re.I | re.S):
+        u = worth_following(final, m.group(1),
+                            re.sub("<[^>]+>", "", m.group(2)))
+        if u and u not in seen:
+            seen.add(u)
+            queue.append(u)
+        if len(queue) >= MAX_PAGES:
+            break
+
+    found, mention, pages = [], False, 0
+    for i, url in enumerate(queue):
+        try:
+            page = html if i == 0 else fetch(url)[1]
+        except Exception:
+            continue
+        pages += 1
+        for link in links_to_us(page):
+            link["on"] = url
+            found.append(link)
+        if not mention and mentions_us(page):
+            mention = True
+
+    rec["pages"] = pages
+    rec["links"] = found
+    rec["follow"] = [l for l in found if "nofollow" not in l["rel"]]
+    rec["mention_only"] = (not found) and mention
     return rec
 
 
@@ -209,10 +268,17 @@ def report(rows):
 
     L = []
     L.append("# Backlinks\n")
-    L.append("%d sites checked: **%d link back** (%d of them followed), "
-             "%d name the site without linking, %d say nothing, %d unreachable.\n"
-             % (len(rows), len(have) + len(nofollow), len(have),
+    seen_pages = sum(r.get("pages", 0) for r in rows)
+    L.append("%d sites checked (%d pages): **%d link back** (%d of them "
+             "followed), %d name the site without linking, %d say nothing, "
+             "%d unreachable.\n"
+             % (len(rows), seen_pages, len(have) + len(nofollow), len(have),
                 len(mention), len(cold), len(dead)))
+    L.append("\n_Each site is read homepage-first, then up to %d inner pages "
+             "whose URL or link text suggests a roster, links, friends, "
+             "partners or credits page -- which is where a credit lives, and "
+             "almost never the homepage. It is still a sample: a link buried "
+             "somewhere unguessable will read here as no link._\n" % (MAX_PAGES - 1))
 
     L.append("\n## Links we already have\n")
     if have:
@@ -309,9 +375,29 @@ def self_test():
     eq(mentions_us("<p>Nothing to do with us</p>"), False, "no mention")
     eq(mentions_us("<p>See the Punk BC board</p>"), True, "punkbc counts")
 
+    # Following inward to where a credit actually lives.
+    B = "https://example.com/"
+    eq(worth_following(B, "/artists/", "Artists"), "https://example.com/artists/",
+       "artist roster by path")
+    eq(worth_following(B, "/p/93", "Our endorsers"), "https://example.com/p/93",
+       "found by anchor text when the path says nothing")
+    eq(worth_following(B, "/shop/cart", "Cart"), None, "ignores the shop")
+    eq(worth_following(B, "https://other.com/links", "Links"), None,
+       "never leaves the site")
+    eq(worth_following(B, "/artists/photo.jpg", "Artists"), None, "not an asset")
+    eq(worth_following(B, "/links#top", "Links"), "https://example.com/links",
+       "fragment dropped so one page is not fetched twice")
+    # www and the apex are one site, so a roster at www. still counts when the
+    # homepage was served from the apex (and the other way round, which is the
+    # commoner redirect).
+    eq(same_site("https://example.com/a", "https://www.example.com/b"), True,
+       "www and apex are the same site")
+    eq(same_site("https://example.com/a", "https://notexample.com/b"), False,
+       "a suffix that is not a subdomain is a different site")
+
     for f in fails:
         print("FAIL", f)
-    print("%d checks, %d failed" % (23, len(fails)))
+    print("%d checks, %d failed" % (31, len(fails)))
     return 1 if fails else 0
 
 

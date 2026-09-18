@@ -38,7 +38,8 @@ PLUMBING = re.compile(
     r"google-analytics\.com|googletagmanager\.com|doubleclick\.net|"
     r"cloudflare\.com|cloudfront\.net|jsdelivr\.net|unpkg\.com|jquery\.com|"
     r"bootstrapcdn\.com|fontawesome\.com|gravatar\.com|w3\.org|"
-    r"schema\.org|opengraphprotocol\.org)$", re.I)
+    r"schema\.org|opengraphprotocol\.org|sentry\.io|sentry-cdn\.com|"
+    r"newrelic\.com|hotjar\.com|segment\.com|intercom\.io)$", re.I)
 
 # Platform boilerplate: a path that exists on every site built with the tool,
 # and identifies the tool rather than the band.
@@ -84,6 +85,12 @@ def self_test():
         if got != want:
             fails.append("%s: got %r want %r" % (what, got, want))
 
+    # An error-reporting DSN, stored as a band's website. It carries the
+    # site's own ingest key in the userinfo, which is another reason not to
+    # be republishing it.
+    eq(is_real_site("https://7c33659f@o363271.ingest.us.sentry.io"), False,
+       "reject a Sentry DSN")
+
     # Everything that actually shipped onto the band pages.
     for u in ["http://www.facebook.com/2008/fbml",
               "http://opengraphprotocol.org",
@@ -114,7 +121,7 @@ def self_test():
 
     for f in fails:
         print("FAIL", f)
-    print("%d checks, %d failed" % (23, len(fails)))
+    print("%d checks, %d failed" % (24, len(fails)))
     return 1 if fails else 0
 
 
