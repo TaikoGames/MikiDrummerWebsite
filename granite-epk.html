@@ -153,8 +153,16 @@
         .book-btn, .book-panel, .socials, .reach { display: none !important; }
         /* The old one-track print fallback; the full list below replaces it. */
         .print-listen { display: none !important; }
-        .print-contact { display: block !important; margin-top: 10px; font-size: 13.5px; line-height: 1.7; }
+        .print-contact { display: flex !important; gap: 18px; align-items: center;
+                         justify-content: center; text-align: left; margin-top: 12px;
+                         font-size: 13.5px; line-height: 1.7; }
         .print-contact .u { color: var(--stone-400); word-break: break-all; }
+        /* White plate behind the code. The page is near-black and a QR tinted
+           to match the design is a QR that half the scanners refuse. */
+        .print-qr { flex: none; background: #fff; padding: 7px; border-radius: 6px; }
+        .print-qr img { display: block; width: 104px; height: 104px; }
+        .print-qr-cap { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+                        color: #111; text-align: center; margin-top: 4px; }
         .sc-list, .videos { display: none !important; }
         .print-only ul { list-style: none; margin: 0; padding: 0; }
         .print-only li { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.14);
@@ -455,16 +463,16 @@
 
         <div class="print-only">
           <ul>
-            <li><span class="t">Blindsight</span><br><span class="u">https://soundcloud.com/dg1company/blindsight</span></li>
-            <li><span class="t">Skookum</span><br><span class="u">https://soundcloud.com/user-968824092/skookum</span></li>
-            <li><span class="t">Hemogoblin</span><br><span class="u">https://soundcloud.com/user-968824092/hemogoblin</span></li>
-            <li><span class="t">Pony Up</span><br><span class="u">https://soundcloud.com/user-968824092/pony-up-1</span></li>
-            <li><span class="t">Sour Diesel</span><br><span class="u">https://soundcloud.com/user-968824092/sour-diesel</span></li>
-            <li><span class="t">Tiamat</span><br><span class="u">https://soundcloud.com/user-968824092/tiamat</span></li>
-            <li><span class="t">Cursed</span><br><span class="u">https://soundcloud.com/user-968824092/cursed</span></li>
-            <li><span class="t">Astro Fungus</span><br><span class="u">https://soundcloud.com/user-968824092/astro-fungus</span></li>
-            <li><span class="t">Devilbliss</span><br><span class="u">https://soundcloud.com/user-968824092/devilbliss</span></li>
-            <li><span class="t">Live video</span><br><span class="u">https://youtu.be/Qovij1CQUV4</span></li>
+            <li><span class="t">Blindsight</span><br><a class="u" href="https://soundcloud.com/dg1company/blindsight">https://soundcloud.com/dg1company/blindsight</a></li>
+            <li><span class="t">Skookum</span><br><a class="u" href="https://soundcloud.com/user-968824092/skookum">https://soundcloud.com/user-968824092/skookum</a></li>
+            <li><span class="t">Hemogoblin</span><br><a class="u" href="https://soundcloud.com/user-968824092/hemogoblin">https://soundcloud.com/user-968824092/hemogoblin</a></li>
+            <li><span class="t">Pony Up</span><br><a class="u" href="https://soundcloud.com/user-968824092/pony-up-1">https://soundcloud.com/user-968824092/pony-up-1</a></li>
+            <li><span class="t">Sour Diesel</span><br><a class="u" href="https://soundcloud.com/user-968824092/sour-diesel">https://soundcloud.com/user-968824092/sour-diesel</a></li>
+            <li><span class="t">Tiamat</span><br><a class="u" href="https://soundcloud.com/user-968824092/tiamat">https://soundcloud.com/user-968824092/tiamat</a></li>
+            <li><span class="t">Cursed</span><br><a class="u" href="https://soundcloud.com/user-968824092/cursed">https://soundcloud.com/user-968824092/cursed</a></li>
+            <li><span class="t">Astro Fungus</span><br><a class="u" href="https://soundcloud.com/user-968824092/astro-fungus">https://soundcloud.com/user-968824092/astro-fungus</a></li>
+            <li><span class="t">Devilbliss</span><br><a class="u" href="https://soundcloud.com/user-968824092/devilbliss">https://soundcloud.com/user-968824092/devilbliss</a></li>
+            <li><span class="t">Live video</span><br><a class="u" href="https://youtu.be/Qovij1CQUV4">https://youtu.be/Qovij1CQUV4</a></li>
           </ul>
           <p class="note">Streaming links, in case you are reading this on paper.</p>
         </div>
@@ -533,9 +541,16 @@
         </div>
 
         <div class="print-contact">
-          <b>Booking and press</b><br>
-          Instagram: <span class="u">@granitevancouver</span><br>
-          Or use the enquiry form at <span class="u">https://www.mikidrummer.ca/granite-epk.html#book</span>
+          <div class="print-qr">
+            <img src="/images/epk/granite-book-qr.png" alt="QR code to book GRANITE">
+            <div class="print-qr-cap">Scan to book</div>
+          </div>
+          <div>
+            <b>Booking and press</b><br>
+            Point a phone at the code, or open<br>
+            <a class="u" href="https://www.mikidrummer.ca/granite-epk.html#book">www.mikidrummer.ca/granite-epk.html#book</a><br>
+            Instagram: <a class="u" href="https://www.instagram.com/granitevancouver/">@granitevancouver</a>
+          </div>
         </div>
 
         <div class="socials">
