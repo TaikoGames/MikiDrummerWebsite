@@ -93,6 +93,23 @@ IG_RESERVED = {
 IG_URL = re.compile(
     r"(?:https?://)?(?:www\.)?instagram\.com/([A-Za-z0-9_.]+)", re.I)
 
+# Accounts that belong to a platform rather than to a band. Every band page
+# carries a row of these in its footer -- "find us on" links, the store's own
+# socials, the ticketing company's -- and they read as handles exactly like a
+# real one. The first run recorded SiM's Instagram as @bandcamp off a Bandcamp
+# page footer, which is a DM to a company nobody meant to write to.
+IG_NOT_A_BAND = {
+    "bandcamp", "spotify", "applemusic", "apple", "youtube", "youtubemusic",
+    "soundcloud", "tiktok", "facebook", "instagram", "twitter", "x",
+    "threads", "discord", "twitch", "patreon", "kickstarter", "gofundme",
+    "shopify", "squarespace", "wix", "wordpress", "bigcartel", "etsy",
+    "linktree", "linktr", "beacons", "bandsintown", "songkick", "setlistfm",
+    "ticketmaster", "eventbrite", "dice", "dicefm", "seetickets", "ticketweb",
+    "merchbar", "bandzoogle", "distrokid", "tunecore", "cdbaby", "reverbnation",
+    "google", "vimeo", "pinterest", "snapchat", "reddit", "tumblr", "paypal",
+    "stripe", "shopifyplus", "printful", "spreadshirt",
+}
+
 
 # ---------------------------------------------------------------- pure helpers
 
@@ -114,7 +131,7 @@ def ig_handle(url):
     if not m:
         return ""
     handle = m.group(1).strip(".").lower()
-    if not handle or handle in IG_RESERVED:
+    if not handle or handle in IG_RESERVED or handle in IG_NOT_A_BAND:
         return ""
     # Instagram allows letters, numbers, periods and underscores, up to 30.
     if len(handle) > 30 or not re.fullmatch(r"[a-z0-9_.]+", handle):
@@ -595,8 +612,16 @@ def selftest():
        "handle recovered from a stored profile list")
     ok(ig_from_profiles({"profiles": [{"url": "https://www.instagram.com/p/abc/"}]}) == "",
        "a stored post URL yields no handle")
+    # Off a real Bandcamp footer: the platform's own account, not the band's.
+    ok(ig_handle("https://www.instagram.com/bandcamp/") == "",
+       "a platform account is not a band")
+    ok(ig_handle("https://instagram.com/spotify") == "", "spotify is not a band")
+    ok(ig_handle("https://www.instagram.com/ticketmaster/") == "",
+       "the ticketing company is not a band")
+    ok(ig_handle("https://www.instagram.com/bandcamptheband/") == "bandcamptheband",
+       "a real handle that merely starts with a platform name survives")
 
-    print("selftest: %d checks, %d failed" % (36, len(fails)))
+    print("selftest: %d checks, %d failed" % (40, len(fails)))
     for f in fails:
         print("  FAIL:", f)
     return 1 if fails else 0
