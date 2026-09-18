@@ -2,57 +2,57 @@
   "songs": [
     {
       "src": "audio/NoOther.mp3",
-      "thumbnail": "images/New folder/BBN_TheDescent_B.jpg",
+      "thumbnail": "images/bound-by-none/the-descent-cover.jpg",
       "title": "No Other - Bound By None"
     },
     {
       "src": "audio/OnTheDouble.mp3",
-      "thumbnail": "images/New folder/BBN_TheDescent_A.jpg",
+      "thumbnail": "images/bound-by-none/the-descent-cover-alt.jpg",
       "title": "On The Double - Bound By None"
     },
     {
       "src": "audio/Cornered Demo - Lift The Anchor.mp3",
-      "thumbnail": "images/New folder/Cornered.jpg",
+      "thumbnail": "images/lift-the-anchor/cornered-single-cover.jpg",
       "title": "Cornered Demo - Lift The Anchor"
     },
     {
       "src": "audio/audio2.mp3",
-      "thumbnail": "images/thumbnail-img2.jpg",
+      "thumbnail": "images/dead-fast-second-nature-cover-square.jpg",
       "title": "Star Shines Trough - Dead Fast"
     },
     {
       "src": "audio/LandSea.mp3",
-      "thumbnail": "images/music-img3.jpg",
+      "thumbnail": "images/dead-fast-second-nature-cover.jpg",
       "title": "Land and Sea - Dead Fast"
     },
     {
       "src": "audio/04 - Skamen.mp3",
-      "thumbnail": "images/thumbnail-img4.jpg",
+      "thumbnail": "images/dead-fast-second-nature-cover-alt.jpg",
       "title": "Skamen - Dead Fast"
     },
     {
       "src": "audio/Bajo el nivel del mal.mp3",
-      "thumbnail": "images/diera-cover.png",
+      "thumbnail": "images/diera-bajo-el-nivel-del-mal-cover.png",
       "title": "Bajo el nivel del mal - Diera"
     },
     {
       "src": "audio/Groenlandia.mp3",
-      "thumbnail": "images/Groenlandia.jpg",
+      "thumbnail": "images/diera-groenlandia-cover.jpg",
       "title": "Groenlandia - Diera"
     },
     {
       "src": "audio/La tragedia de los comunes.mp3",
-      "thumbnail": "images/diera-cover.png",
+      "thumbnail": "images/diera-bajo-el-nivel-del-mal-cover.png",
       "title": "La tragedia de los comunes - Diera"
     },
     {
       "src": "audio/Sebastopol García.mp3",
-      "thumbnail": "images/diera-cover.png",
+      "thumbnail": "images/diera-bajo-el-nivel-del-mal-cover.png",
       "title": "Sebastopol García - Diera"
     },
     {
       "src": "audio/Per mi.mp3",
-      "thumbnail": "images/Groenlandia.jpg",
+      "thumbnail": "images/diera-groenlandia-cover.jpg",
       "title": "Per mi (In Catalan) - Diera"
     },
     {

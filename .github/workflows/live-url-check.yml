@@ -20,7 +20,7 @@ jobs:
           URLS="${{ github.event.inputs.urls }}"
           if [ -z "$URLS" ]; then
             URLS="https://www.mikidrummer.ca/img/digest/satanic-surfers-621665ae.jpg
-                  https://www.mikidrummer.ca/images/diera-cover.png
+                  https://www.mikidrummer.ca/images/diera-bajo-el-nivel-del-mal-cover.png
                   https://www.mikidrummer.ca/digest/2026-09.html
                   https://www.mikidrummer.ca/punkbc.html"
           fi

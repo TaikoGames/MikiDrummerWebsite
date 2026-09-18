@@ -267,8 +267,8 @@
     <div class="desc">Swap the main photos. Uploads are resized and saved straight to the site (they replace the existing image files, so every page using them updates).</div>
     <div class="grid" style="margin-top:14px">
       <div>
-        <div class="ph-ttl">Profile / hero <span class="ph-path">images/band.png</span></div>
-        <img class="ph-preview" id="phProfile" alt="" src="images/band.png">
+        <div class="ph-ttl">Profile / hero <span class="ph-path">images/miki-drummer-live-vancouver.png</span></div>
+        <img class="ph-preview" id="phProfile" alt="" src="images/miki-drummer-live-vancouver.png">
         <div class="row" style="margin-top:0">
           <label class="btn ghost" for="fileProfile">Choose photo…</label>
           <input type="file" id="fileProfile" accept="image/*" hidden>
@@ -277,8 +277,8 @@
         </div>
       </div>
       <div>
-        <div class="ph-ttl">Drum photo <span class="ph-path">images/band2.png</span></div>
-        <img class="ph-preview" id="phDrum" alt="" src="images/band2.png">
+        <div class="ph-ttl">Drum photo <span class="ph-path">images/miki-drummer-drum-kit.png</span></div>
+        <img class="ph-preview" id="phDrum" alt="" src="images/miki-drummer-drum-kit.png">
         <div class="row" style="margin-top:0">
           <label class="btn ghost" for="fileDrum">Choose photo…</label>
           <input type="file" id="fileDrum" accept="image/*" hidden>
@@ -763,8 +763,8 @@
       catch(e){ msg(m,'Save failed: '+e.message,'err'); }
     });
   }
-  wirePhoto('fileProfile','phProfile','saveProfile','profileMsg','images/band.png');
-  wirePhoto('fileDrum','phDrum','saveDrum','drumMsg','images/band2.png');
+  wirePhoto('fileProfile','phProfile','saveProfile','profileMsg','images/miki-drummer-live-vancouver.png');
+  wirePhoto('fileDrum','phDrum','saveDrum','drumMsg','images/miki-drummer-drum-kit.png');
 
   // ---------- Granite photo filter ----------
   const gfxThumb=$('gfxThumb');

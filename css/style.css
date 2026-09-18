@@ -177,7 +177,7 @@ header {
 }
 
 .hero {
-    background: url('../images/banner.png');
+    background: url('../images/stage-backdrop.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
