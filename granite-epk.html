@@ -242,8 +242,11 @@
     .sc-track-player { display: block; width: 100%; border-radius: 12px; border: 1px solid var(--edge); background: var(--stone-900); }
 
     /* ---- Save as PDF button ---- */
-    .pdf-btn {
+    .kit-actions {
         position: fixed; top: 16px; right: 16px; z-index: 60;
+        display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
+    }
+    .pdf-btn {
         display: inline-flex; align-items: center; gap: 8px;
         padding: 11px 18px; border-radius: 100px;
         background: var(--molten); color: #180a03;
@@ -253,13 +256,21 @@
         transition: filter 0.15s ease, transform 0.05s ease;
     }
     .pdf-btn:hover { filter: brightness(1.08); }
+    /* Secondary to the PDF button: the same shape, but it should not compete
+       with the thing most people came to press. */
+    .share-btn {
+        background: rgba(18,14,12,0.86); color: #f3efec;
+        border: 1px solid rgba(255,255,255,0.22);
+        backdrop-filter: blur(6px);
+    }
+    .share-btn:hover { filter: none; border-color: var(--molten); color: var(--molten); }
     .pdf-btn:active { transform: translateY(1px); }
 
     /* ---- print / PDF layout ---- */
     @page { size: A4; margin: 10mm; }
     @media print {
         :root, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: var(--stone-950); }
-        .pdf-btn { display: none !important; }
+        .pdf-btn, .kit-actions { display: none !important; }
         .hero { min-height: 0; height: 200mm; }
         section { padding: 18px 0; }
         .sec-head { break-after: avoid; page-break-after: avoid; }
@@ -277,10 +288,23 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/images/icon-16.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-192.png">
     <link rel="apple-touch-icon" href="/images/icon-180.png">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C75363M813"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-C75363M813');
+</script>
 </head>
 <body>
 
-<button class="pdf-btn" id="pdfBtn" aria-label="Save this press kit as a PDF">⬇ Save as PDF</button>
+<div class="kit-actions">
+    <button class="pdf-btn share-btn" id="shareBtn" role="status" aria-live="polite"
+            aria-label="Share this press kit">⤴ <span class="lbl">Share this page</span></button>
+    <button class="pdf-btn" id="pdfBtn" aria-label="Save this press kit as a PDF">⬇ Save as PDF</button>
+</div>
 
 <!-- ===================== HERO ===================== -->
 <header class="hero">
@@ -339,7 +363,7 @@
             </div>
         </div>
         <div class="media-actions">
-            <button class="dl-btn-media" id="dlAllBtn">⬇ Download all photos + logo</button>
+            <button class="dl-btn-media" id="dlAllBtn">⬇ Download press kit — photos, logo &amp; bio</button>
         </div>
     </div>
 </section>
@@ -383,8 +407,16 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="/js/share-ping.js"></script>
+<script src="/js/epk-extras.js"></script>
 <script>
     document.getElementById('pdfBtn').addEventListener('click', function () { window.print(); });
+
+    EpkExtras.wireShare({
+        btn: 'shareBtn',
+        band: 'GRANITE',
+        url: 'https://www.mikidrummer.ca/granite-epk.html'
+    });
 
     // Apply the admin-chosen Instagram-style filter to the gallery photos.
     fetch('config.json?_=' + Date.now()).then(function (r) { return r.json(); }).then(function (d) {
@@ -395,22 +427,26 @@
     }).catch(function () {});
 
     document.getElementById('dlAllBtn').addEventListener('click', async function () {
-        const btn = this, orig = btn.textContent;
+        const btn = this, orig = btn.innerHTML;
         if (typeof JSZip === 'undefined') { window.location.href = 'images/granite/'; return; }
         btn.disabled = true; btn.textContent = 'Preparing…';
         const files = ['logo.png','logo-black.png','hero.jpg','feature.jpg','live-01.jpg','live-02.jpg','live-03.jpg','live-04.jpg','live-05.jpg','live-06.jpg','live-07.jpg','live-08.jpg'];
-        const zip = new JSZip(), folder = zip.folder('granite-press-photos');
+        const zip = new JSZip(), folder = zip.folder('granite-press-kit');
+        // A press kit without the bio is half a press kit: the photos are
+        // the easy part and the words are what gets pasted into a listing.
+        // Read off the page at download time so it cannot go stale.
+        folder.file('granite-bio.txt', EpkExtras.bioText({ band: 'GRANITE', url: 'https://www.mikidrummer.ca/granite-epk.html' }));
         let added = 0;
         await Promise.all(files.map(async function (f) {
             try { const r = await fetch('images/granite/' + f); if (!r.ok) return; folder.file(f, await r.blob()); added++; } catch (e) {}
         }));
-        if (!added) { alert('No images found to download.'); btn.disabled = false; btn.textContent = orig; return; }
+        if (!added) { alert('No images found to download.'); btn.disabled = false; btn.innerHTML = orig; return; }
         const blob = await zip.generateAsync({ type: 'blob' });
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob); a.download = 'granite-press-photos.zip';
+        a.href = URL.createObjectURL(blob); a.download = 'granite-press-kit.zip';
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
-        btn.disabled = false; btn.textContent = orig;
+        btn.disabled = false; btn.innerHTML = orig;
     });
 </script>
 </body>
