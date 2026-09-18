@@ -541,6 +541,8 @@
             </div>
         </footer>
 
+        <!-- Holds the share-only Formspree id, read by the block below. -->
+        <script src="/js/share-ping.js"></script>
         <script>
         // ---- share ---------------------------------------------------------
         // Same shape as the arcade button on mikibutler.ca: the native share
@@ -557,12 +559,18 @@
           var TITLE = 'Miki Drummer — drum recording, tracks and lessons';
           var BLURB = 'Remote drum recording, custom tracks and lessons, out of Vancouver.';
 
-          // An email per share, through the form the site already uses. One per
-          // browser per day: a page someone taps five times is one share, and
-          // this form's monthly allowance is shared with band bookings — a
-          // booking bouncing because the quota went on share pings would be a
-          // bad trade. Give it its own form id and that ceiling stops mattering.
-          var PING = 'https://formspree.io/f/xpqgrqvb';
+          // An email per share. One per browser per day: a page someone taps
+          // five times is one share, and the signal is that it happened.
+          //
+          // This used to post to xpqgrqvb, the form eight pages share --
+          // including /play-with-us.html for band bookings and /ask-a-band.html
+          // for invites. Fifty submissions a month across the lot of them, so
+          // every share notification was spending allowance a booking needed,
+          // and a refused booking is invisible. Shares now have their own form
+          // and their own ceiling; the id lives in /js/share-ping.js, which is
+          // the one place to change it.
+          var PING = 'https://formspree.io/f/'
+                   + (window.SharePing && window.SharePing.formId ? window.SharePing.formId() : '');
           var K_PING = 'mdSharePing';
 
           // /services.html?sharetest=1 sends every time and says on the page
@@ -571,6 +579,13 @@
           var TEST = /[?&]sharetest=1/.test(location.search);
 
           function notify(method) {
+            // No form id yet means no endpoint to post to. Posting to a bare
+            // /f/ would be a guaranteed 404 on every share, and the share
+            // itself must not care either way.
+            if (!(window.SharePing && window.SharePing.formId && window.SharePing.formId())) {
+              if (TEST) show('No share form configured yet — see js/share-ping.js');
+              return;
+            }
             var day = new Date().toISOString().slice(0, 10);
             try {
               if (!TEST && localStorage.getItem(K_PING) === day) return;

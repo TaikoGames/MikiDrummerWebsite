@@ -242,6 +242,7 @@
   </footer>
 </div>
 
+<script src="/js/share-ping.js"></script>
 <script>
 (function () {
   'use strict';
@@ -841,10 +842,25 @@
       }, 4000);
     }
 
+    // An email as well as the analytics event, on the share-only Formspree
+    // form so this never eats a booking's allowance. A no-op until that form
+    // id is filled in, and it never blocks or delays the share itself.
+    function ping(method) {
+      if (!global_SharePing()) return;
+      window.SharePing.send({
+        what: 'the poster maker',
+        how: method === 'web_share' ? 'share sheet (phone)' : 'copied the link',
+        link: url(method)
+      }, function (ok, why) {
+        if (/[?&]sharetest=1/.test(location.search)) say(ok ? 'Ping sent' : 'Ping: ' + why);
+      });
+    }
+    function global_SharePing() { return window.SharePing && window.SharePing.send; }
+
     btn.addEventListener('click', function () {
       if (navigator.share) {
         navigator.share({ title: TITLE, text: BLURB, url: url('web_share') })
-          .then(function () { track('web_share'); say('Shared 🤘'); })
+          .then(function () { track('web_share'); ping('web_share'); say('Shared 🤘'); })
           .catch(function (e) {
             // Dismissed, not failed.
             if (e && e.name === 'AbortError') { label.textContent = original; hint.textContent = ''; return; }
@@ -860,6 +876,7 @@
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(link).then(function () {
           track('copy');
+          ping('copy');
           say('Link copied 📋', 'Paste it anywhere.');
         }).catch(function () { say('Could not copy', link); });
       } else {
