@@ -1,0 +1,85 @@
+{
+  "_readme": "Sites that ought to link to mikidrummer.ca, checked by tools/backlink_audit.py. Every entry here is an existing relationship rather than a stranger: somewhere the site already links out to, already sends people, or already supplies something to. That is the whole selection rule, because a link request from a stranger is spam and a link request from someone you already credit is a conversation. Bands from the Punk BC board and venues from show-sources.json are added automatically by the audit and do not need listing here.",
+
+  "_fields": {
+    "name": "who they are",
+    "url": "the page most likely to carry the link, homepage unless there is a better one",
+    "kind": "venue | gear | listings | label | press | partner",
+    "weight": "1-10, how much a followed link from them would be worth. Venues and manufacturers keep pages up for years; a one-off blog post does not.",
+    "email": "only if published and verified; the audit prints 'no address on file' rather than guessing",
+    "why": "the specific existing relationship to open with. Without one there is no reason for them to say yes."
+  },
+
+  "targets": [
+    {
+      "name": "Soultone Cymbals",
+      "url": "https://www.soultonecymbals.com/",
+      "kind": "gear",
+      "weight": 10,
+      "why": "Miki plays their cymbals and the site links to them from four pages. Cymbal makers keep an artist roster and those rosters link out to the player's own site. This is the single most winnable link on the list: the relationship exists, the page type exists, and nobody has asked."
+    },
+    {
+      "name": "Woodies Drumsticks",
+      "url": "https://woodiesdrumsticks.com/",
+      "kind": "gear",
+      "weight": 10,
+      "why": "Same again: their sticks, linked from four pages, and stick makers run artist pages. Smaller company than a cymbal manufacturer, which usually means a faster answer."
+    },
+    {
+      "name": "Rickshaw Theatre",
+      "url": "https://rickshawtheatre.com/",
+      "kind": "venue",
+      "weight": 9,
+      "why": "The board republishes their listings and links to them 68 times -- far more than any other outbound destination. If any single relationship on this site has earned an ask, it is this one."
+    },
+    {
+      "name": "The Astoria",
+      "url": "https://astoria.pub/",
+      "kind": "venue",
+      "weight": 9,
+      "why": "Listings republished on the board, 14 outbound links. Note the site links to both astoria.pub and theastoria.ca -- worth settling which is current while asking."
+    },
+    {
+      "name": "The Cobalt",
+      "url": "https://thecobalt.ca/",
+      "kind": "venue",
+      "weight": 9,
+      "why": "Listings republished on the board, 13 outbound links."
+    },
+    {
+      "name": "Commodore Ballroom",
+      "url": "https://www.commodoreballroom.com/",
+      "kind": "venue",
+      "weight": 7,
+      "why": "10 outbound links, but a Live Nation room -- the site is corporate and unlikely to add a local link. Low odds, listed so the answer is on record rather than assumed."
+    },
+    {
+      "name": "The Pearl Vancouver",
+      "url": "https://thepearlvancouver.com/",
+      "kind": "venue",
+      "weight": 8,
+      "why": "Listings republished on the board."
+    },
+    {
+      "name": "Red Gate Arts Society",
+      "url": "https://redgate.tv/",
+      "kind": "venue",
+      "weight": 8,
+      "why": "Linked from the board and from band pages. A small independent arts space, which usually means a real person reads the mail."
+    },
+    {
+      "name": "GigPit",
+      "url": "https://gigpit.ca/",
+      "kind": "listings",
+      "weight": 8,
+      "why": "The nearest thing to a peer: another BC gig listings site, linked 11 times from band pages. Two listings sites covering the same scene normally end up crediting each other, and neither loses anything by it."
+    },
+    {
+      "name": "Kinda Cool Records",
+      "url": "https://www.kindacoolrecords.com/",
+      "kind": "label",
+      "weight": 7,
+      "why": "Two of their bands (Die Job, The Fomites) have pages on the board that link to the label."
+    }
+  ]
+}

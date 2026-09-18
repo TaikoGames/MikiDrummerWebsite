@@ -34,6 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # drift, and the split is fiddly enough to get wrong twice ("Ripcordz w/ The
 # Oo-E Boo-E's" must not become a band called "Ripcordz w").
 from build_punkbc import performers, slugify as _slugify, href_for, today_local  # noqa: E402
+from weblinks import is_real_site  # noqa: E402
 
 
 def slugify(name: str) -> str:
@@ -92,7 +93,12 @@ def load_links() -> dict:
         for p in rec.get("profiles", []):
             url = (p.get("url") or "").strip()
             name = (p.get("name") or "").strip()
-            if url.startswith("http") and "mailto" not in url and "/contact" not in url:
+            # startswith("http") was the whole test here, and it let through
+            # every namespace and script host the finder had scraped off the
+            # band's page. 72 of 114 pages shipped with a Facebook button
+            # pointing at facebook.com/2008/fbml, and said the same thing in
+            # their sameAs, where Google reads it as the band's real accounts.
+            if is_real_site(url) and "mailto" not in url and "/contact" not in url:
                 good.append((name or "Their page", url))
         if good:
             out[(rec.get("band") or "").lower().strip()] = good[:3]

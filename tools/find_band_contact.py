@@ -29,6 +29,9 @@ import time
 import urllib.parse
 import urllib.request
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from weblinks import is_real_site  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SHOWS = os.path.join(ROOT, "punkbc-shows.json")
 OUT = os.path.join(ROOT, "data", "band-contacts.json")
@@ -389,6 +392,13 @@ def look_up(band):
     profiles, cands = [], []
 
     def note(name, url, found):
+        # Namespaces, script hosts and platform boilerplate get scraped off a
+        # page exactly like a real link does. Stored, they end up published:
+        # 72 band pages went out with a Facebook button aimed at the XML
+        # namespace in the page's own <html> tag.
+        if not is_real_site(url):
+            print("    %-26s %-46s %s" % (name[:26], url[:46], "not a site"))
+            return
         profiles.append({"name": name, "url": url, "found": found})
         print("    %-26s %-46s %s" % (name[:26], url[:46], found))
 

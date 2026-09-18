@@ -116,11 +116,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "Instagram",
           "url": "http://instagram.com/authorandpunisher",
           "found": "profile"
@@ -132,18 +127,8 @@
         },
         {
           "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
           "url": "http://www.authorandpunisher.com",
           "found": "email"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -162,24 +147,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "soundcloud.com",
           "url": "https://soundcloud.com/ubaron",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -203,28 +173,13 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43213069-elder-at-nile-theater?utm_source=1471&utm_medium=partner",
           "found": "profile"
         },
         {
           "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
           "url": "https://www.normanrecords.com",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
           "found": "form"
         }
       ],
@@ -258,26 +213,6 @@
         {
           "name": "Bandcamp",
           "url": "https://blasphemy.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -357,21 +292,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "http://instargam.com",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "http://vk.com",
           "found": "email"
@@ -390,21 +310,6 @@
         {
           "name": "Bandcamp",
           "url": "https://brasser.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         },
         {
@@ -459,21 +364,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
@@ -495,11 +385,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "Linktree",
           "url": "http://linktr.ee/burntlung",
           "found": "profile"
@@ -508,16 +393,6 @@
           "name": "Linktree",
           "url": "https://linktr.ee/burntlung",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -538,21 +413,6 @@
         {
           "name": "Bandcamp",
           "url": "https://cheapflavor.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         },
         {
@@ -661,11 +521,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "youtube.com",
           "url": "http://youtube.com/cyborgoctopus",
           "found": "profile"
@@ -677,18 +532,8 @@
         },
         {
           "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
           "url": "https://cyborgoctopusband.com",
           "found": "email"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
         }
       ],
       "note": "",
@@ -705,21 +550,6 @@
         {
           "name": "Bandcamp",
           "url": "https://dangerbox.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         },
         {
@@ -779,26 +609,6 @@
           "name": "Bandcamp",
           "url": "https://dazy.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -856,29 +666,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43251396-revocation-at-amsterdam-bar-and-hall?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -894,21 +684,6 @@
         {
           "name": "Bandcamp",
           "url": "https://delilahbon.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         },
         {
@@ -931,26 +706,6 @@
         {
           "name": "Bandcamp",
           "url": "https://demonhunter.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -975,28 +730,13 @@
           "found": "profile"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "Linktree",
           "url": "https://linktr.ee/devouringvoid",
           "found": "profile"
         },
         {
           "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
           "url": "https://undercover-records.de",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
           "found": "form"
         }
       ],
@@ -1012,11 +752,6 @@
         {
           "name": "Label page (Kinda Cool Records)",
           "url": "https://www.kindacoolrecords.com/diejob",
-          "found": "email"
-        },
-        {
-          "name": "Label contact",
-          "url": "mailto:kindacoolrecords@gmail.com",
           "found": "email"
         },
         {
@@ -1067,23 +802,8 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "http://dustypinesmusic.com",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
           "found": "form"
         }
       ],
@@ -1102,24 +822,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "Instagram",
           "url": "http://www.instagram.com/earthcrisisofficial",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -1143,29 +848,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43213069-elder-at-nile-theater?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1200,11 +885,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43173936-ensiferum-at-mercury-music-lounge?utm_source=1471&utm_medium=partner",
           "found": "profile"
@@ -1213,21 +893,6 @@
           "name": "twitter.com",
           "url": "https://twitter.com/EnsiferumMetal",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1246,11 +911,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "Instagram",
           "url": "https://www.instagram.com/evergreyofficial/",
           "found": "profile"
@@ -1259,11 +919,6 @@
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43018443-hammerfall-at-tupelo-music-hall?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -1314,28 +969,13 @@
           "found": "profile"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "twitter.com",
           "url": "http://www.twitter.com/exhumedofficial",
           "found": "profile"
         },
         {
           "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
           "url": "http://www.gorefuckingmetal.blogspot.com",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
           "found": "form"
         }
       ],
@@ -1351,21 +991,6 @@
         {
           "name": "Bandcamp",
           "url": "https://failure.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         },
         {
@@ -1388,21 +1013,6 @@
         {
           "name": "Bandcamp",
           "url": "https://fatalrealm.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         },
         {
@@ -1442,11 +1052,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "Instagram",
           "url": "https://www.instagram.com/fotocrime/",
           "found": "profile"
@@ -1455,11 +1060,6 @@
           "name": "youtube.com",
           "url": "https://www.youtube.com/fotocrime",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -1486,26 +1086,6 @@
           "name": "Bandcamp",
           "url": "https://fumingmouth.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1524,29 +1104,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/festivals/115151-riot-fest/id/43237147-riot-fest-2026?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1565,11 +1125,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "Instagram",
           "url": "https://www.instagram.com/guiltlessband/",
           "found": "profile"
@@ -1578,11 +1133,6 @@
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43263200-author-and-punisher-at-golddiggers?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -1611,29 +1161,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43018443-hammerfall-at-tupelo-music-hall?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1653,24 +1183,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43206710-ride-for-revenge-at-rickshaw-theatre?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Rickshaw",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -1694,29 +1209,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43171338-frank-turner-and-the-sleeping-souls-at-south-side-ballroom?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1735,24 +1230,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43344951-hulder-at-star-theater?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Star",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -1781,24 +1261,9 @@
           "found": "profile"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "twitter.com",
           "url": "http://twitter.com/infinexhuma",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -1821,24 +1286,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43393112-integrity-at-baroeg?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Baroeg&quot;,&quot;utc_date&quot;:1790726400,&quot;event_date&quot;:&quot;30",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -1861,26 +1311,6 @@
           "name": "Bandcamp",
           "url": "https://jarheadfertilizer.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1898,29 +1328,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43283233-merauder-at-underground-music-cafe?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1939,24 +1349,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43343856-mersiv-at-hb-social-club?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;HB",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -2025,26 +1420,6 @@
           "name": "Instagram",
           "url": "https://instagram.com/liminalshroud?igshid=OTJhZDVkZWE=",
           "found": "profile"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://new.express.adobe.com",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2078,24 +1453,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "http://morsecoderecordings.limitedrun.com",
           "found": "email"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
         }
       ],
       "note": "",
@@ -2114,29 +1474,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "Instagram",
           "url": "http://instagram.com/themanicouagan",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2155,11 +1495,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "Instagram",
           "url": "https://www.instagram.com/mares_of_thrace/",
           "found": "profile"
@@ -2168,21 +1503,6 @@
           "name": "Linktree",
           "url": "https://linktr.ee/maresofthrace",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2231,11 +1551,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43251932-uncle-acid-and-the-deadbeats-at-la-rosa?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;La",
           "found": "profile"
@@ -2244,16 +1559,6 @@
           "name": "Instagram",
           "url": "https://www.instagram.com/messa_band",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -2276,26 +1581,6 @@
           "name": "Bandcamp",
           "url": "https://milestonowhere.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2312,26 +1597,6 @@
           "name": "Bandcamp",
           "url": "https://militariegun.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2347,21 +1612,6 @@
         {
           "name": "Bandcamp",
           "url": "https://missinglink.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         },
         {
@@ -2386,21 +1636,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
@@ -2421,29 +1656,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/festivals/745774-monster-energy-aftershock/id/43083197-monster-energy-aftershock-2026?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2485,26 +1700,6 @@
           "name": "Bandcamp",
           "url": "https://outoforder.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2536,21 +1731,6 @@
         {
           "name": "Bandcamp",
           "url": "https://pillmill.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         },
         {
@@ -2607,21 +1787,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
@@ -2659,11 +1824,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "twitter.com",
           "url": "http://www.twitter.com/revocation",
           "found": "profile"
@@ -2672,21 +1832,6 @@
           "name": "Instagram",
           "url": "http://www.instagram.com/revocation",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2706,24 +1851,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43206710-ride-for-revenge-at-rickshaw-theatre?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Rickshaw",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -2746,24 +1876,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "twitter.com",
           "url": "https://twitter.com/riversofnihil",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -2788,21 +1903,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
@@ -2822,26 +1922,6 @@
           "name": "Bandcamp",
           "url": "https://savagemaster.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2856,26 +1936,6 @@
         {
           "name": "Bandcamp",
           "url": "https://schedule1.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -2896,21 +1956,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
@@ -2928,26 +1973,6 @@
         {
           "name": "Bandcamp",
           "url": "https://shiner.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -2984,11 +2009,6 @@
         },
         {
           "name": "Site",
-          "url": "http://www.w3.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
           "url": "https://42c34b06f2ca6504b0c9f52ac8d6fd03@o363271.ingest.us.sentry.io",
           "found": "form"
         },
@@ -3013,11 +2033,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "twitter.com",
           "url": "https://twitter.com/sleep_official",
           "found": "profile"
@@ -3026,21 +2041,6 @@
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43284432-sleep-at-tower-theatre?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3076,21 +2076,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
@@ -3108,26 +2093,6 @@
         {
           "name": "Bandcamp",
           "url": "https://speedreaper.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -3147,19 +2112,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "twitter.com",
           "url": "http://www.twitter.com/sundressnation",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -3194,24 +2149,9 @@
           "found": "profile"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "soundcloud.com",
           "url": "https://soundcloud.com/soundofsunno",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -3231,26 +2171,6 @@
         {
           "name": "Bandcamp",
           "url": "https://teratoma.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -3296,29 +2216,9 @@
           "found": "profile"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "open.spotify.com",
           "url": "https://open.spotify.com/artist/4FjyhVV0npeLb8IKkpX8tK",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3368,11 +2268,6 @@
           "found": "email"
         },
         {
-          "name": "Label contact",
-          "url": "mailto:kindacoolrecords@gmail.com",
-          "found": "email"
-        },
-        {
           "name": "Instagram",
           "url": "https://www.instagram.com/thefomites/",
           "found": "profile"
@@ -3403,24 +2298,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43009245-growlers-at-catalyst?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;The",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -3445,28 +2325,13 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "twitter.com",
           "url": "https://twitter.com/themenzingers",
           "found": "profile"
         },
         {
           "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
           "url": "http://themenzingers.com",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
           "found": "form"
         }
       ],
@@ -3482,26 +2347,6 @@
         {
           "name": "Bandcamp",
           "url": "https://thespits.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -3522,24 +2367,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43206710-ride-for-revenge-at-rickshaw-theatre?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Rickshaw",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -3578,21 +2408,6 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
-        },
-        {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
@@ -3612,26 +2427,6 @@
           "name": "Bandcamp",
           "url": "https://waitless.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3648,26 +2443,6 @@
           "name": "Bandcamp",
           "url": "https://weeping.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3683,26 +2458,6 @@
         {
           "name": "Bandcamp",
           "url": "https://witiko.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
           "found": "form"
         }
       ],
@@ -3739,24 +2494,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "twitter.com",
           "url": "https://twitter.com/wolvesatthegate",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         },
         {
           "name": "Site",
@@ -3796,29 +2536,9 @@
           "found": "form"
         },
         {
-          "name": "Facebook",
-          "url": "http://www.facebook.com/2008/fbml",
-          "found": "profile"
-        },
-        {
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43292417-youth-fountain-at-paddys-underground?utm_source=1471&utm_medium=partner",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://opengraphprotocol.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://schema.org",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://js.stripe.com",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",

@@ -1,0 +1,72 @@
+name: Backlink audit
+
+# Who links to mikidrummer.ca among the people it already features, and who
+# does not. The site publishes pages about a hundred-odd bands, republishes
+# every venue's listings, and links out to the companies whose gear is on the
+# kit -- all relationships where a link back is a fair thing to ask for, and
+# almost none of them have been asked.
+#
+# Monthly, because link building moves at the speed of people answering email
+# and a weekly run would just reprint the same list.
+
+on:
+  schedule:
+    - cron: "20 13 1 * *"        # 06:20 Vancouver on the 1st
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Only check the first N targets (blank = all)"
+        default: ""
+      dump:
+        description: "Print every site and what was found on it"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backlink-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the filters still hold
+        run: |
+          python3 tools/weblinks.py --self-test
+          python3 tools/backlink_audit.py --self-test
+
+      - name: Crawl
+        run: |
+          ARGS=""
+          [ -n "${{ github.event.inputs.limit }}" ] && ARGS="--limit ${{ github.event.inputs.limit }}"
+          [ "${{ github.event.inputs.dump }}" = "true" ] && ARGS="$ARGS --dump"
+          python3 tools/backlink_audit.py $ARGS | tee /tmp/audit.log
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            if [ -f backlink-report.md ]; then cat backlink-report.md; fi
+            echo
+            echo '<details><summary>Run log</summary>'
+            echo
+            echo '```'
+            cat /tmp/audit.log 2>/dev/null || echo "(no log)"
+            echo '```'
+            echo
+            echo '</details>'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit the report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add backlink-report.md data/backlinks.json
+          git diff --cached --quiet && { echo "nothing changed"; exit 0; }
+          git commit -m "Backlinks: monthly audit"
+          git push origin "HEAD:$GITHUB_REF_NAME"
