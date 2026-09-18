@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poster maker — Punk BC</title>
+<meta name="description" content="Make a gig poster for a Punk BC show: pick the date off the board, set the bill, drop in a background and export it ready for Instagram.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://www.mikidrummer.ca/poster.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
+
+<!-- Why the band names are type rather than logos:
+     the repo holds a logo for Granite and the Miki mark and nothing else. No
+     logo exists for Lift the Anchor, Bound By None or Diera, and none for any
+     of the 78 acts on the board or any venue. Those belong to other people --
+     naming a band on a poster for a gig they are playing is ordinary, pasting
+     their trademark into a generator is not. So: names set big, and a slot for
+     a logo file where one is actually to hand. -->
+
+<style>
+  :root{
+    --bg:#0b0c0e; --card:#131518; --edge:#2b2f34; --edge2:#3a4046;
+    --dim:#7d848d; --mid:#a6adb6; --fg:#e9ebee; --hot:#e8672a;
+  }
+  @font-face{font-family:'KilnSpiked';src:url('/fonts/KilnSansSpiked.woff2') format('woff2');font-display:swap}
+  @font-face{font-family:'KilnRegular';src:url('/fonts/KilnSansRegular.woff2') format('woff2');font-display:swap}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);line-height:1.55;padding:0 18px 70px;
+       font-family:'Helvetica Neue',system-ui,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto}
+  a{color:var(--hot);text-decoration:none} a:hover{text-decoration:underline}
+  header{padding:38px 0 20px;border-bottom:1px solid var(--edge)}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--hot);font-weight:700}
+  h1{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(24px,5vw,36px);letter-spacing:-.02em;margin:9px 0 10px}
+  .lead{color:var(--mid);font-size:15px;max-width:66ch}
+
+  .grid{display:grid;grid-template-columns:1fr;gap:26px;margin-top:26px}
+  @media(min-width:940px){ .grid{grid-template-columns:minmax(0,440px) 1fr;align-items:start} }
+
+  .panel{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:18px}
+  .panel + .panel{margin-top:16px}
+  h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:12px}
+  label{display:block;font-size:12px;color:var(--mid);margin:12px 0 5px}
+  label:first-of-type{margin-top:0}
+  input[type=text],input[type=date],input[type=time],select,textarea{
+    width:100%;background:#0e1013;border:1px solid var(--edge2);color:var(--fg);
+    border-radius:8px;padding:10px 11px;font:inherit;font-size:14px}
+  textarea{resize:vertical;min-height:74px}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--hot);outline-offset:1px;border-color:transparent}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hint{font-size:11.5px;color:var(--dim);margin-top:5px}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;background:#1b1e22;border:1px solid var(--edge2);
+       color:var(--fg);border-radius:999px;padding:9px 16px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .btn:hover{border-color:var(--hot);color:var(--hot)}
+  .btn.go{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .btn.go:hover{filter:brightness(1.08);color:#160802}
+  .btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+  .chip{background:#0e1013;border:1px solid var(--edge2);color:var(--mid);border-radius:999px;
+        padding:6px 12px;font-size:12px;cursor:pointer}
+  .chip[aria-pressed=true]{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:700}
+
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:7px;margin-top:9px}
+  .thumb{position:relative;aspect-ratio:1;border-radius:7px;overflow:hidden;border:2px solid transparent;
+         cursor:pointer;background:#0e1013;padding:0}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb[aria-pressed=true]{border-color:var(--hot)}
+  .thumb .tag{position:absolute;left:3px;bottom:3px;font-size:8.5px;letter-spacing:.06em;
+              background:rgba(0,0,0,.72);color:#fff;padding:1px 4px;border-radius:3px}
+
+  .stage{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:16px;
+         position:sticky;top:16px}
+  canvas{width:100%;height:auto;display:block;border-radius:8px;background:#000}
+  .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:11px;
+        font-size:12px;color:var(--dim);flex-wrap:wrap}
+  footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
+  .warn{color:#ffb38a;font-size:12px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Punk BC · Tools</span>
+    <h1>Poster maker</h1>
+    <p class="lead">Pick a night off the <a href="/punkbc.html">shows board</a> or type one in, choose a
+       background, and get a poster sized for Instagram. Nothing uploads anywhere — it is all drawn
+       in this browser and saved straight to your device.</p>
+  </header>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <h2>Start from a real show</h2>
+        <label for="pick">Upcoming on the board</label>
+        <select id="pick"><option value="">— loading the board —</option></select>
+        <div class="hint">Fills the bill, venue, city and date. Edit anything after.</div>
+      </div>
+
+      <div class="panel">
+        <h2>The bill</h2>
+        <label for="headliner">Headliner</label>
+        <input type="text" id="headliner" placeholder="Lift the Anchor" autocomplete="off">
+        <label for="support">Support — one per line</label>
+        <textarea id="support" placeholder="Granite&#10;Bound By None" autocomplete="off"></textarea>
+        <label for="kicker">Line above the headliner</label>
+        <input type="text" id="kicker" placeholder="Punk BC presents" autocomplete="off">
+      </div>
+
+      <div class="panel">
+        <h2>When and where</h2>
+        <div class="row">
+          <div><label for="date">Date</label><input type="date" id="date"></div>
+          <div><label for="time">Doors</label><input type="time" id="time"></div>
+        </div>
+        <label for="venue">Venue</label>
+        <input type="text" id="venue" list="venues" placeholder="The Rickshaw Theatre" autocomplete="off">
+        <datalist id="venues"></datalist>
+        <div class="row" style="margin-top:12px">
+          <div><label for="city">City</label><input type="text" id="city" placeholder="Vancouver" autocomplete="off"></div>
+          <div><label for="price">Price</label><input type="text" id="price" placeholder="$15" autocomplete="off"></div>
+        </div>
+        <label for="foot">Footer line</label>
+        <input type="text" id="foot" placeholder="19+ · tickets at the door" autocomplete="off">
+      </div>
+
+      <div class="panel">
+        <h2>Background</h2>
+        <div class="chips" id="bgTabs">
+          <button class="chip" data-tab="pd" aria-pressed="true">Public domain</button>
+          <button class="chip" data-tab="mine" aria-pressed="false">My photos</button>
+        </div>
+        <div class="thumbs" id="thumbs"></div>
+        <div class="btns">
+          <button class="btn" id="randomBg">🎲 Random</button>
+          <button class="btn" id="uploadBg">Upload…</button>
+          <input type="file" id="bgFile" accept="image/*" hidden>
+        </div>
+        <div class="hint" id="bgCredit"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Logo</h2>
+        <div class="chips" id="logoChips"></div>
+        <div class="btns">
+          <button class="btn" id="uploadLogo">Upload a logo…</button>
+          <input type="file" id="logoFile" accept="image/*" hidden>
+        </div>
+        <p class="warn">Only Granite has a logo file on the site. For any other band or venue,
+           upload the file they gave you — I am not going to lift someone else's mark off the web.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Shape</h2>
+        <div class="chips" id="sizeChips">
+          <button class="chip" data-w="1080" data-h="1350" aria-pressed="true">Feed 4:5</button>
+          <button class="chip" data-w="1080" data-h="1080" aria-pressed="false">Square</button>
+          <button class="chip" data-w="1080" data-h="1920" aria-pressed="false">Story 9:16</button>
+          <button class="chip" data-w="1191" data-h="1684" aria-pressed="false">Print A4</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="stage">
+        <canvas id="poster" width="1080" height="1350"></canvas>
+        <div class="meta">
+          <span id="dims">1080 × 1350</span>
+          <button class="btn go" id="save">↓ Save PNG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>.
+    Backgrounds marked <em>public domain</em> are CC0 or PD and free to use — the credit is on
+    <a href="/photo-credits.html">the credits page</a>. Your own photos and uploads never leave this browser.
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var cv = $('poster'), ctx = cv.getContext('2d');
+
+  // Backgrounds that are genuinely free to use, and the ones Miki shot himself.
+  // Nothing here is scraped: the two crowd shots are the CC0/PD pair already
+  // localised for the board, the rest are his own bands.
+  var PD = [
+    { src: '/images/punkbc-crowd-1-bg.jpg', credit: 'Crowd — CC0, Mollystarkdean' },
+    { src: '/images/punkbc-crowd-2-bg.jpg', credit: 'Crowd — public domain, Steven Lek' }
+  ];
+  var MINE = [
+    '/images/lift-the-anchor/live-01.jpg', '/images/lift-the-anchor/live-02.jpg',
+    '/images/lift-the-anchor/live-03.jpg', '/images/lift-the-anchor/live-04.jpg',
+    '/images/lift-the-anchor/live-05.jpg', '/images/lift-the-anchor/live-06.jpg',
+    '/images/lift-the-anchor/live-07.jpg', '/images/lift-the-anchor/live-08.jpg',
+    '/images/lift-the-anchor/live-09.jpg', '/images/lift-the-anchor/live-10.jpg',
+    '/images/granite/live-01.jpg', '/images/granite/live-02.jpg',
+    '/images/granite/live-03.jpg', '/images/granite/live-07.jpg',
+    '/images/granite/live-08.jpg', '/images/granite/hero.jpg',
+    '/images/bound-by-none/live-01.jpg'
+  ].map(function (s) { return { src: s, credit: '' }; });
+
+  var LOGOS = [
+    { id: '', name: 'None', src: '' },
+    { id: 'granite', name: 'Granite', src: '/images/granite/logo.png' },
+    { id: 'miki', name: 'Miki mark', src: '/images/brand.png' }
+  ];
+
+  var state = {
+    bg: null, bgCredit: '', logo: null,
+    w: 1080, h: 1350, tab: 'pd'
+  };
+
+  // ---- fonts -------------------------------------------------------------
+  // Canvas will silently fall back to a default face if it draws before the
+  // webfont is ready, which looks like the tool ignoring the brand entirely.
+  // Wait for both, then draw, then redraw once more on late arrival.
+  var fontsReady = false;
+  function loadFonts() {
+    if (!document.fonts || !document.fonts.load) { fontsReady = true; return Promise.resolve(); }
+    return Promise.all([
+      document.fonts.load('700 100px KilnSpiked'),
+      document.fonts.load('400 40px KilnRegular')
+    ]).then(function () { fontsReady = true; }).catch(function () { fontsReady = true; });
+  }
+  function disp(px) { return (fontsReady ? '700 ' + px + 'px KilnSpiked, ' : 'bold ' + px + 'px ') + 'Impact, sans-serif'; }
+  function text(px) { return (fontsReady ? '400 ' + px + 'px KilnRegular, ' : px + 'px ') + 'Helvetica, Arial, sans-serif'; }
+
+  // ---- drawing helpers ---------------------------------------------------
+  function loadImage(src) {
+    return new Promise(function (res, rej) {
+      var im = new Image();
+      im.crossOrigin = 'anonymous';
+      im.onload = function () { res(im); };
+      im.onerror = rej;
+      im.src = src;
+    });
+  }
+
+  function cover(im, w, h) {
+    var s = Math.max(w / im.width, h / im.height);
+    var dw = im.width * s, dh = im.height * s;
+    ctx.drawImage(im, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  }
+
+  function wrapLines(str, font, maxW) {
+    ctx.font = font;
+    var words = String(str).split(/\s+/), lines = [], line = '';
+    for (var i = 0; i < words.length; i++) {
+      var t = (line + ' ' + words[i]).trim();
+      if (ctx.measureText(t).width <= maxW || !line) line = t;
+      else { lines.push(line); line = words[i]; }
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function fitLines(str, startPx, minPx, maxW, maxLines) {
+    // Band names run from "Diera" to "Chuck Ragan and the Camaraderie"; one
+    // size cannot serve both, so step down until it fits.
+    for (var px = startPx; px > minPx; px -= 4) {
+      var ls = wrapLines(str, disp(px), maxW);
+      if (ls.length <= maxLines) return { px: px, lines: ls };
+    }
+    return { px: minPx, lines: wrapLines(str, disp(minPx), maxW).slice(0, maxLines) };
+  }
+
+  function dateLine() {
+    var d = $('date').value, t = $('time').value;
+    if (!d) return t ? t : '';
+    var parts = d.split('-');
+    var dt = new Date(+parts[0], +parts[1] - 1, +parts[2]);   // local, not UTC
+    var s = dt.toLocaleDateString('en-CA', { weekday: 'long', day: 'numeric', month: 'long' });
+    return (t ? s + ' · ' + t : s).toUpperCase();
+  }
+
+  // ---- the poster --------------------------------------------------------
+  function draw() {
+    var W = state.w, H = state.h;
+    cv.width = W; cv.height = H;
+    $('dims').textContent = W + ' × ' + H;
+
+    ctx.fillStyle = '#0a0908';
+    ctx.fillRect(0, 0, W, H);
+    if (state.bg) { cover(state.bg, W, H); }
+
+    // Darken from the bottom so the type sits on ink and the picture still
+    // reads through. A flat wash would kill the photograph.
+    //
+    // The stops are set by measurement, not taste: with the first pass the
+    // bottom block came out at 3.3:1 against a bright crowd shot, which scrapes
+    // past AA for large text and fails anything smaller. These give the worst
+    // case real headroom on both backgrounds, and the picture still shows.
+    var g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, 'rgba(8,7,7,.70)');
+    g.addColorStop(0.42, 'rgba(8,7,7,.60)');
+    g.addColorStop(0.78, 'rgba(8,7,7,.86)');
+    g.addColorStop(1, 'rgba(8,7,7,.97)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // A second, softer wash behind the bottom third only. The bill and the
+    // date sit there on every poster, and an uploaded photo can be far
+    // brighter than the two that ship with the tool.
+    var g2 = ctx.createLinearGradient(0, H * 0.55, 0, H);
+    g2.addColorStop(0, 'rgba(8,7,7,0)');
+    g2.addColorStop(1, 'rgba(8,7,7,.55)');
+    ctx.fillStyle = g2;
+    ctx.fillRect(0, H * 0.55, W, H * 0.45);
+
+    var pad = Math.round(W * 0.075);
+    var inner = W - pad * 2;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+
+    // --- top: kicker and logo
+    var y = pad + Math.round(H * 0.035);
+    var kicker = $('kicker').value.trim();
+    if (kicker) {
+      ctx.font = text(Math.round(W * 0.026));
+      ctx.fillStyle = '#e8672a';
+      ctx.letterSpacing = '4px';
+      ctx.fillText(kicker.toUpperCase(), pad, y);
+      ctx.letterSpacing = '0px';
+      y += Math.round(W * 0.03);
+    }
+    if (state.logo) {
+      var lw = Math.round(W * 0.20);
+      var lh = state.logo.height * (lw / state.logo.width);
+      ctx.globalAlpha = 0.96;
+      ctx.drawImage(state.logo, W - pad - lw, pad, lw, lh);
+      ctx.globalAlpha = 1;
+    }
+
+    // --- headliner
+    var head = $('headliner').value.trim() || 'YOUR BAND';
+    var fit = fitLines(head.toUpperCase(), Math.round(W * 0.155), Math.round(W * 0.055), inner, 3);
+    y += Math.round(fit.px * 0.92);
+    ctx.fillStyle = '#f6f3f0';
+    for (var i = 0; i < fit.lines.length; i++) {
+      ctx.font = disp(fit.px);
+      ctx.fillText(fit.lines[i], pad, y);
+      y += Math.round(fit.px * 1.0);
+    }
+
+    // --- support, each on its own line
+    var sup = $('support').value.split('\n').map(function (s) { return s.trim(); })
+                .filter(Boolean);
+    if (sup.length) {
+      y += Math.round(W * 0.012);
+      var spx = Math.max(Math.round(W * 0.052), 20);
+      for (var j = 0; j < sup.length && j < 6; j++) {
+        var sl = fitLines(sup[j].toUpperCase(), spx, Math.round(W * 0.03), inner, 1);
+        ctx.font = disp(sl.px);
+        ctx.fillStyle = 'rgba(233,235,238,.88)';
+        ctx.fillText(sl.lines[0], pad, y);
+        y += Math.round(sl.px * 1.12);
+      }
+    }
+
+    // --- bottom block: rule, date, venue, price
+    var by = H - pad;
+    var foot = $('foot').value.trim();
+    if (foot) {
+      ctx.font = text(Math.round(W * 0.024));
+      ctx.fillStyle = 'rgba(214,208,202,.75)';
+      ctx.fillText(foot, pad, by);
+      by -= Math.round(W * 0.042);
+    }
+
+    var price = $('price').value.trim();
+    var venue = $('venue').value.trim();
+    var city = $('city').value.trim();
+    var where = [venue, city].filter(Boolean).join(' · ');
+    if (where || price) {
+      ctx.font = text(Math.round(W * 0.033));
+      ctx.fillStyle = '#e9ebee';
+      ctx.fillText(where, pad, by);
+      if (price) {
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#e8672a';
+        ctx.fillText(price, W - pad, by);
+        ctx.textAlign = 'left';
+      }
+      by -= Math.round(W * 0.052);
+    }
+
+    var when = dateLine();
+    if (when) {
+      var wf = fitLines(when, Math.round(W * 0.062), Math.round(W * 0.03), inner, 2);
+      var lines = wf.lines;
+      for (var k = lines.length - 1; k >= 0; k--) {
+        ctx.font = disp(wf.px);
+        ctx.fillStyle = '#f6f3f0';
+        ctx.fillText(lines[k], pad, by);
+        by -= Math.round(wf.px * 1.06);
+      }
+      by -= Math.round(W * 0.004);
+    }
+
+    ctx.fillStyle = '#e8672a';
+    ctx.fillRect(pad, by, Math.round(W * 0.14), Math.max(4, Math.round(W * 0.007)));
+
+    // --- the mark, bottom right
+    ctx.font = text(Math.round(W * 0.021));
+    ctx.fillStyle = 'rgba(160,154,148,.85)';
+    ctx.textAlign = 'right';
+    ctx.fillText('mikidrummer.ca/punkbc', W - pad, H - pad);
+    ctx.textAlign = 'left';
+  }
+
+  // ---- background picker -------------------------------------------------
+  function list() { return state.tab === 'pd' ? PD : MINE; }
+
+  function renderThumbs() {
+    var box = $('thumbs');
+    box.innerHTML = '';
+    list().forEach(function (item, i) {
+      var b = document.createElement('button');
+      b.className = 'thumb';
+      b.type = 'button';
+      b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = '<img loading="lazy" alt="" src="' + item.src + '">' +
+                    (item.credit ? '<span class="tag">PD</span>' : '');
+      b.addEventListener('click', function () { pickBg(item, b); });
+      box.appendChild(b);
+      if (i === 0 && !state.bg) { pickBg(item, b); }
+    });
+  }
+
+  function pickBg(item, btn) {
+    Array.prototype.forEach.call(document.querySelectorAll('.thumb'), function (t) {
+      t.setAttribute('aria-pressed', 'false');
+    });
+    if (btn) btn.setAttribute('aria-pressed', 'true');
+    $('bgCredit').textContent = item.credit || 'Your own photo.';
+    loadImage(item.src).then(function (im) { state.bg = im; draw(); })
+                       .catch(function () { state.bg = null; draw(); });
+  }
+
+  $('bgTabs').addEventListener('click', function (e) {
+    var b = e.target.closest('.chip'); if (!b) return;
+    Array.prototype.forEach.call(this.querySelectorAll('.chip'), function (c) {
+      c.setAttribute('aria-pressed', String(c === b));
+    });
+    state.tab = b.dataset.tab;
+    renderThumbs();
+  });
+
+  $('randomBg').addEventListener('click', function () {
+    // "Random, and it can be public domain" -- so it draws from the free pool,
+    // never from a photo that would need a credit nobody has written.
+    var item = PD[Math.floor(Math.random() * PD.length)];
+    state.tab = 'pd';
+    Array.prototype.forEach.call($('bgTabs').querySelectorAll('.chip'), function (c) {
+      c.setAttribute('aria-pressed', String(c.dataset.tab === 'pd'));
+    });
+    renderThumbs();
+    setTimeout(function () {
+      var idx = PD.indexOf(item);
+      var btn = document.querySelectorAll('.thumb')[idx];
+      pickBg(item, btn);
+    }, 0);
+  });
+
+  function wireUpload(btnId, inputId, onLoad) {
+    $(btnId).addEventListener('click', function () { $(inputId).click(); });
+    $(inputId).addEventListener('change', function () {
+      var f = this.files && this.files[0];
+      if (!f) return;
+      var fr = new FileReader();
+      fr.onload = function () { loadImage(fr.result).then(onLoad).catch(function () {}); };
+      fr.readAsDataURL(f);      // stays in this browser; nothing is uploaded
+    });
+  }
+  wireUpload('uploadBg', 'bgFile', function (im) {
+    state.bg = im; $('bgCredit').textContent = 'Your upload — never leaves this browser.';
+    Array.prototype.forEach.call(document.querySelectorAll('.thumb'), function (t) {
+      t.setAttribute('aria-pressed', 'false');
+    });
+    draw();
+  });
+  wireUpload('uploadLogo', 'logoFile', function (im) {
+    state.logo = im;
+    Array.prototype.forEach.call($('logoChips').querySelectorAll('.chip'), function (c) {
+      c.setAttribute('aria-pressed', 'false');
+    });
+    draw();
+  });
+
+  // ---- logo chips --------------------------------------------------------
+  LOGOS.forEach(function (l, i) {
+    var b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.textContent = l.name;
+    b.setAttribute('aria-pressed', String(i === 0));
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call($('logoChips').querySelectorAll('.chip'), function (c) {
+        c.setAttribute('aria-pressed', String(c === b));
+      });
+      if (!l.src) { state.logo = null; draw(); return; }
+      loadImage(l.src).then(function (im) { state.logo = im; draw(); });
+    });
+    $('logoChips').appendChild(b);
+  });
+
+  // ---- size chips --------------------------------------------------------
+  $('sizeChips').addEventListener('click', function (e) {
+    var b = e.target.closest('.chip'); if (!b) return;
+    Array.prototype.forEach.call(this.querySelectorAll('.chip'), function (c) {
+      c.setAttribute('aria-pressed', String(c === b));
+    });
+    state.w = +b.dataset.w; state.h = +b.dataset.h;
+    draw();
+  });
+
+  // ---- prefill from the board -------------------------------------------
+  fetch('/punkbc-shows.json').then(function (r) { return r.json(); }).then(function (doc) {
+    var today = new Date().toISOString().slice(0, 10);
+    var up = (doc.shows || []).filter(function (s) { return s.date >= today; })
+                              .sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    var sel = $('pick');
+    sel.innerHTML = '<option value="">— type it in myself —</option>';
+    up.forEach(function (s, i) {
+      var o = document.createElement('option');
+      o.value = String(i);
+      o.textContent = s.date + '  ·  ' + (s.band || '').slice(0, 44) +
+                      (s.venue ? '  @ ' + s.venue : '');
+      sel.appendChild(o);
+    });
+    // Venue suggestions come from the board itself, so the list is whatever is
+    // actually booking rather than a hand-kept set that goes stale.
+    var seen = {};
+    (doc.shows || []).forEach(function (s) { if (s.venue) seen[s.venue] = 1; });
+    var dl = $('venues');
+    Object.keys(seen).sort().forEach(function (v) {
+      var o = document.createElement('option'); o.value = v; dl.appendChild(o);
+    });
+
+    sel.addEventListener('change', function () {
+      if (this.value === '') return;
+      var s = up[+this.value];
+      // The band column is one string holding the whole bill: the first act is
+      // the headliner, the rest are support.
+      var acts = (s.band || '').split(/\s*(?:\/|,|\bw\/\b|\bwith\b|\+)\s*/i).filter(Boolean);
+      $('headliner').value = acts[0] || '';
+      $('support').value = acts.slice(1).join('\n');
+      $('date').value = s.date || '';
+      $('time').value = /^\d{2}:\d{2}$/.test(s.time || '') ? s.time : '';
+      $('venue').value = s.venue || '';
+      $('city').value = s.city || '';
+      $('price').value = s.price || '';
+      $('foot').value = s.notes || '';
+      draw();
+    });
+  }).catch(function () {
+    $('pick').innerHTML = '<option value="">— board unavailable, type it in —</option>';
+  });
+
+  // ---- save --------------------------------------------------------------
+  $('save').addEventListener('click', function () {
+    draw();
+    cv.toBlob(function (blob) {
+      var name = ($('headliner').value.trim() || 'poster')
+                   .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name + '-' + ($('date').value || 'poster') + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    }, 'image/png');
+  });
+
+  // ---- live redraw -------------------------------------------------------
+  ['headliner', 'support', 'kicker', 'date', 'time', 'venue', 'city', 'price', 'foot']
+    .forEach(function (id) { $(id).addEventListener('input', draw); });
+
+  // sensible defaults so the canvas is never blank on arrival
+  $('kicker').value = 'Punk BC presents';
+  var soon = new Date(Date.now() + 14 * 864e5);
+  $('date').value = soon.toISOString().slice(0, 10);
+
+  loadFonts().then(function () { renderThumbs(); draw(); });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { fontsReady = true; draw(); });
+  }
+})();
+</script>
+</body>
+</html>
