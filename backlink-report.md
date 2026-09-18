@@ -1,6 +1,9 @@
 # Backlinks
 
-30 sites checked: **0 link back** (0 of them followed), 0 name the site without linking, 25 say nothing, 5 unreachable.
+30 sites checked (69 pages): **0 link back** (0 of them followed), 0 name the site without linking, 26 say nothing, 4 unreachable.
+
+
+_Each site is read homepage-first, then up to 5 inner pages whose URL or link text suggests a roster, links, friends, partners or credits page -- which is where a credit lives, and almost never the homepage. It is still a sample: a link buried somewhere unguessable will read here as no link._
 
 
 ## Links we already have
@@ -45,6 +48,7 @@ _In weight order. A venue whose listings the board republishes is a far better u
 - **Dead Pioneers** (band, weight 5) — https://deadpioneers.band/  ·  _no address on file_
 - **Exhumed** (band, weight 5) — http://www.gorefuckingmetal.blogspot.com  ·  _no address on file_
 - **Fotocrime** (band, weight 5) — http://fotocrime.com  ·  _no address on file_
+- **SiM** (band, weight 5) — https://bsky.app  ·  _no address on file_
 - **The Menzingers** (band, weight 5) — http://themenzingers.com  ·  _no address on file_
 
 ## Unreachable
@@ -52,7 +56,6 @@ _In weight order. A venue whose listings the board republishes is a far better u
 _Dead or blocking. A dead band site is also a dead link on our own board, so these are worth fixing in both directions._
 
 - The Astoria — https://theastoria.ca (http 403)
-- Baron — https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io (URLError)
 - Blackwater Holylight — https://www.normanrecords.com (http 403)
 - Dusty Pines — http://dustypinesmusic.com (URLError)
 - sundress — http://www.sundressnation.com (URLError)

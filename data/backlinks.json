@@ -6,11 +6,12 @@
     "weight": 10,
     "email": "",
     "why": "Miki plays their cymbals and the site links to them from four pages. Cymbal makers keep an artist roster and those rosters link out to the player's own site. This is the single most winnable link on the list: the relationship exists, the page type exists, and nobody has asked.",
-    "status": "ok",
-    "final": "https://www.soultonecymbals.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 6,
+    "status": "ok",
+    "final": "https://www.soultonecymbals.com/"
   },
   {
     "name": "Woodies Drumsticks",
@@ -19,11 +20,12 @@
     "weight": 10,
     "email": "",
     "why": "Same again: their sticks, linked from four pages, and stick makers run artist pages. Smaller company than a cymbal manufacturer, which usually means a faster answer.",
-    "status": "ok",
-    "final": "https://woodiesdrumsticks.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 3,
+    "status": "ok",
+    "final": "https://woodiesdrumsticks.com/"
   },
   {
     "name": "Rickshaw Theatre",
@@ -32,11 +34,12 @@
     "weight": 9,
     "email": "",
     "why": "The board republishes their listings and links to them 68 times -- far more than any other outbound destination. If any single relationship on this site has earned an ask, it is this one.",
-    "status": "ok",
-    "final": "https://rickshawtheatre.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 4,
+    "status": "ok",
+    "final": "https://rickshawtheatre.com/"
   },
   {
     "name": "The Astoria",
@@ -45,11 +48,12 @@
     "weight": 9,
     "email": "",
     "why": "Listings republished on the board, 14 outbound links. Note the site links to both astoria.pub and theastoria.ca -- worth settling which is current while asking.",
-    "status": "ok",
-    "final": "https://astoria.pub/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://astoria.pub/"
   },
   {
     "name": "The Cobalt",
@@ -58,11 +62,12 @@
     "weight": 9,
     "email": "",
     "why": "Listings republished on the board, 13 outbound links.",
-    "status": "ok",
-    "final": "https://www.thecobalt.ca/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 3,
+    "status": "ok",
+    "final": "https://www.thecobalt.ca/"
   },
   {
     "name": "The Astoria",
@@ -71,10 +76,11 @@
     "weight": 9,
     "email": "",
     "why": "The board republishes their listings",
-    "status": "http 403",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 0,
+    "status": "http 403"
   },
   {
     "name": "The Pearl Vancouver",
@@ -83,11 +89,12 @@
     "weight": 8,
     "email": "",
     "why": "Listings republished on the board.",
-    "status": "ok",
-    "final": "https://thepearlvancouver.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 5,
+    "status": "ok",
+    "final": "https://thepearlvancouver.com/"
   },
   {
     "name": "Red Gate Arts Society",
@@ -96,11 +103,12 @@
     "weight": 8,
     "email": "",
     "why": "Linked from the board and from band pages. A small independent arts space, which usually means a real person reads the mail.",
-    "status": "ok",
-    "final": "https://redgate.tv/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 2,
+    "status": "ok",
+    "final": "https://redgate.tv/"
   },
   {
     "name": "GigPit",
@@ -109,11 +117,12 @@
     "weight": 8,
     "email": "",
     "why": "The nearest thing to a peer: another BC gig listings site, linked 11 times from band pages. Two listings sites covering the same scene normally end up crediting each other, and neither loses anything by it.",
-    "status": "ok",
-    "final": "https://gigpit.ca/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 6,
+    "status": "ok",
+    "final": "https://gigpit.ca/"
   },
   {
     "name": "Commodore Ballroom",
@@ -122,11 +131,12 @@
     "weight": 7,
     "email": "",
     "why": "10 outbound links, but a Live Nation room -- the site is corporate and unlikely to add a local link. Low odds, listed so the answer is on record rather than assumed.",
-    "status": "ok",
-    "final": "https://www.commodoreballroom.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://www.commodoreballroom.com/"
   },
   {
     "name": "Kinda Cool Records",
@@ -135,11 +145,12 @@
     "weight": 7,
     "email": "",
     "why": "Two of their bands (Die Job, The Fomites) have pages on the board that link to the label.",
-    "status": "ok",
-    "final": "https://www.kindacoolrecords.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 5,
+    "status": "ok",
+    "final": "https://www.kindacoolrecords.com/"
   },
   {
     "name": "Alien Boys",
@@ -148,11 +159,12 @@
     "weight": 7,
     "email": "alienboysvancouver@gmail.com",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://alienboys.ca/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 2,
+    "status": "ok",
+    "final": "https://alienboys.ca/"
   },
   {
     "name": "Bloodlines",
@@ -161,11 +173,12 @@
     "weight": 7,
     "email": "bloodlinestexas@gmail.com",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://facedownrecords.com/family/bloodlines/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 4,
+    "status": "ok",
+    "final": "https://facedownrecords.com/family/bloodlines/"
   },
   {
     "name": "Brehdren",
@@ -174,11 +187,12 @@
     "weight": 7,
     "email": "info@brehdren.com",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://brehdren.com/brehdren/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 2,
+    "status": "ok",
+    "final": "https://brehdren.com/brehdren/"
   },
   {
     "name": "Cyborg Octopus",
@@ -187,11 +201,12 @@
     "weight": 7,
     "email": "cyborgoctopusband@gmail.com",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://cyborgoctopusband.com",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://cyborgoctopusband.com"
   },
   {
     "name": "Devouring Void",
@@ -200,11 +215,12 @@
     "weight": 7,
     "email": "devouringvoidbcoffical@gmail.com",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://undercover-records.de",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://undercover-records.de"
   },
   {
     "name": "Evergrey",
@@ -213,11 +229,12 @@
     "weight": 7,
     "email": "management@evergrey.net",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://evergrey.net/contact/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://evergrey.net/contact/"
   },
   {
     "name": "Guiltless",
@@ -226,11 +243,12 @@
     "weight": 7,
     "email": "info@evilgreed.net",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://music.neurotrecordings.com",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://music.neurotrecordings.com"
   },
   {
     "name": "Longshot",
@@ -239,11 +257,12 @@
     "weight": 7,
     "email": "info@morsecoderecordings.com",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "http://morsecoderecordings.limitedrun.com",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 5,
+    "status": "ok",
+    "final": "http://morsecoderecordings.limitedrun.com"
   },
   {
     "name": "Mean Bikini",
@@ -252,11 +271,12 @@
     "weight": 7,
     "email": "Outhousepr@gmail.com",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://outhouseproductionsandrecords.com/bands/mean-bikini/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 3,
+    "status": "ok",
+    "final": "https://outhouseproductionsandrecords.com/bands/mean-bikini/"
   },
   {
     "name": "Author & Punisher",
@@ -265,23 +285,12 @@
     "weight": 5,
     "email": "",
     "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 1,
     "status": "ok",
-    "final": "https://www.authorandpunisher.com/",
-    "links": [],
-    "follow": [],
-    "mention_only": false
-  },
-  {
-    "name": "Baron",
-    "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
-    "kind": "band",
-    "weight": 5,
-    "email": "",
-    "why": "Listed on the Punk BC board",
-    "status": "URLError",
-    "links": [],
-    "follow": [],
-    "mention_only": false
+    "final": "https://www.authorandpunisher.com/"
   },
   {
     "name": "Blackwater Holylight",
@@ -290,10 +299,11 @@
     "weight": 5,
     "email": "",
     "why": "Listed on the Punk BC board",
-    "status": "http 403",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 0,
+    "status": "http 403"
   },
   {
     "name": "BRASS",
@@ -302,11 +312,12 @@
     "weight": 5,
     "email": "",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://m.vk.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://m.vk.com/"
   },
   {
     "name": "Dead Pioneers",
@@ -315,11 +326,12 @@
     "weight": 5,
     "email": "",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://deadpioneers.band/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 2,
+    "status": "ok",
+    "final": "https://deadpioneers.band/"
   },
   {
     "name": "Dusty Pines",
@@ -328,10 +340,11 @@
     "weight": 5,
     "email": "",
     "why": "Listed on the Punk BC board",
-    "status": "URLError",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 0,
+    "status": "URLError"
   },
   {
     "name": "Exhumed",
@@ -340,11 +353,12 @@
     "weight": 5,
     "email": "",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "http://gorefuckingmetal.blogspot.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 2,
+    "status": "ok",
+    "final": "http://gorefuckingmetal.blogspot.com/"
   },
   {
     "name": "Fotocrime",
@@ -353,11 +367,26 @@
     "weight": 5,
     "email": "",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://www.fotocrime.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 3,
+    "status": "ok",
+    "final": "https://www.fotocrime.com/"
+  },
+  {
+    "name": "SiM",
+    "url": "https://bsky.app",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://bsky.app"
   },
   {
     "name": "sundress",
@@ -366,10 +395,11 @@
     "weight": 5,
     "email": "",
     "why": "Listed on the Punk BC board",
-    "status": "URLError",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 0,
+    "status": "URLError"
   },
   {
     "name": "The Menzingers",
@@ -378,10 +408,11 @@
     "weight": 5,
     "email": "",
     "why": "Listed on the Punk BC board",
-    "status": "ok",
-    "final": "https://themenzingers.com/",
     "links": [],
     "follow": [],
-    "mention_only": false
+    "mention_only": false,
+    "pages": 3,
+    "status": "ok",
+    "final": "https://themenzingers.com/"
   }
 ]
