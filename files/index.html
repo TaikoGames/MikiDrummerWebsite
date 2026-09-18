@@ -1,264 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-C75363M813"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-C75363M813');
-</script>
+<!-- /files/ held a stale copy of an older version of this site: four pages,
+     three of them titled "Mirkidrummer" -- the brand name misspelled -- with
+     no canonical of any kind, indexable, and competing with the real pages
+     for the same terms. Whatever links or ranking they had was being split
+     off from the page that should have it.
 
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     GitHub Pages serves static files and cannot issue a 301, so this is the
+     strongest redirect available: a canonical at the real page, an instant
+     meta refresh, and a JS replace() so the dead URL stays out of the back
+     button. Deleting these would 404 instead, which throws the equity away
+     rather than passing it on.
 
-        <!-- ===================== SEO: BASIC ===================== -->
-        <title>Miki Drummer | Vancouver Drummer from Ibiza — Lessons, Sessions & Live</title>
-        <meta name="description" content="Miki is a Vancouver-based drummer with 20+ years of experience, originally from Ibiza, Spain. Available for live shows, studio sessions, drum lessons, and collaborations.">
-        <meta name="keywords" content="drummer Vancouver, drum lessons Vancouver, session drummer, Ibiza drummer, live drummer, studio drummer, Miki drummer">
-        <meta name="author" content="Miki Drummer">
-        <meta name="robots" content="index, follow">
-        <link rel="canonical" href="https://www.mikidrummer.ca/">
+     Do not add noindex. It contradicts the canonical -- one says "index the
+     other page instead", the other says "index nothing" -- and Google
+     resolves the conflict by dropping the URL rather than consolidating it. -->
 
-        <!-- ===================== SEO: OPEN GRAPH ===================== -->
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="https://www.mikidrummer.ca/">
-        <meta property="og:title" content="Miki Drummer | Vancouver Drummer from Ibiza">
-        <meta property="og:description" content="20+ years behind the kit. Originally from Ibiza, now based in Vancouver. Sessions, lessons, and live performances.">
-        <meta property="og:image" content="https://www.mikidrummer.ca/images/miki-drummer-live-vancouver.png">
-        <meta property="og:image:width" content="1200">
-        <meta property="og:image:height" content="630">
-        <meta property="og:locale" content="en_CA">
-        <meta property="og:site_name" content="Miki Drummer">
+<title>Miki Drummer | Vancouver Drummer from Ibiza</title>
+<link rel="canonical" href="https://www.mikidrummer.ca/">
+<meta http-equiv="refresh" content="0; url=/">
+<meta name="description" content="This page has moved to mikidrummer.ca/">
 
-        <!-- ===================== SEO: TWITTER / X CARD ===================== -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:url" content="https://www.mikidrummer.ca/">
-        <meta name="twitter:title" content="Miki Drummer | Vancouver Drummer from Ibiza">
-        <meta name="twitter:description" content="20+ years behind the kit. Originally from Ibiza, now based in Vancouver. Sessions, lessons & live.">
-        <meta name="twitter:image" content="https://www.mikidrummer.ca/images/miki-drummer-live-vancouver.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
 
-        <!-- ===================== SEO: STRUCTURED DATA ===================== -->
-        <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "Person",
-          "name": "Miki Drummer",
-          "jobTitle": "Professional Drummer",
-          "description": "Vancouver-based drummer with 20+ years of experience, originally from Ibiza, Spain.",
-          "url": "https://www.mikidrummer.ca/",
-          "image": "https://www.mikidrummer.ca/images/miki-drummer-live-vancouver.png",
-          "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Vancouver",
-            "addressRegion": "BC",
-            "addressCountry": "CA"
-          },
-          "sameAs": [
-            "https://www.instagram.com/mikibdrummer/",
-            "https://www.youtube.com/@MikiDrummerBC",
-            "https://www.tiktok.com/@mikibdrummer"
-          ],
-          "knowsAbout": ["Drums", "Percussion", "Music Production", "Live Performance", "Drum Lessons"]
-        }
-        </script>
-
-        <!-- ===================== STYLES ===================== -->
-        <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/responsive.css">
-        <meta name="theme-color" content="#000000">
-
-    </head>
-    <body>
-        <header>
-            <div class="container">
-                <nav class="navbar navbar-expand-lg">
-                    <a class="navbar-brand" href="/index.html">
-                        <img src="images/brand.png" alt="Miki Drummer">
-                    </a>
-                    <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                        <span class="navbar-toggler-icon"></span>
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav m-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/about.html">About</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="/video.html">Videos</a>
-                            </li>
-                            <li class="nav-item">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/services.html">Services</a>
-                            </li>
-                        </ul>
-                        <div class="nav-social">
-                            <ul>
-                                <li>
-                                    <a href="https://www.tiktok.com/@mikibdrummer">
-                                        <img src="images/twitter.png" alt="Miki Drummer TikTok">
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.instagram.com/mikibdrummer/">
-                                        <img src="images/instagram.png" alt="Miki Drummer Instagram">
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.youtube.com/@MikiDrummerBC">
-                                        <img src="images/youtube.png" alt="Miki Drummer YouTube">
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        </header>
-
-        <div class="news-pra">
-          <marquee id="newsMarquee">Loading news...</marquee>
-          <script>
-              async function fetchNews() {
-                  try {
-                      const response = await fetch('news.txt');
-                      const data = await response.text();
-                      const newsArray = data.split('\n').filter(line => line.trim() !== '');
-                      let newsItems = [];
-                      let currentNews = {};
-                      for (let line of newsArray) {
-                          if (line.startsWith('Title:')) {
-                              if (currentNews.title) newsItems.push(currentNews);
-                              currentNews = { title: line.replace('Title: ', '').trim() };
-                          } else if (line.startsWith('Description:')) {
-                              currentNews.description = line.replace('Description: ', '').trim();
-                          }
-                      }
-                      if (currentNews.title) newsItems.push(currentNews);
-                      const newsContent = newsItems.map(news => `${news.title} - ${news.description}`).join(' | ');
-                      document.getElementById('newsMarquee').innerText = newsContent;
-                  } catch (error) {
-                      document.getElementById('newsMarquee').innerText = 'Error loading news';
-                  }
-              }
-              fetchNews();
-          </script>
-        </div>
-
-        <section class="hero">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 col-resp">
-                        <div class="hero-left">
-                            <h2 class="main-text">About:</h2>
-                            <p class="main-text">
-                                Originally from the sun-soaked shores of Ibiza, Spain, and now shaking things up in Vancouver,
-                                Miki has been smashing the drums for over two decades. Starting out in the suburban skate punk scene
-                                of the Balearic Islands, he's now fully plugged into Vancouver's music scene.
-                            </p>
-                            <ol></ol>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="hero-right">
-                            <img src="images/miki-drummer-live-vancouver.png" alt="Miki Drummer live performance">
-                            <div class="text-box">
-                                <p class="main-text"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="live-overlay">
-                    <div class="overlay-content">
-                        <div class="video-main">
-                          <iframe id="youtubeFrame" width="100%" height="495"
-                            title="Miki Drummer YouTube video" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                          <script>
-                              async function loadYouTubeURL() {
-                                  try {
-                                      const response = await fetch('youtubeurl.json');
-                                      const data = await response.json();
-                                      document.getElementById('youtubeFrame').src = data.youtube_url;
-                                  } catch (error) {
-                                      console.error('Error loading YouTube URL:', error);
-                                  }
-                              }
-                              window.onload = loadYouTubeURL;
-                          </script>
-                        </div>
-                        <a href="#" class="close-overlay"><img src="images/close-icon.png" alt="Close"></a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <footer>
-            <div class="footer-main">
-                <div class="container">
-                    <div class="footer-audio-main">
-                        <div class="audio-player">
-                            <audio id="audio"></audio>
-                            <div class="thumbnail">
-                                <img id="thumbnail-img" src="images/dead-fast-second-nature-cover.png" alt="Song Thumbnail">
-                            </div>
-                            <div class="controls">
-                                <button id="prev" class="control-button"><i class="fas fa-backward"></i></button>
-                                <button id="playPause" class="control-button"><i class="fas fa-play"></i></button>
-                                <button id="next" class="control-button"><i class="fas fa-forward"></i></button>
-                                <input type="range" id="seekBar" value="0" min="0" max="100" step="1">
-                                <span id="currentTime">0:00</span>
-                                <span id="duration">0:00</span>
-                                <button id="playlist" class="control-button"><i class="fas fa-list"></i></button>
-                                <button id="volume" class="control-button"><i class="fas fa-volume-up"></i></button>
-                            </div>
-                            <div class="playlist">
-                                <ul id="playlist-songs"></ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/custom.js"></script>
-
-        <script type="text/javascript">
-            function toggleOverlay(showOverlay) {
-                var overlay = document.querySelector('.live-overlay');
-                overlay.style.display = showOverlay === "yes" ? "flex" : "none";
-            }
-            fetch('config.json')
-                .then(response => response.json())
-                .then(data => toggleOverlay(data.showOverlay))
-                .catch(error => console.error('Error fetching the configuration:', error));
-
-            document.querySelector('.close-overlay').addEventListener('click', function(event) {
-                event.preventDefault();
-                document.querySelector('.live-overlay').style.display = "none";
-            });
-        </script>
-
-        <style media="screen">
-            .live-overlay { display: none; }
-        </style>
-
-    </body>
+<style>
+  body{background:#080605;color:#cfc9c5;font-family:'Space Mono','Courier New',monospace;
+       display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;
+       padding:24px;text-align:center;line-height:1.7}
+  a{color:#f0ede8;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#e8372a}
+  a:hover{color:#e8372a}
+</style>
+</head>
+<body>
+  <p>This page has moved.<br>
+     <a href="/">Continue to Miki Drummer &rarr;</a></p>
+  <script>location.replace('/');</script>
+</body>
 </html>
