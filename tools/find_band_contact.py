@@ -80,12 +80,60 @@ SOCIAL_HOSTS = ("instagram.com", "facebook.com", "twitter.com", "x.com",
 CONTACT_PATHS = ("", "/contact", "/contact.html", "/contact-us", "/booking",
                  "/about", "/info")
 
+# Instagram paths that are not somebody's profile. /p/ and /reel/ are single
+# posts, and the rest are Instagram's own furniture -- all of them turn up as
+# links on a band's page, and all of them would read as a handle if the first
+# path segment were taken on trust.
+IG_RESERVED = {
+    "p", "reel", "reels", "tv", "stories", "explore", "accounts", "about",
+    "developer", "developers", "legal", "privacy", "terms", "directory",
+    "web", "emails", "challenge", "session", "graphql", "ajax", "api",
+    "help", "press", "blog", "jobs", "topics", "locations", "create", "your_activity",
+}
+IG_URL = re.compile(
+    r"(?:https?://)?(?:www\.)?instagram\.com/([A-Za-z0-9_.]+)", re.I)
+
 
 # ---------------------------------------------------------------- pure helpers
 
 def slug(name):
     """The shape a band's own bandcamp subdomain usually takes."""
     return re.sub(r"[^a-z0-9]", "", name.lower().replace("&", "and"))
+
+
+def ig_handle(url):
+    """The Instagram handle in a URL, or "" if there is not one.
+
+    A band page links to Instagram in several shapes -- the profile, a single
+    post, an embedded reel -- and only the first is an account anyone can be
+    written to. Taking the first path segment on trust would file half the
+    board under handles like "p" and "reel", which is how the site ended up
+    with a band whose Instagram was recorded as @p.
+    """
+    m = IG_URL.search(url or "")
+    if not m:
+        return ""
+    handle = m.group(1).strip(".").lower()
+    if not handle or handle in IG_RESERVED:
+        return ""
+    # Instagram allows letters, numbers, periods and underscores, up to 30.
+    if len(handle) > 30 or not re.fullmatch(r"[a-z0-9_.]+", handle):
+        return ""
+    return handle
+
+
+def ig_from_profiles(rec):
+    """Recover a handle from the profile links a record already carries.
+
+    Every lookup so far stored Instagram as one entry in a list of links
+    without ever pulling the handle out, so the board's handles exist but are
+    not usable as a list. This reads them back out with no network at all.
+    """
+    for p in rec.get("profiles", []):
+        h = ig_handle(p.get("url", ""))
+        if h:
+            return h
+    return ""
 
 
 def acts_from(show):
@@ -377,6 +425,11 @@ def look_up(band):
             official.append(u)
     time.sleep(PAUSE)
 
+    # Only three profiles are kept, and Instagram is the one being collected
+    # for, so it goes first rather than being cut by whatever order the links
+    # happened to come back in. A post URL is not an account, so anything
+    # without a real handle sorts with the rest.
+    social.sort(key=lambda u: 0 if ig_handle(u) else 1)
     for u in social[:3]:
         h = host_of(u)
         name = ("Instagram" if "instagram" in h else
@@ -418,11 +471,18 @@ def look_up(band):
             if a == email:
                 src = h
                 break
+    handle = ""
+    for u in social:
+        handle = ig_handle(u)
+        if handle:
+            break
+
     return {
         "band": band,
         "checked": datetime.date.today().isoformat(),
         "email": email,
         "email_source": src,
+        "instagram": handle,
         "profiles": profiles,
         "note": "" if email else "Found automatically; no address published.",
         "by": "auto",
@@ -511,7 +571,32 @@ def selftest():
     ok(not stale({"email": "", "checked": "2026-09-01"}, today), "fresh empty retried")
     ok(stale({"email": "", "checked": "nonsense"}, today), "bad date not retried")
 
-    print("selftest: %d checks, %d failed" % (24, len(fails)))
+    # Instagram handles. The failure that matters is a post URL read as an
+    # account: /p/ABC123 would file a band under @p, and a DM to @p reaches a
+    # stranger. Every shape below turns up as a link on a real band's page.
+    ok(ig_handle("https://www.instagram.com/alienboysvancouver/") == "alienboysvancouver",
+       "plain profile URL")
+    ok(ig_handle("http://instagram.com/mean.bikini.official") == "mean.bikini.official",
+       "dots are legal in a handle")
+    ok(ig_handle("https://www.instagram.com/theband/?hl=en") == "theband",
+       "query string ignored")
+    ok(ig_handle("https://www.instagram.com/p/CVWlA4glQkb/") == "", "a post is not an account")
+    ok(ig_handle("https://www.instagram.com/reel/Cabc123/") == "", "a reel is not an account")
+    ok(ig_handle("https://www.instagram.com/explore/tags/punk/") == "",
+       "a tag page is not an account")
+    ok(ig_handle("https://www.instagram.com/accounts/login/") == "",
+       "the login page is not an account")
+    ok(ig_handle("https://facebook.com/theband") == "", "not instagram at all")
+    ok(ig_handle("") == "" and ig_handle(None) == "", "empty input")
+    ok(ig_handle("https://www.instagram.com/" + "x" * 40) == "", "over the length limit")
+    ok(ig_from_profiles({"profiles": [
+        {"url": "https://theband.ca/"},
+        {"url": "https://www.instagram.com/theband/"}]}) == "theband",
+       "handle recovered from a stored profile list")
+    ok(ig_from_profiles({"profiles": [{"url": "https://www.instagram.com/p/abc/"}]}) == "",
+       "a stored post URL yields no handle")
+
+    print("selftest: %d checks, %d failed" % (36, len(fails)))
     for f in fails:
         print("  FAIL:", f)
     return 1 if fails else 0
@@ -527,6 +612,11 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--dump", action="store_true",
                     help="print every page read and every address refused")
+    ap.add_argument("--backfill", action="store_true",
+                    help="recover instagram handles from stored profile links; "
+                         "reads no network, so it runs anywhere")
+    ap.add_argument("--handles", action="store_true",
+                    help="print the outreach list: band, handle, email")
     args = ap.parse_args()
 
     if args.selftest:
@@ -536,6 +626,44 @@ def main():
         data = json.load(f)
     have = {b["band"].lower().strip(): b for b in data["bands"]}
     today = datetime.date.today()
+
+    if args.handles:
+        rows = sorted((b for b in data["bands"] if b.get("instagram")),
+                      key=lambda b: b["band"].lower())
+        w = max((len(b["band"]) for b in rows), default=4)
+        for b in rows:
+            print("%-*s  @%-24s %s" % (w, b["band"], b["instagram"], b.get("email") or ""))
+        print("\n%d of %d bands have a handle" % (len(rows), len(data["bands"])))
+        return 0
+
+    if args.backfill:
+        # Every lookup so far kept Instagram as a link in a list and never
+        # pulled the handle out, so the handles are already on disk -- just
+        # not in a form anyone can use as a list. No network needed.
+        filled = fixed = 0
+        for rec in data["bands"]:
+            found = ig_from_profiles(rec)
+            current = rec.get("instagram", "")
+            if current and not ig_handle("instagram.com/" + current):
+                # A handle recorded before the reserved-path check existed.
+                print("  dropping bad handle for %-26s @%s" % (rec["band"], current))
+                rec["instagram"] = found
+                fixed += 1
+            elif not current and found:
+                rec["instagram"] = found
+                filled += 1
+            elif "instagram" not in rec:
+                rec["instagram"] = found
+        if args.dry_run:
+            print("would fill %d, correct %d" % (filled, fixed))
+            return 0
+        with open(OUT, "w") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+        total = sum(1 for b in data["bands"] if b.get("instagram"))
+        print("backfill: filled %d, corrected %d — %d of %d bands now have a handle"
+              % (filled, fixed, total, len(data["bands"])))
+        return 0
 
     if args.band:
         wanted = args.band
@@ -554,7 +682,14 @@ def main():
                 # Only an address is worth protecting. A record of "nothing
                 # found", by hand or otherwise, should not stop a better
                 # crawler from having a go later.
-                if rec and (rec.get("email") or not stale(rec, today)):
+                #
+                # "Has an email" used to be enough to retire a band forever,
+                # which was right when an address was the only thing being
+                # collected. Now a handle is wanted too, so a record is only
+                # done when it has both -- otherwise the fourteen bands whose
+                # address was found first would never be looked at again.
+                done = rec and rec.get("email") and rec.get("instagram")
+                if done or (rec and not stale(rec, today)):
                     continue
                 wanted.append(a)
 
