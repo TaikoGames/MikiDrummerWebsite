@@ -97,6 +97,13 @@
   .pos button:hover{border-color:var(--hot)}
   .pos button[aria-pressed=true]{border-color:var(--hot);background:#241309}
   .pos button[aria-pressed=true]::after{background:var(--hot)}
+  .placer{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+  .nudge{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:132px;margin-top:8px}
+  .nudge button{aspect-ratio:1;background:#0e1013;border:1px solid var(--edge2);border-radius:6px;
+                color:var(--mid);cursor:pointer;font-size:15px;line-height:1;padding:0}
+  .nudge button:hover{border-color:var(--hot);color:var(--hot)}
+  .nudge button:active{background:#241309}
+  .nudge button[data-reset]{font-size:13px}
   .slider{display:flex;align-items:center;gap:10px;margin-top:12px}
   .slider input[type=range]{flex:1;accent-color:var(--hot)}
   .slider output{font-size:12px;color:var(--mid);min-width:44px;text-align:right;
@@ -197,17 +204,35 @@
         <ul class="loaded" id="logoList"></ul>
 
         <label style="margin-top:14px" id="posLabel">Position</label>
-        <div class="pos" id="logoPos">
-          <button type="button" data-pos="tl" aria-pressed="false" aria-label="Top left"></button>
-          <button type="button" data-pos="tc" aria-pressed="false" aria-label="Top centre"></button>
-          <button type="button" data-pos="tr" aria-pressed="true"  aria-label="Top right"></button>
-          <button type="button" data-pos="ml" aria-pressed="false" aria-label="Middle left"></button>
-          <button type="button" data-pos="mc" aria-pressed="false" aria-label="Middle centre"></button>
-          <button type="button" data-pos="mr" aria-pressed="false" aria-label="Middle right"></button>
-          <button type="button" data-pos="bl" aria-pressed="false" aria-label="Bottom left"></button>
-          <button type="button" data-pos="bc" aria-pressed="false" aria-label="Bottom centre"></button>
-          <button type="button" data-pos="br" aria-pressed="false" aria-label="Bottom right"></button>
+        <div class="placer">
+          <div class="pos" id="logoPos">
+            <button type="button" data-pos="tl" aria-pressed="false" aria-label="Top left"></button>
+            <button type="button" data-pos="tc" aria-pressed="false" aria-label="Top centre"></button>
+            <button type="button" data-pos="tr" aria-pressed="true"  aria-label="Top right"></button>
+            <button type="button" data-pos="ml" aria-pressed="false" aria-label="Middle left"></button>
+            <button type="button" data-pos="mc" aria-pressed="false" aria-label="Middle centre"></button>
+            <button type="button" data-pos="mr" aria-pressed="false" aria-label="Middle right"></button>
+            <button type="button" data-pos="bl" aria-pressed="false" aria-label="Bottom left"></button>
+            <button type="button" data-pos="bc" aria-pressed="false" aria-label="Bottom centre"></button>
+            <button type="button" data-pos="br" aria-pressed="false" aria-label="Bottom right"></button>
+          </div>
+
+          <!-- The nine anchors get you to the right corner; these get you to the
+               right spot in it. 50 poster pixels a tap, and the middle button
+               puts it back on its anchor. -->
+          <div class="nudge" id="logoNudge">
+            <span></span>
+            <button type="button" data-dx="0"  data-dy="-1" aria-label="Nudge up">↑</button>
+            <span></span>
+            <button type="button" data-dx="-1" data-dy="0"  aria-label="Nudge left">←</button>
+            <button type="button" data-reset="1" aria-label="Back to the anchor" title="Back to the anchor">◎</button>
+            <button type="button" data-dx="1"  data-dy="0"  aria-label="Nudge right">→</button>
+            <span></span>
+            <button type="button" data-dx="0"  data-dy="1"  aria-label="Nudge down">↓</button>
+            <span></span>
+          </div>
         </div>
+        <div class="hint" id="nudgeOut">On its anchor.</div>
 
         <label for="logoScale" style="margin-top:14px">Size</label>
         <div class="slider">
@@ -321,6 +346,15 @@
     var y = L.pos[0] === 't' ? pad + stack
           : L.pos[0] === 'm' ? (H - h) / 2 + stack
           : H - pad - h - stack;
+
+    // The anchor gets it to the right corner; the nudge gets it to the right
+    // spot in that corner. Clamped so the centre stays on the poster: bleeding
+    // a logo off an edge is a real choice, losing it off the canvas with no
+    // way back but the reset button is not.
+    x += (L.dx || 0);
+    y += (L.dy || 0);
+    x = Math.max(-w / 2, Math.min(W - w / 2, x));
+    y = Math.max(-h / 2, Math.min(H - h / 2, y));
     return { x: x, y: y, w: w, h: h };
   }
 
@@ -665,9 +699,10 @@
   // its own size, so they are a list rather than a slot. Selecting one in the
   // list is what the position grid and the slider below act on.
   function addLogo(img, name) {
-    state.logos.push({ img: img, name: name, pos: 'tr', scale: 0.20 });
+    state.logos.push({ img: img, name: name, pos: 'tr', scale: 0.20, dx: 0, dy: 0 });
     state.sel = state.logos.length - 1;
     renderLogos();
+    syncControls();      // the grid, slider and nudge readout follow the new one
     draw();
   }
 
@@ -681,6 +716,7 @@
       e.textContent = 'No logos yet — pick one above or upload your own.';
       box.appendChild(e);
       $('posLabel').textContent = 'Position';
+      $('nudgeOut').textContent = '';
       return;
     }
     state.logos.forEach(function (L, i) {
@@ -694,7 +730,8 @@
       nm.textContent = L.name;
       var sub = document.createElement('span');
       sub.className = 'sub';
-      sub.textContent = L.pos.toUpperCase() + ' · ' + Math.round(L.scale * 100) + '%';
+      sub.textContent = L.pos.toUpperCase() + ' · ' + Math.round(L.scale * 100) + '%'
+                      + ((L.dx || L.dy) ? ' · moved' : '');
       var kill = document.createElement('button');
       kill.className = 'kill'; kill.type = 'button';
       kill.setAttribute('aria-label', 'Remove ' + L.name);
@@ -723,6 +760,7 @@
     });
     $('logoScale').value = Math.round(c.scale * 100);
     $('logoScaleOut').textContent = Math.round(c.scale * 100) + '%';
+    showNudge();
   }
 
   // ---- logo chips: each one adds, rather than replacing ------------------
@@ -752,6 +790,29 @@
     $('logoScaleOut').textContent = this.value + '%';
     renderLogos(); draw();
   });
+
+  // ---- nudge -------------------------------------------------------------
+  var STEP = 50;                 // poster pixels per tap
+  $('logoNudge').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var c = current(); if (!c) return;
+    if (b.dataset.reset) { c.dx = 0; c.dy = 0; }
+    else {
+      c.dx = (c.dx || 0) + (+b.dataset.dx) * STEP;
+      c.dy = (c.dy || 0) + (+b.dataset.dy) * STEP;
+    }
+    showNudge(); renderLogos(); draw();
+  });
+
+  function showNudge() {
+    var c = current();
+    if (!c) { $('nudgeOut').textContent = ''; return; }
+    if (!c.dx && !c.dy) { $('nudgeOut').textContent = 'On its anchor.'; return; }
+    var bits = [];
+    if (c.dx) bits.push(Math.abs(c.dx) + 'px ' + (c.dx < 0 ? 'left' : 'right'));
+    if (c.dy) bits.push(Math.abs(c.dy) + 'px ' + (c.dy < 0 ? 'up' : 'down'));
+    $('nudgeOut').textContent = 'Nudged ' + bits.join(', ') + '.';
+  }
 
   // ---- size chips --------------------------------------------------------
   $('sizeChips').addEventListener('click', function (e) {
