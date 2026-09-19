@@ -425,6 +425,12 @@
     <div class="wrap">
         <div class="sec-head"><h2 class="display">Media</h2></div>
         <div class="gallery" data-filter="warm">
+            <!-- The press photo leads. Everything below it is a live shot, and a
+                 promoter deciding whether to put this band on a bill wants to see
+                 the four of them before they see a stage. It is the only current,
+                 posed, properly lit picture in the kit, which is exactly the
+                 image a listings page or a poster ends up using. -->
+            <figure class="shot feature"><img src="images/granite/press-photo.jpg" alt="Granite band press photo — the four-piece Vancouver metal and grunge band standing against a graffitied wall" loading="eager" width="1600" height="1200"></figure>
             <div class="grid3 tall">
                 <figure class="shot"><img src="images/granite/live-07.jpg" alt="Granite live — vocalist and drummer on stage in Vancouver" loading="lazy"></figure>
                 <figure class="shot"><img src="images/granite/live-08.jpg" alt="Granite live — full band and crowd at a Vancouver show" loading="lazy"></figure>
@@ -437,7 +443,7 @@
                 <figure class="shot"><img src="images/granite/live-03.jpg" alt="Granite live" loading="lazy"></figure>
             </div>
         </div>
-        <p class="note">Live photos · hi-res versions available on request.</p>
+        <p class="note">Press photo and live shots · hi-res versions available on request.</p>
         <div class="videos" style="margin-top:28px">
             <div class="vid">
                 <div class="thumb"><iframe src="https://www.youtube.com/embed/Qovij1CQUV4" title="Granite — live" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>
@@ -654,7 +660,10 @@
         // Only files that exist. live-04 through live-06 were listed and are not
         // there, so every download fired three 404s -- swallowed by the catch, so
         // nothing broke and nobody noticed.
-        const files = ['logo.png','logo-black.png','hero.jpg','feature.jpg',
+        // press-photo.jpg first: it is the one a promoter or a listings editor
+        // will actually run, so it should be the first thing in the folder
+        // rather than something to hunt for among the live shots.
+        const files = ['press-photo.jpg','logo.png','logo-black.png','hero.jpg','feature.jpg',
                        'live-01.jpg','live-02.jpg','live-03.jpg',
                        'live-07.jpg','live-08.jpg','live-09.jpg'];
         const zip = new JSZip(), folder = zip.folder('granite-press-kit');
