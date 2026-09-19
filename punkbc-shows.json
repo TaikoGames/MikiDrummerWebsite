@@ -2,43 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Brasser / Curb Zombie / Brehdren",
-      "date": "2026-09-18",
-      "time": "",
-      "venue": "LanaLou's",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/brasser-curb-zombie-brehdren/1561399485461074/",
-      "genre": "",
-      "notes": "",
-      "image": "https://cdn-az.allevents.in/events2/banners/ce5054d9090069a8b68f9353f55355fb7f9ad31f6b96b340c62c0d561ad3429a-rimg-w1200-h1855-dcc8c8b8-gmir?v=1789187345"
-    },
-    {
-      "band": "Out Of Order / Night Court / Terminal City Rats / Teratoma",
-      "date": "2026-09-18",
-      "time": "",
-      "venue": "Green Auto",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/out-of-order-montreal-plus-loc/2265951294164205/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
-      "band": "Mares of Thrace",
-      "date": "2026-09-18",
-      "time": "19:00",
-      "venue": "Astoria Pub",
-      "city": "Vancouver",
-      "price": "$23 adv",
-      "ticket": "https://astoria.pub/",
-      "genre": "Doom/Noise Rock",
-      "notes": "With Burnt Lung, Burn Pattern, Manicouagan. 19+",
-      "image": "https://f4.bcbits.com/img/0038564378_16.jpg",
-      "curated": ""
-    },
-    {
       "band": "Cheap Flavor / Baron / Witiko",
       "date": "2026-09-19",
       "time": "",
