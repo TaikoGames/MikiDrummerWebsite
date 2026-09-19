@@ -1,10 +1,20 @@
 {
   "_readme": "What the site assistant knows. Plain facts only, each with the page it came from, so an answer can always point at something real. Edit freely — chat.html reads this at load and needs no rebuild. Keep 'a' short: it is spoken back almost verbatim.",
-  "updated": "2026-09-05",
+  "updated": "2026-09-19",
   "topics": [
     {
       "id": "who",
-      "k": ["who", "miki", "about", "drummer", "bio", "experience", "ibiza", "spain", "background"],
+      "k": [
+        "who",
+        "miki",
+        "about",
+        "drummer",
+        "bio",
+        "experience",
+        "ibiza",
+        "spain",
+        "background"
+      ],
       "q": "Who is Miki?",
       "a": "Miki is a drummer based in Vancouver, BC, originally from Ibiza, Spain, with more than 20 years behind a kit across punk, rock and live performance.",
       "link": "/about.html",
@@ -12,7 +22,31 @@
     },
     {
       "id": "services",
-      "k": ["service", "services", "hire", "session", "record", "recording", "remote", "track", "tracks", "studio", "rates", "price", "cost"],
+      "k": [
+        "service",
+        "services",
+        "hire",
+        "session",
+        "record",
+        "recording",
+        "remote",
+        "track",
+        "tracks",
+        "studio",
+        "rates",
+        "price",
+        "cost",
+        "need a drummer",
+        "looking for a drummer",
+        "find a drummer",
+        "session drummer",
+        "drummer for hire",
+        "hire a drummer",
+        "fill in",
+        "stand in",
+        "depping",
+        "drum tracks"
+      ],
       "q": "What does Miki do?",
       "a": "Remote drum recording and custom drum tracks, online drum lessons, video editing, live setup and tuning, and drum rental in Vancouver.",
       "link": "/services.html",
@@ -20,7 +54,16 @@
     },
     {
       "id": "lessons",
-      "k": ["lesson", "lessons", "teach", "teaching", "learn", "student", "tuition", "online lesson"],
+      "k": [
+        "lesson",
+        "lessons",
+        "teach",
+        "teaching",
+        "learn",
+        "student",
+        "tuition",
+        "online lesson"
+      ],
       "q": "Does Miki teach?",
       "a": "Yes — drum lessons, online. They are listed with the rest of the services.",
       "link": "/services.html",
@@ -28,8 +71,17 @@
     },
     {
       "id": "bands",
-      "k": ["band", "bands", "what bands", "which bands", "project", "projects", "current bands",
-            "play in", "plays in"],
+      "k": [
+        "band",
+        "bands",
+        "what bands",
+        "which bands",
+        "project",
+        "projects",
+        "current bands",
+        "play in",
+        "plays in"
+      ],
       "q": "What bands does Miki play in?",
       "a": "Currently Lift the Anchor (punk rock) and Granite (metal and grunge). Past projects include Bound By None, Dead Fast and Bound.",
       "link": "/bands.html",
@@ -37,7 +89,13 @@
     },
     {
       "id": "lta",
-      "k": ["lift", "anchor", "lift the anchor", "lta", "punk rock band"],
+      "k": [
+        "lift",
+        "anchor",
+        "lift the anchor",
+        "lta",
+        "punk rock band"
+      ],
       "q": "Who are Lift the Anchor?",
       "a": "A melodic Vancouver punk rock band — big hooks, gang vocals, songs about fresh starts. For fans of Sum 41, Silverstein and Four Year Strong. The press kit has photos, video, and a Book the band form.",
       "link": "/lift-the-anchor-epk.html",
@@ -45,7 +103,11 @@
     },
     {
       "id": "granite",
-      "k": ["granite", "metal", "grunge"],
+      "k": [
+        "granite",
+        "metal",
+        "grunge"
+      ],
       "q": "Who are Granite?",
       "a": "A genre-bending metal and grunge band from Vancouver — heavy riffs, raw vocals, a relentless live show. The press kit has photos, music and booking.",
       "link": "/granite-epk.html",
@@ -53,7 +115,26 @@
     },
     {
       "id": "booking",
-      "k": ["book", "booking", "book the band", "book a band", "book lift the anchor", "book granite", "hire the band", "promoter", "offer", "contact", "email", "reach", "get in touch"],
+      "k": [
+        "book",
+        "booking",
+        "book the band",
+        "book a band",
+        "book lift the anchor",
+        "book granite",
+        "hire the band",
+        "promoter",
+        "offer",
+        "contact",
+        "email",
+        "reach",
+        "get in touch",
+        "need a drummer for a show",
+        "drummer for one show",
+        "put you on",
+        "add you to the bill",
+        "play my show"
+      ],
       "q": "How do I book a band?",
       "a": "Lift the Anchor's press kit has a Book the band form — venue, city, date and what you are offering. Granite's kit has its own contact section.",
       "link": "/lift-the-anchor-epk.html#book",
@@ -61,9 +142,24 @@
     },
     {
       "id": "availability",
-      "k": ["available", "availability", "free", "are you free", "open date", "open dates",
-            "can you play", "are you playing", "any dates", "what dates", "calendar",
-            "still available", "taking bookings", "book a date", "play my venue", "play our venue"],
+      "k": [
+        "available",
+        "availability",
+        "free",
+        "are you free",
+        "open date",
+        "open dates",
+        "can you play",
+        "are you playing",
+        "any dates",
+        "what dates",
+        "calendar",
+        "still available",
+        "taking bookings",
+        "book a date",
+        "play my venue",
+        "play our venue"
+      ],
       "q": "Are the bands available on a given date?",
       "a": "Dates are not posted publicly — the quickest way to find out is to ask with the date in hand. The Book the band form on Lift the Anchor's press kit takes the date, the venue and the city and goes straight to Miki.",
       "link": "/lift-the-anchor-epk.html#book",
@@ -71,7 +167,15 @@
     },
     {
       "id": "punkbc",
-      "k": ["punk bc", "punkbc", "listings", "board", "gig guide", "what's on", "whats on"],
+      "k": [
+        "punk bc",
+        "punkbc",
+        "listings",
+        "board",
+        "gig guide",
+        "what's on",
+        "whats on"
+      ],
       "q": "What is Punk BC?",
       "a": "A board of upcoming punk, hardcore, metal and crust shows across British Columbia — Vancouver, Victoria, Kelowna, Nanaimo and beyond, with dates, venues and ticket links.",
       "link": "/punkbc.html",
@@ -79,7 +183,14 @@
     },
     {
       "id": "video",
-      "k": ["video", "videos", "cover", "covers", "youtube", "watch"],
+      "k": [
+        "video",
+        "videos",
+        "cover",
+        "covers",
+        "youtube",
+        "watch"
+      ],
       "q": "Where are the videos?",
       "a": "Drum covers and live performances, including tracks by Get Dead, Hot Water Music and Bad Religion.",
       "link": "/video.html",
@@ -87,7 +198,15 @@
     },
     {
       "id": "jukebox",
-      "k": ["jukebox", "playlist", "records", "spin", "submit a song", "visualizer", "visualiser"],
+      "k": [
+        "jukebox",
+        "playlist",
+        "records",
+        "spin",
+        "submit a song",
+        "visualizer",
+        "visualiser"
+      ],
       "q": "What is the jukebox?",
       "a": "Spin the records, watch the visualiser, and submit a song for the playlist.",
       "link": "/jukebox.html",
@@ -95,15 +214,36 @@
     },
     {
       "id": "tools",
-      "k": ["tool", "tools", "toy", "toys", "made", "built", "app", "apps"],
+      "k": [
+        "tool",
+        "tools",
+        "toy",
+        "toys",
+        "made",
+        "built",
+        "app",
+        "apps",
+        "free tools",
+        "what can i use",
+        "generator",
+        "maker"
+      ],
       "q": "What tools are on the site?",
-      "a": "A few built here: the drum visualiser, the cymbal designer, the light show, Razor Cut for splitting audio, the gig checklist, the click track and the stage playbook.",
-      "link": "/admin.html",
-      "label": "Tools"
+      "a": "Eight free ones, all running in your browser with nothing to sign up for: a gig poster maker, a merch mockup maker, a QR code maker, a gig checklist, a click track maker, a cymbal designer, a drum trigger visualiser and an audio splitter.",
+      "link": "/tools.html",
+      "label": "All the tools"
     },
     {
       "id": "lightshow",
-      "k": ["light", "lights", "light show", "lightshow", "visualiser", "visualizer", "reactive"],
+      "k": [
+        "light",
+        "lights",
+        "light show",
+        "lightshow",
+        "visualiser",
+        "visualizer",
+        "reactive"
+      ],
       "q": "What is the light show?",
       "a": "Album art or a band photo lit by the music in real time, one zone per player. There is a version for Granite and one for Lift the Anchor.",
       "link": "/light-show.html",
@@ -111,7 +251,13 @@
     },
     {
       "id": "click",
-      "k": ["click", "click track", "metronome", "tempo", "bpm"],
+      "k": [
+        "click",
+        "click track",
+        "metronome",
+        "tempo",
+        "bpm"
+      ],
       "q": "Is there a metronome?",
       "a": "Yes — a click track tool with tempo and time signature.",
       "link": "/click-track.html",
@@ -119,7 +265,15 @@
     },
     {
       "id": "checklist",
-      "k": ["checklist", "gig checklist", "pack", "packing", "gear", "load in", "load-in"],
+      "k": [
+        "checklist",
+        "gig checklist",
+        "pack",
+        "packing",
+        "gear",
+        "load in",
+        "load-in"
+      ],
       "q": "Is there a gig checklist?",
       "a": "Yes — a packing and load-in checklist you can tick off on a phone.",
       "link": "/gig-checklist.html",
@@ -127,11 +281,93 @@
     },
     {
       "id": "kit",
-      "k": ["kit", "setup", "drum kit", "gear list", "cymbals", "snare", "what do you play"],
+      "k": [
+        "kit",
+        "setup",
+        "drum kit",
+        "gear list",
+        "cymbals",
+        "snare",
+        "what do you play"
+      ],
       "q": "What kit does Miki play?",
       "a": "The setup is mapped out piece by piece on the drum map page.",
       "link": "/drum-map.html",
       "label": "Drum map"
+    },
+    {
+      "id": "poster",
+      "k": [
+        "poster",
+        "posters",
+        "flyer",
+        "flyers",
+        "gig poster",
+        "poster maker"
+      ],
+      "q": "Is there a gig poster maker?",
+      "a": "Yes. Set the bill, the date and the venue and it lays out a poster — or pull a night straight off the Punk BC board and it fills itself in. Saves sized for an Instagram post, a story, or A4 print.",
+      "link": "/poster.html",
+      "label": "Poster Maker"
+    },
+    {
+      "id": "merch",
+      "k": [
+        "merch",
+        "merchandise",
+        "shirt",
+        "shirts",
+        "tshirt",
+        "t shirt",
+        "hoodie",
+        "mockup",
+        "mockups",
+        "tote",
+        "print",
+        "sticker",
+        "stickers",
+        "pin",
+        "pins",
+        "badge",
+        "badges",
+        "patch",
+        "patches",
+        "drum head",
+        "koozie"
+      ],
+      "q": "Can I mock up band merch?",
+      "a": "Yes — your logo on a shirt, hoodie, tote, cap, drum head or a pair of sticks before you order a box of them. You can also photograph the actual blank you are printing and the artwork maps onto it in perspective.",
+      "link": "/merch.html",
+      "label": "Merch Mockups"
+    },
+    {
+      "id": "qr",
+      "k": [
+        "qr",
+        "qr code",
+        "qr codes",
+        "barcode",
+        "scan",
+        "scannable"
+      ],
+      "q": "Is there a QR code maker?",
+      "a": "Yes. A code for any link, with your logo in the middle if you want one, saved as PNG or SVG. It warns you when the colours are too close to scan or the logo has grown big enough to break the code.",
+      "link": "/qr.html",
+      "label": "QR Code Maker"
+    },
+    {
+      "id": "cymbal",
+      "k": [
+        "cymbal",
+        "cymbals",
+        "engrave",
+        "engraving",
+        "cymbal designer"
+      ],
+      "q": "What is the cymbal designer?",
+      "a": "Engrave or paint artwork onto a virtual cymbal. Quarter symmetry repeats every stroke at 90, 180 and 270 degrees, so one gesture wraps the whole thing. Pick the size and finish, then download it as a PNG.",
+      "link": "/cymbal-designer.html",
+      "label": "Cymbal Designer"
     }
   ]
 }

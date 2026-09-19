@@ -237,6 +237,59 @@
     return norm(s).split(' ').filter(function (w) { return w && STOP.indexOf(w) < 0; });
   }
 
+  // Edit distance, capped: anything past `max` is "too different" and the row
+  // can be abandoned early, which is most of the point of the cap.
+  function lev(a, b, max) {
+    if (a === b) return 0;
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    var prev = [], cur = [], i, j;
+    for (j = 0; j <= b.length; j++) prev[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      cur[0] = i;
+      var best = cur[0];
+      for (j = 1; j <= b.length; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1,
+                          prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+        if (cur[j] < best) best = cur[j];
+      }
+      if (best > max) return max + 1;
+      prev = cur.slice();
+    }
+    return prev[b.length];
+  }
+
+  // How wrong a word is allowed to be and still count. Scaled by length
+  // because one slip in a four-letter word is most of the word, and two slips
+  // in a long one still leaves it recognisable. Short words get nothing: at
+  // three letters every typo is also some other real word.
+  function typoBudget(w) {
+    return w.length >= 8 ? 2 : w.length >= 5 ? 1 : 0;
+  }
+
+  // Does this read like a question about the listings, rather than a question
+  // that merely happens to contain a place name? "drum lessons vancouver" is
+  // not a shows question, and answering it with 56 gig listings is worse than
+  // saying nothing.
+  function showIntent(n) {
+    return /\b(show|shows|gig|gigs|concert|concerts|playing|tonight|weekend|listing|listings|whats on|whos playing|lineup|bill|doors)\b/.test(n);
+  }
+
+  // Looser, and used only once a question is known to be a follow-up, where
+  // the subject is already settled and "when do they play next" is obviously
+  // about dates. Bare "play" cannot mean that in a first question -- "what kit
+  // does he play" is about the kit -- so the two tests stay separate.
+  function askingWhen(n) {
+    return showIntent(n) || /\b(play|plays|next|when|date|dates|tour|touring|booked)\b/.test(n);
+  }
+
+  // The questions that are worth more than any listing: somebody trying to
+  // hire a drummer or put a band on. These lose to the shows board on raw
+  // word-scoring -- "I need a drummer for one show" contains "show" -- and
+  // they are the whole reason the site exists.
+  function hiringIntent(n) {
+    return /\b(book|booking|hire|hiring|available|availability|rate|rates|price|cost|quote|fee|session|record|recording|lesson|lessons|teach|teaching|learn|drummer|fill in|stand in|depping)\b/.test(n);
+  }
+
   // ---- shows --------------------------------------------------------------
 
   // "Is the band free that weekend" asks about their diary, not about what is
@@ -288,8 +341,19 @@
     var n = norm(q);
 
     if (asksAvailability(n)) return null;
-    var showy = /\b(show|shows|gig|gigs|concert|concerts|playing|on tonight|tonight|weekend|listing|listings|whats on|whos playing)\b/.test(n);
+    var showy = showIntent(n);
     var up = upcoming();
+
+    // A place or band name is only allowed to decide the answer when the
+    // question is actually about listings, or when it is short enough that the
+    // name IS the question ("anything in Victoria", or just "Victoria").
+    //
+    // Without this a place name wins unconditionally, and "drum lessons
+    // vancouver" came back with 56 gig listings -- a confident, useless answer
+    // to somebody who wanted to book a lesson. Hiring language blocks it
+    // outright: those questions are the point of the site.
+    var contentWords = words(q).length;
+    var nameMayWin = (showy || contentWords <= 2) && !hiringIntent(n);
 
     if (!shows) return showy ? 'I could not load the listings just now, so I cannot answer that one. The board itself is at /punkbc.html.' : null;
 
@@ -308,9 +372,11 @@
     });
 
     var hitKey = null;
-    Object.keys(places).sort(function (a, b) { return b.length - a.length; }).forEach(function (p) {
-      if (!hitKey && p.length > 3 && n.indexOf(p) >= 0) hitKey = p;
-    });
+    if (nameMayWin) {
+      Object.keys(places).sort(function (a, b) { return b.length - a.length; }).forEach(function (p) {
+        if (!hitKey && p.length > 3 && n.indexOf(p) >= 0) hitKey = p;
+      });
+    }
     if (hitKey) {
       var place = places[hitKey];
       var there = up.filter(function (s) {
@@ -324,11 +390,13 @@
 
     // A band asked for by name.
     var band = null;
-    up.forEach(function (s) {
-      (s.band || '').split(' / ').forEach(function (b) {
-        if (!band && norm(b).length > 3 && n.indexOf(norm(b)) >= 0) band = s;
+    if (nameMayWin) {
+      up.forEach(function (s) {
+        (s.band || '').split(' / ').forEach(function (b) {
+          if (!band && norm(b).length > 3 && n.indexOf(norm(b)) >= 0) band = s;
+        });
       });
-    });
+    }
     if (band) return 'Yes — ' + showLine(band);
 
     if (!showy) return null;
@@ -390,7 +458,13 @@
     return spread;
   }
 
-  function answerKB(q, floor) {
+  // The topics that answer "I want to hire you". When a question carries
+  // hiring language these are weighted up, because otherwise "I need a drummer
+  // for one show" lands on the biography -- "drummer" is a word in it -- and
+  // answers a booking enquiry with a paragraph about Ibiza.
+  var HIRE_TOPICS = { services: 1, booking: 1, lessons: 1, availability: 1 };
+
+  function answerKB(q, floor, prefer) {
     var topics = allTopics();
     if (!topics.length) return null;
     var ws = words(q);
@@ -411,15 +485,59 @@
         // "lift the anchor" when both are present.
         if (k.indexOf(' ') >= 0) { if (nq.indexOf(k) >= 0) score += (6 + k.length / 10) * rarity; return; }
         ws.forEach(function (w) {
-          if (w === k) score += 4 * rarity;
-          else if (w.length > 4 && k.indexOf(w) === 0) score += 1.5 * rarity;
+          // Best of the three, not the first that happens to apply. Taking the
+          // first cost "tell me about granit" its answer: "granit" is a prefix
+          // of "granite", so the weak prefix rule claimed it at 1.5 and
+          // returned before the typo rule could score it properly.
+          var s = 0;
+          if (w === k) s = 4;
+          else {
+            if (w.length > 4 && k.indexOf(w) === 0) s = 2.8;
+            // A near miss, worth less than an exact hit and far more than
+            // nothing. People type "teech" and "granit" on phones, and the
+            // whole question used to fall through on one wrong letter.
+            var budget = Math.min(typoBudget(w), typoBudget(k));
+            if (budget && lev(w, k, budget) <= budget) s = Math.max(s, 2.6);
+          }
+          if (s) score += s * rarity;
         });
       });
+      if (prefer && prefer[t.id]) score *= 1.8;
       if (score > bestScore) { bestScore = score; best = t; }
     });
 
     if (!best || bestScore < (floor || 2)) return null;
-    return { text: best.a, links: [{ label: best.label, href: best.link }] };
+    return { text: best.a, score: bestScore, topic: best,
+             links: [{ label: best.label, href: best.link }] };
+  }
+
+  // The nearest topics regardless of how weakly they scored, so a question it
+  // cannot answer produces something to click rather than a dead end.
+  function nearest(q, n) {
+    var topics = allTopics(), ws = words(q);
+    if (!ws.length) return [];
+    var sp = keywordSpread(topics), nq = norm(q);
+    return topics.map(function (t) {
+      var score = 0;
+      (t.k || []).forEach(function (key) {
+        var k = norm(key);
+        if (!k) return;
+        var rarity = 1 / (sp[k] || 1);
+        if (k.indexOf(' ') >= 0) { if (nq.indexOf(k) >= 0) score += 6 * rarity; return; }
+        ws.forEach(function (w) {
+          if (w === k) score += 4 * rarity;
+          else if (w.length > 4 && k.indexOf(w) === 0) score += 1.5 * rarity;
+          else {
+            var budget = Math.min(typoBudget(w), typoBudget(k));
+            if (budget && lev(w, k, budget) <= budget) score += 2.6 * rarity;
+          }
+        });
+      });
+      return { t: t, score: score };
+    }).filter(function (r) { return r.score > 0 && r.t.q; })
+      .sort(function (a, b) { return b.score - a.score; })
+      .slice(0, n || 3)
+      .map(function (r) { return r.t; });
   }
 
   // ---- optional Claude ----------------------------------------------------
@@ -473,32 +591,98 @@
 
   // ---- the actual conversation -------------------------------------------
 
-  function respond(q) {
+  // What the last answer was about, so a follow-up has something to attach
+  // itself to. Without it "when do they play next" is a question with no
+  // subject in it at all, and no amount of matching will save it.
+  var lastSubject = '';        // words to stand in for the pronoun
+  var lastTopicId = '';
+
+  var PRONOUN = /\b(they|them|their|theyre|it|its|that|those|he|him|his|she|her|you|your)\b/;
+
+  // Does this question lean on something already said?
+  //
+  // Only ever asked once the normal pipeline has already failed, and that
+  // ordering is the whole design. The first version guessed up front -- a
+  // pronoun plus a short question -- and it was wrong constantly: "what bands
+  // does he play in" has "he" in it and is perfectly self-contained, but it
+  // got rewritten with the previous subject and answered "nothing of theirs is
+  // on the shows board". A question that can be answered on its own must never
+  // be reinterpreted.
+  function isFollowUp(q) {
+    if (!lastSubject) return false;
+    return PRONOUN.test(norm(q));
+  }
+
+  function remember(topic, q) {
+    if (topic && topic.id) {
+      lastTopicId = topic.id;
+      // Prefer the topic's own distinctive words over the visitor's phrasing.
+      lastSubject = (topic.k || []).slice(0, 3).join(' ') || norm(q);
+    }
+  }
+
+  function respond(q, depth) {
+    var n = norm(q);
+
     // Order matters, and each step earns its place:
-    //   1. a question naming a venue, city, band or date window is about the
-    //      shows, whatever else is in it — "what's on at the Cobalt"
-    //   2. otherwise a question naming a topic wins over the word "show"
-    //      appearing in it — "where can I find the light show"
-    //   3. then the catch-all listing, then a loose topic match.
+    //   1. hiring and lessons language beats the listings outright — "I need a
+    //      drummer for one show" contains the word "show" and is not about the
+    //      board at all
+    //   2. a question that pins down a venue, city, band or date window and
+    //      reads like a listings question — "what's on at the Cobalt"
+    //   3. a confidently named topic, so "where can I find the light show"
+    //      beats the word "show" appearing in it
+    //   4. then the catch-all listing, then a loose topic match.
+    var hiring = hiringIntent(n) ? answerKB(q, 3, HIRE_TOPICS) : null;
+    if (hiring) { remember(hiring.topic, q); say('bot', hiring.text, hiring.links); return; }
+
     var pinned = answerShows(q, true);
-    if (pinned) { say('bot', pinned, [{ label: 'Punk BC', href: '/punkbc.html' }]); return; }
+    if (pinned) { lastTopicId = ''; lastSubject = ''; say('bot', pinned, [{ label: 'Punk BC', href: '/punkbc.html' }]); return; }
 
     var named = answerKB(q, 5);
-    if (named) { say('bot', named.text, named.links); return; }
+    if (named) { remember(named.topic, q); say('bot', named.text, named.links); return; }
 
     // Asked in so many words and not already answered by something more
     // specific: send them to the form rather than to whichever topic happened
     // to share a word with the question.
-    if (asksAvailability(norm(q))) {
-      var av = allTopics().filter(function (t) { return t.id === 'availability'; })[0];
-      if (av) { say('bot', av.a, [{ label: av.label, href: av.link }]); return; }
+    if (asksAvailability(n)) {
+      var av2 = allTopics().filter(function (t) { return t.id === 'availability'; })[0];
+      if (av2) { remember(av2, q); say('bot', av2.a, [{ label: av2.label, href: av2.link }]); return; }
     }
 
     var shown = answerShows(q, false);
-    if (shown) { say('bot', shown, [{ label: 'Punk BC', href: '/punkbc.html' }]); return; }
+    if (shown) { lastTopicId = ''; lastSubject = ''; say('bot', shown, [{ label: 'Punk BC', href: '/punkbc.html' }]); return; }
 
     var known = answerKB(q, 2);
-    if (known) { say('bot', known.text, known.links); return; }
+    if (known) { remember(known.topic, q); say('bot', known.text, known.links); return; }
+
+    // Nothing answered it as written. Only now is it worth assuming the
+    // question is about whatever was being discussed -- by this point there is
+    // no self-contained reading left to spoil.
+    if (!depth && isFollowUp(q)) {
+      // "When do they play next" about a band with no dates on the board
+      // should say so and point at the form. Matching on the word "next"
+      // alone hands back somebody else's gig, stated as though it were theirs.
+      if (askingWhen(n)) {
+        var onBoard = upcoming().some(function (s) {
+          return (s.band || '').split(' / ').some(function (b) {
+            return norm(b).length > 3 && norm(lastSubject).indexOf(norm(b)) >= 0;
+          });
+        });
+        if (!onBoard) {
+          var av3 = allTopics().filter(function (t) { return t.id === 'availability'; })[0];
+          if (av3) {
+            say('bot', 'Nothing of theirs is on the shows board at the moment. ' + av3.a,
+                [{ label: av3.label, href: av3.link }]);
+            return;
+          }
+        }
+      }
+      // One level only: if the rewritten question still fails, going round
+      // again just asks the same thing louder.
+      respond(lastSubject + ' ' + q, 1);
+      return;
+    }
 
     // Remember what it could not answer. This is the list worth teaching from
     // — real questions people asked, rather than guesses about what they might.
@@ -509,10 +693,46 @@
     queueMiss(q);
 
     if (!key()) {
-      say('bot',
-          'I do not know that one. I can answer questions about the shows board, the bands, ' +
+      // Offer the nearest things it does know, as buttons. A dead end that
+      // lists categories asks the visitor to guess the vocabulary; three
+      // real questions to click does the guessing for them.
+      // Always three, never none. Scoring only surfaces suggestions when a
+      // question half-matches something, which is a narrow band -- anything
+      // that matches at all usually clears the floor and gets answered. So a
+      // question about something genuinely unknown produced a paragraph of
+      // apology and nothing to click, which is where visitors give up.
+      var near = nearest(q, 3);
+      if (!near.length) {
+        near = allTopics().filter(function (t) {
+          return t.q && /^(services|booking|punkbc|bands)$/.test(t.id || '');
+        }).slice(0, 3);
+      }
+      var m = say('bot', near.length
+        ? 'I do not know that one. These I can answer:'
+        : 'I do not know that one. I can answer questions about the shows board, the bands, ' +
           'the services and the tools on this site — try one of the buttons above the box. ' +
           'For anything else, Smarter answers at the bottom of the page hands the question to Claude.');
+      if (near.length) {
+        var row = el('div', 'chips');
+        near.forEach(function (t) {
+          var c = el('button', 'chip', t.q);
+          c.type = 'button';
+          c.addEventListener('click', function () {
+            // Answer the topic the button names, rather than feeding its
+            // wording back through the matcher. "What does Miki do?" is the
+            // services topic's own question and it matches the biography --
+            // so re-matching makes the suggestion reply with something other
+            // than the thing it just offered.
+            say('me', t.q);
+            remember(t, t.q);
+            say('bot', t.a, [{ label: t.label, href: t.link }]);
+            if (!matchMedia('(hover: none)').matches) input.focus();
+          });
+          row.appendChild(c);
+        });
+        m.appendChild(row);
+        log.scrollTop = log.scrollHeight;
+      }
       return;
     }
 
@@ -527,13 +747,20 @@
     });
   }
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var q = input.value.trim();
+  function ask(q) {
+    q = String(q || '').trim();
     if (!q) return;
     say('me', q);
     input.value = '';
     respond(q);
+    // Back to the box. Without this every follow-up needs a click first,
+    // which is most of what makes a chat feel like a form.
+    if (!matchMedia('(hover: none)').matches) input.focus();
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    ask(input.value);
   });
 
   // ---- starters -----------------------------------------------------------
@@ -544,7 +771,7 @@
   STARTERS.forEach(function (s) {
     var c = el('button', 'chip', s);
     c.type = 'button';
-    c.addEventListener('click', function () { input.value = s; form.requestSubmit(); });
+    c.addEventListener('click', function () { ask(s); });
     chips.appendChild(c);
   });
 
