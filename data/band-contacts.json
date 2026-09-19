@@ -89,6 +89,43 @@
       "by": "auto"
     },
     {
+      "band": "Arch Enemy",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://archenemy.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Armored Saint",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://armoredsaint.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "twitter.com",
+          "url": "https://twitter.com/thearmoredsaint",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "ATD, Scatterbox and more",
       "checked": "2026-09-14",
       "email": "",
@@ -609,6 +646,27 @@
           "name": "Bandcamp",
           "url": "https://dazy.bandcamp.com/",
           "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Dead Bars",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://deadbars.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/festivals/12711-fest/id/43163657-fest-2026?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Fest&quot;,&quot;utc_date&quot;:1792713600,&quot;event_date&quot;:&quot;23",
+          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1426,6 +1484,32 @@
       "by": "auto"
     },
     {
+      "band": "Livekill",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "livekillofficial",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://livekill.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/livekillofficial",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "https://twitter.com/LiveKillBand",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Locked Shut. Touring on new self-titled album",
       "checked": "2026-09-18",
       "email": "",
@@ -1571,6 +1655,22 @@
       "instagram": "messa_band"
     },
     {
+      "band": "Metal Church",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://metalchurch.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Miles to Nowhere",
       "checked": "2026-09-18",
       "email": "",
@@ -1664,6 +1764,37 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Nervosa",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "nervosaofficial",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://nervosa.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://instagram.com/nervosaofficial",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "http://twitter.com/nervosaband",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "https://nervosaband.co.uk",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Night Court",
@@ -2101,6 +2232,22 @@
       "instagram": ""
     },
     {
+      "band": "Suicide Machines",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://suicidemachines.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "sundress",
       "checked": "2026-09-17",
       "email": "",
@@ -2197,6 +2344,58 @@
       ],
       "note": "Vancouver punk. Did a split with The Fomites.",
       "instagram": ""
+    },
+    {
+      "band": "The Aggrolites",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://theaggrolites.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43212614-thee-sinseers-at-wiltern?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "http://twitter.com/theaggrolites",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "https://music.aggroreggae.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://aggroreggae.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "The Bouncing Souls",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://thebouncingsouls.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "The Corps",
@@ -2339,6 +2538,58 @@
       "by": "auto"
     },
     {
+      "band": "The OBGMs",
+      "checked": "2026-09-19",
+      "email": "mgmt@theobgms.com",
+      "email_source": "theobgms.com",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://theobgms.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43289470-bad-nerves-at-le-studio-td?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://theobgms.com/contact",
+          "found": "email"
+        }
+      ],
+      "note": "",
+      "by": "auto"
+    },
+    {
+      "band": "The Restarts",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "the_restarts_official",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://therestarts.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/the_restarts_official/",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/festivals/3792752-smash-the-fash-fest-ii/id/43287218-smash-the-fash-fest-ii-2027?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Walthamstow",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "The Spits",
       "checked": "2026-09-14",
       "email": "",
@@ -2353,6 +2604,32 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Truck Violence",
+      "checked": "2026-09-19",
+      "email": "",
+      "email_source": "",
+      "instagram": "truckviolence",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://truckviolence.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/truckviolence",
+          "found": "profile"
+        },
+        {
+          "name": "youtube.com",
+          "url": "https://www.youtube.com/@truckviolence",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Tsalal",
