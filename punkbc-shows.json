@@ -2,31 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Cheap Flavor / Baron / Witiko",
-      "date": "2026-09-19",
-      "time": "",
-      "venue": "Fox Cabaret",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://gigpit.ca/shows/event:JuEbdQNhkWA",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/images/shows/cheap-flavor-2026-09-19.jpg",
-      "image_source": "https://api.gigpit.ca/services/images/Zs_OKNfmAQ4?height=1200"
-    },
-    {
-      "band": "ATD, Scatterbox and more",
-      "date": "2026-09-19",
-      "time": "19",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "",
-      "genre": "",
-      "notes": "",
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCnETL8kQOMwqqr4mESShO80Aw8FIq-mutJJcfZ1csRw&s"
-    },
-    {
       "band": "Sleep",
       "date": "2026-09-20",
       "time": "19:00",
