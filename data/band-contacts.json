@@ -73,6 +73,42 @@
       "instagram": ""
     },
     {
+      "band": "Anger Within",
+      "checked": "2026-09-20",
+      "email": "",
+      "email_source": "",
+      "instagram": "officialangerwithin",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://angerwithin.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://www.instagram.com/officialangerwithin",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "http://twitter.com/angerwithin",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.reverbnation.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.myspace.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Antifa Dance Party",
       "checked": "2026-09-18",
       "email": "",
@@ -440,6 +476,22 @@
       "note": "",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Castrator",
+      "checked": "2026-09-20",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://castrator.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Cheap Flavor",
