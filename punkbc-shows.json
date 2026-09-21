@@ -2,43 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Sleep",
-      "date": "2026-09-20",
-      "time": "19:00",
-      "venue": "Commodore Ballroom",
-      "city": "Vancouver",
-      "price": "From $70 USD",
-      "ticket": "https://www.commodoreballroom.com/shows",
-      "genre": "Doom/Stoner Metal",
-      "notes": "Only Canadian date on their fall North America tour",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sleep_at_the_Filmore_Detroit%2C_March_31%2C_2018.jpg?width=600",
-      "curated": ""
-    },
-    {
-      "band": "The Spits",
-      "date": "2026-09-20",
-      "time": "19:00",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "",
-      "genre": "",
-      "notes": "Punk",
-      "image": "https://images.squarespace-cdn.com/content/v1/5c6c4858c46f6d31bcc4fb49/1693596257321-8ZZMIPE5BN1J3VYDMLY3/AQ-2023PROMO-michaelxcrusty6.jpg"
-    },
-    {
-      "band": "Unsane",
-      "date": "2026-09-20",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$22",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Noise Rock",
-      "notes": "19+ event",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Unsane_2005_red.jpg?width=600"
-    },
-    {
       "band": "Elder",
       "date": "2026-09-21",
       "time": "19:00",
