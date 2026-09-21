@@ -30,6 +30,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Not preinstalled on ubuntu-latest, contrary to what I assumed: the
+      # first run downloaded all 55 MB and then fell over on ffprobe.
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -1
+
       - name: Check the Drive-page handling still holds
         run: python3 tools/fetch_drive_audio.py --self-test
 
@@ -37,7 +45,14 @@ jobs:
         env:
           FILE_ID: ${{ github.event.inputs.file_id }}
           OUT: ${{ github.event.inputs.out }}
-        run: python3 tools/fetch_drive_audio.py | tee /tmp/audio.log
+        # pipefail, because bash reports the exit status of the LAST command
+        # in a pipeline. Without it `python3 ... | tee` always succeeds, and
+        # the first run sailed past a crashed fetch into the commit step,
+        # where it failed on a missing file and reported that instead of the
+        # real cause.
+        run: |
+          set -o pipefail
+          python3 tools/fetch_drive_audio.py | tee /tmp/audio.log
 
       - name: Summary
         if: always()
