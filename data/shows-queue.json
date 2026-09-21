@@ -282,6 +282,34 @@
       "first_seen": "2026-09-10"
     },
     {
+      "band": "Lethbridge Invasion night 1",
+      "date": "2026-11-13",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion/1653147899703601/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-09-21"
+    },
+    {
+      "band": "Lethbridge Invasion night 2 @ Bullys",
+      "date": "2026-11-14",
+      "time": "",
+      "venue": "Bully's Studios",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion-night-2/2907068749648249/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-09-21"
+    },
+    {
       "band": "The Restarts, Alien Boys, Mean Bikini",
       "date": "2026-11-18",
       "time": "",
@@ -340,7 +368,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1107
+    "vancouver-punk-calendar": 1109
   },
-  "updated": "2026-09-20"
+  "updated": "2026-09-21"
 }
