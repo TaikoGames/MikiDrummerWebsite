@@ -1,0 +1,62 @@
+name: Drive audio
+
+# Masters come back from mastering as WAVs on Google Drive. This fetches one,
+# transcodes it to something a website can serve, and commits the result.
+#
+# It runs here rather than locally because this is where ffmpeg and a route to
+# Drive both exist. The source WAV is never committed -- only the MP3.
+
+on:
+  workflow_dispatch:
+    inputs:
+      file_id:
+        description: "Google Drive file id (the long string in the /file/d/… URL)"
+        required: true
+      out:
+        description: "Where to write it, repo-relative"
+        required: true
+        default: "audio/granite/pony-up.mp3"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: drive-audio
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the Drive-page handling still holds
+        run: python3 tools/fetch_drive_audio.py --self-test
+
+      - name: Fetch and transcode
+        env:
+          FILE_ID: ${{ github.event.inputs.file_id }}
+          OUT: ${{ github.event.inputs.out }}
+        run: python3 tools/fetch_drive_audio.py | tee /tmp/audio.log
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo '## Audio'
+            echo
+            echo '```'
+            cat /tmp/audio.log 2>/dev/null || echo "(no log)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit it
+        env:
+          OUT: ${{ github.event.inputs.out }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$OUT"
+          git diff --cached --quiet && { echo "nothing new"; exit 0; }
+          git commit -m "Audio: $OUT from Drive"
+          git push origin "HEAD:$GITHUB_REF_NAME"
