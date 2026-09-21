@@ -170,7 +170,7 @@
         .print-qr img { display: block; width: 104px; height: 104px; }
         .print-qr-cap { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
                         color: #111; text-align: center; margin-top: 4px; }
-        .sc-list, .videos { display: none !important; }
+        .sc-list, .videos, .master audio, .master-dl { display: none !important; }
         .print-only ul { list-style: none; margin: 0; padding: 0; }
         .print-only li { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.14);
                          font-size: 12.5px; line-height: 1.5; }
@@ -281,6 +281,16 @@
     .sc-list { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
     .sc-list-label { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone-400); margin-bottom: 2px; }
     .sc-track-player { display: block; width: 100%; border-radius: 12px; border: 1px solid var(--edge); background: var(--stone-900); }
+    .master { margin: 24px 0 0; padding: 18px 20px; border: 1px solid var(--molten);
+              border-radius: 14px; background: var(--stone-900); }
+    .master figcaption { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .master-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+                    color: var(--molten); font-weight: 700; }
+    .master figcaption strong { font-size: 19px; letter-spacing: -0.01em; }
+    .master audio { width: 100%; display: block; }
+    .master-dl { display: inline-block; margin-top: 12px; font-size: 12.5px; color: var(--stone-400);
+                 border-bottom: 1px solid var(--edge); padding-bottom: 2px; text-decoration: none; }
+    .master-dl:hover { color: var(--molten); border-color: var(--molten); }
 
     /* ---- Save as PDF button ---- */
     .kit-actions {
@@ -460,7 +470,24 @@
 <section id="listen">
     <div class="wrap">
         <div class="sec-head"><h2 class="display">Listen</h2></div>
+        <!-- Served from this site rather than embedded, so it plays with no
+             third party involved, keeps working inside the downloaded press
+             kit, and can be handed to a promoter as a file. Everything below
+             it is on SoundCloud, which is right for the catalogue but wrong
+             for the one track somebody is meant to hear first. -->
+        <figure class="master">
+            <figcaption>
+                <span class="master-label">Latest master</span>
+                <strong>Pony Up</strong>
+            </figcaption>
+            <audio controls preload="none" src="audio/granite/pony-up.mp3">
+                <a href="audio/granite/pony-up.mp3">Download Pony Up (MP3)</a>
+            </audio>
+            <a class="master-dl" href="audio/granite/pony-up.mp3" download>↓ Download MP3 · 4.6 MB</a>
+        </figure>
+
         <div class="sc-list">
+            <div class="sc-list-label">The rest of the catalogue</div>
             <iframe class="sc-track-player" height="120" scrolling="no" frameborder="no" allow="autoplay" loading="lazy" title="Granite — Blindsight on SoundCloud" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fdg1company%2Fblindsight&color=%23e8672a&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false"></iframe>
             <iframe class="sc-track-player" height="120" scrolling="no" frameborder="no" allow="autoplay" loading="lazy" title="Granite — Skookum on SoundCloud" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fuser-968824092%2Fskookum&color=%23e8672a&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false"></iframe>
             <iframe class="sc-track-player" height="120" scrolling="no" frameborder="no" allow="autoplay" loading="lazy" title="Granite — Hemogoblin on SoundCloud" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fuser-968824092%2Fhemogoblin&color=%23e8672a&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false"></iframe>
@@ -476,6 +503,7 @@
 
         <div class="print-only">
           <ul>
+            <li><span class="t">Pony Up — latest master</span><br><a class="u" href="https://www.mikidrummer.ca/audio/granite/pony-up.mp3">https://www.mikidrummer.ca/audio/granite/pony-up.mp3</a></li>
             <li><span class="t">Blindsight</span><br><a class="u" href="https://soundcloud.com/dg1company/blindsight">https://soundcloud.com/dg1company/blindsight</a></li>
             <li><span class="t">Skookum</span><br><a class="u" href="https://soundcloud.com/user-968824092/skookum">https://soundcloud.com/user-968824092/skookum</a></li>
             <li><span class="t">Hemogoblin</span><br><a class="u" href="https://soundcloud.com/user-968824092/hemogoblin">https://soundcloud.com/user-968824092/hemogoblin</a></li>
@@ -663,9 +691,17 @@
         // press-photo.jpg first: it is the one a promoter or a listings editor
         // will actually run, so it should be the first thing in the folder
         // rather than something to hunt for among the live shots.
-        const files = ['press-photo.jpg','logo.png','logo-black.png','hero.jpg','feature.jpg',
-                       'live-01.jpg','live-02.jpg','live-03.jpg',
-                       'live-07.jpg','live-08.jpg','live-09.jpg'];
+        const files = ['images/granite/press-photo.jpg','images/granite/logo.png',
+                       'images/granite/logo-black.png','images/granite/hero.jpg',
+                       'images/granite/feature.jpg',
+                       'images/granite/live-01.jpg','images/granite/live-02.jpg',
+                       'images/granite/live-03.jpg','images/granite/live-07.jpg',
+                       'images/granite/live-08.jpg','images/granite/live-09.jpg',
+                       // The song, so the kit a promoter downloads is something
+                       // they can listen to on a plane. Paths are full now: the
+                       // audio does not live beside the photos, and one
+                       // hardcoded prefix cannot reach both.
+                       'audio/granite/pony-up.mp3'];
         const zip = new JSZip(), folder = zip.folder('granite-press-kit');
         // A press kit without the bio is half a press kit: the photos are
         // the easy part and the words are what gets pasted into a listing.
@@ -673,7 +709,7 @@
         folder.file('granite-bio.txt', EpkExtras.bioText({ band: 'GRANITE', url: 'https://www.mikidrummer.ca/granite-epk.html' }));
         let added = 0;
         await Promise.all(files.map(async function (f) {
-            try { const r = await fetch('images/granite/' + f); if (!r.ok) return; folder.file(f, await r.blob()); added++; } catch (e) {}
+            try { const r = await fetch(f); if (!r.ok) return; folder.file(f.split('/').pop(), await r.blob()); added++; } catch (e) {}
         }));
         if (!added) { alert('No images found to download.'); btn.disabled = false; btn.innerHTML = orig; return; }
         const blob = await zip.generateAsync({ type: 'blob' });
