@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Elder",
-      "date": "2026-09-21",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$38",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Stoner Metal",
-      "notes": "With Blackwater Holylight. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
-    },
-    {
       "band": "Revocation",
       "date": "2026-09-22",
       "time": "18:00",
