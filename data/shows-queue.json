@@ -198,6 +198,20 @@
       "first_seen": "2026-09-10"
     },
     {
+      "band": "Status/Non-Status, By Divine Right, Uptights",
+      "date": "2026-10-08",
+      "time": "",
+      "venue": "Green Auto Music 1822 Pandora St",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://gigpit.ca/shows/event:x1L0qxrZmFk",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-09-23"
+    },
+    {
       "band": "Concrete Vehicles with Hillsboro, WAIT//LESS, and LöLä",
       "date": "2026-10-08",
       "time": "",
@@ -368,7 +382,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1109
+    "vancouver-punk-calendar": 1110
   },
-  "updated": "2026-09-22"
+  "updated": "2026-09-23"
 }
