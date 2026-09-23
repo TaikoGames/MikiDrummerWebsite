@@ -2,43 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Revocation",
-      "date": "2026-09-22",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$30",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Death Metal",
-      "notes": "With Defeated Sanity, Fuming Mouth, Weeping. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Revocation_at_Alchemica,_Bologna_2.jpg?width=600"
-    },
-    {
-      "band": "Delilah Bon",
-      "date": "2026-09-22",
-      "time": "19:00",
-      "venue": "Hollywood Theatre",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/delilah-bon-live-in-vancouver-/1645162889870380/",
-      "genre": "Punk",
-      "notes": "",
-      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg/500px-Hands_Off_Gretel_%40_Crystal_Bar_%28cropped%29.jpg"
-    },
-    {
-      "band": "Quicksand & Fucked Up",
-      "date": "2026-09-22",
-      "time": "20:00",
-      "venue": "Capital Ballroom",
-      "city": "Victoria",
-      "price": "",
-      "ticket": "https://www.ticketmaster.ca",
-      "genre": "Post-Hardcore/Punk",
-      "notes": "Co-headline fall Canadian tour. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fucked_up_at_the_polaris_music_prize_gala_2009_by_dustin_rabin.jpg?width=600",
-      "curated": ""
-    },
-    {
       "band": "Quicksand & Fucked Up",
       "date": "2026-09-23",
       "time": "19:00",
