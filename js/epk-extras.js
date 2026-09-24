@@ -285,63 +285,6 @@
       return PROVIDERS[key].trims ? mailtoMessage(personal) : fullMessage(personal);
     }
 
-    // ---- sending it here, without opening anything -------------------
-    //
-    // The page cannot send mail on its own, and must not be able to: a public
-    // press kit that posts to any address a visitor types is a spam relay
-    // wearing a band's name, and the first thing that happens is the domain
-    // gets blacklisted.
-    //
-    // So the credentials never ship in the page. They live in localStorage on
-    // the devices of the people in the band, pasted once, exactly like the
-    // GitHub token on the admin page and the API key on the chat page. A
-    // stranger reading this file finds nothing to abuse; a bandmate who has
-    // set it up once gets type-the-address-and-send.
-    //
-    // The mail goes out through EmailJS, from the band's own connected
-    // account, so replies land where they should rather than at a form.
-    var CREDS = 'epk:send';
-    var SEND_API = 'https://api.emailjs.com/api/v1.0/email/send';
-
-    function creds() {
-      try {
-        var v = JSON.parse(localStorage.getItem(CREDS) || 'null');
-        return (v && v.service && v.template && v.key) ? v : null;
-      } catch (e) { return null; }
-    }
-    function saveCreds(v) {
-      try { localStorage.setItem(CREDS, JSON.stringify(v)); return true; }
-      catch (e) { return false; }
-    }
-    function forgetCreds() { try { localStorage.removeItem(CREDS); } catch (e) {} }
-
-    function sendDirect(to, personal) {
-      var c = creds();
-      return fetch(SEND_API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_id: c.service,
-          template_id: c.template,
-          user_id: c.key,
-          template_params: {
-            to_email: to,
-            subject: subject,
-            // The web composers' version: there is no URL here to overflow,
-            // so the bio goes out whole.
-            message: fullMessage(personal),
-            band: band,
-            reply_to: c.from || ''
-          }
-        })
-      }).then(function (r) {
-        if (r.ok) return true;
-        return r.text().then(function (msg) {
-          throw new Error(msg || ('the mail service answered ' + r.status));
-        });
-      });
-    }
-
     var dlg = buildDialog();
 
     function buildDialog() {
@@ -351,7 +294,8 @@
       d.innerHTML =
         '<form method="dialog" class="vd-form">' +
           '<h3>Send the press kit</h3>' +
-          '<p class="vd-sub" id="vd-sub"></p>' +
+          '<p class="vd-sub">The whole message is written — bio, photos, music and the kit. ' +
+             'Put the address in and it opens ready to send.</p>' +
           '<label for="vd-to">Venue or promoter\u2019s email</label>' +
           '<input id="vd-to" type="email" inputmode="email" autocomplete="off" ' +
                  'placeholder="bookings@venue.com" required>' +
@@ -363,29 +307,10 @@
             '<button type="button" class="vd-send" id="vd-send">Open in Gmail</button>' +
             '<button type="button" class="vd-cancel" value="cancel">Cancel</button>' +
           '</div>' +
-          '<p class="vd-alt" id="vd-alt">Use <button type="button" class="vd-swap" data-k="gmail">Gmail</button>' +
+          '<p class="vd-alt">Use <button type="button" class="vd-swap" data-k="gmail">Gmail</button>' +
             '<button type="button" class="vd-swap" data-k="outlook">Outlook</button>' +
             '<button type="button" class="vd-swap" data-k="mail">my mail app</button>' +
             '<button type="button" class="vd-swap" data-k="copy">copy it instead</button></p>' +
-          '<p class="vd-setup-row"><button type="button" class="vd-setup-toggle" id="vd-setup-toggle"></button></p>' +
-          '<div class="vd-setup" id="vd-setup" hidden>' +
-            '<p class="vd-setup-why">Send straight from here, with no Gmail tab. Connect an ' +
-              '<a href="https://www.emailjs.com/" target="_blank" rel="noopener">EmailJS</a> account ' +
-              'to the band\u2019s mailbox and paste its three IDs. They are kept on this device only ' +
-              'and never go into the page, so nobody reading the site can send mail as you \u2014 ' +
-              'which is the whole reason it is done this way.</p>' +
-            '<label for="vd-svc">Service ID</label><input id="vd-svc" autocomplete="off" placeholder="service_xxxxxxx">' +
-            '<label for="vd-tpl">Template ID</label><input id="vd-tpl" autocomplete="off" placeholder="template_xxxxxxx">' +
-            '<label for="vd-key">Public key</label><input id="vd-key" autocomplete="off" placeholder="xxxxxxxxxxxxxxxx">' +
-            '<label for="vd-from">Reply-to address <span class="vd-opt">(optional)</span></label>' +
-            '<input id="vd-from" type="email" autocomplete="off" placeholder="band@example.com">' +
-            '<div class="vd-actions">' +
-              '<button type="button" class="vd-cancel" id="vd-save">Save on this device</button>' +
-              '<button type="button" class="vd-cancel" id="vd-forget">Forget</button>' +
-            '</div>' +
-            '<p class="vd-setup-why">The template needs <code>{{to_email}}</code> in its To field, and ' +
-              '<code>{{subject}}</code> and <code>{{message}}</code> in the subject and body.</p>' +
-          '</div>' +
         '</form>';
       document.body.appendChild(d);
 
@@ -395,59 +320,13 @@
       var send = d.querySelector('#vd-send');
       var choice = preferred();
 
-      var alt = d.querySelector('#vd-alt');
-      var setup = d.querySelector('#vd-setup');
-      var setupToggle = d.querySelector('#vd-setup-toggle');
-
       function paint() {
-        var direct = !!creds();
-        // Configured means one button that does the thing. The provider list
-        // is only useful when the page still has to hand off, so it goes away
-        // rather than sitting there offering a longer way round.
-        send.textContent = direct ? 'Send'
-                          : choice === 'copy' ? 'Copy the message'
-                          : 'Open in ' + PROVIDERS[choice].label;
-        alt.hidden = direct;
-        // "It opens ready to send" stops being true the moment it sends from
-        // here, and a dialog describing the wrong behaviour is how people
-        // stop believing the rest of the words on it.
-        d.querySelector('#vd-sub').textContent = direct
-          ? 'The whole message is written — bio, photos, music and the kit. Put the address in and press Send.'
-          : 'The whole message is written — bio, photos, music and the kit. Put the address in and it opens ready to send.';
-        setupToggle.textContent = direct ? 'Sending from this device · change'
-                                         : 'Send from here instead, without opening Gmail';
+        send.textContent = choice === 'copy' ? 'Copy the message'
+                                             : 'Open in ' + PROVIDERS[choice].label;
         Array.prototype.forEach.call(d.querySelectorAll('.vd-swap'), function (s) {
           s.setAttribute('aria-pressed', String(s.dataset.k === choice));
         });
       }
-
-      setupToggle.addEventListener('click', function () {
-        setup.hidden = !setup.hidden;
-        if (!setup.hidden) {
-          var c = creds() || {};
-          d.querySelector('#vd-svc').value = c.service || '';
-          d.querySelector('#vd-tpl').value = c.template || '';
-          d.querySelector('#vd-key').value = c.key || '';
-          d.querySelector('#vd-from').value = c.from || '';
-          d.querySelector('#vd-svc').focus();
-        }
-      });
-      d.querySelector('#vd-save').addEventListener('click', function () {
-        var v = { service: d.querySelector('#vd-svc').value.trim(),
-                  template: d.querySelector('#vd-tpl').value.trim(),
-                  key: d.querySelector('#vd-key').value.trim(),
-                  from: d.querySelector('#vd-from').value.trim() };
-        if (!v.service || !v.template || !v.key) {
-          err.textContent = 'All three IDs are needed before it can send.';
-          return;
-        }
-        err.textContent = saveCreds(v) ? '' : 'This browser would not store it.';
-        setup.hidden = true;
-        paint();
-      });
-      d.querySelector('#vd-forget').addEventListener('click', function () {
-        forgetCreds(); setup.hidden = true; paint();
-      });
 
       d.addEventListener('click', function (e) {
         var s = e.target.closest('.vd-swap');
@@ -459,7 +338,7 @@
 
       send.addEventListener('click', function () {
         var address = to.value.trim();
-        if (!creds() && choice === 'copy') {
+        if (choice === 'copy') {
           copyOut(personal.value.trim());
           d.close();
           return;
@@ -470,31 +349,6 @@
           return;
         }
         err.textContent = '';
-
-        // Configured: no hand-off, no new tab, no Gmail.
-        if (creds()) {
-          var was = send.textContent;
-          send.disabled = true;
-          send.textContent = 'Sending…';
-          sendDirect(address, personal.value.trim()).then(function () {
-            if (typeof global.gtag === 'function') {
-              global.gtag('event', 'share', { method: 'email_venue_direct',
-                                              content_type: 'epk', item_id: band });
-            }
-            send.disabled = false; send.textContent = was;
-            d.close();
-            note('Sent to ' + address + '.');
-          }).catch(function (e) {
-            send.disabled = false; send.textContent = was;
-            // Stay open with the address still in the box: retyping it is the
-            // last thing anyone wants after a failed send.
-            err.textContent = 'Did not send — ' + (e && e.message ? e.message : 'unknown error') +
-                              '. Try “copy it instead”, or check the setup below.';
-            alt.hidden = false;
-          });
-          return;
-        }
-
         var href = PROVIDERS[choice].make(address, bodyFor(choice, personal.value.trim()));
         if (typeof global.gtag === 'function') {
           global.gtag('event', 'share', { method: 'email_venue_' + choice,
