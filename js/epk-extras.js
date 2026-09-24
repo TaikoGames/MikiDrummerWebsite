@@ -294,8 +294,9 @@
       d.innerHTML =
         '<form method="dialog" class="vd-form">' +
           '<h3>Send the press kit</h3>' +
-          '<p class="vd-sub">The whole message is written — bio, photos, music and the kit. ' +
-             'Put the address in and it opens ready to send.</p>' +
+          '<p class="vd-sub">The whole message is written — bio, links, music and the kit. ' +
+             'Put the address in and it opens ready to send. For the photos <em>inside</em> the ' +
+             'email, use \u201ccopy it with the photos\u201d and paste into a new message.</p>' +
           '<label for="vd-to">Venue or promoter\u2019s email</label>' +
           '<input id="vd-to" type="email" inputmode="email" autocomplete="off" ' +
                  'placeholder="bookings@venue.com" required>' +
@@ -310,7 +311,7 @@
           '<p class="vd-alt">Use <button type="button" class="vd-swap" data-k="gmail">Gmail</button>' +
             '<button type="button" class="vd-swap" data-k="outlook">Outlook</button>' +
             '<button type="button" class="vd-swap" data-k="mail">my mail app</button>' +
-            '<button type="button" class="vd-swap" data-k="copy">copy it instead</button></p>' +
+            '<button type="button" class="vd-swap" data-k="copy">copy it with the photos</button></p>' +
         '</form>';
       document.body.appendChild(d);
 
@@ -321,7 +322,7 @@
       var choice = preferred();
 
       function paint() {
-        send.textContent = choice === 'copy' ? 'Copy the message'
+        send.textContent = choice === 'copy' ? 'Copy it with the photos'
                                              : 'Open in ' + PROVIDERS[choice].label;
         Array.prototype.forEach.call(d.querySelectorAll('.vd-swap'), function (s) {
           s.setAttribute('aria-pressed', String(s.dataset.k === choice));
@@ -370,11 +371,95 @@
       return d;
     }
 
+    // ---- the same message, as rich mail ------------------------------
+    //
+    // mailto and the webmail compose URLs are plain text and nothing else:
+    // RFC 6068 has no HTML, no attachments, no images, and Gmail's and
+    // Outlook's compose parameters follow it. So a prefilled link can never
+    // show a photo, however it is written.
+    //
+    // The clipboard can. Written as text/html it pastes into Gmail as
+    // formatted mail with the pictures in place, and text/plain rides along
+    // in the same write so pasting anywhere else still gives the plain
+    // version. No account, nothing to set up.
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function isImage(u) { return /\.(jpe?g|png|gif|webp)(\?|$)/i.test(u); }
+
+    function htmlMessage(personal) {
+      var media = opts.media || [];
+      var pics = media.filter(function (m) { return isImage(m.url); });
+      var rest = media.filter(function (m) { return !isImage(m.url); });
+
+      // 600px is the width every email client has agreed on for twenty years,
+      // and max-width:100% is what keeps it from overflowing a phone.
+      function img(m) {
+        return '<img src="' + esc(m.url) + '" alt="' + esc(m.label) + '" width="600" ' +
+               'style="display:block;width:100%;max-width:600px;height:auto;' +
+               'border-radius:6px;margin:0 0 14px">';
+      }
+
+      var h = ['<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;' +
+               'line-height:1.6;color:#141414;max-width:600px">'];
+      h.push('<p>Hi,</p>');
+      if (personal) h.push('<p>' + esc(personal) + '</p>');
+      h.push('<p>I\u2019m with <strong>' + esc(band) + '</strong>, ' + esc(opts.blurb || 'a band') +
+             '. We would like to play at your venue.</p>');
+
+      if (pics.length) h.push(img(pics[0]));
+
+      var paras = bioParagraphs();
+      if (paras.length) {
+        h.push('<p style="margin:18px 0 6px"><strong>ABOUT</strong></p>');
+        paras.forEach(function (x) { h.push('<p>' + esc(x) + '</p>'); });
+      }
+
+      if (rest.length) {
+        h.push('<p style="margin:18px 0 6px"><strong>MUSIC AND VIDEO</strong></p><ul style="margin:0 0 14px;padding-left:20px">');
+        rest.forEach(function (m) {
+          h.push('<li><a href="' + esc(m.url) + '">' + esc(m.label) + '</a></li>');
+        });
+        h.push('</ul>');
+      }
+
+      // Everything after the first picture, so the mail leads with the band
+      // rather than with a wall of logos.
+      pics.slice(1).forEach(function (m) { h.push(img(m)); });
+
+      h.push('<p style="margin:18px 0 6px"><strong>FULL PRESS KIT</strong></p>');
+      h.push('<p><a href="' + esc(link) + '">Bio, all photos, live video and booking</a><br>' +
+             '<a href="' + esc(link) + '#kit">Download everything as a zip</a></p>');
+      h.push('<p>Happy to send anything else you need, and we can work around whatever ' +
+             'dates you have open.</p><p>Thanks,</p></div>');
+      return h.join('');
+    }
+
     function copyOut(personal) {
       var text = fullMessage(personal);
+      var html = htmlMessage(personal);
+
+      // Both flavours in one write. Gmail takes the HTML; a plain-text box
+      // takes the text; neither needs the person to have chosen correctly.
+      if (global.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+        navigator.clipboard.write([new global.ClipboardItem({
+          'text/html': new Blob([html], { type: 'text/html' }),
+          'text/plain': new Blob([text], { type: 'text/plain' })
+        })]).then(function () {
+          note('Copied with the photos in it. Open a new email to the venue and paste — ' +
+               'the pictures come with it.');
+        }).catch(function () { plainCopy(text); });
+        return;
+      }
+      plainCopy(text);
+    }
+
+    function plainCopy(text) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text)
-          .then(function () { note('Message copied — paste it into an email to the venue.'); })
+          .then(function () { note('Message copied as plain text — this browser will not carry images on the clipboard.'); })
           .catch(function () { note('Could not copy. The press kit link is ' + url); });
       } else {
         note('This browser will not copy for me. The press kit link is ' + url);
