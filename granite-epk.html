@@ -210,6 +210,47 @@
     }
     .copy-msg:hover { color: var(--molten); }
     .send-said { margin-top: 8px; font-size: 12.5px; color: var(--stone-300); min-height: 1.2em; max-width: 56ch; }
+
+    /* The send dialog. A <dialog> rather than a div: the browser handles the
+       backdrop, Escape, focus trapping and returning focus afterwards, all of
+       which hand-rolled modals get wrong. */
+    .venue-dialog { border: 1px solid var(--molten); border-radius: 16px; padding: 0;
+                    background: var(--stone-900); color: var(--stone-100);
+                    max-width: 460px; width: calc(100% - 32px);
+                    /* The page's `* { margin: 0 }` reset also hits <dialog>, and
+                       margin:auto is how a browser centres a modal one -- without
+                       this it pins itself to the top-left corner. */
+                    margin: auto; }
+    .venue-dialog::backdrop { background: rgba(8,8,10,0.72); }
+    .vd-form { padding: 26px 26px 22px; display: block; }
+    .vd-form h3 { font-family: "Arial Black", system-ui, sans-serif; text-transform: uppercase;
+                  letter-spacing: -0.01em; font-size: 20px; margin-bottom: 8px; }
+    .vd-sub { color: var(--stone-300); font-size: 13.5px; line-height: 1.55; margin-bottom: 18px; }
+    .vd-form label { display: block; font-size: 11.5px; letter-spacing: 0.12em;
+                     text-transform: uppercase; color: var(--stone-400); font-weight: 700;
+                     margin: 14px 0 6px; }
+    .vd-opt { text-transform: none; letter-spacing: 0; font-weight: 400; }
+    .vd-form input { width: 100%; font: inherit; font-size: 15px; color: var(--stone-100);
+                     background: var(--stone-950); border: 1px solid var(--stone-700);
+                     border-radius: 10px; padding: 12px 14px; }
+    .vd-form input:focus { outline: 2px solid var(--molten); outline-offset: 1px; border-color: var(--molten); }
+    .vd-err { color: #ff9b8a; font-size: 12.5px; min-height: 1.2em; margin-top: 8px; }
+    .vd-actions { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .vd-send { flex: 1 1 auto; padding: 13px 22px; border-radius: 100px; border: none; cursor: pointer;
+               background: var(--molten); color: #180a03;
+               font: 800 13px/1 "Helvetica Neue", system-ui, sans-serif;
+               letter-spacing: 0.05em; text-transform: uppercase; }
+    .vd-send:hover { filter: brightness(1.08); }
+    .vd-cancel { padding: 13px 20px; border-radius: 100px; cursor: pointer;
+                 background: transparent; color: var(--stone-300);
+                 border: 1px solid var(--stone-700); font: 600 13px/1 "Helvetica Neue", system-ui, sans-serif; }
+    .vd-cancel:hover { border-color: var(--stone-400); color: var(--stone-100); }
+    .vd-alt { margin-top: 16px; font-size: 12.5px; color: var(--stone-400); line-height: 2; }
+    .vd-swap { background: none; border: none; cursor: pointer; color: var(--stone-300);
+               font: inherit; font-size: 12.5px; text-decoration: underline;
+               text-underline-offset: 3px; padding: 2px 6px; }
+    .vd-swap:hover { color: var(--molten); }
+    .vd-swap[aria-pressed=true] { color: var(--molten); font-weight: 700; text-decoration: none; }
     .dl-btn-media {
         display: inline-flex; align-items: center; gap: 8px;
         padding: 13px 24px; border-radius: 100px;
@@ -405,7 +446,7 @@
         .shot { break-inside: avoid; page-break-inside: avoid; }
         .connect { break-inside: avoid; page-break-inside: avoid; }
         .social, .reach { border-color: var(--molten) !important; }
-        .sc-player, .sc-card, .videos, .sc-list, .media-actions { display: none !important; }
+        .sc-player, .sc-card, .videos, .sc-list, .media-actions, .venue-dialog { display: none !important; }
         .print-listen { display: inline-block; color: var(--molten); font-weight: 700; }
     }
 </style>

@@ -158,13 +158,12 @@
     // has the press kit link two lines further down.
     var MAILTO_BUDGET = 1750;
 
-    function compose(bioParas, trimmed) {
-      var out = [
-        'Hi,',
-        '',
-        "I'm with " + band + ', ' + (opts.blurb || 'a band') + '. We would like to play at your venue.',
-        ''
-      ];
+    function compose(bioParas, trimmed, note) {
+      var out = ['Hi,', ''];
+      if (note) { out.push(note); out.push(''); }
+      out.push("I'm with " + band + ', ' + (opts.blurb || 'a band') +
+               '. We would like to play at your venue.');
+      out.push('');
 
       if (bioParas.length) {
         out.push('ABOUT');
@@ -200,17 +199,17 @@
     }
 
     // The whole thing, for the clipboard and for any client that can take it.
-    function fullMessage() {
-      return compose(bioParagraphs(), false);
+    function fullMessage(note) {
+      return compose(bioParagraphs(), false, note);
     }
 
     // The most of it that will survive being a URL. Drops whole paragraphs
     // from the end rather than cutting mid-sentence, because half a sentence
     // about your own band reads worse than a shorter bio.
-    function mailtoMessage() {
+    function mailtoMessage(note) {
       var all = bioParagraphs(), paras = all;
       while (true) {
-        var body = compose(paras, paras.length < all.length);
+        var body = compose(paras, paras.length < all.length, note);
         if (encodeURIComponent(body).length <= MAILTO_BUDGET || !paras.length) return body;
         paras = paras.slice(0, -1);
       }
@@ -223,42 +222,184 @@
       note.t = setTimeout(function () { said.textContent = ''; }, 9000);
     }
 
-    // The mailto lives on the anchor's href rather than being assigned to
-    // location on click. It opens even if the rest of this script has fallen
-    // over, it can be long-pressed or right-clicked like any other link, and
-    // it is inspectable -- a button that navigates from a handler can only be
-    // tested by launching a mail client.
     var subject = band + ' — press kit and booking enquiry';
-    // encodeURIComponent, not escape: an em dash in a band name or an
-    // ampersand in the blurb otherwise truncates the body at that character
-    // and the booker gets half a sentence.
-    btn.setAttribute('href', 'mailto:?subject=' + encodeURIComponent(subject) +
-                             '&body=' + encodeURIComponent(mailtoMessage()));
 
-    btn.addEventListener('click', function () {
-      if (typeof global.gtag === 'function') {
-        global.gtag('event', 'share', { method: 'email_venue', content_type: 'epk', item_id: band });
+    // Where the message is handed over to actually be sent.
+    //
+    // This site cannot send the mail itself, and should not: a page that
+    // posts to any address somebody types is an open relay, and it would be
+    // found and used for spam long before it was useful. What it can do is
+    // compose the whole thing -- recipient, subject, body -- and hand it to
+    // the mail the sender already has, one press from Send.
+    //
+    // Gmail and Outlook on the web are the point of this. mailto only works
+    // if a desktop mail client is set up, which on a borrowed laptop or a
+    // phone with only the Gmail app often it is not, and then the button
+    // appears to do nothing at all.
+    var PROVIDERS = {
+      gmail: {
+        label: 'Gmail',
+        make: function (to, body) {
+          return 'https://mail.google.com/mail/?view=cm&fs=1' +
+                 '&to=' + encodeURIComponent(to) +
+                 '&su=' + encodeURIComponent(subject) +
+                 '&body=' + encodeURIComponent(body);
+        }
+      },
+      outlook: {
+        label: 'Outlook',
+        make: function (to, body) {
+          return 'https://outlook.live.com/mail/0/deeplink/compose?to=' + encodeURIComponent(to) +
+                 '&subject=' + encodeURIComponent(subject) +
+                 '&body=' + encodeURIComponent(body);
+        }
+      },
+      mail: {
+        label: 'My mail app',
+        // The only one with a length ceiling worth worrying about, so it is
+        // the only one that gets the trimmed bio. The web composers take the
+        // whole thing.
+        trims: true,
+        make: function (to, body) {
+          return 'mailto:' + encodeURIComponent(to) +
+                 '?subject=' + encodeURIComponent(subject) +
+                 '&body=' + encodeURIComponent(body);
+        }
       }
-      // A machine with no mail app configured does nothing visible at all,
-      // which reads as a broken button. Say what should have happened and
-      // offer the other way out.
-      note('Opening your email app. Nothing happened? Tap “Copy the message” and paste it into your mail.');
+    };
+
+    var REMEMBER = 'epk:mailProvider';
+    function preferred() {
+      try { return localStorage.getItem(REMEMBER) || 'gmail'; } catch (e) { return 'gmail'; }
+    }
+    function remember(k) { try { localStorage.setItem(REMEMBER, k); } catch (e) {} }
+
+    // Deliberately loose. This is a hint that a typo has happened, not an
+    // authority on what a valid address is -- rejecting a real venue address
+    // because it has an unusual domain would be worse than sending nothing.
+    function looksLikeEmail(v) {
+      return /^[^\s@]+@[^\s@.]+\.[^\s@]+$/.test(String(v || '').trim());
+    }
+
+    function bodyFor(key, personal) {
+      return PROVIDERS[key].trims ? mailtoMessage(personal) : fullMessage(personal);
+    }
+
+    var dlg = buildDialog();
+
+    function buildDialog() {
+      var d = document.createElement('dialog');
+      d.className = 'venue-dialog';
+      d.setAttribute('aria-label', 'Send the ' + band + ' press kit');
+      d.innerHTML =
+        '<form method="dialog" class="vd-form">' +
+          '<h3>Send the press kit</h3>' +
+          '<p class="vd-sub">The whole message is written — bio, photos, music and the kit. ' +
+             'Put the address in and it opens ready to send.</p>' +
+          '<label for="vd-to">Venue or promoter\u2019s email</label>' +
+          '<input id="vd-to" type="email" inputmode="email" autocomplete="off" ' +
+                 'placeholder="bookings@venue.com" required>' +
+          '<label for="vd-note">Add a line first <span class="vd-opt">(optional)</span></label>' +
+          '<input id="vd-note" type="text" autocomplete="off" ' +
+                 'placeholder="We played with Baron at the Cobalt in June.">' +
+          '<p class="vd-err" id="vd-err" role="alert"></p>' +
+          '<div class="vd-actions">' +
+            '<button type="button" class="vd-send" id="vd-send">Open in Gmail</button>' +
+            '<button type="button" class="vd-cancel" value="cancel">Cancel</button>' +
+          '</div>' +
+          '<p class="vd-alt">Use <button type="button" class="vd-swap" data-k="gmail">Gmail</button>' +
+            '<button type="button" class="vd-swap" data-k="outlook">Outlook</button>' +
+            '<button type="button" class="vd-swap" data-k="mail">my mail app</button>' +
+            '<button type="button" class="vd-swap" data-k="copy">copy it instead</button></p>' +
+        '</form>';
+      document.body.appendChild(d);
+
+      var to = d.querySelector('#vd-to');
+      var personal = d.querySelector('#vd-note');
+      var err = d.querySelector('#vd-err');
+      var send = d.querySelector('#vd-send');
+      var choice = preferred();
+
+      function paint() {
+        send.textContent = choice === 'copy' ? 'Copy the message'
+                                             : 'Open in ' + PROVIDERS[choice].label;
+        Array.prototype.forEach.call(d.querySelectorAll('.vd-swap'), function (s) {
+          s.setAttribute('aria-pressed', String(s.dataset.k === choice));
+        });
+      }
+
+      d.addEventListener('click', function (e) {
+        var s = e.target.closest('.vd-swap');
+        if (s) { choice = s.dataset.k; remember(choice); paint(); return; }
+        // Clicking the backdrop rather than the panel closes it.
+        if (e.target === d) d.close();
+      });
+      d.querySelector('.vd-cancel').addEventListener('click', function () { d.close(); });
+
+      send.addEventListener('click', function () {
+        var address = to.value.trim();
+        if (choice === 'copy') {
+          copyOut(personal.value.trim());
+          d.close();
+          return;
+        }
+        if (!looksLikeEmail(address)) {
+          err.textContent = 'That does not look like an email address — check it and try again.';
+          to.focus();
+          return;
+        }
+        err.textContent = '';
+        var href = PROVIDERS[choice].make(address, bodyFor(choice, personal.value.trim()));
+        if (typeof global.gtag === 'function') {
+          global.gtag('event', 'share', { method: 'email_venue_' + choice,
+                                          content_type: 'epk', item_id: band });
+        }
+        // A new tab for the web composers so the press kit stays open behind
+        // it; mailto hands off to the OS and never navigates this page.
+        // location.assign rather than setting location.href: same effect, and
+        // it is a method, so a test can watch what gets handed to it without
+        // launching a mail client.
+        if (choice === 'mail') global.location.assign(href);
+        else global.open(href, '_blank', 'noopener');
+        d.close();
+        note('Opened ' + PROVIDERS[choice].label + ' with the message ready. ' +
+             'Nothing there? Reopen this and choose “copy it instead”.');
+      });
+
+      paint();
+      return d;
+    }
+
+    function copyOut(personal) {
+      var text = fullMessage(personal);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(function () { note('Message copied — paste it into an email to the venue.'); })
+          .catch(function () { note('Could not copy. The press kit link is ' + url); });
+      } else {
+        note('This browser will not copy for me. The press kit link is ' + url);
+      }
+    }
+
+    // The anchor keeps a working mailto href, so a right-click, a long-press
+    // and a page whose script never ran all still do something sensible. The
+    // dialog is the enhancement on top, not the only way through.
+    btn.setAttribute('href', 'mailto:?subject=' + encodeURIComponent(subject) +
+                             '&body=' + encodeURIComponent(mailtoMessage('')));
+
+    btn.addEventListener('click', function (e) {
+      if (typeof dlg.showModal !== 'function') return;   // let the mailto happen
+      e.preventDefault();
+      dlg.showModal();
+      var to = dlg.querySelector('#vd-to');
+      if (to) { to.value = ''; to.focus(); }
+      var err = dlg.querySelector('#vd-err');
+      if (err) err.textContent = '';
     });
 
     if (opts.copyBtn) {
       var cb = typeof opts.copyBtn === 'string' ? document.getElementById(opts.copyBtn) : opts.copyBtn;
-      if (cb) {
-        cb.addEventListener('click', function () {
-          var text = fullMessage();
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text)
-              .then(function () { note('Message copied — paste it into an email to the venue.'); })
-              .catch(function () { note('Could not copy. Select the link above and send it by hand.'); });
-          } else {
-            note('This browser will not copy for me. The link is ' + url);
-          }
-        });
-      }
+      if (cb) cb.addEventListener('click', function () { copyOut(''); });
     }
   }
 
