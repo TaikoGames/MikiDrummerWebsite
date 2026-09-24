@@ -177,6 +177,19 @@
         .print-only .t { font-weight: 700; }
         .print-only .u { color: var(--stone-400); word-break: break-all; }
     }
+    .artwork { margin-top: 34px; padding-top: 28px; border-top: 1px solid var(--edge); }
+    .artwork h3 { font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+                  color: var(--stone-400); font-weight: 700; margin-bottom: 16px; }
+    .art-grid { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
+    @media (min-width: 760px) { .art-grid { grid-template-columns: 1.35fr 1fr; } }
+    .art { margin: 0; border: 1px solid var(--edge); border-radius: 12px; overflow: hidden;
+           background: var(--stone-900); }
+    /* contain, not cover: a wordmark cropped to fill a box is a wordmark with
+       its letters cut off, and these are the files people reproduce. */
+    .art img { display: block; width: 100%; height: auto; object-fit: contain; }
+    .art figcaption { padding: 10px 14px; font-size: 11.5px; letter-spacing: 0.1em;
+                      text-transform: uppercase; color: var(--stone-400);
+                      border-top: 1px solid var(--edge); }
     .note { margin-top: 18px; font-size: 13px; color: var(--stone-400); }
     .media-actions { margin-top: 26px; }
     .dl-btn-media {
@@ -453,7 +466,25 @@
                 <figure class="shot"><img src="images/granite/live-03.jpg" alt="Granite live" loading="lazy"></figure>
             </div>
         </div>
-        <p class="note">Press photo and live shots · hi-res versions available on request.</p>
+        <!-- The band's own artwork, kept out of the photo gallery above. The
+             gallery has a warm filter on it for the live shots, and a filter
+             is exactly what you must not do to a logo: these are the files a
+             promoter reproduces, so they are shown as drawn. -->
+        <div class="artwork">
+            <h3>Artwork</h3>
+            <div class="art-grid">
+                <figure class="art art-wide">
+                    <img src="images/granite/logo-fire.jpg" alt="Granite logo — the white wordmark over flames on black marble" loading="lazy" width="914" height="392">
+                    <figcaption>Wordmark · banner</figcaption>
+                </figure>
+                <figure class="art">
+                    <img src="images/granite/tiamat-demon.jpg" alt="Granite Tiamat artwork — a winged Mesopotamian demon drawn in white line art on black" loading="lazy" width="1131" height="1600">
+                    <figcaption>Tiamat · single artwork</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <p class="note">Press photo, live shots and artwork · hi-res versions available on request.</p>
         <div class="videos" style="margin-top:28px">
             <div class="vid">
                 <div class="thumb"><iframe src="https://www.youtube.com/embed/Qovij1CQUV4" title="Granite — live" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>
@@ -697,6 +728,9 @@
                        'images/granite/live-01.jpg','images/granite/live-02.jpg',
                        'images/granite/live-03.jpg','images/granite/live-07.jpg',
                        'images/granite/live-08.jpg','images/granite/live-09.jpg',
+                       // The artwork, which is what a promoter reproduces on a
+                       // poster or a listing. It was on Drive and nowhere else.
+                       'images/granite/logo-fire.jpg','images/granite/tiamat-demon.jpg',
                        // The song, so the kit a promoter downloads is something
                        // they can listen to on a plane. Paths are full now: the
                        // audio does not live beside the photos, and one
