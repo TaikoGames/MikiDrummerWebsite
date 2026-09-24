@@ -139,6 +139,24 @@
     .grid3 .shot { aspect-ratio: 1 / 1; }
     .note { margin-top: 18px; font-size: 13px; color: var(--stone-400); }
     .media-actions { margin-top: 26px; }
+    .send-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .send-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 13px 24px; border-radius: 100px;
+        background: transparent; color: var(--stone-100);
+        border: 1px solid var(--molten);
+        font: 700 13px/1 "Helvetica Neue", system-ui, sans-serif;
+        letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer;
+    }
+    .send-btn { text-decoration: none; }
+    .send-btn:hover { background: var(--molten); color: #180a03; }
+    .copy-msg {
+        background: none; border: none; cursor: pointer; color: var(--stone-400);
+        font: 400 12.5px/1 "Helvetica Neue", system-ui, sans-serif;
+        text-decoration: underline; text-underline-offset: 3px; padding: 13px 4px;
+    }
+    .copy-msg:hover { color: var(--molten); }
+    .send-said { margin-top: 8px; font-size: 12.5px; color: var(--stone-300); min-height: 1.2em; max-width: 56ch; }
     .dl-btn-media {
         display: inline-flex; align-items: center; gap: 8px;
         padding: 13px 24px; border-radius: 100px;
@@ -499,6 +517,14 @@
         </div>
         <div class="media-actions">
             <button class="dl-btn-media" id="dlAllBtn">⬇ Download press kit — photos, logo &amp; bio</button>
+            <!-- Under the download, deliberately. Downloading the zip is not the
+                 job; sending it to a booker is, and that step was the one going
+                 missing. -->
+            <div class="send-row">
+                <a class="send-btn" id="venueEmailBtn" href="mailto:">✉ Email this kit to a venue</a>
+                <button class="copy-msg" id="venueCopyBtn" type="button">Copy the message</button>
+            </div>
+            <p class="send-said" id="venueSaid" role="status" aria-live="polite"></p>
         </div>
     </div>
 </section>
@@ -693,6 +719,15 @@
     EpkExtras.wireShare({
         btn: 'shareBtn',
         band: 'Lift the Anchor',
+        url: 'https://www.mikidrummer.ca/lift-the-anchor-epk.html'
+    });
+
+    EpkExtras.wireVenueEmail({
+        btn: 'venueEmailBtn',
+        copyBtn: 'venueCopyBtn',
+        said: 'venueSaid',
+        band: 'Lift the Anchor',
+        blurb: 'a melodic punk rock band from Vancouver, BC',
         url: 'https://www.mikidrummer.ca/lift-the-anchor-epk.html'
     });
 

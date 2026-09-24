@@ -126,5 +126,86 @@
     }
   }
 
-  global.EpkExtras = { bioText: bioText, wireShare: wireShare };
+  // ---- email the kit to a venue ------------------------------------------
+  // The download button hands you a zip, which assumes you already know what
+  // to do with it. Bandmates were not sending the kit anywhere, because
+  // "download" is a step in a job nobody explained. This is the job: a
+  // finished email to a booker, already written, with the link in it.
+  //
+  // No recipient is filled in -- that is the one thing the sender knows and
+  // this does not. Nothing is sent from here either; it opens whatever mail
+  // app they already use, so the reply goes to them and not to a form.
+  function wireVenueEmail(opts) {
+    var btn = typeof opts.btn === 'string' ? document.getElementById(opts.btn) : opts.btn;
+    if (!btn) return;
+    var said = typeof opts.said === 'string' ? document.getElementById(opts.said) : opts.said;
+    var band = opts.band || document.title;
+    var url = opts.url || (location.origin + location.pathname);
+    var link = url + '?utm_source=email&utm_medium=venue&utm_campaign=epk';
+
+    function message() {
+      // Short on purpose. A booker reads the first two lines and the link;
+      // everything after that is for the ones who are already interested.
+      return [
+        'Hi,',
+        '',
+        "I'm with " + band + ', ' + (opts.blurb || 'a band') + '. We would like to play at your venue.',
+        '',
+        'Everything is in one link — bio, photos, live video and music:',
+        link,
+        '',
+        'Happy to send anything else you need, and we can work around whatever',
+        'dates you have open.',
+        '',
+        'Thanks,'
+      ].join('\r\n');
+    }
+
+    function note(msg) {
+      if (!said) return;
+      said.textContent = msg;
+      clearTimeout(note.t);
+      note.t = setTimeout(function () { said.textContent = ''; }, 9000);
+    }
+
+    // The mailto lives on the anchor's href rather than being assigned to
+    // location on click. It opens even if the rest of this script has fallen
+    // over, it can be long-pressed or right-clicked like any other link, and
+    // it is inspectable -- a button that navigates from a handler can only be
+    // tested by launching a mail client.
+    var subject = band + ' — press kit and booking enquiry';
+    // encodeURIComponent, not escape: an em dash in a band name or an
+    // ampersand in the blurb otherwise truncates the body at that character
+    // and the booker gets half a sentence.
+    btn.setAttribute('href', 'mailto:?subject=' + encodeURIComponent(subject) +
+                             '&body=' + encodeURIComponent(message()));
+
+    btn.addEventListener('click', function () {
+      if (typeof global.gtag === 'function') {
+        global.gtag('event', 'share', { method: 'email_venue', content_type: 'epk', item_id: band });
+      }
+      // A machine with no mail app configured does nothing visible at all,
+      // which reads as a broken button. Say what should have happened and
+      // offer the other way out.
+      note('Opening your email app. Nothing happened? Tap “Copy the message” and paste it into your mail.');
+    });
+
+    if (opts.copyBtn) {
+      var cb = typeof opts.copyBtn === 'string' ? document.getElementById(opts.copyBtn) : opts.copyBtn;
+      if (cb) {
+        cb.addEventListener('click', function () {
+          var text = message();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text)
+              .then(function () { note('Message copied — paste it into an email to the venue.'); })
+              .catch(function () { note('Could not copy. Select the link above and send it by hand.'); });
+          } else {
+            note('This browser will not copy for me. The link is ' + url);
+          }
+        });
+      }
+    }
+  }
+
+  global.EpkExtras = { bioText: bioText, wireShare: wireShare, wireVenueEmail: wireVenueEmail };
 })(window);
