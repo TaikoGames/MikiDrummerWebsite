@@ -1,0 +1,62 @@
+name: Drive images
+
+# Band artwork arrives as a Drive folder of zips and PSDs. Choosing which
+# pieces go on a press kit means seeing them, and that cannot happen until
+# somebody has unpacked the archives and flattened the Photoshop files.
+#
+# This does that and commits a numbered contact sheet to a review folder.
+# Nothing it produces is on the site: the sheet exists to be looked at, and
+# the chosen files are moved into place deliberately afterwards.
+
+on:
+  workflow_dispatch:
+    inputs:
+      files:
+        description: "Drive items as id:name, comma separated"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: drive-images
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --quiet pillow
+
+      - name: Check the unpacking still holds
+        run: python3 tools/fetch_drive_images.py --self-test
+
+      - name: Fetch and lay out
+        env:
+          FILES: ${{ github.event.inputs.files }}
+        # pipefail: without it the pipe's exit status is tee's, and a crashed
+        # fetch leaves the step green and fails later somewhere unrelated.
+        run: |
+          set -o pipefail
+          python3 tools/fetch_drive_images.py | tee /tmp/images.log
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo '## Artwork'
+            echo
+            echo '```'
+            cat /tmp/images.log 2>/dev/null || echo "(no log)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit the review folder
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add images/granite/review
+          git diff --cached --quiet && { echo "nothing new"; exit 0; }
+          git commit -m "Granite artwork: contact sheet for review"
+          git push origin "HEAD:$GITHUB_REF_NAME"
