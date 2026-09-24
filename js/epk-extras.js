@@ -11,6 +11,18 @@
 (function (global) {
   'use strict';
 
+  // The bio prose, read off the page. One reader for both the zip's text file
+  // and the venue email, so the two can never say different things about the
+  // same band -- which is the failure nobody notices until a listing quotes
+  // the wrong one.
+  function bioParagraphs() {
+    var paras = document.querySelectorAll('#bio .bio-body p');
+    if (!paras.length) paras = document.querySelectorAll('#bio p');
+    return Array.prototype.map.call(paras, function (p) {
+      return (p.textContent || '').replace(/\s+/g, ' ').trim();
+    }).filter(Boolean);
+  }
+
   // ---- the bio, read off the page ---------------------------------------
   // Read from the DOM rather than kept as a string in here. A press kit whose
   // zip carries a bio the page no longer says is worse than one with no bio
@@ -26,12 +38,7 @@
     out.push(new Array(band.length + 1).join('='));
     out.push('');
 
-    var paras = document.querySelectorAll('#bio .bio-body p');
-    if (!paras.length) paras = document.querySelectorAll('#bio p');
-    Array.prototype.forEach.call(paras, function (p) {
-      var t = (p.textContent || '').replace(/\s+/g, ' ').trim();
-      if (t) { out.push(t); out.push(''); }
-    });
+    bioParagraphs().forEach(function (t) { out.push(t); out.push(''); });
 
     var facts = document.querySelectorAll('#bio .facts .row');
     if (facts.length) {
@@ -143,22 +150,70 @@
     var url = opts.url || (location.origin + location.pathname);
     var link = url + '?utm_source=email&utm_medium=venue&utm_campaign=epk';
 
-    function message() {
-      // Short on purpose. A booker reads the first two lines and the link;
-      // everything after that is for the ones who are already interested.
-      return [
+    // Outlook has historically truncated a mailto URL somewhere around 2000
+    // characters, silently, mid-word. Percent-encoding roughly doubles what a
+    // newline or a space costs, so a body that looks fine as text can blow the
+    // budget once it is a URL. Everything below is measured encoded, and the
+    // bio is what gets shortened, because a booker who wants the whole thing
+    // has the press kit link two lines further down.
+    var MAILTO_BUDGET = 1750;
+
+    function compose(bioParas, trimmed) {
+      var out = [
         'Hi,',
         '',
         "I'm with " + band + ', ' + (opts.blurb || 'a band') + '. We would like to play at your venue.',
-        '',
-        'Everything is in one link — bio, photos, live video and music:',
-        link,
-        '',
-        'Happy to send anything else you need, and we can work around whatever',
-        'dates you have open.',
-        '',
-        'Thanks,'
-      ].join('\r\n');
+        ''
+      ];
+
+      if (bioParas.length) {
+        out.push('ABOUT');
+        out.push('');
+        bioParas.forEach(function (t) { out.push(t); out.push(''); });
+        // Say so rather than just stopping. A bio that ends early with no
+        // explanation reads as a band that could not be bothered finishing
+        // the sentence.
+        if (trimmed) { out.push('(Full bio in the press kit, linked below.)'); out.push(''); }
+      }
+
+      var media = opts.media || [];
+      if (media.length) {
+        out.push('MUSIC AND PHOTOS');
+        out.push('');
+        media.forEach(function (m) { out.push(m.label + ': ' + m.url); });
+        out.push('');
+      }
+
+      out.push('FULL PRESS KIT');
+      out.push('');
+      out.push('Bio, all photos, live video and booking: ' + link);
+      // #kit rather than the bare page: the download button is most of the way
+      // down a long press kit, and "it is on there somewhere" is how a booker
+      // decides not to bother.
+      out.push('Download everything as a zip (photos, logo, bio): ' + link + '#kit');
+      out.push('');
+      out.push('Happy to send anything else you need, and we can work around whatever');
+      out.push('dates you have open.');
+      out.push('');
+      out.push('Thanks,');
+      return out.join('\r\n');
+    }
+
+    // The whole thing, for the clipboard and for any client that can take it.
+    function fullMessage() {
+      return compose(bioParagraphs(), false);
+    }
+
+    // The most of it that will survive being a URL. Drops whole paragraphs
+    // from the end rather than cutting mid-sentence, because half a sentence
+    // about your own band reads worse than a shorter bio.
+    function mailtoMessage() {
+      var all = bioParagraphs(), paras = all;
+      while (true) {
+        var body = compose(paras, paras.length < all.length);
+        if (encodeURIComponent(body).length <= MAILTO_BUDGET || !paras.length) return body;
+        paras = paras.slice(0, -1);
+      }
     }
 
     function note(msg) {
@@ -178,7 +233,7 @@
     // ampersand in the blurb otherwise truncates the body at that character
     // and the booker gets half a sentence.
     btn.setAttribute('href', 'mailto:?subject=' + encodeURIComponent(subject) +
-                             '&body=' + encodeURIComponent(message()));
+                             '&body=' + encodeURIComponent(mailtoMessage()));
 
     btn.addEventListener('click', function () {
       if (typeof global.gtag === 'function') {
@@ -194,7 +249,7 @@
       var cb = typeof opts.copyBtn === 'string' ? document.getElementById(opts.copyBtn) : opts.copyBtn;
       if (cb) {
         cb.addEventListener('click', function () {
-          var text = message();
+          var text = fullMessage();
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text)
               .then(function () { note('Message copied — paste it into an email to the venue.'); })
@@ -207,5 +262,29 @@
     }
   }
 
-  global.EpkExtras = { bioText: bioText, wireShare: wireShare, wireVenueEmail: wireVenueEmail };
+  // Arriving from the email's zip link. The download button lives most of the
+  // way down a long page, so landing on the page is not the same as finding
+  // it; this scrolls to it and makes it obvious which thing to press.
+  function wireKitAnchor(btnId) {
+    if (location.hash !== '#kit') return;
+    var btn = document.getElementById(btnId);
+    if (!btn) return;
+    // A frame late, so it runs after the browser has done its own hash jump.
+    setTimeout(function () {
+      btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      btn.classList.add('kit-called');
+      // Not auto-clicked: a download that starts on its own is how a page
+      // gets treated as hostile, and some browsers refuse it anyway without
+      // a gesture.
+      if (typeof btn.focus === 'function') btn.focus({ preventScroll: true });
+    }, 60);
+  }
+
+  global.EpkExtras = {
+    bioText: bioText,
+    bioParagraphs: bioParagraphs,
+    wireShare: wireShare,
+    wireVenueEmail: wireVenueEmail,
+    wireKitAnchor: wireKitAnchor
+  };
 })(window);
