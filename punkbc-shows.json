@@ -2,32 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Quicksand & Fucked Up",
-      "date": "2026-09-23",
-      "time": "19:00",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "$34.50 adv",
-      "ticket": "https://www.ticketweb.ca/event/quicksand-and-fucked-up-the-pearl-tickets/15034213",
-      "genre": "Post-Hardcore/Punk",
-      "notes": "Presented by MODO-Live & Rickshaw. Same tour as the Sept 22 Victoria date. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Quicksand_Rock_am_Ring_2014_%28113%29.JPG?width=600",
-      "curated": ""
-    },
-    {
-      "band": "Tyrann",
-      "date": "2026-09-23",
-      "time": "19:00",
-      "venue": "Astoria Pub",
-      "city": "Vancouver",
-      "price": "$25.30 adv",
-      "ticket": "https://astoria.pub/",
-      "genre": "Heavy Metal",
-      "notes": "With Speed Reaper, Powermönger. Members of Tribulation/Enforcer. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
-      "curated": ""
-    },
-    {
       "band": "Covenant Festival XI — Night One",
       "date": "2026-09-24",
       "time": "18:00",
