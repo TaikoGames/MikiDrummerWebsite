@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Covenant Festival XI — Night One",
-      "date": "2026-09-24",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$110",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Black Metal",
-      "notes": "Misthyrming, Abyssal, Brazen Horde, Diabolic Oath, Fire Magic, Living Evil. 3-day pass $280. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
-    },
-    {
       "band": "The Growlers",
       "date": "2026-09-25",
       "time": "",
@@ -84,6 +72,19 @@
       "genre": "Industrial Metal",
       "notes": "With Guiltless",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Author_%26_Punisher_%40_Roadburn_Festival_2017_02.jpg?width=600"
+    },
+    {
+      "band": "Ten Days Late / GRRRizzly / Charles Mansion / Incompleteness",
+      "date": "2026-09-26",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$20",
+      "ticket": "https://astoria.pub/events/gutter-night/",
+      "genre": "Punk",
+      "notes": "Gutter Night. Riot grrrl punk, doomy psych and heavy rock. GRRRizzly are from Olympia WA",
+      "image": "https://astoria.pub/wp-content/uploads/2026/09/Gutter-Night.jpeg",
+      "curated": ""
     },
     {
       "band": "Judge",
@@ -157,6 +158,45 @@
       "genre": "",
       "notes": "Smoke a Joint About It release party",
       "image": "https://cdn-az.allevents.in/events8/banners/c2b9218e24874f1e20c9b455b3c276c6af5e320834f8723619dc831ba50583ce-rimg-w1200-h1500-dc080808-gmir?v=1789187351"
+    },
+    {
+      "band": "Aemia",
+      "date": "2026-10-04",
+      "time": "19:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thepearlvancouver.com/tm-event/aemia-with-fka-rayne-and-in-pieces/",
+      "genre": "Alt Metal",
+      "notes": "Hometown show. With FKA Rayne, In Pieces. 19+",
+      "image": "https://images.weserv.nl/?url=i.ticketweb.com/i/00/13/56/92/33_Edp.jpg&w=500&output=jpg&q=75",
+      "curated": ""
+    },
+    {
+      "band": "Kal-El",
+      "date": "2026-10-04",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$28.75 adv",
+      "ticket": "https://astoria.pub/events/kal-el-goya-volume-circle-of-titans/",
+      "genre": "Stoner/Doom Metal",
+      "notes": "With Goya, Black Moon Cult, Circle of Titans. Invisible Orange presents",
+      "image": "https://astoria.pub/wp-content/uploads/2026/07/AM20261004kalelIG-819x1024.jpg",
+      "curated": ""
+    },
+    {
+      "band": "Salem Trials",
+      "date": "2026-10-05",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$17.83 adv",
+      "ticket": "https://astoria.pub/events/salem-trials-no-faith-in-fortune-endr-black-ivar/",
+      "genre": "Deathcore",
+      "notes": "With No Faith In Fortune, ENDR, Black Ivar. Heavy Is The Head EP tour",
+      "image": "https://images.weserv.nl/?url=astoria.pub/wp-content/uploads/2026/09/Salem_11zon-663x1024.png&w=450&output=jpg&q=75",
+      "curated": ""
     },
     {
       "band": "Nekrogoblikon",
@@ -320,6 +360,19 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
     },
     {
+      "band": "The Well",
+      "date": "2026-10-18",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$26.45 adv",
+      "ticket": "https://astoria.pub/events/the-well-pink-fuzz-space-queen/",
+      "genre": "Psych/Stoner Metal",
+      "notes": "With Pink Fuzz, Space Queen. Austin TX",
+      "image": "https://astoria.pub/wp-content/uploads/2026/08/The-Well-663x1024.jpg",
+      "curated": ""
+    },
+    {
       "band": "Demon Hunter",
       "date": "2026-10-20",
       "time": "18:30",
@@ -369,6 +422,19 @@
       "image": "https://lastfm.freetls.fastly.net/i/u/300x300/49b19b8c582ae0c3419af66d26d22ad5"
     },
     {
+      "band": "Microwave & Free Throw",
+      "date": "2026-10-26",
+      "time": "18:30",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thepearlvancouver.com/tm-event/microwave-free-throw-with-carly-cosgrove/",
+      "genre": "Emo/Punk",
+      "notes": "With Carly Cosgrove. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Free_Throw_at_the_Black_Cat_%282025%29.jpg?width=500",
+      "curated": ""
+    },
+    {
       "band": "The Dillinger Escape Plan",
       "date": "2026-10-26",
       "time": "19:00",
@@ -379,6 +445,32 @@
       "genre": "Mathcore",
       "notes": "Final Calculating Infinity shows. With Squid Pisser, XCOMM",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Dillinger_Escape_Plan_Furnace_Fest_2025_Birmingham_Alabama_3.png?width=300"
+    },
+    {
+      "band": "Protomartyr",
+      "date": "2026-10-28",
+      "time": "19:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thepearlvancouver.com/tm-event/protomartyr-with-accessory/",
+      "genre": "Post-Punk",
+      "notes": "With Accessory. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Protomartyr.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Gilla Band",
+      "date": "2026-10-31",
+      "time": "18:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thepearlvancouver.com/tm-event/gilla-band-with-special-guests/",
+      "genre": "Post-Punk/Noise Rock",
+      "notes": "With Piss. Halloween. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Gilla_Band-Paard_%282%29_%28cropped%29.jpg?width=600",
+      "curated": ""
     },
     {
       "band": "Pain of Truth",
@@ -428,6 +520,58 @@
       "genre": "Drone Metal",
       "notes": "19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sunn_O%29%29%29_%40_Roskilde_%2705_%28327956477%29.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Sunn O)))",
+      "date": "2026-11-02",
+      "time": "19:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thepearlvancouver.com/tm-event/sunn-o-2/",
+      "genre": "Drone Metal",
+      "notes": "Night two (night one is Nov 1). 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sunn_O%29%29%29_%40_Roskilde_%2705_%28327956477%29.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Plini",
+      "date": "2026-11-03",
+      "time": "18:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.commodoreballroom.com/shows",
+      "genre": "Progressive Metal",
+      "notes": "An Unnameable Desire North American Tour. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Plini248_300x_RG_%28cropped%29.jpg?width=500",
+      "curated": ""
+    },
+    {
+      "band": "King Buffalo",
+      "date": "2026-11-03",
+      "time": "19:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thepearlvancouver.com/tm-event/king-buffalo-with-l-a-witch/",
+      "genre": "Stoner/Psych Rock",
+      "notes": "With L.A. Witch. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/King_Buffalo_op_het_Valkhof_Festival_2022.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Jon Spencer",
+      "date": "2026-11-08",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$27.50 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/jon-spencer-2/",
+      "genre": "Punk Blues",
+      "notes": "With Genre Is Death. Timbre presents. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jon_Spencer._2013.jpg?width=500",
       "curated": ""
     },
     {
@@ -503,6 +647,19 @@
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Arch_Enemy_since_2026_collage.jpg?width=500"
     },
     {
+      "band": "Black Death Cult",
+      "date": "2026-11-14",
+      "time": "20:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$25 adv",
+      "ticket": "https://astoria.pub/events/black-death-cult-perdurabo-deliriant-fracture-occisor/",
+      "genre": "Black/Doom Metal",
+      "notes": "With Perdurabo, Deliriant Fracture, Occisor. A Night of Death and Doom. Music starts 9pm",
+      "image": "https://astoria.pub/wp-content/uploads/2026/07/Black-Death-Cult-663x1024.jpeg",
+      "curated": ""
+    },
+    {
       "band": "Metal Church",
       "date": "2026-11-15",
       "time": "18:00",
@@ -539,6 +696,19 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
+      "band": "Korpiklaani",
+      "date": "2026-11-18",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$32 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/korpiklaani-2/",
+      "genre": "Folk Metal",
+      "notes": "With Crimson Shadows. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Korpiklaani_-_Rakuunarock_2013.jpg?width=600",
+      "curated": ""
+    },
+    {
       "band": "The OBGMs",
       "date": "2026-11-20",
       "time": "",
@@ -552,6 +722,84 @@
       "image_source": "http://static1.squarespace.com/static/5e18e652d375b8296da6709b/t/67f4aa6065ed532f93e4754c/1744087648669/OBGMs-Logo-Gif-2025.gif?format=1500w"
     },
     {
+      "band": "WAAX",
+      "date": "2026-11-21",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "$22 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/waax-angels-mess-tour/",
+      "genre": "Punk/Alt Rock",
+      "notes": "Angel's Mess Tour. Rickshaw and Cobalt present. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/SXSW_2019_-_WAAX_%2833555039998%29.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Pointed Sticks",
+      "date": "2026-11-28",
+      "time": "19:30",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$25 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/pointed-sticks-final-show/",
+      "genre": "Punk",
+      "notes": "Final show ever. Vancouver punk legends. Support to be announced. 19+",
+      "image": "https://rickshawtheatre.com/wp-content/uploads/2026/09/PS-NOV-SHOW1-400x533.jpg",
+      "curated": ""
+    },
+    {
+      "band": "Insomnium & Amorphis",
+      "date": "2026-11-30",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$30 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/insomnium-amorphis/",
+      "genre": "Melodic Death Metal",
+      "notes": "With Hinayana. MRG presents. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Insomnium_Party.San_Metal_Open_Air_2017_46.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Protest the Hero",
+      "date": "2026-12-03",
+      "time": "20:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thepearlvancouver.com/tm-event/protest-the-hero-with-special-guests/",
+      "genre": "Progressive Metal",
+      "notes": "With Royal Tusk, Kaonashi. 19+",
+      "image": "https://en.wikipedia.org/wiki/Special:FilePath/ProtestAtSOMF.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Guilt Trip",
+      "date": "2026-12-04",
+      "time": "18:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$30 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/guilt-trip/",
+      "genre": "Hardcore",
+      "notes": "With Gates to Hell, Mauled. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Guilt_Trip_Full_Force_2023_04.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Bridge City Sinners",
+      "date": "2027-01-02",
+      "time": "19:00",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://thepearlvancouver.com/tm-event/bridge-city-sinners/",
+      "genre": "Gospel Punk",
+      "notes": "New Years Evil Tour. With Riley Downing, Roselit Bone. 19+",
+      "image": "https://images.weserv.nl/?url=i.ticketweb.com/i/00/13/03/84/14_Edp.jpg&w=500&output=jpg&q=75",
+      "curated": ""
+    },
+    {
       "band": "The Bouncing Souls / Suicide Machines / The Aggrolites / Dead Bars",
       "date": "2027-02-21",
       "time": "",
@@ -562,6 +810,19 @@
       "genre": "",
       "notes": "",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+    },
+    {
+      "band": "Eluveitie",
+      "date": "2027-02-26",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$40 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/eluveitie/",
+      "genre": "Folk Metal",
+      "notes": "With NiNi, Illumishade. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Eluveitie_-_Manchester_2025.jpg?width=600",
+      "curated": ""
     },
     {
       "band": "Nervosa",
