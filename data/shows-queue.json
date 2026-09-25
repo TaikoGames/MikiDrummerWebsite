@@ -310,6 +310,20 @@
       "first_seen": "2026-09-24"
     },
     {
+      "band": "Russian Tim's Disorganized Orchestra \"Siberian Cabaret\" EP Release Show w/ Dirty Bellows and KitchenSpoon",
+      "date": "2026-11-07",
+      "time": "",
+      "venue": "Tyrant Studios 1019 Seymour St",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/disorganized-orchestra-siberia/1429030059114898/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-09-25"
+    },
+    {
       "band": "Lethbridge Invasion night 1",
       "date": "2026-11-13",
       "time": "",
@@ -396,7 +410,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1111
+    "vancouver-punk-calendar": 1112
   },
-  "updated": "2026-09-24"
+  "updated": "2026-09-25"
 }
