@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="/js/track.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- The title leads with what somebody would actually type into a search box.
+     "Drum Along — Play Miki's Songs" is a name only someone who already knows
+     the site would search for, which is the one group that does not need to
+     find it. -->
+<title>Free Drum Game Online — Play Real Punk Songs | Punk BC</title>
+<meta name="description" content="A free drum rhythm game in your browser — no download, no sign-up, works on a phone. Twelve real punk and metal tracks, charted from the actual recordings.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://www.mikidrummer.ca/drum-game/">
+<meta name="author" content="Miki Drummer">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mikidrummer.ca/drum-game/">
+<meta property="og:title" content="Drum Along — a free drum game in your browser">
+<meta property="og:description" content="Three lanes, twelve real punk and metal songs, no download. The charts are detected from the recordings, so you are playing the actual drum parts.">
+<meta property="og:site_name" content="Punk BC">
+<meta property="og:image" content="https://www.mikidrummer.ca/images/drum-game-play-punk-songs-browser.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Three coloured lanes of drum notes running toward a white hit line, with hi-hat, snare and kick pads.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Drum Along — a free drum game in your browser">
+<meta name="twitter:description" content="Twelve real punk and metal songs, charted from the recordings. No download, works on a phone.">
+<meta name="twitter:image" content="https://www.mikidrummer.ca/images/drum-game-play-punk-songs-browser.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
+
+<style>
+  :root{ --bg:#0b0c0e; --card:#131518; --edge:#2b2f34; --edge2:#3a4046;
+         --dim:#7d848d; --mid:#a6adb6; --fg:#e9ebee; --hot:#e8672a;
+         --hat:#7ee7c7; --snare:#f4b400; --kick:#e8672a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);line-height:1.55;
+       font-family:'Helvetica Neue',system-ui,Arial,sans-serif;
+       padding:0 16px 60px;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1040px;margin:0 auto}
+  a{color:var(--hot);text-decoration:none} a:hover{text-decoration:underline}
+  header{padding:34px 0 18px;border-bottom:1px solid var(--edge)}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--hot);font-weight:700}
+  h1{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(26px,5.5vw,42px);letter-spacing:-.02em;margin:8px 0 10px}
+  .lead{color:var(--mid);font-size:15px;max-width:66ch}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;background:#1b1e22;border:1px solid var(--edge2);
+       color:var(--fg);border-radius:999px;padding:10px 18px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .btn:hover{border-color:var(--hot);color:var(--hot)}
+  .btn.go{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+  /* ---- song select ---- */
+  .songs{display:grid;grid-template-columns:1fr;gap:10px;margin:22px 0 8px}
+  @media(min-width:680px){.songs{grid-template-columns:1fr 1fr}}
+  .song{display:flex;align-items:center;justify-content:space-between;gap:14px;
+        background:var(--card);border:1px solid var(--edge);border-radius:12px;
+        padding:14px 16px;cursor:pointer;text-align:left;color:inherit;font:inherit;width:100%}
+  .song:hover{border-color:var(--hot)}
+  .song b{display:block;font-size:15px}
+  .song span{color:var(--dim);font-size:12.5px}
+  .song .n{color:var(--dim);font-size:11.5px;white-space:nowrap;letter-spacing:.06em}
+
+  /* ---- stage ---- */
+  /* touch-action:none on the whole stage, because on a phone the pads ARE the
+     controls: without it a fast hi-hat pattern reads as a swipe and the page
+     scrolls out from under the player, or pulls down to refresh. */
+  .stage{position:relative;margin-top:18px;border:1px solid var(--edge);border-radius:14px;
+         overflow:hidden;background:#0b0c0e;touch-action:none;user-select:none;
+         -webkit-user-select:none}
+  canvas{display:block;width:100%;height:clamp(240px,56vh,560px)}
+  body.playing{overscroll-behavior:none}
+
+  /* On a touchscreen the game takes the screen while it is being played.
+     A phone in landscape is 390 pixels tall, so a canvas sized as a share of
+     the page left a 240 pixel letterbox with the header above it and the pads
+     below the fold — unplayable in exactly the orientation that is meant to
+     be the comfortable one. */
+  @media(pointer:coarse){
+    body.ingame{padding:0;overflow:hidden}
+    body.ingame .stage{position:fixed;inset:0;margin:0;border:0;border-radius:0;z-index:60}
+    body.ingame canvas{height:100vh;height:100dvh}
+  }
+  .hud{position:absolute;inset:0;pointer-events:none;padding:16px 18px;
+       padding-bottom:max(16px,env(safe-area-inset-bottom));
+       display:flex;flex-direction:column;justify-content:space-between}
+  .hud .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .score{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(20px,4vw,30px);letter-spacing:-.02em}
+  .meta{text-align:right;font-size:12px;color:var(--mid);line-height:1.7}
+  .transport{display:flex;gap:6px;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
+  .quit{pointer-events:auto;background:rgba(19,21,24,.82);border:1px solid var(--edge2);
+        color:var(--mid);border-radius:999px;padding:7px 13px;font:inherit;font-size:11.5px;
+        font-weight:600;cursor:pointer;letter-spacing:.06em;touch-action:manipulation;
+        line-height:1;min-width:34px}
+  .quit:hover{border-color:var(--hot);color:var(--hot)}
+  #prev,#next{font-size:16px;padding:4px 12px}
+  @media(pointer:coarse){ .quit{padding:10px 14px;font-size:12.5px;min-width:42px} }
+
+  /* ---- the in-game song picker ---- */
+  .picker .pickBox{background:var(--card);border:1px solid var(--edge2);border-radius:14px;
+                   padding:18px;width:min(460px,100%);max-height:78vh;display:flex;
+                   flex-direction:column;gap:10px;pointer-events:auto}
+  .picker h3{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700}
+  #pickList{overflow-y:auto;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
+  .pick{display:block;width:100%;text-align:left;background:#1b1e22;border:1px solid var(--edge);
+        border-radius:10px;padding:11px 13px;color:var(--fg);font:inherit;cursor:pointer}
+  .pick b{display:block;font-size:14px}
+  .pick span{color:var(--dim);font-size:12px}
+  .pick:hover{border-color:var(--hot)}
+  .pick.on{border-color:var(--hot);background:#241a13}
+  .pick.on b{color:var(--hot)}
+  @media(pointer:coarse){ .pick{padding:14px 13px} }
+  .combo{align-self:center;font-family:'Arial Black',system-ui,sans-serif;
+         font-size:clamp(28px,7vw,52px);color:var(--hot);opacity:0;transition:opacity .12s}
+  .combo small{display:block;font:700 11px/1 'Helvetica Neue',sans-serif;letter-spacing:.24em;
+               text-transform:uppercase;color:var(--mid);text-align:center;margin-top:4px}
+  .verdict{align-self:center;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+           font-size:14px;opacity:0;transition:opacity .1s}
+  .keys{display:flex;justify-content:center;gap:10px}
+  /* Fitts' law on a phone: the pads are the only control, so they get the
+     bottom of the screen and a target a thumb can find without looking. */
+  .keycap{pointer-events:auto;flex:1;max-width:190px;border:1px solid var(--edge2);border-radius:12px;
+          background:rgba(19,21,24,.82);padding:14px 6px;text-align:center;cursor:pointer;
+          font-size:12px;color:var(--mid);user-select:none;-webkit-user-select:none;
+          touch-action:none;-webkit-touch-callout:none}
+  @media(max-width:680px){
+    .keys{gap:8px}
+    .keycap{max-width:none;padding:20px 4px;font-size:11.5px}
+    .keycap b{font-size:15px}
+  }
+  @media(pointer:coarse){ .keycap{min-height:74px;display:flex;flex-direction:column;
+                                  align-items:center;justify-content:center;gap:2px} }
+  /* A phone on its side has 390 pixels of height in total: a thumb-sized pad
+     eats the runway it is meant to be watching. */
+  @media(pointer:coarse) and (max-height:500px){ .keycap{min-height:54px;padding:10px 4px} }
+
+  /* On a small screen the middle of the frame is the vanishing point, which is
+     where the next bar of notes is, so a combo counter parked there covers the
+     one thing the player is reading. Pin both readouts to the edges instead. */
+  @media(pointer:coarse){
+    .combo{position:absolute;left:18px;top:72px;font-size:28px;text-align:left}
+    .combo small{text-align:left;margin-top:0}
+    .verdict{position:absolute;left:0;right:0;text-align:center;font-size:13px;
+             bottom:calc(max(16px,env(safe-area-inset-bottom)) + 84px)}
+  }
+  .keycap b{display:block;font-size:14px;color:var(--fg)}
+  .keycap.hat{border-color:rgba(126,231,199,.5)} .keycap.snare{border-color:rgba(244,180,0,.5)}
+  .keycap.kick{border-color:rgba(232,103,42,.6)}
+  .keycap.down{background:var(--hot);color:#160802} .keycap.down b{color:#160802}
+
+  .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+           background:rgba(8,9,11,.88);text-align:center;padding:24px}
+  .overlay[hidden]{display:none}
+  .panel{max-width:440px}
+  .panel h2{font-family:'Arial Black',system-ui,sans-serif;font-size:26px;margin-bottom:10px}
+  .panel p{color:var(--mid);font-size:14px;margin-bottom:16px}
+  .grade{font-family:'Arial Black',system-ui,sans-serif;font-size:76px;line-height:1;color:var(--hot);margin-bottom:6px}
+  .tallies{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:14px 0 18px;font-size:13px;color:var(--mid)}
+  .tallies b{display:block;font-size:18px;color:var(--fg)}
+
+  .settings{margin-top:16px;background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:16px 18px}
+  .settings h3{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:10px}
+  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .row input[type=range]{flex:1;min-width:180px;accent-color:var(--hot)}
+  .row output{font-size:12.5px;color:var(--mid);min-width:74px;text-align:right;font-variant-numeric:tabular-nums}
+  .hint{font-size:11.5px;color:var(--dim);margin-top:8px;max-width:70ch}
+  .tbl{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+  .tbl th{text-align:left;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+          color:var(--dim);font-weight:700;padding:0 10px 8px 0;border-bottom:1px solid var(--edge)}
+  .tbl td{padding:9px 10px 9px 0;border-bottom:1px solid var(--edge);color:var(--mid)}
+  .tbl td:first-child{color:var(--fg);font-weight:600}
+  @media(max-width:560px){ .tbl th:nth-child(4),.tbl td:nth-child(4){display:none} }
+  .qa h4{font-size:14px;margin:16px 0 4px;color:var(--fg)}
+  .qa h4:first-child{margin-top:8px}
+  .qa p{font-size:13px;color:var(--mid);max-width:74ch}
+  .calDot{width:64px;height:64px;border-radius:50%;background:#1b1e22;border:2px solid var(--edge2);
+          margin:0 auto;transition:transform .06s ease-out,background .06s,border-color .06s}
+  .calDot.on{background:var(--hot);border-color:var(--hot);transform:scale(1.25)}
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Free · No download · Works on a phone</span>
+    <h1>Drum Along</h1>
+    <p class="lead">A drum game you play in the browser. Three lanes, twelve real punk and metal
+       songs, and the charts are not hand-written — they are detected from the recordings, so the
+       notes you are hitting are the drum parts that were actually played. Hi-hat on <b>A</b>,
+       snare on <b>S</b>, kick on <b>space</b>, or tap the three pads along the bottom on a
+       phone — turn it sideways and they get bigger.</p>
+  </header>
+
+  <div id="select">
+    <div class="songs" id="songs"></div>
+    <p class="hint" id="songsNote">Loading the song list…</p>
+  </div>
+
+  <div class="stage" id="stage" hidden>
+    <canvas id="c"></canvas>
+    <!-- Streamed, not decoded. decodeAudioData turns a four megabyte MP3 into
+         sixty-odd megabytes of PCM before a single note plays, which on a
+         phone is a long wait and often a tab the OS kills outright. An audio
+         element starts on the first few kilobytes. -->
+    <audio id="track" preload="auto" playsinline></audio>
+    <div class="hud">
+      <div class="top">
+        <div>
+          <div class="score" id="score">0</div>
+          <div style="font-size:11.5px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase">Score</div>
+        </div>
+        <div class="meta">
+          <span id="nowPlaying"></span><br>
+          <span id="progress">0:00</span>
+          <!-- Once the stage goes fullscreen on a phone there is nothing to
+               scroll to, so the way out -- and the way to another song -- has
+               to be on the stage itself. -->
+          <div class="transport">
+            <button class="quit" id="prev" type="button" title="Previous song (←)">‹</button>
+            <button class="quit" id="pick" type="button">Songs</button>
+            <button class="quit" id="next" type="button" title="Next song (→)">›</button>
+            <button class="quit" id="quit" type="button">Stop</button>
+          </div>
+        </div>
+      </div>
+      <div class="combo" id="combo">0<small>Combo</small></div>
+      <div class="verdict" id="verdict"></div>
+      <div class="keys" id="keys"></div>
+    </div>
+
+    <div class="overlay" id="overlay" hidden>
+      <div class="panel" id="panel"></div>
+    </div>
+
+    <!-- The song list again, on top of the stage, so changing your mind
+         mid-song costs one tap instead of stopping and scrolling. -->
+    <div class="overlay picker" id="picker" hidden>
+      <div class="pickBox">
+        <h3>Songs</h3>
+        <div id="pickList"></div>
+        <button class="btn" id="pickClose" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- The calibration click. Its own element, but the same kind of element
+       the songs play through, because the output latency being measured is
+       the one the songs will have. -->
+  <audio id="cal" preload="auto" playsinline></audio>
+
+  <div class="settings">
+    <h3>Timing</h3>
+    <div class="row">
+      <label for="offset" style="font-size:12.5px;color:var(--mid)">Audio offset</label>
+      <input type="range" id="offset" min="-400" max="400" step="5" value="0">
+      <output id="offsetOut">0 ms</output>
+      <button class="btn" id="resetOffset" type="button">Reset</button>
+    </div>
+    <p class="hint">If every note feels early or late, this is the fix. Your speakers, and
+       especially Bluetooth headphones, play sound later than the screen draws — 150&nbsp;ms is
+       normal over Bluetooth and that is a whole judgement window and then some. Rather than
+       guessing at the slider, tap it out: the button below plays a steady click and measures how
+       far off your taps land. Saved on this device.</p>
+
+    <div class="row" style="margin-top:14px">
+      <button class="btn go" id="calStart" type="button">Calibrate by tapping</button>
+      <span class="hint" id="calMsg" style="margin:0"></span>
+    </div>
+
+    <div id="calBox" hidden style="margin-top:14px">
+      <div class="calDot" id="calDot"></div>
+      <p class="hint" style="margin-top:12px">Tap <b>space</b> — or the big button — on every
+         click you hear. Not on the flash: <b>on the sound</b>. About twelve of them.</p>
+      <div class="row" style="margin-top:10px">
+        <button class="btn go" id="calTap" type="button" style="flex:1;justify-content:center;
+                padding:18px">Tap on the click</button>
+        <button class="btn" id="calStop" type="button">Cancel</button>
+      </div>
+      <p class="hint" id="calCount">0 taps</p>
+    </div>
+  </div>
+
+  <div class="settings">
+    <h3>Where the notes come from</h3>
+    <p class="hint" style="font-size:13px;color:var(--mid);max-width:74ch">
+      Nobody charted these songs by hand. A script listens to each recording and looks for the
+      moments a sound starts — not just energy going up, which in a punk mix happens on every
+      strum, but the sharp arrival that a stick or a beater makes. Then it finds the song's pulse,
+      lays the actual beats down, and keeps only the hits that land on them. Whichever part of the
+      spectrum jumped hardest decides the lane: the bottom is the kick, the crack around
+      1.5&nbsp;kHz to 5&nbsp;kHz is the snare, above 7&nbsp;kHz is the cymbals. So the notes coming
+      down the lanes are the parts Miki actually played, not somebody's transcription of them —
+      and the background pulses on the beats the tracker found, which is why it is in time.
+    </p>
+    <p class="hint" style="font-size:13px;color:var(--mid);max-width:74ch;margin-top:10px">
+      It is not a perfect listener and it is not pretending to be. A bass guitar sits close enough
+      to a kick drum to get a vote, a guitar chord in the snare's range sometimes gets charted as
+      a snare, and two of these are mixes whose low end is squashed flat enough that the kick is
+      barely there to find — those charts are honestly thin on kicks rather than dishonestly full
+      of invented ones. Twelve songs so far, across Bound By None, Dead Fast, Diera, Lift the
+      Anchor and Granite. Adding another is one workflow run.
+    </p>
+  </div>
+
+  <!-- The song list in the game is built by JavaScript from the chart files,
+       which means a crawler sees an empty div where twelve song and band
+       names should be. These are the same twelve, in HTML, because band names
+       and song titles are the thing people actually search for. -->
+  <section class="settings" id="songlist">
+    <h3>The songs you can play</h3>
+    <p class="hint" style="font-size:13px;color:var(--mid);max-width:74ch">
+      Twelve tracks, all of them Miki's own drumming with his bands around Vancouver and
+      Barcelona. Every one is charted from the recording itself.
+    </p>
+    <table class="tbl">
+      <thead><tr><th>Song</th><th>Band</th><th>Tempo</th><th>Notes</th><th>Length</th></tr></thead>
+      <tbody>
+        <tr><td><a href="/drum-game/songs/noother.html">No Other</a></td><td>Bound By None</td><td>120 BPM</td><td>1080</td><td>2:58</td></tr>
+        <tr><td><a href="/drum-game/songs/onthedouble.html">On The Double</a></td><td>Bound By None</td><td>185 BPM</td><td>852</td><td>2:35</td></tr>
+        <tr><td><a href="/drum-game/songs/landsea.html">Land and Sea</a></td><td>Dead Fast</td><td>172 BPM</td><td>871</td><td>2:31</td></tr>
+        <tr><td><a href="/drum-game/songs/04-skamen.html">Skamen</a></td><td>Dead Fast</td><td>115 BPM</td><td>1203</td><td>3:08</td></tr>
+        <tr><td><a href="/drum-game/songs/audio2.html">Star Shines Trough</a></td><td>Dead Fast</td><td>178 BPM</td><td>976</td><td>2:34</td></tr>
+        <tr><td><a href="/drum-game/songs/bajo-el-nivel-del-mal.html">Bajo el nivel del mal</a></td><td>Diera</td><td>215 BPM</td><td>451</td><td>1:42</td></tr>
+        <tr><td><a href="/drum-game/songs/groenlandia.html">Groenlandia</a></td><td>Diera</td><td>148 BPM</td><td>340</td><td>1:27</td></tr>
+        <tr><td><a href="/drum-game/songs/la-tragedia-de-los-comunes.html">La tragedia de los comunes</a></td><td>Diera</td><td>148 BPM</td><td>520</td><td>1:44</td></tr>
+        <tr><td><a href="/drum-game/songs/per-mi.html">Per mi (In Catalan)</a></td><td>Diera</td><td>207 BPM</td><td>703</td><td>2:23</td></tr>
+        <tr><td><a href="/drum-game/songs/sebastopol-garcia.html">Sebastopol García</a></td><td>Diera</td><td>207 BPM</td><td>986</td><td>2:43</td></tr>
+        <tr><td><a href="/drum-game/songs/pony-up.html">Pony Up</a></td><td>Granite</td><td>162 BPM</td><td>770</td><td>3:11</td></tr>
+        <tr><td><a href="/drum-game/songs/cornered-demo-lift-the-anchor.html">Cornered (demo)</a></td><td>Lift The Anchor</td><td>148 BPM</td><td>992</td><td>3:17</td></tr>
+      </tbody>
+    </table>
+    <p class="hint">More about the bands on <a href="/punkbc.html">Punk BC</a>.</p>
+  </section>
+
+  <!-- Visible answers to the things people actually type. The FAQPage markup
+       at the bottom of the page describes exactly this text and nothing else
+       -- schema that answers questions the page does not visibly answer is
+       the sort of thing that gets a site's rich results switched off. -->
+  <section class="settings" id="faq">
+    <h3>Questions</h3>
+    <div class="qa">
+      <h4>Is it free?</h4>
+      <p>Yes. No account, no download, no ads, nothing to install. It is a web page.</p>
+
+      <h4>Can I play a drum game on my phone?</h4>
+      <p>Yes — tap the three pads along the bottom. Turn the phone sideways and they get
+         bigger. It works in any current mobile browser.</p>
+
+      <h4>Do I need a real drum kit or an electronic kit?</h4>
+      <p>No. It is three keys on a keyboard (A, S and space) or three pads on a touchscreen.
+         If you do own a kit, this is not a replacement for a practice pad — it is a reading
+         and timing exercise you can do on a bus.</p>
+
+      <h4>Where do the drum charts come from?</h4>
+      <p>They are detected from the recordings. A script finds the moment each drum is struck,
+         works out the song's tempo, tracks the beats, and keeps the hits that land on them.
+         Nobody transcribed these by hand, so the notes are the parts that were actually
+         played rather than somebody's approximation of them.</p>
+
+      <h4>The notes feel early or late. How do I fix it?</h4>
+      <p>Use the calibration on this page: it plays a steady click and measures how far off your
+         taps land, then sets the offset for you. Bluetooth headphones are almost always the
+         cause — they can run 150&nbsp;ms or more behind the screen, which is wider than the
+         scoring window.</p>
+
+      <h4>Can I add my own band's songs?</h4>
+      <p>Not through the page — the charting runs on a server. But the tool that does it is
+         open in the repository, and if you are a BC band who would like a track charted,
+         say so through <a href="/services.html">the services page</a>.</p>
+    </div>
+  </section>
+
+  <footer>
+    A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>.
+    One of the <a href="/tools.html">free tools</a> for bands and drummers, alongside the
+    <a href="/click-track.html">click track maker</a> and the
+    <a href="/gig-checklist.html">gig checklist</a>.
+    Every song here is Miki's own playing, with his bands.
+  </footer>
+</div>
+
+<!-- Structured data. Every answer in the FAQ block below appears, in those
+     words, in the visible #faq section -- markup describing answers a reader
+     cannot see on the page is what gets a site's rich results turned off. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "VideoGame",
+      "@id": "https://www.mikidrummer.ca/drum-game/#game",
+      "name": "Drum Along",
+      "url": "https://www.mikidrummer.ca/drum-game/",
+      "description": "A free browser drum rhythm game. Three lanes — hi-hat, snare and kick — and twelve real Vancouver punk and metal tracks, charted automatically from the recordings so the notes are the drum parts that were actually played.",
+      "image": "https://www.mikidrummer.ca/images/drum-game-play-punk-songs-browser.png",
+      "genre": ["Rhythm game", "Music game"],
+      "gamePlatform": ["Web browser", "Android", "iOS"],
+      "playMode": "SinglePlayer",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Any browser with WebGL",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD",
+                  "availability": "https://schema.org/InStock" },
+      "author": { "@type": "Person", "name": "Miki Drummer",
+                  "url": "https://www.mikidrummer.ca/" },
+      "publisher": { "@type": "Organization", "name": "Punk BC",
+                     "url": "https://www.mikidrummer.ca/punkbc.html" },
+      "musicBy": [
+        { "@type": "MusicGroup", "name": "Bound By None" },
+        { "@type": "MusicGroup", "name": "Dead Fast" },
+        { "@type": "MusicGroup", "name": "Diera" },
+        { "@type": "MusicGroup", "name": "Granite" },
+        { "@type": "MusicGroup", "name": "Lift The Anchor" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.mikidrummer.ca/drum-game/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is it free?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "Yes. No account, no download, no ads, nothing to install. It is a web page." } },
+        { "@type": "Question", "name": "Can I play a drum game on my phone?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "Yes — tap the three pads along the bottom. Turn the phone sideways and they get bigger. It works in any current mobile browser." } },
+        { "@type": "Question", "name": "Do I need a real drum kit or an electronic kit?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "No. It is three keys on a keyboard (A, S and space) or three pads on a touchscreen. If you do own a kit, this is not a replacement for a practice pad — it is a reading and timing exercise you can do on a bus." } },
+        { "@type": "Question", "name": "Where do the drum charts come from?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "They are detected from the recordings. A script finds the moment each drum is struck, works out the song's tempo, tracks the beats, and keeps the hits that land on them. Nobody transcribed these by hand, so the notes are the parts that were actually played rather than somebody's approximation of them." } },
+        { "@type": "Question", "name": "The notes feel early or late. How do I fix it?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "Use the calibration on this page: it plays a steady click and measures how far off your taps land, then sets the offset for you. Bluetooth headphones are almost always the cause — they can run 150 ms or more behind the screen, which is wider than the scoring window." } },
+        { "@type": "Question", "name": "Can I add my own band's songs?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "Not through the page — the charting runs on a server. But the tool that does it is open in the repository, and if you are a BC band who would like a track charted, say so through the services page." } }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Miki Drummer",
+          "item": "https://www.mikidrummer.ca/" },
+        { "@type": "ListItem", "position": 2, "name": "Free tools",
+          "item": "https://www.mikidrummer.ca/tools.html" },
+        { "@type": "ListItem", "position": 3, "name": "Drum Along",
+          "item": "https://www.mikidrummer.ca/drum-game/" }
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+/* A deliberately old-fashioned script: no modules, no arrow functions, no
+ * const. Its entire job is to speak when the module below cannot.
+ *
+ * "It's not even loading" is the one report the game itself can never make.
+ * If the module fails to parse, fails to resolve an import, or the browser
+ * has no modules at all, none of its own error handling runs -- the page just
+ * sits on "Loading the song list" with nothing in the console the player can
+ * see. This runs regardless, waits, and says what happened.
+ */
+(function () {
+  var problem = '';
+  addEventListener('error', function (e) {
+    if (problem) return;                          // the first one is the cause
+    var t = e && e.target;
+    // Only our own files. An ad blocker eating the analytics tag is the most
+    // common script error on the page and has nothing to do with the game --
+    // blaming it would send people chasing the wrong thing.
+    if (t && t.tagName === 'SCRIPT' && t.src && t.src.indexOf(location.origin) === 0) {
+      problem = 'a script did not load: ' + t.src.replace(location.origin, '');
+    } else if (e && e.message && e.message !== 'Script error.') {
+      problem = e.message;
+    }
+  }, true);
+
+  function check(second) {
+    var box = document.getElementById('songs');
+    var note = document.getElementById('songsNote');
+    if (!note || (box && box.children.length)) return;
+    if (window.__drumGameRan) {
+      // The module is alive, so this is a slow or broken connection rather
+      // than a browser that cannot run it. Give it one longer go before
+      // telling somebody on a train that their phone is the problem.
+      if (!second) { setTimeout(function () { check(true); }, 20000); return; }
+      note.textContent = 'The song list would not load' +
+        (problem ? ' (' + problem + ')' : '') +
+        '. A refresh usually sorts it; if not, the connection dropped partway.';
+      return;
+    }
+    note.textContent = 'The game would not start here. It needs a reasonably current ' +
+      'browser — Safari 15 or newer on an iPhone, or a recent Chrome, Firefox or Edge — ' +
+      'and a connection that held up while the page loaded. Everything else on the ' +
+      'site works without it.' + (problem ? ' (' + problem + ')' : '');
+  }
+  setTimeout(function () { check(false); }, 15000);
+})();
+</script>
+<script type="module">
+import { LANES, WINDOWS, MISS_AFTER, judge, nearestNote, hitScore,
+         accuracy, rank, slugify } from '/js/drum-game.js';
+
+/* drum-scene.js is NOT imported here, because importing it pulls in 1.3 MB of
+ * Three.js and nothing on this page runs until that arrives. On a phone on a
+ * bad connection that is twenty seconds of "Loading the song list…" before a
+ * list of twelve small JSON files can be shown. Loaded on demand instead, and
+ * warmed in the background while the player reads the list, so picking a song
+ * is still instant on anything but the first slow tap. */
+let buildScene = null;
+const warmScene = () => import('/js/drum-scene.js').then((m) => (buildScene = m.buildScene));
+
+// Tells the watchdog above that the module parsed and its imports resolved,
+// so a stuck page can be blamed on the right thing.
+window.__drumGameRan = true;
+
+const $ = (id) => document.getElementById(id);
+const OFFSET_KEY = 'drumGame:offset';
+
+let view, chart = null, current = null;
+let library = [], index = -1;        // every charted song, and where we are in it
+let beatTimes = [], beatAt = 0;      // the tracked beats, for the background
+let running = false, cursor = 0, judgeFrom = 0;
+let lastFrame = 0;
+let score = 0, combo = 0, best = 0;
+let counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
+let live = [];                       // notes currently on screen
+let offset = Number(localStorage.getItem(OFFSET_KEY) || 0);
+
+function setOffset(ms) {
+  offset = Number(ms) || 0;
+  $('offset').value = offset;
+  $('offsetOut').textContent = (offset > 0 ? '+' : '') + offset + ' ms';
+  try { localStorage.setItem(OFFSET_KEY, String(offset)); } catch (e) {}
+}
+setOffset(offset);
+$('offset').addEventListener('input', function () { setOffset(this.value); });
+$('resetOffset').addEventListener('click', () => {
+  setOffset(0);
+  $('calMsg').textContent = '';
+});
+
+/* ---- calibration ------------------------------------------------------
+ *
+ * The clock inside the page can be made to agree with the audio file to
+ * within a couple of milliseconds, and that still does not mean a note
+ * reaches the pad when you HEAR the drum. Between the position an audio
+ * element reports and the sound arriving at your ear there is an output
+ * buffer, a speaker, and quite possibly a Bluetooth link adding 150 to 300 ms
+ * of its own. Nothing in the page can see any of that. The only instrument
+ * that can measure it is the person holding the phone.
+ *
+ * So: play a steady click through the SAME kind of element the songs play
+ * through -- the latency being measured is the one that matters, and an
+ * AudioContext would have a different one -- and ask for taps. The median gap
+ * between a tap and the click it belongs to is the number, and it quietly
+ * includes the player's own motor delay, which is also real and also wants
+ * correcting.
+ */
+
+/* 75 BPM. Slow on purpose.
+ *
+ * At 100 BPM the gap is 600 ms, so a tap 300 ms late is indistinguishable
+ * from one 300 ms early and the measurement wraps -- which meant a 250 ms
+ * Bluetooth delay, the single case this tool exists for, had every one of its
+ * taps thrown out as a missed beat. A wider gap, plus the fact that output
+ * latency is physically never negative (sound cannot arrive before it is
+ * played), makes the window asymmetric and the answer unambiguous out to
+ * well past anything a real headset does. */
+const CAL_PERIOD = 0.8;
+const CAL_EARLY = 0.25;        // a tap may sit this much of a gap BEFORE its click
+const CAL_LATE = 0.75;         // and this much after it
+const CAL_LENGTH = 20;         // seconds of clicks
+const CAL_WARMUP = 2;          // taps to throw away while they find the pulse
+const CAL_NEEDED = 6;          // taps required before a result is offered
+
+/* A click track as a WAV blob. Built here rather than shipped as a file
+ * because it has to be exact: the clicks are at known times in the data, and
+ * that is the entire measurement. */
+function clickTrackURL() {
+  const sr = 22050, n = Math.ceil(CAL_LENGTH * sr);
+  const pcm = new Int16Array(n);
+  for (let t = CAL_PERIOD; t < CAL_LENGTH - 0.3; t += CAL_PERIOD) {
+    const at = Math.round(t * sr);
+    for (let k = 0; k < 700 && at + k < n; k++) {
+      const env = Math.exp(-k / 90);
+      pcm[at + k] = Math.round(0.55 * 32767 * env * Math.sin(2 * Math.PI * 1500 * k / sr));
+    }
+  }
+  const buf = new ArrayBuffer(44 + pcm.length * 2);
+  const v = new DataView(buf);
+  const tag = (off, s) => { for (let i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); };
+  tag(0, 'RIFF'); v.setUint32(4, 36 + pcm.length * 2, true); tag(8, 'WAVEfmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true);
+  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  tag(36, 'data'); v.setUint32(40, pcm.length * 2, true);
+  new Int16Array(buf, 44).set(pcm);
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
+
+let cal = null;
+
+function calTime() {
+  if (!cal) return 0;
+  return cal.anchorMedia + (performance.now() / 1000 - cal.anchorWall);
+}
+
+function calibrateStart() {
+  const a = $('cal');
+  calibrateStop(true);
+  cal = { taps: [], anchorMedia: 0, anchorWall: 0, lastMedia: -1,
+          url: clickTrackURL(), armed: false };
+  a.src = cal.url;
+  a.currentTime = 0;
+  $('calBox').hidden = false;
+  $('calMsg').textContent = '';
+  $('calCount').textContent = '0 taps';
+  $('calStart').disabled = true;
+
+  const p = a.play();
+  if (p && p.catch) p.catch(() => {
+    $('calMsg').textContent = 'The browser would not play the click — tap the button again.';
+    calibrateStop();
+  });
+
+  // Same rule as the game: do not start the clock until the sound is moving.
+  (function waitCal(began) {
+    if (!cal) return;
+    if (a.currentTime > 0) {
+      cal.anchorMedia = a.currentTime;
+      cal.anchorWall = performance.now() / 1000;
+      cal.armed = true;
+      calFlash();
+      return;
+    }
+    if (performance.now() - began > 6000) {
+      $('calMsg').textContent = 'The click would not start playing.';
+      return calibrateStop();
+    }
+    requestAnimationFrame(() => waitCal(began));
+  })(performance.now());
+}
+
+/* The dot flashes on the beat. It is deliberately NOT what to tap to --
+ * tapping the flash would measure the screen, and the screen is not the thing
+ * that is late. The instruction says to tap the sound. */
+function calFlash() {
+  if (!cal || !cal.armed) return;
+
+  // Keep the calibration clock honest against the click track, the same way
+  // the game clock is kept honest against the song. A clock anchored once and
+  // left to free-run drifts: measured at 23 ms over twelve seconds, which
+  // lands directly on the number being measured and biases every calibration
+  // the same way. A measuring instrument that drifts is not one.
+  const a = $('cal');
+  const m = a.currentTime;
+  if (m !== cal.lastMedia) {
+    cal.lastMedia = m;
+    const err = m - calTime();
+    if (Math.abs(err) > 0.25) { cal.anchorMedia = m; cal.anchorWall = performance.now() / 1000; }
+    else cal.anchorMedia += err * 0.15;
+  }
+
+  const t = calTime();
+  const phase = t / CAL_PERIOD;
+  const on = (phase - Math.floor(phase)) < 0.18;
+  $('calDot').classList.toggle('on', on);
+  if (t > CAL_LENGTH - 0.5) return calibrateFinish();
+  requestAnimationFrame(calFlash);
+}
+
+function calibrateTap() {
+  if (!cal || !cal.armed) return;
+  const t = calTime();
+  // Which click this tap belongs to. Measured from the click BEFORE it and
+  // then folded, rather than from the nearest one, so the window can be
+  // lopsided: a long way late is ordinary (that is what latency is), a long
+  // way early is someone who has lost the pulse.
+  let k = Math.floor(t / CAL_PERIOD);
+  let delta = t - k * CAL_PERIOD;
+  if (delta > CAL_PERIOD * (1 - CAL_EARLY)) { delta -= CAL_PERIOD; k += 1; }
+  if (k < 1 || delta > CAL_PERIOD * CAL_LATE) return;
+  cal.taps.push(delta);
+  const n = cal.taps.length;
+  $('calCount').textContent = n + (n === 1 ? ' tap' : ' taps') +
+    (n <= CAL_WARMUP + CAL_NEEDED ? ' — keep going' : ' — you can stop when you like');
+  if (n >= CAL_WARMUP + CAL_NEEDED + 8) calibrateFinish();
+}
+
+function calibrateFinish() {
+  if (!cal) return;
+  const taps = cal.taps.slice(CAL_WARMUP);
+  calibrateStop();
+  if (taps.length < CAL_NEEDED) {
+    $('calMsg').textContent =
+      `Only ${taps.length} usable taps — needs ${CAL_NEEDED}. Try again and tap every click.`;
+    return;
+  }
+  taps.sort((x, y) => x - y);
+  const mid = taps.length % 2
+    ? taps[(taps.length - 1) / 2]
+    : (taps[taps.length / 2 - 1] + taps[taps.length / 2]) / 2;
+  // Spread, as a rough honesty check on the measurement.
+  const spread = (taps[taps.length - 1] - taps[0]) * 1000;
+  const ms = Math.max(-400, Math.min(400, Math.round(mid * 1000 / 5) * 5));
+  setOffset(ms);
+  $('calMsg').textContent =
+    `Set to ${ms > 0 ? '+' : ''}${ms} ms from ${taps.length} taps` +
+    (spread > 120 ? ' — your taps were spread out, so run it again if it still feels off.' : '.');
+  if (window.Track) Track.ev('game_calibrated', { offset: ms, taps: taps.length });
+}
+
+function calibrateStop(quiet) {
+  const a = $('cal');
+  try { a.pause(); } catch (e) {}
+  if (cal && cal.url) URL.revokeObjectURL(cal.url);
+  cal = null;
+  $('calDot').classList.remove('on');
+  $('calBox').hidden = true;
+  $('calStart').disabled = false;
+  if (!quiet) { /* message is set by the caller */ }
+}
+
+/* ---- song list ------------------------------------------------------- */
+
+function titleOf(raw) {
+  const i = raw.indexOf(' - ');
+  return i > -1 ? { title: raw.slice(0, i).trim(), band: raw.slice(i + 3).trim() }
+                : { title: raw.trim(), band: '' };
+}
+
+async function loadSongs() {
+  let songs = [];
+  try {
+    const pl = await (await fetch('/playlist.json', { cache: 'no-store' })).json();
+    songs = (pl.songs || []).filter(s => (s.src || '').toLowerCase().endsWith('.mp3'));
+  } catch (e) {}
+  songs.push({ src: 'audio/granite/pony-up.mp3', title: 'Pony Up - Granite' });
+
+  // Only the ones that have a chart. A song in the list that cannot be played
+  // is worse than a shorter list.
+  const checked = await Promise.all(songs.map(async (s) => {
+    const slug = slugify(s.src.split('/').pop());
+    try {
+      const r = await fetch(`/data/beatmaps/${slug}.json`, { method: 'GET', cache: 'no-store' });
+      if (!r.ok) return null;
+      const map = await r.json();
+      return { ...titleOf(s.title || slug), src: '/' + s.src.replace(/^\//, ''), slug, map };
+    } catch (e) { return null; }
+  }));
+
+  const ready = checked.filter(Boolean);
+  const box = $('songs');
+  box.textContent = '';
+  if (!ready.length) {
+    $('songsNote').textContent =
+      'No charts yet. Run the Beatmaps workflow and they will appear here.';
+    return;
+  }
+  library = ready;
+  ready.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.className = 'song'; b.type = 'button';
+    const left = document.createElement('div');
+    left.innerHTML = '<b></b><span></span>';
+    left.querySelector('b').textContent = s.title;
+    left.querySelector('span').textContent =
+      (s.band || '') + (s.map.bpm ? ' · ' + Math.round(s.map.bpm) + ' BPM' : '');
+    const right = document.createElement('div');
+    right.className = 'n';
+    const mins = Math.floor(s.map.duration / 60), secs = Math.round(s.map.duration % 60);
+    right.textContent = `${s.map.notes.length} notes · ${mins}:${String(secs).padStart(2, '0')}`;
+    b.append(left, right);
+    b.addEventListener('click', () => start(i));
+    box.appendChild(b);
+  });
+  buildPicker();
+  $('songsNote').textContent =
+    `${ready.length} songs charted. Pick one — headphones help, and check the offset below if it feels off.`;
+  // Fetch the renderer now, while they are deciding.
+  warmScene().catch(() => {});   // a failure here is reported properly on Start
+
+  // ?song=<slug> opens straight onto that track, which is what every song
+  // page links to. It stops at Ready rather than playing: the arrival was a
+  // page load, not a tap, and no browser will start audio off a page load.
+  const want = new URLSearchParams(location.search).get('song');
+  if (want) {
+    const i = ready.findIndex(s => s.slug === want);
+    if (i >= 0) start(i);
+  }
+}
+
+/* ---- playing --------------------------------------------------------- */
+
+function padKeys() {
+  const keys = $('keys');
+  keys.textContent = '';
+  LANES.forEach((lane) => {
+    const d = document.createElement('div');
+    d.className = 'keycap ' + lane.id;
+    d.innerHTML = '<b></b>';
+    d.querySelector('b').textContent = lane.label;
+    d.append(lane.key === ' ' ? 'space' : lane.key.toUpperCase());
+    d.addEventListener('pointerdown', (e) => { e.preventDefault(); strike(lane.id); });
+    // A drum roll on a touchscreen is a long press as far as the OS is
+    // concerned, and a long press is a text-selection handle or a menu.
+    d.addEventListener('contextmenu', (e) => e.preventDefault());
+    keys.appendChild(d);
+  });
+}
+
+/* Back to the menu, from wherever. One function because there are three ways
+ * out and every one of them has to stop the song, let the page scroll again
+ * and give the screen back. */
+function backToSelect() {
+  running = false;
+  document.body.classList.remove('playing', 'ingame');
+  try { $('track').pause(); } catch (e) {}
+  $('overlay').hidden = true;
+  $('picker').hidden = true;
+  $('stage').hidden = true;
+  $('select').hidden = false;
+  if (view) view.resize();
+}
+
+function fail(headline, err, song, extra) {
+  const msg = (err && err.message ? err.message : String(err));
+  $('overlay').hidden = false;
+  $('panel').innerHTML = '<h2></h2><p></p>';
+  $('panel').querySelector('h2').textContent = headline;
+  $('panel').querySelector('p').textContent = msg + '. ' + (extra || '');
+  const back = document.createElement('button');
+  back.className = 'btn'; back.textContent = 'Pick another';
+  back.addEventListener('click', backToSelect);
+  $('panel').appendChild(back);
+  // So a failure that only happens on somebody else's phone still shows up.
+  if (window.Track) {
+    Track.ev('game_load_failed', { song: song && song.slug, reason: msg.slice(0, 90) });
+  }
+  console.error('[drum game]', headline, err);
+}
+
+/* Get the track ready to play without decoding it.
+ *
+ * The first version read the whole file and handed it to decodeAudioData,
+ * which expands a four megabyte MP3 into around sixty megabytes of raw PCM
+ * before the first note. A laptop shrugs; a phone spends ten seconds on it,
+ * and a phone with other tabs open has the tab killed. An audio element
+ * streams — it is playable off the first chunk, and the memory never grows. */
+function loadTrack(src) {
+  return new Promise((resolve, reject) => {
+    const a = $('track');
+    let settled = false;
+    const timer = setTimeout(
+      () => no('the track did not start loading within 30 seconds'), 30000);
+
+    function cleanup() {
+      clearTimeout(timer);
+      a.removeEventListener('canplay', ok);
+      a.removeEventListener('loadedmetadata', ok);
+      a.removeEventListener('error', bad);
+    }
+    function ok()  { if (settled) return; settled = true; cleanup(); resolve(); }
+    function no(m) { if (settled) return; settled = true; cleanup(); reject(new Error(m)); }
+    function bad() {
+      const e = a.error;
+      no('the browser could not play that file' + (e ? ' (media error ' + e.code + ')' : ''));
+    }
+
+    a.addEventListener('canplay', ok);
+    a.addEventListener('loadedmetadata', ok);   // enough to know the duration
+    a.addEventListener('error', bad);
+    a.src = src;
+    a.load();
+  });
+}
+
+async function start(i, autoplay) {
+  const song = library[i];
+  if (!song) return;
+  index = i;
+  current = song;
+  running = false;
+  try { $('track').pause(); } catch (e) {}
+  $('select').hidden = true;
+  $('stage').hidden = false;
+  document.body.classList.add('ingame');
+  $('stage').scrollIntoView({ block: 'nearest' });
+  $('picker').hidden = true;
+  $('overlay').hidden = false;
+  $('panel').innerHTML = '<h2>Loading…</h2><p>Getting ready.</p>';
+  $('nowPlaying').textContent = song.title + (song.band ? ' · ' + song.band : '');
+  markPicker();
+
+  // Every stage says what it is doing, and every stage can fail out loud.
+  // The first version put only the fetch and the decode inside the try, so
+  // anything that went wrong before them -- a browser with no WebGL, an audio
+  // context that would not start -- left "Decoding the track." on screen for
+  // ever with nothing in the console and no way to tell which step had died.
+  function stage(msg) {
+    const p = $('panel').querySelector('p');
+    if (p) p.textContent = msg;
+  }
+
+  try {
+    if (!view) {
+      // Say why the first song is the slow one, so the wait reads as a
+      // download rather than a hang.
+      stage(buildScene ? 'Starting the renderer…'
+                       : 'Downloading the 3D engine — first song only…');
+      if (!buildScene) await warmScene();
+      view = buildScene($('c'));
+      padKeys();
+      window.addEventListener('resize', view.resize);
+      // A phone rotating fires orientationchange before the new size is
+      // readable, so measure again on the far side of a frame.
+      window.addEventListener('orientationchange',
+        () => setTimeout(view.resize, 250));
+    }
+    view.resize();
+  } catch (err) {
+    return fail('The 3D part will not start', err, song,
+                'Either WebGL is switched off or blocked by an extension, or the ' +
+                'renderer did not finish downloading.');
+  }
+
+  try {
+    stage('Loading the track…');
+    await loadTrack(song.src);
+  } catch (err) {
+    // Without this the panel says "Loading..." for ever and the player is
+    // left guessing whether the song is long or the page is broken.
+    return fail('Could not load that one', err, song, '');
+  }
+
+  chart = song.map.notes.map(n => ({ ...n, done: false, mesh: null }));
+  beatTimes = song.map.beats || [];
+  beatAt = 0;
+  score = 0; combo = 0; best = 0; cursor = 0; judgeFrom = 0; live = [];
+  counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
+  $('score').textContent = '0';
+  $('combo').style.opacity = '0';
+
+  if (window.Track) Track.ev('game_start', { song: song.slug });
+
+  // Skipping to the next song came from a tap, and the audio element has
+  // already been unlocked by whatever started the last one, so it can just
+  // go. If the browser disagrees, play() falls back to the Ready panel.
+  if (autoplay) { $('overlay').hidden = true; play(); return; }
+  showReady();
+}
+
+function showReady() {
+  $('overlay').hidden = false;
+  $('panel').innerHTML =
+    '<h2>Ready</h2><p>Hi-hat <b>A</b> · Snare <b>S</b> · Kick <b>space</b>, or tap the pads.</p>';
+  const go = document.createElement('button');
+  go.className = 'btn go'; go.textContent = 'Start';
+  go.addEventListener('click', () => { $('overlay').hidden = true; play(); });
+  $('panel').appendChild(go);
+  go.focus();
+}
+
+/* ---- moving between songs without leaving the game ------------------- */
+
+function skip(delta) {
+  if (!library.length) return;
+  // Carry on playing if we already were, otherwise land on Ready.
+  start((index + delta + library.length) % library.length, running);
+}
+
+function buildPicker() {
+  const box = $('pickList');
+  box.textContent = '';
+  library.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.className = 'pick'; b.type = 'button'; b.dataset.i = String(i);
+    const t = document.createElement('b'); t.textContent = s.title;
+    const sub = document.createElement('span'); sub.textContent = s.band || '';
+    b.append(t, sub);
+    b.addEventListener('click', () => start(i, running));
+    box.appendChild(b);
+  });
+  markPicker();
+}
+
+function markPicker() {
+  const box = $('pickList');
+  if (!box) return;
+  [...box.children].forEach((b, i) => b.classList.toggle('on', i === index));
+}
+
+/* ---- the clock ------------------------------------------------------- */
+/* Where in the song we are. Not the frame clock: frames stall behind a
+ * garbage collection and lie on a 120 Hz display, and a rhythm game that
+ * counts frames drifts out of the music within a verse.
+ *
+ * The truth is audio.currentTime, but it is not smooth — browsers update it
+ * in steps, and on a phone the step can be a quarter of a second, which is
+ * two judgement windows wide. So it runs as a free clock anchored to the last
+ * media reading, and every time the media clock does tick it eases the anchor
+ * towards it rather than jumping. Smooth between ticks, correct across them. */
+let anchorMedia = 0, anchorWall = 0, lastMedia = -1;
+const wall = () => performance.now() / 1000;
+function anchor(m) { anchorMedia = m; anchorWall = wall(); }
+function rawTime() { return anchorMedia + (wall() - anchorWall); }
+function songTime() { return rawTime() - offset / 1000; }
+
+/* A hook so the sync can actually be checked from outside.
+ *
+ * The bug that made the cues feel wrong was half a second of desync at the
+ * start of every song, and from outside the page it was invisible -- the
+ * progress readout only shows whole seconds, so nothing on screen disagreed
+ * with anything. The only way to stop it coming back is to be able to ask the
+ * game what time it thinks it is. Costs nothing and it is not a secret. */
+window.__drumClock = () => ({
+  song: songTime(), media: $('track').currentTime,
+  running, offset, drift: songTime() + offset / 1000 - $('track').currentTime
+});
+
+function tickClock() {
+  const a = $('track');
+  // Paused means a phone call, a locked screen, a tab in the background. The
+  // song is not moving, so neither is the clock.
+  if (a.paused) { anchor(a.currentTime); lastMedia = -1; return; }
+  const m = a.currentTime;
+  if (m === lastMedia) return;              // no new reading, keep free-running
+  lastMedia = m;
+  const err = m - rawTime();
+  if (Math.abs(err) > 0.25) anchor(m);      // a seek, a stall, a sleeping tab
+  else anchorMedia += err * 0.08;           // otherwise creep onto it, silently
+}
+
+function play() {
+  const a = $('track');
+  a.currentTime = 0;
+  a.onended = () => { if (running) finish(); };
+  lastMedia = -1;
+  // play() must be called inside the tap that started it -- a phone will not
+  // let a timer start audio.
+  const p = a.play();
+  if (p && p.catch) {
+    p.catch(() => {
+      // Almost always a browser refusing audio that did not come straight
+      // from a tap -- skipping to the next song can land here. Not a failure,
+      // just one more tap: put Ready back rather than an error panel.
+      running = false;
+      document.body.classList.remove('playing');
+      showReady();
+    });
+  }
+  waitForAudio(performance.now());
+}
+
+/* Do not start the game clock until the song is genuinely moving.
+ *
+ * This was the bug behind "the visual cues do not match the music". play()
+ * returns optimistically and the element reports itself as not paused, but
+ * currentTime sits at exactly 0 while the browser fills its buffer --
+ * measured at 312 ms on a phone profile and 687 ms on desktop. Anchoring the
+ * clock at the click meant the first half-second of every song ran that far
+ * AHEAD of the music: notes reached the pad before the sound, and then the
+ * whole thing lurched backwards when the correction finally fired. The first
+ * seconds of a song are exactly when a player decides whether a rhythm game
+ * is in time, and this one was announcing that it was not.
+ *
+ * So: wait for the media clock to actually advance, and anchor to that. */
+function waitForAudio(began) {
+  const a = $('track');
+  if (a.paused) {                       // the play() promise rejected
+    return;
+  }
+  if (a.currentTime > 0) {
+    anchor(a.currentTime);
+    running = true;
+    lastFrame = 0;
+    document.body.classList.add('playing');
+    requestAnimationFrame(loop);
+    return;
+  }
+  if (performance.now() - began > 8000) {
+    return fail('The track would not start playing', new Error(
+      'the browser reported it was playing but the position never moved'),
+      current, 'Try another song, or reload the page.');
+  }
+  requestAnimationFrame(() => waitForAudio(began));
+}
+
+function flashVerdict(name, colour) {
+  const v = $('verdict');
+  v.textContent = name;
+  v.style.color = colour;
+  v.style.opacity = '1';
+  clearTimeout(flashVerdict.t);
+  flashVerdict.t = setTimeout(() => { v.style.opacity = '0'; }, 260);
+}
+
+function strike(laneId) {
+  const lane = view.lanes.find(l => l.id === laneId);
+  if (lane) lane.flash = 1;
+  const cap = document.querySelector('.keycap.' + laneId);
+  if (cap) { cap.classList.add('down'); setTimeout(() => cap.classList.remove('down'), 90); }
+  if (!running) return;
+
+  const now = songTime();
+  // judgeFrom, not cursor. cursor is the SPAWN pointer -- it runs ahead as
+  // notes come on screen -- so searching from it looks only at notes that
+  // have not appeared yet, and every note you can actually hit sits behind
+  // it. That was worth zero points and a screen full of Miss.
+  while (judgeFrom < chart.length &&
+         (chart[judgeFrom].done || chart[judgeFrom].t < now - MISS_AFTER)) {
+    judgeFrom++;
+  }
+  const found = nearestNote(chart, laneId, now, judgeFrom);
+  if (!found) return;
+  const w = judge(found.delta);
+  if (!w) return;
+
+  found.note.done = true;
+  combo += 1;
+  best = Math.max(best, combo);
+  counts[w.name] += 1;
+  score += hitScore(w.score, combo);
+  $('score').textContent = score.toLocaleString();
+  const c = $('combo');
+  c.firstChild.textContent = String(combo);
+  c.style.opacity = combo >= 3 ? '1' : '0';
+  flashVerdict(w.name, w.name === 'Perfect' ? '#7ee7c7' : w.name === 'Good' ? '#f4b400' : '#a6adb6');
+  if (found.note.mesh) { view.freeNote(found.note.mesh); found.note.mesh = null; }
+  live = live.filter(n => n !== found.note);
+}
+
+$('calStart').addEventListener('click', calibrateStart);
+$('calStop').addEventListener('click', () => {
+  calibrateStop();
+  $('calMsg').textContent = 'Cancelled — the offset is unchanged.';
+});
+$('calTap').addEventListener('pointerdown', (e) => { e.preventDefault(); calibrateTap(); });
+
+$('quit').addEventListener('click', backToSelect);
+$('prev').addEventListener('click', () => skip(-1));
+$('next').addEventListener('click', () => skip(1));
+$('pick').addEventListener('click', () => { $('picker').hidden = false; markPicker(); });
+$('pickClose').addEventListener('click', () => { $('picker').hidden = true; });
+$('picker').addEventListener('click', (e) => {
+  if (e.target === $('picker')) $('picker').hidden = true;   // tap the backdrop
+});
+
+addEventListener('keydown', (e) => {
+  if (e.repeat) return;
+  // Calibrating takes the keyboard: space is the tap, escape gives up.
+  if (cal) {
+    if (e.key === ' ') { e.preventDefault(); calibrateTap(); return; }
+    if (e.key === 'Escape') { calibrateStop(); $('calMsg').textContent = 'Cancelled.'; return; }
+    return;
+  }
+  if ($('stage').hidden) return;
+  if (e.key === 'Escape') {
+    if (!$('picker').hidden) { $('picker').hidden = true; return; }
+    backToSelect(); return;
+  }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); skip(-1); return; }
+  if (e.key === 'ArrowRight') { e.preventDefault(); skip(1);  return; }
+  const lane = LANES.find(l => l.key === e.key.toLowerCase());
+  if (!lane) return;
+  e.preventDefault();
+  strike(lane.id);
+});
+
+/* How recently the song had a beat, 1 down to 0 over about a fifth of a
+ * second. The beats come from the chart, which got them from a tracker that
+ * followed the actual recording, so the background is in time with the record
+ * rather than with a metronome set to roughly the right number. */
+function beatPulse(now) {
+  while (beatAt < beatTimes.length && beatTimes[beatAt] <= now) beatAt++;
+  const last = beatAt > 0 ? beatTimes[beatAt - 1] : -99;
+  const since = now - last;
+  return since >= 0 && since < 0.2 ? 1 - since / 0.2 : 0;
+}
+
+function loop() {
+  if (!running) return;
+  tickClock();
+  const now = songTime();
+
+  const stamp = performance.now() / 1000;
+  const dt = lastFrame ? stamp - lastFrame : 0;
+  lastFrame = stamp;
+
+  // Bring on anything inside the lookahead.
+  while (cursor < chart.length && chart[cursor].t - now < view.LOOKAHEAD) {
+    const n = chart[cursor];
+    if (!n.done) {
+      const lane = view.lanes.find(l => l.id === n.lane);
+      if (lane) {
+        n.mesh = view.takeNote(lane.colour);
+        n.mesh.position.set(lane.x, view.NOTE_Y, 0);
+        live.push(n);
+      }
+    }
+    cursor++;
+  }
+
+  for (let i = live.length - 1; i >= 0; i--) {
+    const n = live[i];
+    const dt = n.t - now;
+    if (n.mesh) {
+      n.mesh.position.z = view.HIT_Z - dt * view.SPEED;
+      view.styleNote(n.mesh, dt);
+    }
+    if (dt < -MISS_AFTER) {
+      // Gone past. A miss breaks the combo whether or not anything was pressed.
+      if (!n.done) {
+        n.done = true;
+        counts.Miss += 1;
+        combo = 0;
+        $('combo').style.opacity = '0';
+        flashVerdict('Miss', '#ff8f8f');
+      }
+      if (n.mesh) { view.freeNote(n.mesh); n.mesh = null; }
+      live.splice(i, 1);
+    }
+  }
+
+  view.lanes.forEach((l) => {
+    l.flash = Math.max(0, l.flash - 0.08);
+    l.pad.material.emissiveIntensity = 0.22 + l.flash * 1.5;
+    l.ring.material.opacity = l.flash * 0.7;
+    const s = 1 + l.flash * 0.18;
+    l.ring.scale.set(s, s, s);
+  });
+
+  const secs = Math.max(0, now);
+  $('progress').textContent =
+    `${Math.floor(secs / 60)}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
+
+  if (view.update) view.update(dt, beatPulse(now));
+  view.renderer.render(view.scene, view.camera);
+  requestAnimationFrame(loop);
+}
+
+function finish() {
+  running = false;
+  document.body.classList.remove('playing');
+  try { $('track').pause(); } catch (e) {}
+  live.forEach(n => { if (n.mesh) view.freeNote(n.mesh); });
+  live = [];
+  const acc = accuracy(counts);
+  const grade = rank(acc);
+  $('overlay').hidden = false;
+  $('panel').innerHTML =
+    `<div class="grade">${grade}</div>
+     <h2>${score.toLocaleString()}</h2>
+     <p>${(acc * 100).toFixed(1)}% · best combo ${best}</p>
+     <div class="tallies">
+       <div><b>${counts.Perfect}</b>Perfect</div>
+       <div><b>${counts.Good}</b>Good</div>
+       <div><b>${counts.OK}</b>OK</div>
+       <div><b>${counts.Miss}</b>Miss</div>
+     </div>`;
+  // Three ways on, none of which is "scroll back up and start again".
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;justify-content:center;flex-wrap:wrap';
+  const mk = (label, cls, fn) => {
+    const b = document.createElement('button');
+    b.className = 'btn ' + cls; b.textContent = label;
+    b.addEventListener('click', fn);
+    row.appendChild(b);
+    return b;
+  };
+  const nxt = mk('Next song', 'go', () => start((index + 1) % library.length, true));
+  mk('Again', '', () => start(index, true));
+  mk('All songs', '', backToSelect);
+  $('panel').appendChild(row);
+  nxt.focus();
+  if (window.Track) {
+    Track.ev('game_finish', { grade, accuracy: Math.round(acc * 100), score, combo: best });
+  }
+}
+
+loadSongs();
+</script>
+</body>
+</html>

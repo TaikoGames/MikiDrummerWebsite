@@ -36,7 +36,7 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://www.mikidrummer.ca/game.html</loc>
+    <loc>https://www.mikidrummer.ca/drum-game/</loc>
     <lastmod>2026-09-26</lastmod>
     <priority>0.9</priority>
     <changefreq>weekly</changefreq>
@@ -44,6 +44,78 @@
       <image:loc>https://www.mikidrummer.ca/images/drum-game-play-punk-songs-browser.png</image:loc>
       <image:title>Drum Along — a free drum game in your browser</image:title>
     </image:image>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/04-skamen.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/audio2.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/bajo-el-nivel-del-mal.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/cornered-demo-lift-the-anchor.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/groenlandia.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/la-tragedia-de-los-comunes.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/landsea.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/noother.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/onthedouble.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/per-mi.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/pony-up.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/drum-game/songs/sebastopol-garcia.html</loc>
+    <lastmod>2026-09-26</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/tools.html</loc>
