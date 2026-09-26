@@ -1,0 +1,80 @@
+name: Game smoke test
+
+# Loads the live drum game in a real browser and plays a few seconds of it.
+#
+# Exists because "it stays on Loading" was reported for a page that works
+# perfectly on localhost. The difference between the repo and the deployed
+# site is the thing nobody can see from a laptop, and it is exactly where a
+# missing file, a stale deploy or a bad MIME type hides.
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Page to test"
+        default: "https://www.mikidrummer.ca/game.html"
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i --silent playwright@1.49.0 && npx playwright install --with-deps chromium
+
+      - name: Load it and play it
+        env:
+          URL: ${{ github.event.inputs.url || 'https://www.mikidrummer.ca/game.html' }}
+        run: |
+          cat > smoke.mjs <<'JS'
+          import { chromium } from 'playwright';
+          const URL_ = process.env.URL;
+          const b = await chromium.launch({ args:[
+            '--autoplay-policy=no-user-gesture-required',
+            '--use-gl=swiftshader','--enable-unsafe-swiftshader'] });
+          const p = await b.newPage();
+          const errs = [], bad = [];
+          p.on('pageerror', e => errs.push('PAGEERROR: ' + e.message));
+          p.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0,160)); });
+          p.on('response', r => { if (r.status() >= 400) bad.push(r.status() + ' ' + r.url()); });
+
+          console.log('loading', URL_);
+          await p.goto(URL_, { waitUntil: 'domcontentloaded' });
+
+          // Are the modules and the three.js bundle actually being served?
+          for (const path of ['/js/drum-game.js','/js/drum-scene.js','/vendor/three/three.module.js']) {
+            const r = await p.request.get(new URL(path, URL_).href);
+            console.log(`  ${r.status()}  ${path}  ${r.headers()['content-type'] || ''}`);
+          }
+
+          await p.waitForFunction(() => document.querySelectorAll('#songs .song').length > 0,
+                                  null, { timeout: 30000 })
+                 .catch(() => { throw new Error('the song list never appeared'); });
+          const songs = await p.$$eval('#songs .song', e => e.length);
+          console.log('songs listed:', songs);
+
+          await p.$$eval('#songs .song', els => els[0].click());
+          const t0 = Date.now(); let last = '';
+          while (Date.now() - t0 < 70000) {
+            const h = await p.$eval('#panel h2', e => e.textContent).catch(() => '');
+            const s = await p.$eval('#panel p', e => e.textContent).catch(() => '');
+            const line = `[${h}] ${s}`;
+            if (line !== last) { console.log('  ' + line); last = line; }
+            if (h === 'Ready') break;
+            if (/Could not|will not/.test(h)) throw new Error('load failed: ' + line);
+            await p.waitForTimeout(250);
+          }
+          const ready = await p.$eval('#panel h2', e => e.textContent).catch(() => '');
+          if (ready !== 'Ready') throw new Error('never reached Ready — stuck on: ' + last);
+
+          await p.click('#panel .btn');
+          await p.waitForTimeout(6000);
+          const clock = await p.$eval('#progress', e => e.textContent);
+          console.log('clock after 6s of play:', clock);
+          if (clock === '0:00') throw new Error('the song never started');
+
+          console.log('page errors:', errs.length ? errs : 'none');
+          console.log('bad responses:', bad.length ? bad : 'none');
+          await b.close();
+          if (errs.length) { console.log('\n(errors above did not block the game)'); }
+          JS
+          node smoke.mjs
