@@ -2,7 +2,7 @@
  * anything. The rules are in drum-game.js, which stays importable by a test.
  */
 import * as THREE from 'three';
-import { LANES } from './drum-game.js';
+import { LANES, LOOKAHEAD, SPEED, HIT_Z } from './drum-game.js';
 
 export function buildScene(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });

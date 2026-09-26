@@ -25,9 +25,9 @@ export const LANES = [
 
 // How far ahead a note is visible, in seconds of music. Long enough to read a
 // pattern coming, short enough that the runway is not a wall of dots.
-const LOOKAHEAD = 1.9;
-const SPEED = 9.0;              // world units per second of music
-const HIT_Z = 0;                // where the pads are
+export const LOOKAHEAD = 1.9;
+export const SPEED = 9.0;              // world units per second of music
+export const HIT_Z = 0;                // where the pads are
 
 // Judgement windows, in seconds either side. Measured against the audio
 // clock, so these are the real numbers rather than frame counts.
@@ -83,4 +83,26 @@ export function rank(acc) {
   if (acc >= 0.70) return 'C';
   if (acc >= 0.55) return 'D';
   return 'F';
+}
+
+/* The chart filename for a track.
+ *
+ * Must agree, character for character, with slugify() in
+ * tools/build_beatmaps.py, because one writes the file and the other fetches
+ * it. They disagreed once: Python kept the accent in "Sebastopol García" and
+ * this dropped it to "garc-a", so the fetch 404'd and the song quietly
+ * vanished from the menu -- no error, just eleven songs where there were
+ * twelve. Folding to ASCII first is what makes them the same function.
+ *
+ * tools/drum_game_test.mjs and the Python self-test check the same names
+ * against the same expected slugs. Testing one side against a reimplementation
+ * of the other is how the bug survived being "covered" the first time.
+ */
+export function slugify(name) {
+  return name
+    .replace(/\.[^.]+$/, '')
+    .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')   // García -> Garcia
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }

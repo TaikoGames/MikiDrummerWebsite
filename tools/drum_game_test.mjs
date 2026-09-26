@@ -8,7 +8,7 @@
  * get checked. Everything here is arithmetic that decides whether a hit
  * counts, which is the part players will notice being wrong.
  */
-import { judge, nearestNote, hitScore, accuracy, rank,
+import { judge, nearestNote, hitScore, accuracy, rank, slugify,
          WINDOWS, MISS_AFTER } from '../js/drum-game.js';
 
 let fails = 0;
@@ -98,6 +98,24 @@ for (let a = 0; a <= 1.0001; a += 0.01) {
   const i = order.indexOf(rank(Math.min(a, 1)));
   ok(i >= last, `grade goes backwards at ${a.toFixed(2)} (${rank(a)})`);
   last = i;
+}
+
+// --- slugs -------------------------------------------------------------
+// The same table appears in tools/build_beatmaps.py's self-test. One side
+// writes the chart file, the other fetches it, and testing either against a
+// reimplementation of the other is what let "Sebastopol García" 404 while
+// both tests passed.
+const SLUGS = {
+  'Sebastopol García.mp3': 'sebastopol-garcia',
+  'Per mi.mp3': 'per-mi',
+  '04 - Skamen.mp3': '04-skamen',
+  'Bajo el nivel del mal.mp3': 'bajo-el-nivel-del-mal',
+  'LandSea.mp3': 'landsea',
+  'Café Über.mp3': 'cafe-uber'
+};
+for (const [name, want] of Object.entries(SLUGS)) {
+  eq(slugify(name), want, `slug for ${name}`);
+  ok(/^[a-z0-9-]+$/.test(slugify(name)), `slug for ${name} is url-safe ascii`);
 }
 
 console.log(fails ? `${fails} check(s) FAILED` : 'drum game rules: all checks passed');

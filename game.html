@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Drum Along — Play Miki's Songs | Punk BC</title>
-<meta name="description" content="A drum rhythm game in your browser. Play along to real Vancouver punk and metal tracks — the charts are detected from the actual drum takes. Free, nothing to install.">
+<meta name="description" content="A free drum rhythm game in your browser. Play along to real Vancouver punk and metal — the charts come from the actual drum takes.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.mikidrummer.ca/game.html">
 <meta property="og:type" content="website">
@@ -144,6 +144,25 @@
        then some. Positive means the audio is behind. Saved on this device.</p>
   </div>
 
+  <div class="settings">
+    <h3>Where the notes come from</h3>
+    <p class="hint" style="font-size:13px;color:var(--mid);max-width:74ch">
+      Nobody charted these songs by hand. A script reads each recording, splits the spectrum into
+      the bands a drum kit lives in — the kick down at the bottom, the snare in the crack around
+      1.5&nbsp;kHz to 4&nbsp;kHz, the cymbals above 6&nbsp;kHz — and looks for the moment energy
+      jumps in each one. That is an onset, and an onset is a drum hit. So the notes coming down
+      the lanes are the parts Miki actually played on the record, not somebody's transcription
+      of them.
+    </p>
+    <p class="hint" style="font-size:13px;color:var(--mid);max-width:74ch;margin-top:10px">
+      It is not a perfect listener, and it is not pretending to be. A bass guitar playing eighths
+      lives in the same octave as a kick drum, so the low band gets an opinion about notes that
+      were never played with a foot, and each lane is capped to keep a chart playable rather than
+      literal. Twelve songs are charted so far, across Bound By None, Dead Fast, Diera, Lift the
+      Anchor and Granite. Adding another is one workflow run.
+    </p>
+  </div>
+
   <footer>
     A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>.
     One of the <a href="/tools.html">free tools</a> for bands and drummers.
@@ -157,14 +176,14 @@
 <script type="module">
 import * as THREE from 'three';
 import { LANES, WINDOWS, MISS_AFTER, judge, nearestNote, hitScore,
-         accuracy, rank } from '/js/drum-game.js';
+         accuracy, rank, slugify } from '/js/drum-game.js';
 import { buildScene } from '/js/drum-scene.js';
 
 const $ = (id) => document.getElementById(id);
 const OFFSET_KEY = 'drumGame:offset';
 
 let view, audioCtx, buffer, source, chart = null;
-let startedAt = 0, running = false, cursor = 0;
+let startedAt = 0, running = false, cursor = 0, judgeFrom = 0;
 let score = 0, combo = 0, best = 0;
 let counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
 let live = [];                       // notes currently on screen
@@ -201,8 +220,7 @@ async function loadSongs() {
   // Only the ones that have a chart. A song in the list that cannot be played
   // is worse than a shorter list.
   const checked = await Promise.all(songs.map(async (s) => {
-    const slug = s.src.split('/').pop().replace(/\.[^.]+$/, '')
-                  .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const slug = slugify(s.src.split('/').pop());
     try {
       const r = await fetch(`/data/beatmaps/${slug}.json`, { method: 'GET', cache: 'no-store' });
       if (!r.ok) return null;
@@ -267,11 +285,28 @@ async function start(song) {
   audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') await audioCtx.resume();
 
-  const bytes = await (await fetch(song.src)).arrayBuffer();
-  buffer = await audioCtx.decodeAudioData(bytes);
+  try {
+    const r = await fetch(song.src);
+    if (!r.ok) throw new Error('the audio file came back ' + r.status);
+    buffer = await audioCtx.decodeAudioData(await r.arrayBuffer());
+  } catch (err) {
+    // Without this the panel says "Loading..." for ever and the player is
+    // left guessing whether the song is long or the page is broken.
+    $('panel').innerHTML = '<h2>Could not load that one</h2><p></p>';
+    $('panel').querySelector('p').textContent =
+      (err && err.message ? err.message : String(err)) + '.';
+    const back = document.createElement('button');
+    back.className = 'btn'; back.textContent = 'Pick another';
+    back.addEventListener('click', () => {
+      $('overlay').hidden = true; $('stage').hidden = true; $('select').hidden = false;
+    });
+    $('panel').appendChild(back);
+    if (window.Track) Track.ev('game_load_failed', { song: song.slug });
+    return;
+  }
 
   chart = song.map.notes.map(n => ({ ...n, done: false, mesh: null }));
-  score = 0; combo = 0; best = 0; cursor = 0; live = [];
+  score = 0; combo = 0; best = 0; cursor = 0; judgeFrom = 0; live = [];
   counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
   $('score').textContent = '0';
 
@@ -320,7 +355,15 @@ function strike(laneId) {
   if (!running) return;
 
   const now = songTime();
-  const found = nearestNote(chart, laneId, now, cursor);
+  // judgeFrom, not cursor. cursor is the SPAWN pointer -- it runs ahead as
+  // notes come on screen -- so searching from it looks only at notes that
+  // have not appeared yet, and every note you can actually hit sits behind
+  // it. That was worth zero points and a screen full of Miss.
+  while (judgeFrom < chart.length &&
+         (chart[judgeFrom].done || chart[judgeFrom].t < now - MISS_AFTER)) {
+    judgeFrom++;
+  }
+  const found = nearestNote(chart, laneId, now, judgeFrom);
   if (!found) return;
   const w = judge(found.delta);
   if (!w) return;

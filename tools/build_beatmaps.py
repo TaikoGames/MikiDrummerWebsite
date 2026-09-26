@@ -306,22 +306,26 @@ def self_test():
     ok(out == sorted(out, key=lambda n: n["t"]), "still in time order after thinning")
     ok(thin([{"t": 1, "lane": "kick"}], 10.0) == [{"t": 1, "lane": "kick"}], "sparse chart untouched")
 
-    # Slugs must match what the page asks for: /[^a-z0-9]+/ on a lowercased
-    # name. Anything Python keeps and JavaScript drops is a silent 404.
-    import re as _re
-    for name in ["Sebastopol García", "Per mi", "04 - Skamen", "Bajo el nivel del mal",
-                 "LandSea", "Café Über"]:
-        mine = slugify(name)
-        theirs = _re.sub(r"[^a-z0-9]+", "-",
-                         __import__("unicodedata").normalize("NFKD", name)
-                         .encode("ascii", "ignore").decode("ascii").lower()).strip("-")
-        ok(mine == theirs, "slug for %r: %r vs the page's %r" % (name, mine, theirs))
-        ok(_re.fullmatch(r"[a-z0-9-]+", mine) is not None,
-           "slug %r is url-safe ascii" % mine)
+    # The same table as tools/drum_game_test.mjs. Both sides assert against
+    # these literal strings rather than against each other's logic -- checking
+    # one implementation against a copy of the other is exactly how
+    # "Sebastopol Garcia" 404'd while both tests were green.
+    SLUGS = {
+        "Sebastopol García.mp3": "sebastopol-garcia",
+        "Per mi.mp3": "per-mi",
+        "04 - Skamen.mp3": "04-skamen",
+        "Bajo el nivel del mal.mp3": "bajo-el-nivel-del-mal",
+        "LandSea.mp3": "landsea",
+        "Café Über.mp3": "cafe-uber",
+    }
+    import os.path as _p
+    for name, want in SLUGS.items():
+        got = slugify(_p.splitext(name)[0])
+        ok(got == want, "slug for %s: got %r want %r" % (name, got, want))
 
     for f in fails:
         print("FAIL", f)
-    print("%d checks, %d failed" % (22, len(fails)))
+    print("%d checks, %d failed" % (16, len(fails)))
     return 1 if fails else 0
 
 
