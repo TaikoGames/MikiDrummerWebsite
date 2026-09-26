@@ -142,6 +142,20 @@
       "first_seen": "2026-09-10"
     },
     {
+      "band": "The Getmines with Like Whatever and Mister Pets @ Lanalous",
+      "date": "2026-10-02",
+      "time": "",
+      "venue": "LanaLou's",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://gigpit.ca/shows/event:lPbyZJ-ioQ0",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-09-26"
+    },
+    {
       "band": "Jonny Bones Movie Marathon Memorial @ Rickshaw",
       "date": "2026-10-02",
       "time": "01:00",
@@ -410,7 +424,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1112
+    "vancouver-punk-calendar": 1113
   },
-  "updated": "2026-09-25"
+  "updated": "2026-09-26"
 }
