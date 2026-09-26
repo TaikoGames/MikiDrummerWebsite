@@ -3,42 +3,6 @@
   "shows": [
     {
       "band": "The Growlers",
-      "date": "2026-09-25",
-      "time": "",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/the-growlers/1241521034738430/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
-      "band": "Covenant Festival XI — Night Two",
-      "date": "2026-09-25",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$110",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Black Metal",
-      "notes": "Ruim, Volahn, Egregore and more. 3-day pass $280. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
-    },
-    {
-      "band": "Ensiferum",
-      "date": "2026-09-25",
-      "time": "19:00",
-      "venue": "The WISE Hall",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://orangetickets.ca/detalles_evento.php?id_evento=2221",
-      "genre": "Folk Metal",
-      "notes": "With Firewind & Atavistia",
-      "image": "https://ensiferum.com/_assets/band.CxYa1rmZ_Z2s8fxM.webp"
-    },
-    {
-      "band": "The Growlers",
       "date": "2026-09-26",
       "time": "",
       "venue": "The Pearl",
