@@ -67,6 +67,25 @@ MAX_NOTES_PER_SEC = 9.0
 DOMINANCE = {"kick": 0.18, "snare": 0.05, "hat": 0.04}
 
 
+def slugify(name):
+    """The filename a browser will ask for.
+
+    Folds to ASCII first, which is the whole point. Python's isalnum() counts
+    "í" as alphanumeric and keeps it; the page builds its slug with
+    /[^a-z0-9]+/ and does not. So "Sebastopol García" was written as
+    sebastopol-garcía.json and fetched as sebastopol-garc-a.json, the fetch
+    404'd, and the song quietly disappeared from the menu with no error
+    anywhere -- one of twelve, which is exactly the kind of gap nobody counts.
+    """
+    import unicodedata
+    ascii_name = (unicodedata.normalize("NFKD", name)
+                  .encode("ascii", "ignore").decode("ascii"))
+    slug = "".join(c if c.isalnum() else "-" for c in ascii_name.lower()).strip("-")
+    while "--" in slug:
+        slug = slug.replace("--", "-")
+    return slug
+
+
 def decode(path, sr=SR):
     """MP3 in, mono float array out, via ffmpeg because nothing in the
     standard library reads MP3."""
@@ -287,9 +306,22 @@ def self_test():
     ok(out == sorted(out, key=lambda n: n["t"]), "still in time order after thinning")
     ok(thin([{"t": 1, "lane": "kick"}], 10.0) == [{"t": 1, "lane": "kick"}], "sparse chart untouched")
 
+    # Slugs must match what the page asks for: /[^a-z0-9]+/ on a lowercased
+    # name. Anything Python keeps and JavaScript drops is a silent 404.
+    import re as _re
+    for name in ["Sebastopol García", "Per mi", "04 - Skamen", "Bajo el nivel del mal",
+                 "LandSea", "Café Über"]:
+        mine = slugify(name)
+        theirs = _re.sub(r"[^a-z0-9]+", "-",
+                         __import__("unicodedata").normalize("NFKD", name)
+                         .encode("ascii", "ignore").decode("ascii").lower()).strip("-")
+        ok(mine == theirs, "slug for %r: %r vs the page's %r" % (name, mine, theirs))
+        ok(_re.fullmatch(r"[a-z0-9-]+", mine) is not None,
+           "slug %r is url-safe ascii" % mine)
+
     for f in fails:
         print("FAIL", f)
-    print("%d checks, %d failed" % (10, len(fails)))
+    print("%d checks, %d failed" % (22, len(fails)))
     return 1 if fails else 0
 
 
@@ -302,10 +334,7 @@ def main():
         return 2
     os.makedirs(OUT, exist_ok=True)
     for src in srcs:
-        slug = os.path.splitext(os.path.basename(src))[0]
-        slug = "".join(c if c.isalnum() else "-" for c in slug.lower()).strip("-")
-        while "--" in slug:
-            slug = slug.replace("--", "-")
+        slug = slugify(os.path.splitext(os.path.basename(src))[0])
         data = chart(os.path.join(ROOT, src) if not os.path.isabs(src) else src)
         data["audio"] = "/" + src.replace("\\", "/")
         data["slug"] = slug

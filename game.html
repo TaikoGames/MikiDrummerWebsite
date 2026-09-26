@@ -157,7 +157,8 @@
 <script type="module">
 import * as THREE from 'three';
 import { LANES, WINDOWS, MISS_AFTER, judge, nearestNote, hitScore,
-         accuracy, rank, buildScene } from '/js/drum-game.js';
+         accuracy, rank } from '/js/drum-game.js';
+import { buildScene } from '/js/drum-scene.js';
 
 const $ = (id) => document.getElementById(id);
 const OFFSET_KEY = 'drumGame:offset';
