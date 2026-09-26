@@ -11,6 +11,37 @@
   },
   "bands": [
     {
+      "band": "Aemia",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "aemia__",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://aemia.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/aemia__",
+          "found": "profile"
+        },
+        {
+          "name": "Linktree",
+          "url": "https://linktr.ee/aemia",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.aemia.se",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Alien Boys",
       "checked": "2026-09-10",
       "email": "alienboysvancouver@gmail.com",
@@ -233,6 +264,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Black Moon Cult",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://blackmooncult.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Blackwater Holylight",
@@ -494,6 +541,22 @@
       "by": "auto"
     },
     {
+      "band": "Charles Mansion",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://charlesmansion.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Cheap Flavor",
       "checked": "2026-09-13",
       "email": "",
@@ -513,6 +576,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Circle of Titans. Invisible Orange presents",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://circleoftitansinvisibleorangepresents.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Corner Boys",
@@ -984,6 +1063,22 @@
       "instagram": ""
     },
     {
+      "band": "ENDR",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://endr.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Ensiferum",
       "checked": "2026-09-15",
       "email": "",
@@ -1224,6 +1319,48 @@
       "instagram": ""
     },
     {
+      "band": "Goya",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://goya.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43296523-kalel-no-at-transplants-brewing-company?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "GRRRizzly",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://grrrizzly.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43423675-grrrizzly-at-astoria-pub?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Guiltless",
       "checked": "2026-09-15",
       "email": "info@evilgreed.net",
@@ -1354,6 +1491,22 @@
       "by": "auto"
     },
     {
+      "band": "Incompleteness",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://incompleteness.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Infinexhuma",
       "checked": "2026-09-18",
       "email": "",
@@ -1472,6 +1625,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Kal-El",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://kalel.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Kids on Fire",
@@ -1874,6 +2043,22 @@
       "instagram": "nightcourtpunk"
     },
     {
+      "band": "No Faith In Fortune",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://nofaithinfortune.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Out Of Order",
       "checked": "2026-09-13",
       "email": "",
@@ -2089,6 +2274,32 @@
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Salem Trials",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "salemtrialsband",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://salemtrials.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://instagram.com/salemtrialsband",
+          "found": "profile"
+        },
+        {
+          "name": "Linktree",
+          "url": "https://linktr.ee/salemtrialsband",
+          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2355,6 +2566,22 @@
         {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Ten Days Late",
+      "checked": "2026-09-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://tendayslate.bandcamp.com/",
           "found": "form"
         }
       ],
