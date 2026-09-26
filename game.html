@@ -272,6 +272,25 @@ function padKeys() {
   });
 }
 
+function fail(headline, err, song, extra) {
+  const msg = (err && err.message ? err.message : String(err));
+  $('overlay').hidden = false;
+  $('panel').innerHTML = '<h2></h2><p></p>';
+  $('panel').querySelector('h2').textContent = headline;
+  $('panel').querySelector('p').textContent = msg + '. ' + (extra || '');
+  const back = document.createElement('button');
+  back.className = 'btn'; back.textContent = 'Pick another';
+  back.addEventListener('click', () => {
+    $('overlay').hidden = true; $('stage').hidden = true; $('select').hidden = false;
+  });
+  $('panel').appendChild(back);
+  // So a failure that only happens on somebody else's phone still shows up.
+  if (window.Track) {
+    Track.ev('game_load_failed', { song: song && song.slug, reason: msg.slice(0, 90) });
+  }
+  console.error('[drum game]', headline, err);
+}
+
 async function start(song) {
   $('select').hidden = true;
   $('stage').hidden = false;
@@ -279,30 +298,54 @@ async function start(song) {
   $('panel').innerHTML = '<h2>Loading…</h2><p>Decoding the track.</p>';
   $('nowPlaying').textContent = song.title + (song.band ? ' · ' + song.band : '');
 
-  if (!view) { view = buildScene($('c')); padKeys(); window.addEventListener('resize', view.resize); }
-  view.resize();
-
-  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') await audioCtx.resume();
+  // Every stage says what it is doing, and every stage can fail out loud.
+  // The first version put only the fetch and the decode inside the try, so
+  // anything that went wrong before them -- a browser with no WebGL, an audio
+  // context that would not start -- left "Decoding the track." on screen for
+  // ever with nothing in the console and no way to tell which step had died.
+  function stage(msg) {
+    const p = $('panel').querySelector('p');
+    if (p) p.textContent = msg;
+  }
 
   try {
+    if (!view) {
+      stage('Starting the renderer…');
+      view = buildScene($('c'));
+      padKeys();
+      window.addEventListener('resize', view.resize);
+    }
+    view.resize();
+  } catch (err) {
+    return fail('This browser will not give the page a 3D canvas', err, song,
+                'WebGL may be switched off, or blocked by an extension.');
+  }
+
+  try {
+    stage('Waking the audio…');
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+  } catch (err) {
+    return fail('The browser would not start audio', err, song, '');
+  }
+
+  try {
+    stage('Fetching the track…');
     const r = await fetch(song.src);
     if (!r.ok) throw new Error('the audio file came back ' + r.status);
-    buffer = await audioCtx.decodeAudioData(await r.arrayBuffer());
+    const bytes = await r.arrayBuffer();
+    stage('Decoding ' + (bytes.byteLength / 1048576).toFixed(1) + ' MB…');
+    // decodeAudioData can sit for ever on a file a browser dislikes rather
+    // than rejecting, which is indistinguishable from a hang. Give it a limit.
+    buffer = await Promise.race([
+      audioCtx.decodeAudioData(bytes),
+      new Promise((_, rej) => setTimeout(
+        () => rej(new Error('decoding took more than 45 seconds')), 45000))
+    ]);
   } catch (err) {
     // Without this the panel says "Loading..." for ever and the player is
     // left guessing whether the song is long or the page is broken.
-    $('panel').innerHTML = '<h2>Could not load that one</h2><p></p>';
-    $('panel').querySelector('p').textContent =
-      (err && err.message ? err.message : String(err)) + '.';
-    const back = document.createElement('button');
-    back.className = 'btn'; back.textContent = 'Pick another';
-    back.addEventListener('click', () => {
-      $('overlay').hidden = true; $('stage').hidden = true; $('select').hidden = false;
-    });
-    $('panel').appendChild(back);
-    if (window.Track) Track.ev('game_load_failed', { song: song.slug });
-    return;
+    return fail('Could not load that one', err, song, '');
   }
 
   chart = song.map.notes.map(n => ({ ...n, done: false, mesh: null }));
