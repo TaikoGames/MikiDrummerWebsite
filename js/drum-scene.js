@@ -37,6 +37,26 @@ const FOG_NEAR = 14, FOG_FAR = 44;
 const GRID_STEP = 3.0;        // metres between floor lines
 const GRID_BACK = 60;         // how far the floor grid reaches
 
+/* The vertical stack at the hit line. Nothing here may overlap anything else,
+ * which is not a style preference -- two solid cylinders sharing a range of y
+ * interpenetrate, and what that looks like is one disc emerging from inside
+ * another with a seam across it.
+ *
+ *   runway  -0.02        rails  -0.015
+ *   pad      0.00 .. 0.06
+ *   ring     0.07
+ *   notes    0.10 .. 0.24   (NOTE_Y +/- NOTE_H/2)
+ *
+ * The judgement line sits at NOTE_Y exactly, and draws with depth testing
+ * off. Both of those matter. At the note's own height there is no parallax:
+ * the camera looks down at about 25 degrees, so a line even 0.1 below the
+ * notes would make them appear to cross it 0.2 units early -- 23 ms at this
+ * speed, half a Perfect window, for a player reading the screen. And with
+ * depth testing off it is drawn over the notes rather than through them, so
+ * being level with them costs nothing. */
+export const NOTE_Y = 0.17;
+const NOTE_H = 0.14;
+
 /* A vertical gradient for the sky, drawn once into a 2-pixel-wide canvas.
  * Cheaper than a shader, cheaper than an image, and it is the difference
  * between a game in a room and a game in a void. */
@@ -107,15 +127,27 @@ export function buildScene(canvas) {
     rail2.position.x = lane.x + 0.97;
     scene.add(rail2);
 
-    // The pad: a squat cylinder, lit from inside when struck.
+    // The pad: a low disc set into the runway, lit from inside when struck.
+    //
+    // It used to be a squat cylinder 0.22 tall centred at y=0.06, so it
+    // occupied y from -0.05 to +0.17 while the notes occupied 0.06 to 0.22 --
+    // the two solids INTERPENETRATED by 0.11 for the whole 1.48 units either
+    // side of the line, which at this speed is 164 ms before and after. What
+    // you saw was a smaller disc emerging from inside a larger one with a hard
+    // intersection seam across it. Everything at the hit line now stacks
+    // without touching: pad 0.00-0.06, ring 0.07, notes 0.10-0.24.
+    // Dark at rest, lane-coloured only when struck. A pad painted the same
+    // bright colour as the notes means the moment a note arrives you have two
+    // same-coloured discs stacked on each other and no way to tell the thing
+    // that moves from the thing that does not.
     const pad = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.82, 0.86, 0.22, 40),
+      new THREE.CylinderGeometry(0.78, 0.82, 0.06, 40),
       new THREE.MeshStandardMaterial({
-        color: lane.colour, emissive: lane.colour,
-        emissiveIntensity: 0.12, roughness: 0.5, metalness: 0.1
+        color: 0x191c20, emissive: lane.colour,
+        emissiveIntensity: 0.22, roughness: 0.6, metalness: 0.1
       })
     );
-    pad.position.set(lane.x, 0.06, HIT_Z);
+    pad.position.set(lane.x, 0.03, HIT_Z);
     scene.add(pad);
 
     // A ring that flares on a hit, so the feedback reads even when the pad is
@@ -132,7 +164,7 @@ export function buildScene(canvas) {
       new THREE.MeshBasicMaterial({ color: lane.colour, transparent: true, opacity: 0 })
     );
     ring.rotation.x = -Math.PI / 2;
-    ring.position.set(lane.x, 0.08, HIT_Z);
+    ring.position.set(lane.x, 0.07, HIT_Z);
     scene.add(ring);
 
     return { ...lane, mesh, pad, ring, rails: [rail, rail2], flash: 0 };
@@ -182,22 +214,25 @@ export function buildScene(canvas) {
   // three lanes, so a note arriving is a note crossing something rather than
   // a note being vaguely near a circle.
   const hitLine = new THREE.Mesh(
-    new THREE.PlaneGeometry(7.4, 0.13),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true,
-                                  opacity: 0.82, fog: false, depthWrite: false })
+    new THREE.PlaneGeometry(7.4, 0.11),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85,
+                                  fog: false, depthWrite: false, depthTest: false })
   );
   hitLine.rotation.x = -Math.PI / 2;
-  hitLine.position.set(0, 0.17, HIT_Z);
+  hitLine.position.set(0, NOTE_Y, HIT_Z);
+  hitLine.renderOrder = 10;
   scene.add(hitLine);
 
-  // A soft glow under it, so it reads on a bright phone screen outdoors.
+  // A soft glow under it, so it reads on a bright phone screen outdoors. This
+  // one keeps its depth test -- it belongs to the floor, and notes passing
+  // over it should be in front of it.
   const hitGlow = new THREE.Mesh(
     new THREE.PlaneGeometry(7.4, 1.5),
     new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true,
                                   opacity: 0.07, fog: false, depthWrite: false })
   );
   hitGlow.rotation.x = -Math.PI / 2;
-  hitGlow.position.set(0, 0.03, HIT_Z);
+  hitGlow.position.set(0, 0.008, HIT_Z);
   scene.add(hitGlow);
 
   // A bar across the far end that flares on every beat of the song. The
@@ -222,15 +257,36 @@ export function buildScene(canvas) {
   const pool = [];
   function takeNote(colour) {
     const n = pool.pop() || new THREE.Mesh(
-      new THREE.CylinderGeometry(0.62, 0.62, 0.16, small ? 18 : 28),
-      new THREE.MeshStandardMaterial({ roughness: 0.35, metalness: 0.15 })
+      new THREE.CylinderGeometry(0.62, 0.62, NOTE_H, small ? 18 : 28),
+      new THREE.MeshStandardMaterial({ roughness: 0.35, metalness: 0.15,
+                                       transparent: true })
     );
     n.material.color.setHex(colour);
     n.material.emissive.setHex(colour);
     n.material.emissiveIntensity = 0.45;
+    n.material.opacity = 1;
+    n.scale.set(1, 1, 1);          // pooled: whatever the last note faded to
     n.visible = true;
     scene.add(n);
     return n;
+  }
+
+  /* How a note looks given how far it is from the line, in seconds.
+   *
+   * Past the line it shrinks away fast instead of sailing on toward the
+   * camera. A note that carries on past the pads grows with perspective until
+   * it is the biggest thing on screen and sitting directly in front of the
+   * target you are trying to read -- so the moment you most need to see the
+   * pad is the moment a missed note is covering it. */
+  function styleNote(mesh, dt) {
+    if (dt >= 0) {
+      if (mesh.material.opacity !== 1) { mesh.material.opacity = 1; mesh.scale.set(1, 1, 1); }
+      return;
+    }
+    const k = Math.max(0, 1 + dt / 0.16);      // 1 at the line, 0 just past it
+    mesh.material.opacity = k;
+    const s = 0.45 + k * 0.55;
+    mesh.scale.set(s, 1, s);
   }
   function freeNote(mesh) {
     scene.remove(mesh);
@@ -308,6 +364,6 @@ export function buildScene(canvas) {
     camera.updateProjectionMatrix();
   }
 
-  return { renderer, scene, camera, lanes, takeNote, freeNote, resize, update,
-           SPEED, LOOKAHEAD, HIT_Z };
+  return { renderer, scene, camera, lanes, takeNote, freeNote, styleNote, resize, update,
+           SPEED, LOOKAHEAD, HIT_Z, NOTE_Y };
 }

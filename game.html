@@ -1190,7 +1190,7 @@ function loop() {
       const lane = view.lanes.find(l => l.id === n.lane);
       if (lane) {
         n.mesh = view.takeNote(lane.colour);
-        n.mesh.position.set(lane.x, 0.14, 0);
+        n.mesh.position.set(lane.x, view.NOTE_Y, 0);
         live.push(n);
       }
     }
@@ -1200,7 +1200,10 @@ function loop() {
   for (let i = live.length - 1; i >= 0; i--) {
     const n = live[i];
     const dt = n.t - now;
-    if (n.mesh) n.mesh.position.z = view.HIT_Z - dt * view.SPEED;
+    if (n.mesh) {
+      n.mesh.position.z = view.HIT_Z - dt * view.SPEED;
+      view.styleNote(n.mesh, dt);
+    }
     if (dt < -MISS_AFTER) {
       // Gone past. A miss breaks the combo whether or not anything was pressed.
       if (!n.done) {
@@ -1217,7 +1220,7 @@ function loop() {
 
   view.lanes.forEach((l) => {
     l.flash = Math.max(0, l.flash - 0.08);
-    l.pad.material.emissiveIntensity = 0.12 + l.flash * 0.9;
+    l.pad.material.emissiveIntensity = 0.22 + l.flash * 1.5;
     l.ring.material.opacity = l.flash * 0.7;
     const s = 1 + l.flash * 0.18;
     l.ring.scale.set(s, s, s);
