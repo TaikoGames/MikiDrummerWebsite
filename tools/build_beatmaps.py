@@ -138,12 +138,26 @@ SNAP = 0.30
 # Nothing human plays two of the same limb closer than this.
 MIN_GAP = {"kick": 0.100, "snare": 0.100, "hat": 0.075}
 
-# Per lane, notes per second. These are a backstop now rather than the thing
-# that shapes the chart -- the grid does that -- and on real songs they
-# usually do not bind at all. If they start binding on every track again,
-# that is the same warning sign as last time.
-PER_LANE_MAX = {"kick": 3.2, "snare": 3.2, "hat": 4.2}
-MAX_NOTES_PER_SEC = 7.5
+# Each band also detects on its own, to catch the limbs that never win the
+# full-mix argmax. Sensitivity and a floor on how far that band has to have
+# risen, per lane, because they are not equally clean: the cymbal band is the
+# quietest and the one with least else living in it, the kick band is shared
+# with the bass guitar.
+BAND_SENS = {"kick": 1.7, "snare": 1.7, "hat": 1.5}
+BAND_Z = {"kick": 2.2, "snare": 2.0, "hat": 1.7}
+
+# Per lane, notes per BEAT rather than per second, because that is the unit
+# the music is in -- a cap in seconds means a fast song gets a thinner part
+# than a slow one for no musical reason.
+#
+# These are what hold cross-talk down now that every band detects on its own.
+# A snare puts energy in the cymbal band and a bass guitar puts it in the kick
+# band, so all three bands will happily report more than a drummer played.
+# The numbers are what the limbs can actually do: eighths on the hat, a
+# backbeat plus fills on the snare, and a kick that can double up but is not
+# playing sixteenths for three minutes.
+PER_LANE_PER_BEAT = {"kick": 1.5, "snare": 1.2, "hat": 2.2}
+MAX_NOTES_PER_BEAT = 3.6
 
 
 def slugify(name):
@@ -409,7 +423,7 @@ def enforce_gap(notes):
     return sorted(out, key=lambda n: n["t"])
 
 
-def thin(notes, duration):
+def thin(notes, duration, beats=None):
     """Drop notes until the chart is playable -- weakest METRICAL position
     first, not every Nth note.
 
@@ -421,6 +435,9 @@ def thin(notes, duration):
     """
     if duration <= 0 or not notes:
         return notes
+    # Budgets are per beat. A cap in seconds gives a fast song a thinner drum
+    # part than a slow one, which is backwards.
+    beats = beats if beats else max(1, duration * 2.0)
     by_lane = {}
     for n in notes:
         by_lane.setdefault(n["lane"], []).append(n)
@@ -434,9 +451,9 @@ def thin(notes, duration):
         return [n for n in row if id(n) not in drop]
 
     for lane, row in by_lane.items():
-        by_lane[lane] = trim(row, max(1, int(duration * PER_LANE_MAX.get(lane, 4.0))))
+        by_lane[lane] = trim(row, max(1, int(beats * PER_LANE_PER_BEAT.get(lane, 2.0))))
 
-    total_budget = max(1, int(duration * MAX_NOTES_PER_SEC))
+    total_budget = max(1, int(beats * MAX_NOTES_PER_BEAT))
     out = [n for row in by_lane.values() for n in row]
     while len(out) > total_budget:
         lane = max(by_lane, key=lambda k: len(by_lane[k]))
@@ -461,41 +478,71 @@ def chart(path):
     beat_frames = track_beats(env, lag)
     grid, weight = build_grid(beat_frames)
 
-    onsets = peak_pick(env, fps)
     notes = []
-    if len(grid) > 1 and len(onsets):
+    if len(grid) > 1:
         slot = float(np.median(np.diff(grid)))
-        t = np.array([frame_time(i) for i in onsets])
-        j = np.clip(np.searchsorted(grid, t), 1, len(grid) - 1)
-        j = np.where(np.abs(grid[j] - t) < np.abs(grid[j - 1] - t), j, j - 1)
-        on_grid = np.abs(grid[j] - t) < slot * SNAP
-
-        # Which band rose most, each measured in its own units.
         Z = np.stack([zscore(superflux(S, lo, hi), fps) for _, lo, hi in BANDS])
 
-        # One note per lane per slot: the strongest onset in it wins.
+        def to_slots(frames):
+            """Frame indices -> the grid slots they belong to, dropping any
+            that do not land near one."""
+            if not len(frames):
+                return np.array([], int), np.array([], int)
+            t = np.array([frame_time(i) for i in frames])
+            j = np.clip(np.searchsorted(grid, t), 1, len(grid) - 1)
+            j = np.where(np.abs(grid[j] - t) < np.abs(grid[j - 1] - t), j, j - 1)
+            ok = np.abs(grid[j] - t) < slot * SNAP
+            return np.asarray(frames)[ok], j[ok]
+
+        # One note per lane per slot; the strongest onset in a slot wins it.
         best = {}
-        for k, keep in enumerate(on_grid):
-            if not keep:
-                continue
-            i = int(onsets[k])
-            z = Z[:, i]
+
+        def offer(lane, frame, sl, strength):
+            key = (lane, int(sl))
+            if key not in best or strength > best[key][1]:
+                best[key] = (int(frame), float(strength))
+
+        # -- 1. The full mix, assigned to whichever band rose most ----------
+        # This is the accurate part: independently checked, 95% of what it
+        # produces lands within 45 ms of a real transient in the recording.
+        # It is also, on its own, far too sparse -- see below.
+        mix_f, mix_j = to_slots(peak_pick(env, fps))
+        for f, sl in zip(mix_f, mix_j):
+            z = Z[:, f]
             top = int(np.argmax(z))
             if z[top] < DROP_Z:
                 continue                       # nothing here we can name
-            lanes = [BANDS[top][0]]
+            offer(BANDS[top][0], f, sl, env[f])
             if top != 0 and z[0] >= KICK_Z:    # a kick under a cymbal
-                lanes.append("kick")
-            for lane in lanes:
-                key = (lane, int(j[k]))
-                if key not in best or env[i] > env[best[key][0]]:
-                    best[key] = (i, int(j[k]))
-        for (lane, sl), (i, _) in best.items():
+                offer("kick", f, sl, env[f])
+
+        # -- 2. Each band on its own ----------------------------------------
+        # Taking only the band that rose MOST gives one note per moment, and a
+        # drum kit is four limbs. The hi-hat is the limb that suffers: it is
+        # never the loudest thing in a punk mix, so it only ever won a moment
+        # where nothing else was playing. Measured, its lane stuck at exactly
+        # 173 notes for a three minute song no matter how far the detector's
+        # sensitivity was turned up -- 0.49 per beat, against the two per beat
+        # a hi-hat actually plays. The timekeeping, which is most of what you
+        # hear and all of what a rhythm game is read against, was missing.
+        #
+        # So each band also gets to raise its own onsets. Cross-talk is real
+        # (a snare puts energy in the cymbal band) and is what the per-lane
+        # budgets below are for.
+        for bi, (lane, lo, hi) in enumerate(BANDS):
+            bf = superflux(S, lo, hi)
+            f2, j2 = to_slots(peak_pick(bf, fps, sensitivity=BAND_SENS[lane],
+                                        min_gap=MIN_GAP[lane] * 0.7))
+            for f, sl in zip(f2, j2):
+                if Z[bi, f] >= BAND_Z[lane]:
+                    offer(lane, f, sl, bf[f])
+
+        for (lane, sl), (f, strength) in best.items():
             notes.append({"t": round(float(grid[sl]), 4), "lane": lane,
-                          "w": int(weight[sl]), "s": float(env[i])})
+                          "w": int(weight[sl]), "s": float(strength)})
 
     notes = enforce_gap(notes)
-    notes = thin(notes, duration)
+    notes = thin(notes, duration, beats=len(beat_frames))
     clean = [{"t": n["t"], "lane": n["lane"]} for n in sorted(notes, key=lambda n: n["t"])
              if n["t"] >= 0]
     return {
@@ -659,9 +706,9 @@ def self_test():
     dense = []
     for i in range(400):
         dense.append({"t": i * 0.125, "lane": "hat", "w": [0, 3, 2, 3][i % 4], "s": 1.0})
-    out = thin(list(dense), 10.0)
+    out = thin(list(dense), 10.0, beats=20)
     checks += 2
-    ok(len(out) <= int(10.0 * PER_LANE_MAX["hat"]) + 1,
+    ok(len(out) <= int(20 * PER_LANE_PER_BEAT["hat"]) + 1,
        "hats thinned to their lane budget (%d)" % len(out))
     kept_w = [n["w"] for n in out]
     ok(kept_w.count(0) >= kept_w.count(3),
@@ -671,12 +718,12 @@ def self_test():
     # A flooded kick lane must not be paid for out of the hi-hats.
     mixed = ([{"t": i * 0.05, "lane": "kick", "w": 3, "s": 1.0} for i in range(400)] +
              [{"t": i * 0.05 + 0.02, "lane": "hat", "w": 1, "s": 1.0} for i in range(400)])
-    out2 = thin(sorted(mixed, key=lambda n: n["t"]), 20.0)
+    out2 = thin(sorted(mixed, key=lambda n: n["t"]), 20.0, beats=40)
     hats = sum(1 for n in out2 if n["lane"] == "hat")
     kicks = sum(1 for n in out2 if n["lane"] == "kick")
     checks += 3
     ok(hats >= 40, "hats survive a flooded kick lane (%d hats, %d kicks)" % (hats, kicks))
-    ok(kicks <= int(20.0 * PER_LANE_MAX["kick"]) + 1, "kick lane capped (%d)" % kicks)
+    ok(kicks <= int(40 * PER_LANE_PER_BEAT["kick"]) + 1, "kick lane capped (%d)" % kicks)
     ok(out2 == sorted(out2, key=lambda n: n["t"]), "still in time order after thinning")
 
     # Limb gap.
