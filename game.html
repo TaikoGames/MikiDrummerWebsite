@@ -76,10 +76,29 @@
   .hud .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .score{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(20px,4vw,30px);letter-spacing:-.02em}
   .meta{text-align:right;font-size:12px;color:var(--mid);line-height:1.7}
-  .quit{pointer-events:auto;margin-top:4px;background:rgba(19,21,24,.82);border:1px solid var(--edge2);
-        color:var(--mid);border-radius:999px;padding:6px 14px;font:inherit;font-size:11.5px;
-        font-weight:600;cursor:pointer;letter-spacing:.06em;touch-action:manipulation}
+  .transport{display:flex;gap:6px;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
+  .quit{pointer-events:auto;background:rgba(19,21,24,.82);border:1px solid var(--edge2);
+        color:var(--mid);border-radius:999px;padding:7px 13px;font:inherit;font-size:11.5px;
+        font-weight:600;cursor:pointer;letter-spacing:.06em;touch-action:manipulation;
+        line-height:1;min-width:34px}
   .quit:hover{border-color:var(--hot);color:var(--hot)}
+  #prev,#next{font-size:16px;padding:4px 12px}
+  @media(pointer:coarse){ .quit{padding:10px 14px;font-size:12.5px;min-width:42px} }
+
+  /* ---- the in-game song picker ---- */
+  .picker .pickBox{background:var(--card);border:1px solid var(--edge2);border-radius:14px;
+                   padding:18px;width:min(460px,100%);max-height:78vh;display:flex;
+                   flex-direction:column;gap:10px;pointer-events:auto}
+  .picker h3{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700}
+  #pickList{overflow-y:auto;display:flex;flex-direction:column;gap:6px;-webkit-overflow-scrolling:touch}
+  .pick{display:block;width:100%;text-align:left;background:#1b1e22;border:1px solid var(--edge);
+        border-radius:10px;padding:11px 13px;color:var(--fg);font:inherit;cursor:pointer}
+  .pick b{display:block;font-size:14px}
+  .pick span{color:var(--dim);font-size:12px}
+  .pick:hover{border-color:var(--hot)}
+  .pick.on{border-color:var(--hot);background:#241a13}
+  .pick.on b{color:var(--hot)}
+  @media(pointer:coarse){ .pick{padding:14px 13px} }
   .combo{align-self:center;font-family:'Arial Black',system-ui,sans-serif;
          font-size:clamp(28px,7vw,52px);color:var(--hot);opacity:0;transition:opacity .12s}
   .combo small{display:block;font:700 11px/1 'Helvetica Neue',sans-serif;letter-spacing:.24em;
@@ -168,10 +187,16 @@
         </div>
         <div class="meta">
           <span id="nowPlaying"></span><br>
-          <span id="progress">0:00</span><br>
+          <span id="progress">0:00</span>
           <!-- Once the stage goes fullscreen on a phone there is nothing to
-               scroll to, so the way out has to be on the stage itself. -->
-          <button class="quit" id="quit" type="button">Stop</button>
+               scroll to, so the way out -- and the way to another song -- has
+               to be on the stage itself. -->
+          <div class="transport">
+            <button class="quit" id="prev" type="button" title="Previous song (←)">‹</button>
+            <button class="quit" id="pick" type="button">Songs</button>
+            <button class="quit" id="next" type="button" title="Next song (→)">›</button>
+            <button class="quit" id="quit" type="button">Stop</button>
+          </div>
         </div>
       </div>
       <div class="combo" id="combo">0<small>Combo</small></div>
@@ -181,6 +206,16 @@
 
     <div class="overlay" id="overlay" hidden>
       <div class="panel" id="panel"></div>
+    </div>
+
+    <!-- The song list again, on top of the stage, so changing your mind
+         mid-song costs one tap instead of stopping and scrolling. -->
+    <div class="overlay picker" id="picker" hidden>
+      <div class="pickBox">
+        <h3>Songs</h3>
+        <div id="pickList"></div>
+        <button class="btn" id="pickClose" type="button">Close</button>
+      </div>
     </div>
   </div>
 
@@ -200,18 +235,21 @@
   <div class="settings">
     <h3>Where the notes come from</h3>
     <p class="hint" style="font-size:13px;color:var(--mid);max-width:74ch">
-      Nobody charted these songs by hand. A script reads each recording, splits the spectrum into
-      the bands a drum kit lives in — the kick down at the bottom, the snare in the crack around
-      1.5&nbsp;kHz to 4&nbsp;kHz, the cymbals above 6&nbsp;kHz — and looks for the moment energy
-      jumps in each one. That is an onset, and an onset is a drum hit. So the notes coming down
-      the lanes are the parts Miki actually played on the record, not somebody's transcription
-      of them.
+      Nobody charted these songs by hand. A script listens to each recording and looks for the
+      moments a sound starts — not just energy going up, which in a punk mix happens on every
+      strum, but the sharp arrival that a stick or a beater makes. Then it finds the song's pulse,
+      lays the actual beats down, and keeps only the hits that land on them. Whichever part of the
+      spectrum jumped hardest decides the lane: the bottom is the kick, the crack around
+      1.5&nbsp;kHz to 5&nbsp;kHz is the snare, above 7&nbsp;kHz is the cymbals. So the notes coming
+      down the lanes are the parts Miki actually played, not somebody's transcription of them —
+      and the background pulses on the beats the tracker found, which is why it is in time.
     </p>
     <p class="hint" style="font-size:13px;color:var(--mid);max-width:74ch;margin-top:10px">
-      It is not a perfect listener, and it is not pretending to be. A bass guitar playing eighths
-      lives in the same octave as a kick drum, so the low band gets an opinion about notes that
-      were never played with a foot, and each lane is capped to keep a chart playable rather than
-      literal. Twelve songs are charted so far, across Bound By None, Dead Fast, Diera, Lift the
+      It is not a perfect listener and it is not pretending to be. A bass guitar sits close enough
+      to a kick drum to get a vote, a guitar chord in the snare's range sometimes gets charted as
+      a snare, and two of these are mixes whose low end is squashed flat enough that the kick is
+      barely there to find — those charts are honestly thin on kicks rather than dishonestly full
+      of invented ones. Twelve songs so far, across Bound By None, Dead Fast, Diera, Lift the
       Anchor and Granite. Adding another is one workflow run.
     </p>
   </div>
@@ -291,7 +329,10 @@ const $ = (id) => document.getElementById(id);
 const OFFSET_KEY = 'drumGame:offset';
 
 let view, chart = null, current = null;
+let library = [], index = -1;        // every charted song, and where we are in it
+let beatTimes = [], beatAt = 0;      // the tracked beats, for the background
 let running = false, cursor = 0, judgeFrom = 0;
+let lastFrame = 0;
 let score = 0, combo = 0, best = 0;
 let counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
 let live = [];                       // notes currently on screen
@@ -345,21 +386,24 @@ async function loadSongs() {
       'No charts yet. Run the Beatmaps workflow and they will appear here.';
     return;
   }
-  ready.forEach((s) => {
+  library = ready;
+  ready.forEach((s, i) => {
     const b = document.createElement('button');
     b.className = 'song'; b.type = 'button';
     const left = document.createElement('div');
     left.innerHTML = '<b></b><span></span>';
     left.querySelector('b').textContent = s.title;
-    left.querySelector('span').textContent = s.band || '';
+    left.querySelector('span').textContent =
+      (s.band || '') + (s.map.bpm ? ' · ' + Math.round(s.map.bpm) + ' BPM' : '');
     const right = document.createElement('div');
     right.className = 'n';
     const mins = Math.floor(s.map.duration / 60), secs = Math.round(s.map.duration % 60);
     right.textContent = `${s.map.notes.length} notes · ${mins}:${String(secs).padStart(2, '0')}`;
     b.append(left, right);
-    b.addEventListener('click', () => start(s));
+    b.addEventListener('click', () => start(i));
     box.appendChild(b);
   });
+  buildPicker();
   $('songsNote').textContent =
     `${ready.length} songs charted. Pick one — headphones help, and check the offset below if it feels off.`;
   // Fetch the renderer now, while they are deciding.
@@ -393,6 +437,7 @@ function backToSelect() {
   document.body.classList.remove('playing', 'ingame');
   try { $('track').pause(); } catch (e) {}
   $('overlay').hidden = true;
+  $('picker').hidden = true;
   $('stage').hidden = true;
   $('select').hidden = false;
   if (view) view.resize();
@@ -450,15 +495,22 @@ function loadTrack(src) {
   });
 }
 
-async function start(song) {
+async function start(i, autoplay) {
+  const song = library[i];
+  if (!song) return;
+  index = i;
   current = song;
+  running = false;
+  try { $('track').pause(); } catch (e) {}
   $('select').hidden = true;
   $('stage').hidden = false;
   document.body.classList.add('ingame');
   $('stage').scrollIntoView({ block: 'nearest' });
+  $('picker').hidden = true;
   $('overlay').hidden = false;
   $('panel').innerHTML = '<h2>Loading…</h2><p>Getting ready.</p>';
   $('nowPlaying').textContent = song.title + (song.band ? ' · ' + song.band : '');
+  markPicker();
 
   // Every stage says what it is doing, and every stage can fail out loud.
   // The first version put only the fetch and the decode inside the try, so
@@ -502,18 +554,60 @@ async function start(song) {
   }
 
   chart = song.map.notes.map(n => ({ ...n, done: false, mesh: null }));
+  beatTimes = song.map.beats || [];
+  beatAt = 0;
   score = 0; combo = 0; best = 0; cursor = 0; judgeFrom = 0; live = [];
   counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
   $('score').textContent = '0';
+  $('combo').style.opacity = '0';
 
-  $('panel').innerHTML = '<h2>Ready</h2><p>Hi-hat <b>A</b> · Snare <b>S</b> · Kick <b>space</b>, or tap the pads.</p>';
+  if (window.Track) Track.ev('game_start', { song: song.slug });
+
+  // Skipping to the next song came from a tap, and the audio element has
+  // already been unlocked by whatever started the last one, so it can just
+  // go. If the browser disagrees, play() falls back to the Ready panel.
+  if (autoplay) { $('overlay').hidden = true; play(); return; }
+  showReady();
+}
+
+function showReady() {
+  $('overlay').hidden = false;
+  $('panel').innerHTML =
+    '<h2>Ready</h2><p>Hi-hat <b>A</b> · Snare <b>S</b> · Kick <b>space</b>, or tap the pads.</p>';
   const go = document.createElement('button');
   go.className = 'btn go'; go.textContent = 'Start';
   go.addEventListener('click', () => { $('overlay').hidden = true; play(); });
   $('panel').appendChild(go);
   go.focus();
+}
 
-  if (window.Track) Track.ev('game_start', { song: song.slug });
+/* ---- moving between songs without leaving the game ------------------- */
+
+function skip(delta) {
+  if (!library.length) return;
+  // Carry on playing if we already were, otherwise land on Ready.
+  start((index + delta + library.length) % library.length, running);
+}
+
+function buildPicker() {
+  const box = $('pickList');
+  box.textContent = '';
+  library.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.className = 'pick'; b.type = 'button'; b.dataset.i = String(i);
+    const t = document.createElement('b'); t.textContent = s.title;
+    const sub = document.createElement('span'); sub.textContent = s.band || '';
+    b.append(t, sub);
+    b.addEventListener('click', () => start(i, running));
+    box.appendChild(b);
+  });
+  markPicker();
+}
+
+function markPicker() {
+  const box = $('pickList');
+  if (!box) return;
+  [...box.children].forEach((b, i) => b.classList.toggle('on', i === index));
 }
 
 /* ---- the clock ------------------------------------------------------- */
@@ -558,13 +652,16 @@ function play() {
   // already gone by the time this runs, so the first note has clear air.
   const p = a.play();
   if (p && p.catch) {
-    p.catch((err) => {
+    p.catch(() => {
+      // Almost always a browser refusing audio that did not come straight
+      // from a tap -- skipping to the next song can land here. Not a failure,
+      // just one more tap: put Ready back rather than an error panel.
       running = false;
       document.body.classList.remove('playing');
-      fail('The browser would not play the track', err, current,
-           'Phones only start audio from a tap — try Start again.');
+      showReady();
     });
   }
+  lastFrame = 0;
   requestAnimationFrame(loop);
 }
 
@@ -613,20 +710,48 @@ function strike(laneId) {
 }
 
 $('quit').addEventListener('click', backToSelect);
+$('prev').addEventListener('click', () => skip(-1));
+$('next').addEventListener('click', () => skip(1));
+$('pick').addEventListener('click', () => { $('picker').hidden = false; markPicker(); });
+$('pickClose').addEventListener('click', () => { $('picker').hidden = true; });
+$('picker').addEventListener('click', (e) => {
+  if (e.target === $('picker')) $('picker').hidden = true;   // tap the backdrop
+});
 
 addEventListener('keydown', (e) => {
   if (e.repeat) return;
-  if (e.key === 'Escape' && !$('stage').hidden) { backToSelect(); return; }
+  if ($('stage').hidden) return;
+  if (e.key === 'Escape') {
+    if (!$('picker').hidden) { $('picker').hidden = true; return; }
+    backToSelect(); return;
+  }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); skip(-1); return; }
+  if (e.key === 'ArrowRight') { e.preventDefault(); skip(1);  return; }
   const lane = LANES.find(l => l.key === e.key.toLowerCase());
   if (!lane) return;
   e.preventDefault();
   strike(lane.id);
 });
 
+/* How recently the song had a beat, 1 down to 0 over about a fifth of a
+ * second. The beats come from the chart, which got them from a tracker that
+ * followed the actual recording, so the background is in time with the record
+ * rather than with a metronome set to roughly the right number. */
+function beatPulse(now) {
+  while (beatAt < beatTimes.length && beatTimes[beatAt] <= now) beatAt++;
+  const last = beatAt > 0 ? beatTimes[beatAt - 1] : -99;
+  const since = now - last;
+  return since >= 0 && since < 0.2 ? 1 - since / 0.2 : 0;
+}
+
 function loop() {
   if (!running) return;
   tickClock();
   const now = songTime();
+
+  const stamp = performance.now() / 1000;
+  const dt = lastFrame ? stamp - lastFrame : 0;
+  lastFrame = stamp;
 
   // Bring on anything inside the lookahead.
   while (cursor < chart.length && chart[cursor].t - now < view.LOOKAHEAD) {
@@ -672,6 +797,7 @@ function loop() {
   $('progress').textContent =
     `${Math.floor(secs / 60)}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
 
+  if (view.update) view.update(dt, beatPulse(now));
   view.renderer.render(view.scene, view.camera);
   requestAnimationFrame(loop);
 }
@@ -695,10 +821,21 @@ function finish() {
        <div><b>${counts.OK}</b>OK</div>
        <div><b>${counts.Miss}</b>Miss</div>
      </div>`;
-  const again = document.createElement('button');
-  again.className = 'btn go'; again.textContent = 'Pick another';
-  again.addEventListener('click', backToSelect);
-  $('panel').appendChild(again);
+  // Three ways on, none of which is "scroll back up and start again".
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;justify-content:center;flex-wrap:wrap';
+  const mk = (label, cls, fn) => {
+    const b = document.createElement('button');
+    b.className = 'btn ' + cls; b.textContent = label;
+    b.addEventListener('click', fn);
+    row.appendChild(b);
+    return b;
+  };
+  const nxt = mk('Next song', 'go', () => start((index + 1) % library.length, true));
+  mk('Again', '', () => start(index, true));
+  mk('All songs', '', backToSelect);
+  $('panel').appendChild(row);
+  nxt.focus();
   if (window.Track) {
     Track.ev('game_finish', { grade, accuracy: Math.round(acc * 100), score, combo: best });
   }

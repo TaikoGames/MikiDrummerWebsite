@@ -111,6 +111,48 @@ jobs:
               return { w: Math.round(r.width), h: Math.round(r.height) }; });
             console.log('  canvas:', JSON.stringify(box));
 
+            // Moving between songs without leaving the stage.
+            const playingNow = () => p.$eval('#track', a => !a.paused);
+            const titleNow = () => p.$eval('#nowPlaying', e => e.textContent);
+            const first = await titleNow();
+            await p.click('#next');
+            await p.waitForFunction(t => document.querySelector('#nowPlaying').textContent !== t,
+                                    first, { timeout: 30000 })
+                   .catch(() => { throw new Error('Next did not change the song'); });
+            await p.waitForTimeout(2500);
+            console.log('  next song:', await titleNow(), '| still playing:', await playingNow());
+            if (!await playingNow()) throw new Error('skipping to the next song stopped the audio');
+            await p.click('#prev');
+            await p.waitForTimeout(2000);
+            if (await titleNow() !== first) throw new Error('Prev did not come back');
+
+            await p.click('#pick');
+            const listed = await p.$$eval('#pickList .pick', e => e.length);
+            const marked = await p.$$eval('#pickList .pick.on', e => e.length);
+            console.log('  in-game picker:', listed, 'songs,', marked, 'marked current');
+            if (listed < 2) throw new Error('the in-game picker is empty');
+            if (marked !== 1) throw new Error('the picker does not mark the current song');
+            await p.$$eval('#pickList .pick', els => els[els.length - 1].click());
+            await p.waitForTimeout(2500);
+            if (!await playingNow()) throw new Error('picking a song from the stage stopped the audio');
+            console.log('  picked from stage:', await titleNow());
+
+            // The background pulses on the beats the chart carries, so a
+            // chart served without them means a dead background and, more to
+            // the point, a detector that has quietly gone back to having no
+            // idea what tempo the song is.
+            const map = await (await p.request.get(
+              new URL('/data/beatmaps/noother.json', URL_).href)).json();
+            const dens = map.notes.length / map.duration;
+            console.log(`  chart check: ${map.bpm} BPM, ${map.beats.length} beats, ` +
+                        `${map.notes.length} notes, ${dens.toFixed(2)}/s`);
+            if (!(map.bpm > 60 && map.bpm < 260)) throw new Error('chart has no plausible tempo');
+            if (!(map.beats && map.beats.length > 50)) throw new Error('chart carries no beats');
+            if (dens > 6) {
+              throw new Error(`chart is saturating again (${dens.toFixed(2)} notes/s) -- ` +
+                              'that is the signature of the detector that made random charts');
+            }
+
             console.log('  page errors:', errs.length ? errs : 'none');
             console.log('  bad responses:', bad.length ? bad : 'none');
             await ctx.close();
