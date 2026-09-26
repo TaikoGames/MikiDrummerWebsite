@@ -153,6 +153,9 @@
   .row input[type=range]{flex:1;min-width:180px;accent-color:var(--hot)}
   .row output{font-size:12.5px;color:var(--mid);min-width:74px;text-align:right;font-variant-numeric:tabular-nums}
   .hint{font-size:11.5px;color:var(--dim);margin-top:8px;max-width:70ch}
+  .calDot{width:64px;height:64px;border-radius:50%;background:#1b1e22;border:2px solid var(--edge2);
+          margin:0 auto;transition:transform .06s ease-out,background .06s,border-color .06s}
+  .calDot.on{background:var(--hot);border-color:var(--hot);transform:scale(1.25)}
   footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
 </style>
 </head>
@@ -219,17 +222,41 @@
     </div>
   </div>
 
+  <!-- The calibration click. Its own element, but the same kind of element
+       the songs play through, because the output latency being measured is
+       the one the songs will have. -->
+  <audio id="cal" preload="auto" playsinline></audio>
+
   <div class="settings">
     <h3>Timing</h3>
     <div class="row">
       <label for="offset" style="font-size:12.5px;color:var(--mid)">Audio offset</label>
-      <input type="range" id="offset" min="-200" max="200" step="5" value="0">
+      <input type="range" id="offset" min="-400" max="400" step="5" value="0">
       <output id="offsetOut">0 ms</output>
       <button class="btn" id="resetOffset" type="button">Reset</button>
     </div>
-    <p class="hint">If every note feels early or late, nudge this. Bluetooth headphones are the usual
-       culprit — they can run 150&nbsp;ms behind the screen, which is a whole judgement window and
-       then some. Positive means the audio is behind. Saved on this device.</p>
+    <p class="hint">If every note feels early or late, this is the fix. Your speakers, and
+       especially Bluetooth headphones, play sound later than the screen draws — 150&nbsp;ms is
+       normal over Bluetooth and that is a whole judgement window and then some. Rather than
+       guessing at the slider, tap it out: the button below plays a steady click and measures how
+       far off your taps land. Saved on this device.</p>
+
+    <div class="row" style="margin-top:14px">
+      <button class="btn go" id="calStart" type="button">Calibrate by tapping</button>
+      <span class="hint" id="calMsg" style="margin:0"></span>
+    </div>
+
+    <div id="calBox" hidden style="margin-top:14px">
+      <div class="calDot" id="calDot"></div>
+      <p class="hint" style="margin-top:12px">Tap <b>space</b> — or the big button — on every
+         click you hear. Not on the flash: <b>on the sound</b>. About twelve of them.</p>
+      <div class="row" style="margin-top:10px">
+        <button class="btn go" id="calTap" type="button" style="flex:1;justify-content:center;
+                padding:18px">Tap on the click</button>
+        <button class="btn" id="calStop" type="button">Cancel</button>
+      </div>
+      <p class="hint" id="calCount">0 taps</p>
+    </div>
   </div>
 
   <div class="settings">
@@ -338,17 +365,200 @@ let counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
 let live = [];                       // notes currently on screen
 let offset = Number(localStorage.getItem(OFFSET_KEY) || 0);
 
-$('offset').value = offset;
-$('offsetOut').textContent = offset + ' ms';
-$('offset').addEventListener('input', function () {
-  offset = Number(this.value);
-  $('offsetOut').textContent = offset + ' ms';
+function setOffset(ms) {
+  offset = Number(ms) || 0;
+  $('offset').value = offset;
+  $('offsetOut').textContent = (offset > 0 ? '+' : '') + offset + ' ms';
   try { localStorage.setItem(OFFSET_KEY, String(offset)); } catch (e) {}
-});
+}
+setOffset(offset);
+$('offset').addEventListener('input', function () { setOffset(this.value); });
 $('resetOffset').addEventListener('click', () => {
-  offset = 0; $('offset').value = 0; $('offsetOut').textContent = '0 ms';
-  try { localStorage.setItem(OFFSET_KEY, '0'); } catch (e) {}
+  setOffset(0);
+  $('calMsg').textContent = '';
 });
+
+/* ---- calibration ------------------------------------------------------
+ *
+ * The clock inside the page can be made to agree with the audio file to
+ * within a couple of milliseconds, and that still does not mean a note
+ * reaches the pad when you HEAR the drum. Between the position an audio
+ * element reports and the sound arriving at your ear there is an output
+ * buffer, a speaker, and quite possibly a Bluetooth link adding 150 to 300 ms
+ * of its own. Nothing in the page can see any of that. The only instrument
+ * that can measure it is the person holding the phone.
+ *
+ * So: play a steady click through the SAME kind of element the songs play
+ * through -- the latency being measured is the one that matters, and an
+ * AudioContext would have a different one -- and ask for taps. The median gap
+ * between a tap and the click it belongs to is the number, and it quietly
+ * includes the player's own motor delay, which is also real and also wants
+ * correcting.
+ */
+
+/* 75 BPM. Slow on purpose.
+ *
+ * At 100 BPM the gap is 600 ms, so a tap 300 ms late is indistinguishable
+ * from one 300 ms early and the measurement wraps -- which meant a 250 ms
+ * Bluetooth delay, the single case this tool exists for, had every one of its
+ * taps thrown out as a missed beat. A wider gap, plus the fact that output
+ * latency is physically never negative (sound cannot arrive before it is
+ * played), makes the window asymmetric and the answer unambiguous out to
+ * well past anything a real headset does. */
+const CAL_PERIOD = 0.8;
+const CAL_EARLY = 0.25;        // a tap may sit this much of a gap BEFORE its click
+const CAL_LATE = 0.75;         // and this much after it
+const CAL_LENGTH = 20;         // seconds of clicks
+const CAL_WARMUP = 2;          // taps to throw away while they find the pulse
+const CAL_NEEDED = 6;          // taps required before a result is offered
+
+/* A click track as a WAV blob. Built here rather than shipped as a file
+ * because it has to be exact: the clicks are at known times in the data, and
+ * that is the entire measurement. */
+function clickTrackURL() {
+  const sr = 22050, n = Math.ceil(CAL_LENGTH * sr);
+  const pcm = new Int16Array(n);
+  for (let t = CAL_PERIOD; t < CAL_LENGTH - 0.3; t += CAL_PERIOD) {
+    const at = Math.round(t * sr);
+    for (let k = 0; k < 700 && at + k < n; k++) {
+      const env = Math.exp(-k / 90);
+      pcm[at + k] = Math.round(0.55 * 32767 * env * Math.sin(2 * Math.PI * 1500 * k / sr));
+    }
+  }
+  const buf = new ArrayBuffer(44 + pcm.length * 2);
+  const v = new DataView(buf);
+  const tag = (off, s) => { for (let i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); };
+  tag(0, 'RIFF'); v.setUint32(4, 36 + pcm.length * 2, true); tag(8, 'WAVEfmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true);
+  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  tag(36, 'data'); v.setUint32(40, pcm.length * 2, true);
+  new Int16Array(buf, 44).set(pcm);
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
+
+let cal = null;
+
+function calTime() {
+  if (!cal) return 0;
+  return cal.anchorMedia + (performance.now() / 1000 - cal.anchorWall);
+}
+
+function calibrateStart() {
+  const a = $('cal');
+  calibrateStop(true);
+  cal = { taps: [], anchorMedia: 0, anchorWall: 0, lastMedia: -1,
+          url: clickTrackURL(), armed: false };
+  a.src = cal.url;
+  a.currentTime = 0;
+  $('calBox').hidden = false;
+  $('calMsg').textContent = '';
+  $('calCount').textContent = '0 taps';
+  $('calStart').disabled = true;
+
+  const p = a.play();
+  if (p && p.catch) p.catch(() => {
+    $('calMsg').textContent = 'The browser would not play the click — tap the button again.';
+    calibrateStop();
+  });
+
+  // Same rule as the game: do not start the clock until the sound is moving.
+  (function waitCal(began) {
+    if (!cal) return;
+    if (a.currentTime > 0) {
+      cal.anchorMedia = a.currentTime;
+      cal.anchorWall = performance.now() / 1000;
+      cal.armed = true;
+      calFlash();
+      return;
+    }
+    if (performance.now() - began > 6000) {
+      $('calMsg').textContent = 'The click would not start playing.';
+      return calibrateStop();
+    }
+    requestAnimationFrame(() => waitCal(began));
+  })(performance.now());
+}
+
+/* The dot flashes on the beat. It is deliberately NOT what to tap to --
+ * tapping the flash would measure the screen, and the screen is not the thing
+ * that is late. The instruction says to tap the sound. */
+function calFlash() {
+  if (!cal || !cal.armed) return;
+
+  // Keep the calibration clock honest against the click track, the same way
+  // the game clock is kept honest against the song. A clock anchored once and
+  // left to free-run drifts: measured at 23 ms over twelve seconds, which
+  // lands directly on the number being measured and biases every calibration
+  // the same way. A measuring instrument that drifts is not one.
+  const a = $('cal');
+  const m = a.currentTime;
+  if (m !== cal.lastMedia) {
+    cal.lastMedia = m;
+    const err = m - calTime();
+    if (Math.abs(err) > 0.25) { cal.anchorMedia = m; cal.anchorWall = performance.now() / 1000; }
+    else cal.anchorMedia += err * 0.15;
+  }
+
+  const t = calTime();
+  const phase = t / CAL_PERIOD;
+  const on = (phase - Math.floor(phase)) < 0.18;
+  $('calDot').classList.toggle('on', on);
+  if (t > CAL_LENGTH - 0.5) return calibrateFinish();
+  requestAnimationFrame(calFlash);
+}
+
+function calibrateTap() {
+  if (!cal || !cal.armed) return;
+  const t = calTime();
+  // Which click this tap belongs to. Measured from the click BEFORE it and
+  // then folded, rather than from the nearest one, so the window can be
+  // lopsided: a long way late is ordinary (that is what latency is), a long
+  // way early is someone who has lost the pulse.
+  let k = Math.floor(t / CAL_PERIOD);
+  let delta = t - k * CAL_PERIOD;
+  if (delta > CAL_PERIOD * (1 - CAL_EARLY)) { delta -= CAL_PERIOD; k += 1; }
+  if (k < 1 || delta > CAL_PERIOD * CAL_LATE) return;
+  cal.taps.push(delta);
+  const n = cal.taps.length;
+  $('calCount').textContent = n + (n === 1 ? ' tap' : ' taps') +
+    (n <= CAL_WARMUP + CAL_NEEDED ? ' — keep going' : ' — you can stop when you like');
+  if (n >= CAL_WARMUP + CAL_NEEDED + 8) calibrateFinish();
+}
+
+function calibrateFinish() {
+  if (!cal) return;
+  const taps = cal.taps.slice(CAL_WARMUP);
+  calibrateStop();
+  if (taps.length < CAL_NEEDED) {
+    $('calMsg').textContent =
+      `Only ${taps.length} usable taps — needs ${CAL_NEEDED}. Try again and tap every click.`;
+    return;
+  }
+  taps.sort((x, y) => x - y);
+  const mid = taps.length % 2
+    ? taps[(taps.length - 1) / 2]
+    : (taps[taps.length / 2 - 1] + taps[taps.length / 2]) / 2;
+  // Spread, as a rough honesty check on the measurement.
+  const spread = (taps[taps.length - 1] - taps[0]) * 1000;
+  const ms = Math.max(-400, Math.min(400, Math.round(mid * 1000 / 5) * 5));
+  setOffset(ms);
+  $('calMsg').textContent =
+    `Set to ${ms > 0 ? '+' : ''}${ms} ms from ${taps.length} taps` +
+    (spread > 120 ? ' — your taps were spread out, so run it again if it still feels off.' : '.');
+  if (window.Track) Track.ev('game_calibrated', { offset: ms, taps: taps.length });
+}
+
+function calibrateStop(quiet) {
+  const a = $('cal');
+  try { a.pause(); } catch (e) {}
+  if (cal && cal.url) URL.revokeObjectURL(cal.url);
+  cal = null;
+  $('calDot').classList.remove('on');
+  $('calBox').hidden = true;
+  $('calStart').disabled = false;
+  if (!quiet) { /* message is set by the caller */ }
+}
 
 /* ---- song list ------------------------------------------------------- */
 
@@ -626,6 +836,18 @@ function anchor(m) { anchorMedia = m; anchorWall = wall(); }
 function rawTime() { return anchorMedia + (wall() - anchorWall); }
 function songTime() { return rawTime() - offset / 1000; }
 
+/* A hook so the sync can actually be checked from outside.
+ *
+ * The bug that made the cues feel wrong was half a second of desync at the
+ * start of every song, and from outside the page it was invisible -- the
+ * progress readout only shows whole seconds, so nothing on screen disagreed
+ * with anything. The only way to stop it coming back is to be able to ask the
+ * game what time it thinks it is. Costs nothing and it is not a secret. */
+window.__drumClock = () => ({
+  song: songTime(), media: $('track').currentTime,
+  running, offset, drift: songTime() + offset / 1000 - $('track').currentTime
+});
+
 function tickClock() {
   const a = $('track');
   // Paused means a phone call, a locked screen, a tab in the background. The
@@ -643,13 +865,9 @@ function play() {
   const a = $('track');
   a.currentTime = 0;
   a.onended = () => { if (running) finish(); };
-  anchor(0);
   lastMedia = -1;
-  running = true;
-  document.body.classList.add('playing');
   // play() must be called inside the tap that started it -- a phone will not
-  // let a timer start audio -- so there is no lead-in bar. The overlay is
-  // already gone by the time this runs, so the first note has clear air.
+  // let a timer start audio.
   const p = a.play();
   if (p && p.catch) {
     p.catch(() => {
@@ -661,8 +879,41 @@ function play() {
       showReady();
     });
   }
-  lastFrame = 0;
-  requestAnimationFrame(loop);
+  waitForAudio(performance.now());
+}
+
+/* Do not start the game clock until the song is genuinely moving.
+ *
+ * This was the bug behind "the visual cues do not match the music". play()
+ * returns optimistically and the element reports itself as not paused, but
+ * currentTime sits at exactly 0 while the browser fills its buffer --
+ * measured at 312 ms on a phone profile and 687 ms on desktop. Anchoring the
+ * clock at the click meant the first half-second of every song ran that far
+ * AHEAD of the music: notes reached the pad before the sound, and then the
+ * whole thing lurched backwards when the correction finally fired. The first
+ * seconds of a song are exactly when a player decides whether a rhythm game
+ * is in time, and this one was announcing that it was not.
+ *
+ * So: wait for the media clock to actually advance, and anchor to that. */
+function waitForAudio(began) {
+  const a = $('track');
+  if (a.paused) {                       // the play() promise rejected
+    return;
+  }
+  if (a.currentTime > 0) {
+    anchor(a.currentTime);
+    running = true;
+    lastFrame = 0;
+    document.body.classList.add('playing');
+    requestAnimationFrame(loop);
+    return;
+  }
+  if (performance.now() - began > 8000) {
+    return fail('The track would not start playing', new Error(
+      'the browser reported it was playing but the position never moved'),
+      current, 'Try another song, or reload the page.');
+  }
+  requestAnimationFrame(() => waitForAudio(began));
 }
 
 function flashVerdict(name, colour) {
@@ -709,6 +960,13 @@ function strike(laneId) {
   live = live.filter(n => n !== found.note);
 }
 
+$('calStart').addEventListener('click', calibrateStart);
+$('calStop').addEventListener('click', () => {
+  calibrateStop();
+  $('calMsg').textContent = 'Cancelled — the offset is unchanged.';
+});
+$('calTap').addEventListener('pointerdown', (e) => { e.preventDefault(); calibrateTap(); });
+
 $('quit').addEventListener('click', backToSelect);
 $('prev').addEventListener('click', () => skip(-1));
 $('next').addEventListener('click', () => skip(1));
@@ -720,6 +978,12 @@ $('picker').addEventListener('click', (e) => {
 
 addEventListener('keydown', (e) => {
   if (e.repeat) return;
+  // Calibrating takes the keyboard: space is the tap, escape gives up.
+  if (cal) {
+    if (e.key === ' ') { e.preventDefault(); calibrateTap(); return; }
+    if (e.key === 'Escape') { calibrateStop(); $('calMsg').textContent = 'Cancelled.'; return; }
+    return;
+  }
   if ($('stage').hidden) return;
   if (e.key === 'Escape') {
     if (!$('picker').hidden) { $('picker').hidden = true; return; }

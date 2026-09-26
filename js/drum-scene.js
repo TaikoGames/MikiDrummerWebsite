@@ -120,6 +120,13 @@ export function buildScene(canvas) {
 
     // A ring that flares on a hit, so the feedback reads even when the pad is
     // covered by the note that just landed on it.
+    //
+    // (The moment itself is marked by the judgement line below, which runs
+    // across all three lanes. Without it there is nothing on screen that says
+    // "now" -- the pads are round, the notes land on top of them and cover
+    // them, and the eye has no edge to line anything up against. A rhythm
+    // game that does not draw its own hit line is asking the player to
+    // estimate where it is.)
     const ring = new THREE.Mesh(
       new THREE.RingGeometry(0.9, 1.15, 48),
       new THREE.MeshBasicMaterial({ color: lane.colour, transparent: true, opacity: 0 })
@@ -170,6 +177,28 @@ export function buildScene(canvas) {
     opacity: 0.5, sizeAttenuation: true, fog: true, depthWrite: false
   }));
   scene.add(stars);
+
+  // THE JUDGEMENT LINE. Where "now" is. Bright, hard-edged and across all
+  // three lanes, so a note arriving is a note crossing something rather than
+  // a note being vaguely near a circle.
+  const hitLine = new THREE.Mesh(
+    new THREE.PlaneGeometry(7.4, 0.13),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true,
+                                  opacity: 0.82, fog: false, depthWrite: false })
+  );
+  hitLine.rotation.x = -Math.PI / 2;
+  hitLine.position.set(0, 0.17, HIT_Z);
+  scene.add(hitLine);
+
+  // A soft glow under it, so it reads on a bright phone screen outdoors.
+  const hitGlow = new THREE.Mesh(
+    new THREE.PlaneGeometry(7.4, 1.5),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true,
+                                  opacity: 0.07, fog: false, depthWrite: false })
+  );
+  hitGlow.rotation.x = -Math.PI / 2;
+  hitGlow.position.set(0, 0.03, HIT_Z);
+  scene.add(hitGlow);
 
   // A bar across the far end that flares on every beat of the song. The
   // charts carry the beats the tracker found, so this is in time with the
@@ -232,6 +261,10 @@ export function buildScene(canvas) {
     starPos.needsUpdate = true;
 
     const p = pulse || 0;
+    // The judgement line breathes on the beat too, so the moment the eye is
+    // watching is the moment the music is marking.
+    hitLine.material.opacity = 0.72 + p * 0.28;
+    hitGlow.material.opacity = 0.06 + p * 0.14;
     horizon.material.opacity = 0.10 + p * 0.5;
     horizon.scale.y = 1 + p * 2.6;
     stars.material.opacity = 0.42 + p * 0.3;
