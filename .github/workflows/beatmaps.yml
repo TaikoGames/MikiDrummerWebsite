@@ -1,0 +1,72 @@
+name: Beatmaps
+
+# Charts for the drum game, detected from the recordings rather than written
+# by hand. Runs here because it needs ffmpeg to decode the MP3s.
+#
+# Cheap and deterministic: the same audio gives the same chart every time, so
+# re-running after a detector change shows exactly what the change did.
+
+on:
+  workflow_dispatch:
+    inputs:
+      files:
+        description: "Audio files to chart (space separated, blank = everything in the playlist)"
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: beatmaps
+  cancel-in-progress: false
+
+jobs:
+  chart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install --quiet numpy
+
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - name: Check the detector still hears a click track
+        run: python3 tools/build_beatmaps.py --self-test
+
+      - name: Chart them
+        env:
+          FILES: ${{ github.event.inputs.files }}
+        run: |
+          set -o pipefail
+          if [ -z "$FILES" ]; then
+            FILES=$(python3 - <<'PY'
+          import json
+          songs = json.load(open('playlist.json'))['songs']
+          out = [s['src'] for s in songs if s.get('src', '').lower().endswith('.mp3')]
+          out.append('audio/granite/pony-up.mp3')
+          print(' '.join('"%s"' % p for p in out))
+          PY
+          )
+          fi
+          echo "charting: $FILES"
+          eval "python3 tools/build_beatmaps.py $FILES" | tee /tmp/beatmaps.log
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo '## Beatmaps'
+            echo
+            echo '```'
+            cat /tmp/beatmaps.log 2>/dev/null || echo "(no log)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit them
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/beatmaps
+          git diff --cached --quiet && { echo "nothing changed"; exit 0; }
+          git commit -m "Beatmaps: charts detected from the recordings"
+          git push origin "HEAD:$GITHUB_REF_NAME"
