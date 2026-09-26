@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="/js/track.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Drum Along — Play Miki's Songs | Punk BC</title>
+<meta name="description" content="A drum rhythm game in your browser. Play along to real Vancouver punk and metal tracks — the charts are detected from the actual drum takes. Free, nothing to install.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.mikidrummer.ca/game.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mikidrummer.ca/game.html">
+<meta property="og:title" content="Drum Along — play the actual drum parts">
+<meta property="og:description" content="A rhythm game whose charts come from the recordings themselves. Three lanes, real songs, in your browser.">
+<meta property="og:site_name" content="Punk BC">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
+
+<style>
+  :root{ --bg:#0b0c0e; --card:#131518; --edge:#2b2f34; --edge2:#3a4046;
+         --dim:#7d848d; --mid:#a6adb6; --fg:#e9ebee; --hot:#e8672a;
+         --hat:#7ee7c7; --snare:#f4b400; --kick:#e8672a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);line-height:1.55;
+       font-family:'Helvetica Neue',system-ui,Arial,sans-serif;
+       padding:0 16px 60px;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1040px;margin:0 auto}
+  a{color:var(--hot);text-decoration:none} a:hover{text-decoration:underline}
+  header{padding:34px 0 18px;border-bottom:1px solid var(--edge)}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--hot);font-weight:700}
+  h1{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(26px,5.5vw,42px);letter-spacing:-.02em;margin:8px 0 10px}
+  .lead{color:var(--mid);font-size:15px;max-width:66ch}
+
+  .btn{display:inline-flex;align-items:center;gap:7px;background:#1b1e22;border:1px solid var(--edge2);
+       color:var(--fg);border-radius:999px;padding:10px 18px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+  .btn:hover{border-color:var(--hot);color:var(--hot)}
+  .btn.go{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+  /* ---- song select ---- */
+  .songs{display:grid;grid-template-columns:1fr;gap:10px;margin:22px 0 8px}
+  @media(min-width:680px){.songs{grid-template-columns:1fr 1fr}}
+  .song{display:flex;align-items:center;justify-content:space-between;gap:14px;
+        background:var(--card);border:1px solid var(--edge);border-radius:12px;
+        padding:14px 16px;cursor:pointer;text-align:left;color:inherit;font:inherit;width:100%}
+  .song:hover{border-color:var(--hot)}
+  .song b{display:block;font-size:15px}
+  .song span{color:var(--dim);font-size:12.5px}
+  .song .n{color:var(--dim);font-size:11.5px;white-space:nowrap;letter-spacing:.06em}
+
+  /* ---- stage ---- */
+  .stage{position:relative;margin-top:18px;border:1px solid var(--edge);border-radius:14px;
+         overflow:hidden;background:#0b0c0e}
+  canvas{display:block;width:100%;height:min(62vh,560px)}
+  .hud{position:absolute;inset:0;pointer-events:none;padding:16px 18px;
+       display:flex;flex-direction:column;justify-content:space-between}
+  .hud .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .score{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(20px,4vw,30px);letter-spacing:-.02em}
+  .meta{text-align:right;font-size:12px;color:var(--mid);line-height:1.7}
+  .combo{align-self:center;font-family:'Arial Black',system-ui,sans-serif;
+         font-size:clamp(28px,7vw,52px);color:var(--hot);opacity:0;transition:opacity .12s}
+  .combo small{display:block;font:700 11px/1 'Helvetica Neue',sans-serif;letter-spacing:.24em;
+               text-transform:uppercase;color:var(--mid);text-align:center;margin-top:4px}
+  .verdict{align-self:center;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+           font-size:14px;opacity:0;transition:opacity .1s}
+  .keys{display:flex;justify-content:center;gap:10px}
+  .keycap{pointer-events:auto;flex:1;max-width:190px;border:1px solid var(--edge2);border-radius:12px;
+          background:rgba(19,21,24,.82);padding:10px 6px;text-align:center;cursor:pointer;
+          font-size:12px;color:var(--mid);user-select:none;touch-action:manipulation}
+  .keycap b{display:block;font-size:14px;color:var(--fg)}
+  .keycap.hat{border-color:rgba(126,231,199,.5)} .keycap.snare{border-color:rgba(244,180,0,.5)}
+  .keycap.kick{border-color:rgba(232,103,42,.6)}
+  .keycap.down{background:var(--hot);color:#160802} .keycap.down b{color:#160802}
+
+  .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+           background:rgba(8,9,11,.88);text-align:center;padding:24px}
+  .overlay[hidden]{display:none}
+  .panel{max-width:440px}
+  .panel h2{font-family:'Arial Black',system-ui,sans-serif;font-size:26px;margin-bottom:10px}
+  .panel p{color:var(--mid);font-size:14px;margin-bottom:16px}
+  .grade{font-family:'Arial Black',system-ui,sans-serif;font-size:76px;line-height:1;color:var(--hot);margin-bottom:6px}
+  .tallies{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:14px 0 18px;font-size:13px;color:var(--mid)}
+  .tallies b{display:block;font-size:18px;color:var(--fg)}
+
+  .settings{margin-top:16px;background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:16px 18px}
+  .settings h3{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:10px}
+  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .row input[type=range]{flex:1;min-width:180px;accent-color:var(--hot)}
+  .row output{font-size:12.5px;color:var(--mid);min-width:74px;text-align:right;font-variant-numeric:tabular-nums}
+  .hint{font-size:11.5px;color:var(--dim);margin-top:8px;max-width:70ch}
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Punk BC · Tools</span>
+    <h1>Drum along</h1>
+    <p class="lead">Three lanes, real songs. The charts are not hand-written — they are detected
+       from the recordings, so the notes you are hitting are the drum parts that were actually
+       played. Hi-hat on <b>A</b>, snare on <b>S</b>, kick on <b>space</b>, or tap the pads on a phone.</p>
+  </header>
+
+  <div id="select">
+    <div class="songs" id="songs"></div>
+    <p class="hint" id="songsNote">Loading the song list…</p>
+  </div>
+
+  <div class="stage" id="stage" hidden>
+    <canvas id="c"></canvas>
+    <div class="hud">
+      <div class="top">
+        <div>
+          <div class="score" id="score">0</div>
+          <div style="font-size:11.5px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase">Score</div>
+        </div>
+        <div class="meta">
+          <span id="nowPlaying"></span><br>
+          <span id="progress">0:00</span>
+        </div>
+      </div>
+      <div class="combo" id="combo">0<small>Combo</small></div>
+      <div class="verdict" id="verdict"></div>
+      <div class="keys" id="keys"></div>
+    </div>
+
+    <div class="overlay" id="overlay" hidden>
+      <div class="panel" id="panel"></div>
+    </div>
+  </div>
+
+  <div class="settings">
+    <h3>Timing</h3>
+    <div class="row">
+      <label for="offset" style="font-size:12.5px;color:var(--mid)">Audio offset</label>
+      <input type="range" id="offset" min="-200" max="200" step="5" value="0">
+      <output id="offsetOut">0 ms</output>
+      <button class="btn" id="resetOffset" type="button">Reset</button>
+    </div>
+    <p class="hint">If every note feels early or late, nudge this. Bluetooth headphones are the usual
+       culprit — they can run 150&nbsp;ms behind the screen, which is a whole judgement window and
+       then some. Positive means the audio is behind. Saved on this device.</p>
+  </div>
+
+  <footer>
+    A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>.
+    One of the <a href="/tools.html">free tools</a> for bands and drummers.
+    Every song here is Miki's own playing, with his bands.
+  </footer>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "/vendor/three/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { LANES, WINDOWS, MISS_AFTER, judge, nearestNote, hitScore,
+         accuracy, rank, buildScene } from '/js/drum-game.js';
+
+const $ = (id) => document.getElementById(id);
+const OFFSET_KEY = 'drumGame:offset';
+
+let view, audioCtx, buffer, source, chart = null;
+let startedAt = 0, running = false, cursor = 0;
+let score = 0, combo = 0, best = 0;
+let counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
+let live = [];                       // notes currently on screen
+let offset = Number(localStorage.getItem(OFFSET_KEY) || 0);
+
+$('offset').value = offset;
+$('offsetOut').textContent = offset + ' ms';
+$('offset').addEventListener('input', function () {
+  offset = Number(this.value);
+  $('offsetOut').textContent = offset + ' ms';
+  try { localStorage.setItem(OFFSET_KEY, String(offset)); } catch (e) {}
+});
+$('resetOffset').addEventListener('click', () => {
+  offset = 0; $('offset').value = 0; $('offsetOut').textContent = '0 ms';
+  try { localStorage.setItem(OFFSET_KEY, '0'); } catch (e) {}
+});
+
+/* ---- song list ------------------------------------------------------- */
+
+function titleOf(raw) {
+  const i = raw.indexOf(' - ');
+  return i > -1 ? { title: raw.slice(0, i).trim(), band: raw.slice(i + 3).trim() }
+                : { title: raw.trim(), band: '' };
+}
+
+async function loadSongs() {
+  let songs = [];
+  try {
+    const pl = await (await fetch('/playlist.json', { cache: 'no-store' })).json();
+    songs = (pl.songs || []).filter(s => (s.src || '').toLowerCase().endsWith('.mp3'));
+  } catch (e) {}
+  songs.push({ src: 'audio/granite/pony-up.mp3', title: 'Pony Up - Granite' });
+
+  // Only the ones that have a chart. A song in the list that cannot be played
+  // is worse than a shorter list.
+  const checked = await Promise.all(songs.map(async (s) => {
+    const slug = s.src.split('/').pop().replace(/\.[^.]+$/, '')
+                  .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    try {
+      const r = await fetch(`/data/beatmaps/${slug}.json`, { method: 'GET', cache: 'no-store' });
+      if (!r.ok) return null;
+      const map = await r.json();
+      return { ...titleOf(s.title || slug), src: '/' + s.src.replace(/^\//, ''), slug, map };
+    } catch (e) { return null; }
+  }));
+
+  const ready = checked.filter(Boolean);
+  const box = $('songs');
+  box.textContent = '';
+  if (!ready.length) {
+    $('songsNote').textContent =
+      'No charts yet. Run the Beatmaps workflow and they will appear here.';
+    return;
+  }
+  ready.forEach((s) => {
+    const b = document.createElement('button');
+    b.className = 'song'; b.type = 'button';
+    const left = document.createElement('div');
+    left.innerHTML = '<b></b><span></span>';
+    left.querySelector('b').textContent = s.title;
+    left.querySelector('span').textContent = s.band || '';
+    const right = document.createElement('div');
+    right.className = 'n';
+    const mins = Math.floor(s.map.duration / 60), secs = Math.round(s.map.duration % 60);
+    right.textContent = `${s.map.notes.length} notes · ${mins}:${String(secs).padStart(2, '0')}`;
+    b.append(left, right);
+    b.addEventListener('click', () => start(s));
+    box.appendChild(b);
+  });
+  $('songsNote').textContent =
+    `${ready.length} songs charted. Pick one — headphones help, and check the offset below if it feels off.`;
+}
+
+/* ---- playing --------------------------------------------------------- */
+
+function padKeys() {
+  const keys = $('keys');
+  keys.textContent = '';
+  LANES.forEach((lane) => {
+    const d = document.createElement('div');
+    d.className = 'keycap ' + lane.id;
+    d.innerHTML = '<b></b>';
+    d.querySelector('b').textContent = lane.label;
+    d.append(lane.key === ' ' ? 'space' : lane.key.toUpperCase());
+    d.addEventListener('pointerdown', (e) => { e.preventDefault(); strike(lane.id); });
+    keys.appendChild(d);
+  });
+}
+
+async function start(song) {
+  $('select').hidden = true;
+  $('stage').hidden = false;
+  $('overlay').hidden = false;
+  $('panel').innerHTML = '<h2>Loading…</h2><p>Decoding the track.</p>';
+  $('nowPlaying').textContent = song.title + (song.band ? ' · ' + song.band : '');
+
+  if (!view) { view = buildScene($('c')); padKeys(); window.addEventListener('resize', view.resize); }
+  view.resize();
+
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+  const bytes = await (await fetch(song.src)).arrayBuffer();
+  buffer = await audioCtx.decodeAudioData(bytes);
+
+  chart = song.map.notes.map(n => ({ ...n, done: false, mesh: null }));
+  score = 0; combo = 0; best = 0; cursor = 0; live = [];
+  counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
+  $('score').textContent = '0';
+
+  $('panel').innerHTML = '<h2>Ready</h2><p>Hi-hat <b>A</b> · Snare <b>S</b> · Kick <b>space</b></p>';
+  const go = document.createElement('button');
+  go.className = 'btn go'; go.textContent = 'Start';
+  go.addEventListener('click', () => { $('overlay').hidden = true; play(); });
+  $('panel').appendChild(go);
+  go.focus();
+
+  if (window.Track) Track.ev('game_start', { song: song.slug });
+}
+
+function play() {
+  source = audioCtx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(audioCtx.destination);
+  // A beat of lead-in, so the first note is not on top of the Start button.
+  startedAt = audioCtx.currentTime + 1.2;
+  source.start(startedAt);
+  source.onended = () => { if (running) finish(); };
+  running = true;
+  requestAnimationFrame(loop);
+}
+
+function songTime() {
+  // The audio clock, not the frame clock. This is the whole reason the game
+  // stays in time when the browser stutters.
+  return audioCtx.currentTime - startedAt - offset / 1000;
+}
+
+function flashVerdict(name, colour) {
+  const v = $('verdict');
+  v.textContent = name;
+  v.style.color = colour;
+  v.style.opacity = '1';
+  clearTimeout(flashVerdict.t);
+  flashVerdict.t = setTimeout(() => { v.style.opacity = '0'; }, 260);
+}
+
+function strike(laneId) {
+  const lane = view.lanes.find(l => l.id === laneId);
+  if (lane) lane.flash = 1;
+  const cap = document.querySelector('.keycap.' + laneId);
+  if (cap) { cap.classList.add('down'); setTimeout(() => cap.classList.remove('down'), 90); }
+  if (!running) return;
+
+  const now = songTime();
+  const found = nearestNote(chart, laneId, now, cursor);
+  if (!found) return;
+  const w = judge(found.delta);
+  if (!w) return;
+
+  found.note.done = true;
+  combo += 1;
+  best = Math.max(best, combo);
+  counts[w.name] += 1;
+  score += hitScore(w.score, combo);
+  $('score').textContent = score.toLocaleString();
+  const c = $('combo');
+  c.firstChild.textContent = String(combo);
+  c.style.opacity = combo >= 3 ? '1' : '0';
+  flashVerdict(w.name, w.name === 'Perfect' ? '#7ee7c7' : w.name === 'Good' ? '#f4b400' : '#a6adb6');
+  if (found.note.mesh) { view.freeNote(found.note.mesh); found.note.mesh = null; }
+  live = live.filter(n => n !== found.note);
+}
+
+addEventListener('keydown', (e) => {
+  if (e.repeat) return;
+  const lane = LANES.find(l => l.key === e.key.toLowerCase());
+  if (!lane) return;
+  e.preventDefault();
+  strike(lane.id);
+});
+
+function loop() {
+  if (!running) return;
+  const now = songTime();
+
+  // Bring on anything inside the lookahead.
+  while (cursor < chart.length && chart[cursor].t - now < view.LOOKAHEAD) {
+    const n = chart[cursor];
+    if (!n.done) {
+      const lane = view.lanes.find(l => l.id === n.lane);
+      if (lane) {
+        n.mesh = view.takeNote(lane.colour);
+        n.mesh.position.set(lane.x, 0.14, 0);
+        live.push(n);
+      }
+    }
+    cursor++;
+  }
+
+  for (let i = live.length - 1; i >= 0; i--) {
+    const n = live[i];
+    const dt = n.t - now;
+    if (n.mesh) n.mesh.position.z = view.HIT_Z - dt * view.SPEED;
+    if (dt < -MISS_AFTER) {
+      // Gone past. A miss breaks the combo whether or not anything was pressed.
+      if (!n.done) {
+        n.done = true;
+        counts.Miss += 1;
+        combo = 0;
+        $('combo').style.opacity = '0';
+        flashVerdict('Miss', '#ff8f8f');
+      }
+      if (n.mesh) { view.freeNote(n.mesh); n.mesh = null; }
+      live.splice(i, 1);
+    }
+  }
+
+  view.lanes.forEach((l) => {
+    l.flash = Math.max(0, l.flash - 0.08);
+    l.pad.material.emissiveIntensity = 0.12 + l.flash * 0.9;
+    l.ring.material.opacity = l.flash * 0.7;
+    const s = 1 + l.flash * 0.18;
+    l.ring.scale.set(s, s, s);
+  });
+
+  const secs = Math.max(0, now);
+  $('progress').textContent =
+    `${Math.floor(secs / 60)}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
+
+  view.renderer.render(view.scene, view.camera);
+  requestAnimationFrame(loop);
+}
+
+function finish() {
+  running = false;
+  live.forEach(n => { if (n.mesh) view.freeNote(n.mesh); });
+  live = [];
+  const acc = accuracy(counts);
+  const grade = rank(acc);
+  $('overlay').hidden = false;
+  $('panel').innerHTML =
+    `<div class="grade">${grade}</div>
+     <h2>${score.toLocaleString()}</h2>
+     <p>${(acc * 100).toFixed(1)}% · best combo ${best}</p>
+     <div class="tallies">
+       <div><b>${counts.Perfect}</b>Perfect</div>
+       <div><b>${counts.Good}</b>Good</div>
+       <div><b>${counts.OK}</b>OK</div>
+       <div><b>${counts.Miss}</b>Miss</div>
+     </div>`;
+  const again = document.createElement('button');
+  again.className = 'btn go'; again.textContent = 'Pick another';
+  again.addEventListener('click', () => {
+    $('overlay').hidden = true; $('stage').hidden = true; $('select').hidden = false;
+  });
+  $('panel').appendChild(again);
+  if (window.Track) {
+    Track.ev('game_finish', { grade, accuracy: Math.round(acc * 100), score, combo: best });
+  }
+}
+
+loadSongs();
+</script>
+</body>
+</html>

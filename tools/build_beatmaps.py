@@ -45,16 +45,26 @@ BANDS = [
 
 # Nothing human plays two of the same limb closer than this. It is also what
 # stops one cymbal wash becoming forty notes.
-MIN_GAP = {"kick": 0.110, "snare": 0.110, "hat": 0.085}
+MIN_GAP = {"kick": 0.150, "snare": 0.110, "hat": 0.085}
 
-# A chart denser than this stops being a song and becomes a strobe. Hats get
-# thinned first because a 16th-note hi-hat pattern is the usual offender.
+# Per lane, notes per second, because one global budget cannot tell a flood
+# apart from a part. The first version had a single cap and spent it hats-first
+# -- which produced charts of 948 kicks and 2 hi-hats, since a punk bass guitar
+# playing eighths reads as a kick drum all the way through and the timekeeping
+# the game is actually about got decimated to nothing.
+#
+# The kick is capped hardest for exactly that reason: a low-band onset every
+# 240 ms for three minutes is a bass player, not a foot.
+PER_LANE_MAX = {"kick": 3.2, "snare": 3.4, "hat": 5.0}
+
+# A last backstop across all lanes, so an unusual track cannot add up to a
+# strobe even with each lane inside its own budget.
 MAX_NOTES_PER_SEC = 9.0
 
 # The share of a frame's total flux a band must hold for the onset to be its
 # own rather than splatter from a transient elsewhere. The kick needs the most
 # because everything sharp leaks downward.
-DOMINANCE = {"kick": 0.10, "snare": 0.05, "hat": 0.04}
+DOMINANCE = {"kick": 0.18, "snare": 0.05, "hat": 0.04}
 
 
 def decode(path, sr=SR):
@@ -160,38 +170,47 @@ def pick(flux, min_gap, total=None, dominance=0.0, sr=SR, hop=HOP, sensitivity=1
 
 
 def thin(notes, duration):
-    """Drop notes until the chart is playable.
+    """Drop notes until the chart is playable, one lane at a time.
 
-    Onset detection is honest about what is in the recording, and what is in
-    the recording is a drummer using four limbs at once. A chart that asks one
-    person with two hands to reproduce that is not difficult, it is broken.
+    Onset detection is honest about the recording, and the recording is a
+    drummer using four limbs -- often over a bass guitar that the low band
+    cannot tell from a kick drum. A chart that asks one person with two hands
+    to reproduce all of that is not difficult, it is broken.
 
-    Decimates a lane at a time, repeatedly, keeping every Nth note so the
-    pattern survives at half or a third of its density rather than losing a
-    random half of itself. The first version capped each pass at half a lane
-    and ran the lanes once, so a thousand hats against a budget of ninety came
-    out at five hundred -- correct-looking code that did not do the job.
+    Each lane is thinned against its own budget rather than against a shared
+    one. The shared version was worse than it looked: it spent the whole
+    budget hats-first, so the charts came out at 948 kicks and 2 hi-hats --
+    every bass note kept, and the timekeeping that a drum game is actually
+    about thrown away.
+
+    Decimation keeps every Nth note, so a sixteenth-note line survives at half
+    or a third of its density rather than losing a random half of itself.
     """
     if duration <= 0 or not notes:
-        return notes
-    budget = max(1, int(duration * MAX_NOTES_PER_SEC))
-    if len(notes) <= budget:
         return notes
 
     by_lane = {}
     for n in notes:
         by_lane.setdefault(n["lane"], []).append(n)
 
-    # Hats first, then snare, then kick: a 16th-note hi-hat line is almost
-    # always what put the count over, and it is the least interesting part to
-    # play. The kick is the last thing to lose.
-    for lane in ("hat", "snare", "kick"):
-        while lane in by_lane and sum(len(v) for v in by_lane.values()) > budget:
-            row = by_lane[lane]
-            if len(row) <= 2:
-                break
-            by_lane[lane] = row[::2]
-    return sorted([n for row in by_lane.values() for n in row], key=lambda n: n["t"])
+    for lane, row in by_lane.items():
+        budget = max(1, int(duration * PER_LANE_MAX.get(lane, 4.0)))
+        while len(row) > budget and len(row) > 2:
+            row = row[::2]
+        by_lane[lane] = row
+
+    out = sorted([n for row in by_lane.values() for n in row], key=lambda n: n["t"])
+
+    # Backstop: if the lanes together are still a strobe, thin whichever is
+    # densest, repeatedly, so the balance between them is preserved.
+    total_budget = max(1, int(duration * MAX_NOTES_PER_SEC))
+    while len(out) > total_budget:
+        lane = max(by_lane, key=lambda k: len(by_lane[k]))
+        if len(by_lane[lane]) <= 2:
+            break
+        by_lane[lane] = by_lane[lane][::2]
+        out = sorted([n for row in by_lane.values() for n in row], key=lambda n: n["t"])
+    return out
 
 
 def chart(path):
@@ -254,13 +273,23 @@ def self_test():
     # Thinning must respect the budget and keep the notes sorted.
     dense = [{"t": i * 0.02, "lane": "hat"} for i in range(1000)]
     out = thin(list(dense), 10.0)
-    ok(len(out) <= int(10.0 * MAX_NOTES_PER_SEC) + 1, "thinned to the budget (%d)" % len(out))
+    ok(len(out) <= int(10.0 * PER_LANE_MAX["hat"]) + 1, "hats thinned to their lane budget (%d)" % len(out))
+
+    # The case the first version got wrong: a flooded kick lane must not be
+    # paid for out of the hi-hats.
+    mixed = ([{"t": i * 0.05, "lane": "kick"} for i in range(400)] +
+             [{"t": i * 0.05 + 0.02, "lane": "hat"} for i in range(400)])
+    out2 = thin(sorted(mixed, key=lambda n: n["t"]), 20.0)
+    hats = sum(1 for n in out2 if n["lane"] == "hat")
+    kicks = sum(1 for n in out2 if n["lane"] == "kick")
+    ok(hats >= 40, "hats survive a flooded kick lane (%d hats, %d kicks)" % (hats, kicks))
+    ok(kicks <= int(20.0 * PER_LANE_MAX["kick"]) + 1, "kick lane capped (%d)" % kicks)
     ok(out == sorted(out, key=lambda n: n["t"]), "still in time order after thinning")
     ok(thin([{"t": 1, "lane": "kick"}], 10.0) == [{"t": 1, "lane": "kick"}], "sparse chart untouched")
 
     for f in fails:
         print("FAIL", f)
-    print("%d checks, %d failed" % (8, len(fails)))
+    print("%d checks, %d failed" % (10, len(fails)))
     return 1 if fails else 0
 
 
