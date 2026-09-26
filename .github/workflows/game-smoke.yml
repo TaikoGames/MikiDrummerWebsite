@@ -1,11 +1,18 @@
 name: Game smoke test
 
-# Loads the live drum game in a real browser and plays a few seconds of it.
+# Loads the live drum game in a real browser and plays a few seconds of it,
+# on a desktop window and on a phone.
 #
 # Exists because "it stays on Loading" was reported for a page that works
 # perfectly on localhost. The difference between the repo and the deployed
 # site is the thing nobody can see from a laptop, and it is exactly where a
 # missing file, a stale deploy or a bad MIME type hides.
+#
+# The phone pass exists because the second report was "it's not even loading
+# now, make it playable on the phone", and both halves of that turned out to
+# be the same bug: an import map that Safari only understood from 16.4, which
+# does not fail loudly -- it just declines to run the module. A desktop-only
+# test is blind to the browsers the audience actually holds.
 
 on:
   workflow_dispatch:
@@ -26,55 +33,92 @@ jobs:
           URL: ${{ github.event.inputs.url || 'https://www.mikidrummer.ca/game.html' }}
         run: |
           cat > smoke.mjs <<'JS'
-          import { chromium } from 'playwright';
+          import { chromium, devices } from 'playwright';
           const URL_ = process.env.URL;
           const b = await chromium.launch({ args:[
             '--autoplay-policy=no-user-gesture-required',
             '--use-gl=swiftshader','--enable-unsafe-swiftshader'] });
-          const p = await b.newPage();
-          const errs = [], bad = [];
-          p.on('pageerror', e => errs.push('PAGEERROR: ' + e.message));
-          p.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0,160)); });
-          p.on('response', r => { if (r.status() >= 400) bad.push(r.status() + ' ' + r.url()); });
-
-          console.log('loading', URL_);
-          await p.goto(URL_, { waitUntil: 'domcontentloaded' });
 
           // Are the modules and the three.js bundle actually being served?
-          for (const path of ['/js/drum-game.js','/js/drum-scene.js','/vendor/three/three.module.js']) {
-            const r = await p.request.get(new URL(path, URL_).href);
-            console.log(`  ${r.status()}  ${path}  ${r.headers()['content-type'] || ''}`);
+          {
+            const p = await b.newPage();
+            for (const path of ['/js/drum-game.js','/js/drum-scene.js','/vendor/three/three.module.js']) {
+              const r = await p.request.get(new URL(path, URL_).href);
+              console.log(`  ${r.status()}  ${path}  ${r.headers()['content-type'] || ''}`);
+              if (r.status() !== 200) throw new Error(path + ' is not being served');
+            }
+            // An import map is how this broke the first time. It must not come back.
+            const html = await (await p.request.get(URL_)).text();
+            if (/type=["']importmap["']/.test(html)) {
+              throw new Error('an import map is back on the page -- Safari before 16.4 will not run the game');
+            }
+            await p.close();
           }
 
-          await p.waitForFunction(() => document.querySelectorAll('#songs .song').length > 0,
-                                  null, { timeout: 30000 })
-                 .catch(() => { throw new Error('the song list never appeared'); });
-          const songs = await p.$$eval('#songs .song', e => e.length);
-          console.log('songs listed:', songs);
+          async function pass(name, opts) {
+            console.log('\n=== ' + name + ' ===');
+            const ctx = await b.newContext(opts);
+            const p = await ctx.newPage();
+            const errs = [], bad = [];
+            p.on('pageerror', e => errs.push('PAGEERROR: ' + e.message));
+            p.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0,160)); });
+            p.on('response', r => { if (r.status() >= 400) bad.push(r.status() + ' ' + r.url()); });
 
-          await p.$$eval('#songs .song', els => els[0].click());
-          const t0 = Date.now(); let last = '';
-          while (Date.now() - t0 < 70000) {
-            const h = await p.$eval('#panel h2', e => e.textContent).catch(() => '');
-            const s = await p.$eval('#panel p', e => e.textContent).catch(() => '');
-            const line = `[${h}] ${s}`;
-            if (line !== last) { console.log('  ' + line); last = line; }
-            if (h === 'Ready') break;
-            if (/Could not|will not/.test(h)) throw new Error('load failed: ' + line);
-            await p.waitForTimeout(250);
+            await p.goto(URL_, { waitUntil: 'domcontentloaded' });
+            await p.waitForFunction(() => document.querySelectorAll('#songs .song').length > 0,
+                                    null, { timeout: 30000 })
+                   .catch(async () => {
+                     throw new Error('the song list never appeared: ' +
+                       await p.$eval('#songsNote', e => e.textContent).catch(() => '(no note)'));
+                   });
+            console.log('songs listed:', await p.$$eval('#songs .song', e => e.length));
+
+            await p.$$eval('#songs .song', els => els[0].click());
+            const t0 = Date.now(); let last = '';
+            while (Date.now() - t0 < 90000) {
+              const h = await p.$eval('#panel h2', e => e.textContent).catch(() => '');
+              const s = await p.$eval('#panel p', e => e.textContent).catch(() => '');
+              const line = `[${h}] ${s}`;
+              if (line !== last) { console.log('  ' + line); last = line; }
+              if (h === 'Ready') break;
+              if (/Could not|will not/.test(h)) throw new Error('load failed: ' + line);
+              await p.waitForTimeout(250);
+            }
+            if (await p.$eval('#panel h2', e => e.textContent).catch(() => '') !== 'Ready') {
+              throw new Error('never reached Ready -- stuck on: ' + last);
+            }
+
+            await p.click('#panel .btn');
+            await p.waitForTimeout(6000);
+            const clock = await p.$eval('#progress', e => e.textContent);
+            const media = await p.$eval('#track', a => ({ t: +a.currentTime.toFixed(2), paused: a.paused }));
+            console.log('  after 6s of play: clock', clock, ' audio', JSON.stringify(media));
+            if (clock === '0:00') throw new Error('the song never started');
+            if (media.paused || media.t < 3) throw new Error('the audio element is not playing');
+
+            // The pads are the only control on a phone, so tapping them has to score.
+            for (let i = 0; i < 36; i++) {
+              const caps = await p.$$('.keycap');
+              await caps[i % 3].dispatchEvent('pointerdown');
+              await p.waitForTimeout(80);
+            }
+            const score = await p.$eval('#score', e => e.textContent);
+            console.log('  score after 36 taps on the pads:', score);
+            if (score === '0') throw new Error('tapping the pads scored nothing');
+
+            // All three lanes have to be on screen, or a lane is unhittable.
+            const box = await p.$eval('#c', c => { const r = c.getBoundingClientRect();
+              return { w: Math.round(r.width), h: Math.round(r.height) }; });
+            console.log('  canvas:', JSON.stringify(box));
+
+            console.log('  page errors:', errs.length ? errs : 'none');
+            console.log('  bad responses:', bad.length ? bad : 'none');
+            await ctx.close();
           }
-          const ready = await p.$eval('#panel h2', e => e.textContent).catch(() => '');
-          if (ready !== 'Ready') throw new Error('never reached Ready — stuck on: ' + last);
 
-          await p.click('#panel .btn');
-          await p.waitForTimeout(6000);
-          const clock = await p.$eval('#progress', e => e.textContent);
-          console.log('clock after 6s of play:', clock);
-          if (clock === '0:00') throw new Error('the song never started');
-
-          console.log('page errors:', errs.length ? errs : 'none');
-          console.log('bad responses:', bad.length ? bad : 'none');
+          await pass('desktop', { viewport: { width: 1280, height: 800 } });
+          await pass('iPhone 12 portrait', devices['iPhone 12']);
+          await pass('iPhone 12 landscape', devices['iPhone 12 landscape']);
           await b.close();
-          if (errs.length) { console.log('\n(errors above did not block the game)'); }
           JS
           node smoke.mjs

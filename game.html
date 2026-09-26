@@ -51,14 +51,35 @@
   .song .n{color:var(--dim);font-size:11.5px;white-space:nowrap;letter-spacing:.06em}
 
   /* ---- stage ---- */
+  /* touch-action:none on the whole stage, because on a phone the pads ARE the
+     controls: without it a fast hi-hat pattern reads as a swipe and the page
+     scrolls out from under the player, or pulls down to refresh. */
   .stage{position:relative;margin-top:18px;border:1px solid var(--edge);border-radius:14px;
-         overflow:hidden;background:#0b0c0e}
-  canvas{display:block;width:100%;height:min(62vh,560px)}
+         overflow:hidden;background:#0b0c0e;touch-action:none;user-select:none;
+         -webkit-user-select:none}
+  canvas{display:block;width:100%;height:clamp(240px,56vh,560px)}
+  body.playing{overscroll-behavior:none}
+
+  /* On a touchscreen the game takes the screen while it is being played.
+     A phone in landscape is 390 pixels tall, so a canvas sized as a share of
+     the page left a 240 pixel letterbox with the header above it and the pads
+     below the fold — unplayable in exactly the orientation that is meant to
+     be the comfortable one. */
+  @media(pointer:coarse){
+    body.ingame{padding:0;overflow:hidden}
+    body.ingame .stage{position:fixed;inset:0;margin:0;border:0;border-radius:0;z-index:60}
+    body.ingame canvas{height:100vh;height:100dvh}
+  }
   .hud{position:absolute;inset:0;pointer-events:none;padding:16px 18px;
+       padding-bottom:max(16px,env(safe-area-inset-bottom));
        display:flex;flex-direction:column;justify-content:space-between}
   .hud .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
   .score{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(20px,4vw,30px);letter-spacing:-.02em}
   .meta{text-align:right;font-size:12px;color:var(--mid);line-height:1.7}
+  .quit{pointer-events:auto;margin-top:4px;background:rgba(19,21,24,.82);border:1px solid var(--edge2);
+        color:var(--mid);border-radius:999px;padding:6px 14px;font:inherit;font-size:11.5px;
+        font-weight:600;cursor:pointer;letter-spacing:.06em;touch-action:manipulation}
+  .quit:hover{border-color:var(--hot);color:var(--hot)}
   .combo{align-self:center;font-family:'Arial Black',system-ui,sans-serif;
          font-size:clamp(28px,7vw,52px);color:var(--hot);opacity:0;transition:opacity .12s}
   .combo small{display:block;font:700 11px/1 'Helvetica Neue',sans-serif;letter-spacing:.24em;
@@ -66,9 +87,32 @@
   .verdict{align-self:center;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
            font-size:14px;opacity:0;transition:opacity .1s}
   .keys{display:flex;justify-content:center;gap:10px}
+  /* Fitts' law on a phone: the pads are the only control, so they get the
+     bottom of the screen and a target a thumb can find without looking. */
   .keycap{pointer-events:auto;flex:1;max-width:190px;border:1px solid var(--edge2);border-radius:12px;
-          background:rgba(19,21,24,.82);padding:10px 6px;text-align:center;cursor:pointer;
-          font-size:12px;color:var(--mid);user-select:none;touch-action:manipulation}
+          background:rgba(19,21,24,.82);padding:14px 6px;text-align:center;cursor:pointer;
+          font-size:12px;color:var(--mid);user-select:none;-webkit-user-select:none;
+          touch-action:none;-webkit-touch-callout:none}
+  @media(max-width:680px){
+    .keys{gap:8px}
+    .keycap{max-width:none;padding:20px 4px;font-size:11.5px}
+    .keycap b{font-size:15px}
+  }
+  @media(pointer:coarse){ .keycap{min-height:74px;display:flex;flex-direction:column;
+                                  align-items:center;justify-content:center;gap:2px} }
+  /* A phone on its side has 390 pixels of height in total: a thumb-sized pad
+     eats the runway it is meant to be watching. */
+  @media(pointer:coarse) and (max-height:500px){ .keycap{min-height:54px;padding:10px 4px} }
+
+  /* On a small screen the middle of the frame is the vanishing point, which is
+     where the next bar of notes is, so a combo counter parked there covers the
+     one thing the player is reading. Pin both readouts to the edges instead. */
+  @media(pointer:coarse){
+    .combo{position:absolute;left:18px;top:72px;font-size:28px;text-align:left}
+    .combo small{text-align:left;margin-top:0}
+    .verdict{position:absolute;left:0;right:0;text-align:center;font-size:13px;
+             bottom:calc(max(16px,env(safe-area-inset-bottom)) + 84px)}
+  }
   .keycap b{display:block;font-size:14px;color:var(--fg)}
   .keycap.hat{border-color:rgba(126,231,199,.5)} .keycap.snare{border-color:rgba(244,180,0,.5)}
   .keycap.kick{border-color:rgba(232,103,42,.6)}
@@ -100,7 +144,8 @@
     <h1>Drum along</h1>
     <p class="lead">Three lanes, real songs. The charts are not hand-written — they are detected
        from the recordings, so the notes you are hitting are the drum parts that were actually
-       played. Hi-hat on <b>A</b>, snare on <b>S</b>, kick on <b>space</b>, or tap the pads on a phone.</p>
+       played. Hi-hat on <b>A</b>, snare on <b>S</b>, kick on <b>space</b>, or tap the three pads
+       along the bottom on a phone — turn it sideways and they get bigger.</p>
   </header>
 
   <div id="select">
@@ -110,6 +155,11 @@
 
   <div class="stage" id="stage" hidden>
     <canvas id="c"></canvas>
+    <!-- Streamed, not decoded. decodeAudioData turns a four megabyte MP3 into
+         sixty-odd megabytes of PCM before a single note plays, which on a
+         phone is a long wait and often a tab the OS kills outright. An audio
+         element starts on the first few kilobytes. -->
+    <audio id="track" preload="auto" playsinline></audio>
     <div class="hud">
       <div class="top">
         <div>
@@ -118,7 +168,10 @@
         </div>
         <div class="meta">
           <span id="nowPlaying"></span><br>
-          <span id="progress">0:00</span>
+          <span id="progress">0:00</span><br>
+          <!-- Once the stage goes fullscreen on a phone there is nothing to
+               scroll to, so the way out has to be on the stage itself. -->
+          <button class="quit" id="quit" type="button">Stop</button>
         </div>
       </div>
       <div class="combo" id="combo">0<small>Combo</small></div>
@@ -170,20 +223,75 @@
   </footer>
 </div>
 
-<script type="importmap">
-{ "imports": { "three": "/vendor/three/three.module.js" } }
+<script>
+/* A deliberately old-fashioned script: no modules, no arrow functions, no
+ * const. Its entire job is to speak when the module below cannot.
+ *
+ * "It's not even loading" is the one report the game itself can never make.
+ * If the module fails to parse, fails to resolve an import, or the browser
+ * has no modules at all, none of its own error handling runs -- the page just
+ * sits on "Loading the song list" with nothing in the console the player can
+ * see. This runs regardless, waits, and says what happened.
+ */
+(function () {
+  var problem = '';
+  addEventListener('error', function (e) {
+    if (problem) return;                          // the first one is the cause
+    var t = e && e.target;
+    // Only our own files. An ad blocker eating the analytics tag is the most
+    // common script error on the page and has nothing to do with the game --
+    // blaming it would send people chasing the wrong thing.
+    if (t && t.tagName === 'SCRIPT' && t.src && t.src.indexOf(location.origin) === 0) {
+      problem = 'a script did not load: ' + t.src.replace(location.origin, '');
+    } else if (e && e.message && e.message !== 'Script error.') {
+      problem = e.message;
+    }
+  }, true);
+
+  function check(second) {
+    var box = document.getElementById('songs');
+    var note = document.getElementById('songsNote');
+    if (!note || (box && box.children.length)) return;
+    if (window.__drumGameRan) {
+      // The module is alive, so this is a slow or broken connection rather
+      // than a browser that cannot run it. Give it one longer go before
+      // telling somebody on a train that their phone is the problem.
+      if (!second) { setTimeout(function () { check(true); }, 20000); return; }
+      note.textContent = 'The song list would not load' +
+        (problem ? ' (' + problem + ')' : '') +
+        '. A refresh usually sorts it; if not, the connection dropped partway.';
+      return;
+    }
+    note.textContent = 'The game would not start here. It needs a reasonably current ' +
+      'browser — Safari 15 or newer on an iPhone, or a recent Chrome, Firefox or Edge — ' +
+      'and a connection that held up while the page loaded. Everything else on the ' +
+      'site works without it.' + (problem ? ' (' + problem + ')' : '');
+  }
+  setTimeout(function () { check(false); }, 15000);
+})();
 </script>
 <script type="module">
-import * as THREE from 'three';
 import { LANES, WINDOWS, MISS_AFTER, judge, nearestNote, hitScore,
          accuracy, rank, slugify } from '/js/drum-game.js';
-import { buildScene } from '/js/drum-scene.js';
+
+/* drum-scene.js is NOT imported here, because importing it pulls in 1.3 MB of
+ * Three.js and nothing on this page runs until that arrives. On a phone on a
+ * bad connection that is twenty seconds of "Loading the song list…" before a
+ * list of twelve small JSON files can be shown. Loaded on demand instead, and
+ * warmed in the background while the player reads the list, so picking a song
+ * is still instant on anything but the first slow tap. */
+let buildScene = null;
+const warmScene = () => import('/js/drum-scene.js').then((m) => (buildScene = m.buildScene));
+
+// Tells the watchdog above that the module parsed and its imports resolved,
+// so a stuck page can be blamed on the right thing.
+window.__drumGameRan = true;
 
 const $ = (id) => document.getElementById(id);
 const OFFSET_KEY = 'drumGame:offset';
 
-let view, audioCtx, buffer, source, chart = null;
-let startedAt = 0, running = false, cursor = 0, judgeFrom = 0;
+let view, chart = null, current = null;
+let running = false, cursor = 0, judgeFrom = 0;
 let score = 0, combo = 0, best = 0;
 let counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
 let live = [];                       // notes currently on screen
@@ -254,6 +362,8 @@ async function loadSongs() {
   });
   $('songsNote').textContent =
     `${ready.length} songs charted. Pick one — headphones help, and check the offset below if it feels off.`;
+  // Fetch the renderer now, while they are deciding.
+  warmScene().catch(() => {});   // a failure here is reported properly on Start
 }
 
 /* ---- playing --------------------------------------------------------- */
@@ -268,8 +378,24 @@ function padKeys() {
     d.querySelector('b').textContent = lane.label;
     d.append(lane.key === ' ' ? 'space' : lane.key.toUpperCase());
     d.addEventListener('pointerdown', (e) => { e.preventDefault(); strike(lane.id); });
+    // A drum roll on a touchscreen is a long press as far as the OS is
+    // concerned, and a long press is a text-selection handle or a menu.
+    d.addEventListener('contextmenu', (e) => e.preventDefault());
     keys.appendChild(d);
   });
+}
+
+/* Back to the menu, from wherever. One function because there are three ways
+ * out and every one of them has to stop the song, let the page scroll again
+ * and give the screen back. */
+function backToSelect() {
+  running = false;
+  document.body.classList.remove('playing', 'ingame');
+  try { $('track').pause(); } catch (e) {}
+  $('overlay').hidden = true;
+  $('stage').hidden = true;
+  $('select').hidden = false;
+  if (view) view.resize();
 }
 
 function fail(headline, err, song, extra) {
@@ -280,9 +406,7 @@ function fail(headline, err, song, extra) {
   $('panel').querySelector('p').textContent = msg + '. ' + (extra || '');
   const back = document.createElement('button');
   back.className = 'btn'; back.textContent = 'Pick another';
-  back.addEventListener('click', () => {
-    $('overlay').hidden = true; $('stage').hidden = true; $('select').hidden = false;
-  });
+  back.addEventListener('click', backToSelect);
   $('panel').appendChild(back);
   // So a failure that only happens on somebody else's phone still shows up.
   if (window.Track) {
@@ -291,11 +415,49 @@ function fail(headline, err, song, extra) {
   console.error('[drum game]', headline, err);
 }
 
+/* Get the track ready to play without decoding it.
+ *
+ * The first version read the whole file and handed it to decodeAudioData,
+ * which expands a four megabyte MP3 into around sixty megabytes of raw PCM
+ * before the first note. A laptop shrugs; a phone spends ten seconds on it,
+ * and a phone with other tabs open has the tab killed. An audio element
+ * streams — it is playable off the first chunk, and the memory never grows. */
+function loadTrack(src) {
+  return new Promise((resolve, reject) => {
+    const a = $('track');
+    let settled = false;
+    const timer = setTimeout(
+      () => no('the track did not start loading within 30 seconds'), 30000);
+
+    function cleanup() {
+      clearTimeout(timer);
+      a.removeEventListener('canplay', ok);
+      a.removeEventListener('loadedmetadata', ok);
+      a.removeEventListener('error', bad);
+    }
+    function ok()  { if (settled) return; settled = true; cleanup(); resolve(); }
+    function no(m) { if (settled) return; settled = true; cleanup(); reject(new Error(m)); }
+    function bad() {
+      const e = a.error;
+      no('the browser could not play that file' + (e ? ' (media error ' + e.code + ')' : ''));
+    }
+
+    a.addEventListener('canplay', ok);
+    a.addEventListener('loadedmetadata', ok);   // enough to know the duration
+    a.addEventListener('error', bad);
+    a.src = src;
+    a.load();
+  });
+}
+
 async function start(song) {
+  current = song;
   $('select').hidden = true;
   $('stage').hidden = false;
+  document.body.classList.add('ingame');
+  $('stage').scrollIntoView({ block: 'nearest' });
   $('overlay').hidden = false;
-  $('panel').innerHTML = '<h2>Loading…</h2><p>Decoding the track.</p>';
+  $('panel').innerHTML = '<h2>Loading…</h2><p>Getting ready.</p>';
   $('nowPlaying').textContent = song.title + (song.band ? ' · ' + song.band : '');
 
   // Every stage says what it is doing, and every stage can fail out loud.
@@ -310,38 +472,29 @@ async function start(song) {
 
   try {
     if (!view) {
-      stage('Starting the renderer…');
+      // Say why the first song is the slow one, so the wait reads as a
+      // download rather than a hang.
+      stage(buildScene ? 'Starting the renderer…'
+                       : 'Downloading the 3D engine — first song only…');
+      if (!buildScene) await warmScene();
       view = buildScene($('c'));
       padKeys();
       window.addEventListener('resize', view.resize);
+      // A phone rotating fires orientationchange before the new size is
+      // readable, so measure again on the far side of a frame.
+      window.addEventListener('orientationchange',
+        () => setTimeout(view.resize, 250));
     }
     view.resize();
   } catch (err) {
-    return fail('This browser will not give the page a 3D canvas', err, song,
-                'WebGL may be switched off, or blocked by an extension.');
+    return fail('The 3D part will not start', err, song,
+                'Either WebGL is switched off or blocked by an extension, or the ' +
+                'renderer did not finish downloading.');
   }
 
   try {
-    stage('Waking the audio…');
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') await audioCtx.resume();
-  } catch (err) {
-    return fail('The browser would not start audio', err, song, '');
-  }
-
-  try {
-    stage('Fetching the track…');
-    const r = await fetch(song.src);
-    if (!r.ok) throw new Error('the audio file came back ' + r.status);
-    const bytes = await r.arrayBuffer();
-    stage('Decoding ' + (bytes.byteLength / 1048576).toFixed(1) + ' MB…');
-    // decodeAudioData can sit for ever on a file a browser dislikes rather
-    // than rejecting, which is indistinguishable from a hang. Give it a limit.
-    buffer = await Promise.race([
-      audioCtx.decodeAudioData(bytes),
-      new Promise((_, rej) => setTimeout(
-        () => rej(new Error('decoding took more than 45 seconds')), 45000))
-    ]);
+    stage('Loading the track…');
+    await loadTrack(song.src);
   } catch (err) {
     // Without this the panel says "Loading..." for ever and the player is
     // left guessing whether the song is long or the page is broken.
@@ -353,7 +506,7 @@ async function start(song) {
   counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
   $('score').textContent = '0';
 
-  $('panel').innerHTML = '<h2>Ready</h2><p>Hi-hat <b>A</b> · Snare <b>S</b> · Kick <b>space</b></p>';
+  $('panel').innerHTML = '<h2>Ready</h2><p>Hi-hat <b>A</b> · Snare <b>S</b> · Kick <b>space</b>, or tap the pads.</p>';
   const go = document.createElement('button');
   go.className = 'btn go'; go.textContent = 'Start';
   go.addEventListener('click', () => { $('overlay').hidden = true; play(); });
@@ -363,22 +516,56 @@ async function start(song) {
   if (window.Track) Track.ev('game_start', { song: song.slug });
 }
 
-function play() {
-  source = audioCtx.createBufferSource();
-  source.buffer = buffer;
-  source.connect(audioCtx.destination);
-  // A beat of lead-in, so the first note is not on top of the Start button.
-  startedAt = audioCtx.currentTime + 1.2;
-  source.start(startedAt);
-  source.onended = () => { if (running) finish(); };
-  running = true;
-  requestAnimationFrame(loop);
+/* ---- the clock ------------------------------------------------------- */
+/* Where in the song we are. Not the frame clock: frames stall behind a
+ * garbage collection and lie on a 120 Hz display, and a rhythm game that
+ * counts frames drifts out of the music within a verse.
+ *
+ * The truth is audio.currentTime, but it is not smooth — browsers update it
+ * in steps, and on a phone the step can be a quarter of a second, which is
+ * two judgement windows wide. So it runs as a free clock anchored to the last
+ * media reading, and every time the media clock does tick it eases the anchor
+ * towards it rather than jumping. Smooth between ticks, correct across them. */
+let anchorMedia = 0, anchorWall = 0, lastMedia = -1;
+const wall = () => performance.now() / 1000;
+function anchor(m) { anchorMedia = m; anchorWall = wall(); }
+function rawTime() { return anchorMedia + (wall() - anchorWall); }
+function songTime() { return rawTime() - offset / 1000; }
+
+function tickClock() {
+  const a = $('track');
+  // Paused means a phone call, a locked screen, a tab in the background. The
+  // song is not moving, so neither is the clock.
+  if (a.paused) { anchor(a.currentTime); lastMedia = -1; return; }
+  const m = a.currentTime;
+  if (m === lastMedia) return;              // no new reading, keep free-running
+  lastMedia = m;
+  const err = m - rawTime();
+  if (Math.abs(err) > 0.25) anchor(m);      // a seek, a stall, a sleeping tab
+  else anchorMedia += err * 0.08;           // otherwise creep onto it, silently
 }
 
-function songTime() {
-  // The audio clock, not the frame clock. This is the whole reason the game
-  // stays in time when the browser stutters.
-  return audioCtx.currentTime - startedAt - offset / 1000;
+function play() {
+  const a = $('track');
+  a.currentTime = 0;
+  a.onended = () => { if (running) finish(); };
+  anchor(0);
+  lastMedia = -1;
+  running = true;
+  document.body.classList.add('playing');
+  // play() must be called inside the tap that started it -- a phone will not
+  // let a timer start audio -- so there is no lead-in bar. The overlay is
+  // already gone by the time this runs, so the first note has clear air.
+  const p = a.play();
+  if (p && p.catch) {
+    p.catch((err) => {
+      running = false;
+      document.body.classList.remove('playing');
+      fail('The browser would not play the track', err, current,
+           'Phones only start audio from a tap — try Start again.');
+    });
+  }
+  requestAnimationFrame(loop);
 }
 
 function flashVerdict(name, colour) {
@@ -425,8 +612,11 @@ function strike(laneId) {
   live = live.filter(n => n !== found.note);
 }
 
+$('quit').addEventListener('click', backToSelect);
+
 addEventListener('keydown', (e) => {
   if (e.repeat) return;
+  if (e.key === 'Escape' && !$('stage').hidden) { backToSelect(); return; }
   const lane = LANES.find(l => l.key === e.key.toLowerCase());
   if (!lane) return;
   e.preventDefault();
@@ -435,6 +625,7 @@ addEventListener('keydown', (e) => {
 
 function loop() {
   if (!running) return;
+  tickClock();
   const now = songTime();
 
   // Bring on anything inside the lookahead.
@@ -487,6 +678,8 @@ function loop() {
 
 function finish() {
   running = false;
+  document.body.classList.remove('playing');
+  try { $('track').pause(); } catch (e) {}
   live.forEach(n => { if (n.mesh) view.freeNote(n.mesh); });
   live = [];
   const acc = accuracy(counts);
@@ -504,9 +697,7 @@ function finish() {
      </div>`;
   const again = document.createElement('button');
   again.className = 'btn go'; again.textContent = 'Pick another';
-  again.addEventListener('click', () => {
-    $('overlay').hidden = true; $('stage').hidden = true; $('select').hidden = false;
-  });
+  again.addEventListener('click', backToSelect);
   $('panel').appendChild(again);
   if (window.Track) {
     Track.ev('game_finish', { grade, accuracy: Math.round(acc * 100), score, combo: best });

@@ -12,9 +12,11 @@
  * The one thing a rhythm game has to get right is time, and the one way to
  * get it wrong is to measure it with requestAnimationFrame. Frames drift,
  * stall behind a garbage collection and lie on a 120 Hz display. Every
- * judgement here is made against AudioContext.currentTime, which is the same
- * clock that is playing the music, so a dropped frame costs a smooth
- * animation and never a missed note.
+ * judgement here is made against the playing track's own position, so a
+ * dropped frame costs a smooth animation and never a missed note. game.html
+ * owns that clock: it reads the audio element and smooths between its ticks,
+ * because the element reports its position in steps a quarter of a second
+ * wide on some phones and a judgement window is a tenth of that.
  */
 
 export const LANES = [

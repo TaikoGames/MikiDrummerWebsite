@@ -154,12 +154,14 @@
   <p id="loadErr"></p>
 </div>
 
-<script type="importmap">
-{ "imports": { "three": "./vendor/three/three.module.js" } }
-</script>
-
+<!-- Three is imported by path, not through an import map. An import map needs
+     Safari 16.4, and one release older does not fail loudly: it ignores the
+     map, cannot resolve the bare specifier 'three', and silently declines to
+     run the module. The page then sits on its loading bar for ever with
+     nothing in the console. The two vendored files that used to import 'three'
+     were pointed at the same path for the same reason. -->
 <script type="module">
-import * as THREE from 'three';
+import * as THREE from './vendor/three/three.module.js';
 import { GLTFLoader } from './vendor/three/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from './vendor/three/libs/meshopt_decoder.module.js';
 
