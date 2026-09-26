@@ -5,15 +5,28 @@
 <script src="/js/track.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Drum Along — Play Miki's Songs | Punk BC</title>
-<meta name="description" content="A free drum rhythm game in your browser. Play along to real Vancouver punk and metal — the charts come from the actual drum takes.">
-<meta name="robots" content="index, follow">
+<!-- The title leads with what somebody would actually type into a search box.
+     "Drum Along — Play Miki's Songs" is a name only someone who already knows
+     the site would search for, which is the one group that does not need to
+     find it. -->
+<title>Free Drum Game Online — Play Real Punk Songs | Punk BC</title>
+<meta name="description" content="A free drum rhythm game in your browser — no download, no sign-up, works on a phone. Twelve real punk and metal tracks, charted from the actual recordings.">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://www.mikidrummer.ca/game.html">
+<meta name="author" content="Miki Drummer">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.mikidrummer.ca/game.html">
-<meta property="og:title" content="Drum Along — play the actual drum parts">
-<meta property="og:description" content="A rhythm game whose charts come from the recordings themselves. Three lanes, real songs, in your browser.">
+<meta property="og:title" content="Drum Along — a free drum game in your browser">
+<meta property="og:description" content="Three lanes, twelve real punk and metal songs, no download. The charts are detected from the recordings, so you are playing the actual drum parts.">
 <meta property="og:site_name" content="Punk BC">
+<meta property="og:image" content="https://www.mikidrummer.ca/images/drum-game-play-punk-songs-browser.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Three coloured lanes of drum notes running toward a white hit line, with hi-hat, snare and kick pads.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Drum Along — a free drum game in your browser">
+<meta name="twitter:description" content="Twelve real punk and metal songs, charted from the recordings. No download, works on a phone.">
+<meta name="twitter:image" content="https://www.mikidrummer.ca/images/drum-game-play-punk-songs-browser.png">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
 <link rel="apple-touch-icon" href="/images/icon-180.png">
@@ -153,6 +166,15 @@
   .row input[type=range]{flex:1;min-width:180px;accent-color:var(--hot)}
   .row output{font-size:12.5px;color:var(--mid);min-width:74px;text-align:right;font-variant-numeric:tabular-nums}
   .hint{font-size:11.5px;color:var(--dim);margin-top:8px;max-width:70ch}
+  .tbl{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+  .tbl th{text-align:left;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+          color:var(--dim);font-weight:700;padding:0 10px 8px 0;border-bottom:1px solid var(--edge)}
+  .tbl td{padding:9px 10px 9px 0;border-bottom:1px solid var(--edge);color:var(--mid)}
+  .tbl td:first-child{color:var(--fg);font-weight:600}
+  @media(max-width:560px){ .tbl th:nth-child(4),.tbl td:nth-child(4){display:none} }
+  .qa h4{font-size:14px;margin:16px 0 4px;color:var(--fg)}
+  .qa h4:first-child{margin-top:8px}
+  .qa p{font-size:13px;color:var(--mid);max-width:74ch}
   .calDot{width:64px;height:64px;border-radius:50%;background:#1b1e22;border:2px solid var(--edge2);
           margin:0 auto;transition:transform .06s ease-out,background .06s,border-color .06s}
   .calDot.on{background:var(--hot);border-color:var(--hot);transform:scale(1.25)}
@@ -281,12 +303,156 @@
     </p>
   </div>
 
+  <!-- The song list in the game is built by JavaScript from the chart files,
+       which means a crawler sees an empty div where twelve song and band
+       names should be. These are the same twelve, in HTML, because band names
+       and song titles are the thing people actually search for. -->
+  <section class="settings" id="songlist">
+    <h3>The songs you can play</h3>
+    <p class="hint" style="font-size:13px;color:var(--mid);max-width:74ch">
+      Twelve tracks, all of them Miki's own drumming with his bands around Vancouver and
+      Barcelona. Every one is charted from the recording itself.
+    </p>
+    <table class="tbl">
+      <thead><tr><th>Song</th><th>Band</th><th>Tempo</th><th>Notes</th><th>Length</th></tr></thead>
+      <tbody>
+        <tr><td>No Other</td><td>Bound By None</td><td>120 BPM</td><td>551</td><td>2:58</td></tr>
+        <tr><td>On The Double</td><td>Bound By None</td><td>185 BPM</td><td>533</td><td>2:35</td></tr>
+        <tr><td>Land and Sea</td><td>Dead Fast</td><td>172 BPM</td><td>489</td><td>2:31</td></tr>
+        <tr><td>Skamen</td><td>Dead Fast</td><td>115 BPM</td><td>701</td><td>3:08</td></tr>
+        <tr><td>Star Shines Trough</td><td>Dead Fast</td><td>178 BPM</td><td>535</td><td>2:34</td></tr>
+        <tr><td>Bajo el nivel del mal</td><td>Diera</td><td>215 BPM</td><td>322</td><td>1:42</td></tr>
+        <tr><td>Groenlandia</td><td>Diera</td><td>148 BPM</td><td>203</td><td>1:27</td></tr>
+        <tr><td>La tragedia de los comunes</td><td>Diera</td><td>148 BPM</td><td>356</td><td>1:44</td></tr>
+        <tr><td>Per mi (In Catalan)</td><td>Diera</td><td>207 BPM</td><td>444</td><td>2:23</td></tr>
+        <tr><td>Sebastopol García</td><td>Diera</td><td>207 BPM</td><td>676</td><td>2:43</td></tr>
+        <tr><td>Pony Up</td><td>Granite</td><td>162 BPM</td><td>434</td><td>3:11</td></tr>
+        <tr><td>Cornered (demo)</td><td>Lift The Anchor</td><td>148 BPM</td><td>580</td><td>3:17</td></tr>
+      </tbody>
+    </table>
+    <p class="hint">More about the bands on <a href="/punkbc.html">Punk BC</a>.</p>
+  </section>
+
+  <!-- Visible answers to the things people actually type. The FAQPage markup
+       at the bottom of the page describes exactly this text and nothing else
+       -- schema that answers questions the page does not visibly answer is
+       the sort of thing that gets a site's rich results switched off. -->
+  <section class="settings" id="faq">
+    <h3>Questions</h3>
+    <div class="qa">
+      <h4>Is it free?</h4>
+      <p>Yes. No account, no download, no ads, nothing to install. It is a web page.</p>
+
+      <h4>Can I play a drum game on my phone?</h4>
+      <p>Yes — tap the three pads along the bottom. Turn the phone sideways and they get
+         bigger. It works in any current mobile browser.</p>
+
+      <h4>Do I need a real drum kit or an electronic kit?</h4>
+      <p>No. It is three keys on a keyboard (A, S and space) or three pads on a touchscreen.
+         If you do own a kit, this is not a replacement for a practice pad — it is a reading
+         and timing exercise you can do on a bus.</p>
+
+      <h4>Where do the drum charts come from?</h4>
+      <p>They are detected from the recordings. A script finds the moment each drum is struck,
+         works out the song's tempo, tracks the beats, and keeps the hits that land on them.
+         Nobody transcribed these by hand, so the notes are the parts that were actually
+         played rather than somebody's approximation of them.</p>
+
+      <h4>The notes feel early or late. How do I fix it?</h4>
+      <p>Use the calibration on this page: it plays a steady click and measures how far off your
+         taps land, then sets the offset for you. Bluetooth headphones are almost always the
+         cause — they can run 150&nbsp;ms or more behind the screen, which is wider than the
+         scoring window.</p>
+
+      <h4>Can I add my own band's songs?</h4>
+      <p>Not through the page — the charting runs on a server. But the tool that does it is
+         open in the repository, and if you are a BC band who would like a track charted,
+         say so through <a href="/services.html">the services page</a>.</p>
+    </div>
+  </section>
+
   <footer>
     A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>.
-    One of the <a href="/tools.html">free tools</a> for bands and drummers.
+    One of the <a href="/tools.html">free tools</a> for bands and drummers, alongside the
+    <a href="/click-track.html">click track maker</a> and the
+    <a href="/gig-checklist.html">gig checklist</a>.
     Every song here is Miki's own playing, with his bands.
   </footer>
 </div>
+
+<!-- Structured data. Every answer in the FAQ block below appears, in those
+     words, in the visible #faq section -- markup describing answers a reader
+     cannot see on the page is what gets a site's rich results turned off. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "VideoGame",
+      "@id": "https://www.mikidrummer.ca/game.html#game",
+      "name": "Drum Along",
+      "url": "https://www.mikidrummer.ca/game.html",
+      "description": "A free browser drum rhythm game. Three lanes — hi-hat, snare and kick — and twelve real Vancouver punk and metal tracks, charted automatically from the recordings so the notes are the drum parts that were actually played.",
+      "image": "https://www.mikidrummer.ca/images/drum-game-play-punk-songs-browser.png",
+      "genre": ["Rhythm game", "Music game"],
+      "gamePlatform": ["Web browser", "Android", "iOS"],
+      "playMode": "SinglePlayer",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Any browser with WebGL",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD",
+                  "availability": "https://schema.org/InStock" },
+      "author": { "@type": "Person", "name": "Miki Drummer",
+                  "url": "https://www.mikidrummer.ca/" },
+      "publisher": { "@type": "Organization", "name": "Punk BC",
+                     "url": "https://www.mikidrummer.ca/punkbc.html" },
+      "musicBy": [
+        { "@type": "MusicGroup", "name": "Bound By None" },
+        { "@type": "MusicGroup", "name": "Dead Fast" },
+        { "@type": "MusicGroup", "name": "Diera" },
+        { "@type": "MusicGroup", "name": "Granite" },
+        { "@type": "MusicGroup", "name": "Lift The Anchor" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.mikidrummer.ca/game.html#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is it free?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "Yes. No account, no download, no ads, nothing to install. It is a web page." } },
+        { "@type": "Question", "name": "Can I play a drum game on my phone?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "Yes — tap the three pads along the bottom. Turn the phone sideways and they get bigger. It works in any current mobile browser." } },
+        { "@type": "Question", "name": "Do I need a real drum kit or an electronic kit?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "No. It is three keys on a keyboard (A, S and space) or three pads on a touchscreen. If you do own a kit, this is not a replacement for a practice pad — it is a reading and timing exercise you can do on a bus." } },
+        { "@type": "Question", "name": "Where do the drum charts come from?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "They are detected from the recordings. A script finds the moment each drum is struck, works out the song's tempo, tracks the beats, and keeps the hits that land on them. Nobody transcribed these by hand, so the notes are the parts that were actually played rather than somebody's approximation of them." } },
+        { "@type": "Question", "name": "The notes feel early or late. How do I fix it?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "Use the calibration on this page: it plays a steady click and measures how far off your taps land, then sets the offset for you. Bluetooth headphones are almost always the cause — they can run 150 ms or more behind the screen, which is wider than the scoring window." } },
+        { "@type": "Question", "name": "Can I add my own band's songs?",
+          "acceptedAnswer": { "@type": "Answer",
+            "text": "Not through the page — the charting runs on a server. But the tool that does it is open in the repository, and if you are a BC band who would like a track charted, say so through the services page." } }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Miki Drummer",
+          "item": "https://www.mikidrummer.ca/" },
+        { "@type": "ListItem", "position": 2, "name": "Free tools",
+          "item": "https://www.mikidrummer.ca/tools.html" },
+        { "@type": "ListItem", "position": 3, "name": "Drum Along",
+          "item": "https://www.mikidrummer.ca/game.html" }
+      ]
+    }
+  ]
+}
+</script>
 
 <script>
 /* A deliberately old-fashioned script: no modules, no arrow functions, no

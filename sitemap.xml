@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.mikidrummer.ca/</loc>
     <lastmod>2026-09-17</lastmod>
@@ -37,8 +38,12 @@
   <url>
     <loc>https://www.mikidrummer.ca/game.html</loc>
     <lastmod>2026-09-26</lastmod>
-    <priority>0.7</priority>
-    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+    <image:image>
+      <image:loc>https://www.mikidrummer.ca/images/drum-game-play-punk-songs-browser.png</image:loc>
+      <image:title>Drum Along — a free drum game in your browser</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/tools.html</loc>

@@ -203,12 +203,17 @@ export function buildScene(canvas) {
   // A bar across the far end that flares on every beat of the song. The
   // charts carry the beats the tracker found, so this is in time with the
   // record rather than with a guess at its tempo.
+  // Narrow, and it takes the fog like everything else. At full width with
+  // fog switched off it was not a glow at the far end of the runway, it was a
+  // solid orange wall hanging across the sky with the floor grid visible
+  // through it -- which is what a 64-unit plane at constant brightness sitting
+  // in front of a fog layer actually is.
   const horizon = new THREE.Mesh(
-    new THREE.PlaneGeometry(64, 0.9),
+    new THREE.PlaneGeometry(22, 0.7),
     new THREE.MeshBasicMaterial({ color: 0xe8672a, transparent: true, opacity: 0.12,
-                                  fog: false, depthWrite: false })
+                                  fog: true, depthWrite: false })
   );
-  horizon.position.set(0, 0.4, -GRID_BACK * 0.55);
+  horizon.position.set(0, 0.5, -GRID_BACK * 0.42);
   scene.add(horizon);
 
   // Notes are pooled. A three minute song is a couple of thousand notes and
@@ -265,8 +270,8 @@ export function buildScene(canvas) {
     // watching is the moment the music is marking.
     hitLine.material.opacity = 0.72 + p * 0.28;
     hitGlow.material.opacity = 0.06 + p * 0.14;
-    horizon.material.opacity = 0.10 + p * 0.5;
-    horizon.scale.y = 1 + p * 2.6;
+    horizon.material.opacity = 0.14 + p * 0.42;
+    horizon.scale.y = 1 + p * 2.2;
     stars.material.opacity = 0.42 + p * 0.3;
     grid.material.opacity = 0.45 + p * 0.35;
   }
