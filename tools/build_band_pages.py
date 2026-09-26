@@ -240,6 +240,7 @@ def page_html(info: dict, today: str) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/js/track.js" defer></script>
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc, quote=True)}">
 <meta name="robots" content="index, follow">
@@ -354,6 +355,7 @@ def index_html(pages: list[dict], today: str) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/js/track.js" defer></script>
 <title>Bands playing BC — {n} acts with shows coming up | Punk BC</title>
 <meta name="description" content="{html.escape(desc, quote=True)}">
 <meta name="robots" content="index, follow">

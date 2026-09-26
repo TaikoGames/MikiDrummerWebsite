@@ -466,6 +466,7 @@
   gtag('js', new Date());
   gtag('config', 'G-C75363M813');
 </script>
+<script src="/js/track.js" defer></script>
 </head>
 <body>
 
@@ -557,7 +558,7 @@
             </div>
         </div>
         <div class="media-actions">
-            <button class="dl-btn-media" id="dlAllBtn">⬇ Download press kit — photos, logo &amp; bio</button>
+            <button class="dl-btn-media" id="dlAllBtn" data-no-track>⬇ Download press kit — photos, logo &amp; bio</button>
             <!-- Under the download, deliberately. Downloading the zip is not the
                  job; sending it to a booker is, and that step was the one going
                  missing. -->
@@ -830,6 +831,7 @@
                        // audio does not live beside the photos, and one
                        // hardcoded prefix cannot reach both.
                        'audio/granite/pony-up.mp3'];
+        if (window.Track) Track.ev('press_kit_download', { band: 'GRANITE' });
         const zip = new JSZip(), folder = zip.folder('granite-press-kit');
         // A press kit without the bio is half a press kit: the photos are
         // the easy part and the words are what gets pasted into a listing.

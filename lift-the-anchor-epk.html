@@ -484,6 +484,7 @@
   gtag('js', new Date());
   gtag('config', 'G-C75363M813');
 </script>
+<script src="/js/track.js" defer></script>
 </head>
 <body>
 
@@ -563,7 +564,7 @@
             </div>
         </div>
         <div class="media-actions">
-            <button class="dl-btn-media" id="dlAllBtn">⬇ Download press kit — photos, logo &amp; bio</button>
+            <button class="dl-btn-media" id="dlAllBtn" data-no-track>⬇ Download press kit — photos, logo &amp; bio</button>
             <!-- Under the download, deliberately. Downloading the zip is not the
                  job; sending it to a booker is, and that step was the one going
                  missing. -->
@@ -850,6 +851,7 @@
         const files = ['hero.jpg','feature.jpg',
                        'live-01.jpg','live-02.jpg','live-03.jpg','live-04.jpg','live-05.jpg',
                        'live-06.jpg','live-07.jpg','live-08.jpg','live-09.jpg','live-10.jpg'];
+        if (window.Track) Track.ev('press_kit_download', { band: 'Lift the Anchor' });
         const zip = new JSZip(), folder = zip.folder('lift-the-anchor-press-kit');
         // A press kit without the bio is half a press kit: the photos are
         // the easy part and the words are what gets pasted into a listing.

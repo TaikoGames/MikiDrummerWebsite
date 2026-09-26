@@ -548,6 +548,7 @@ def venue_page_html(venue: str, city: str, shows: list[dict], today: str) -> str
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/js/track.js" defer></script>
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc, quote=True)}">
 <meta name="robots" content="index, follow">
@@ -728,6 +729,7 @@ def city_page_html(city: str, shows: list[dict], today: str) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/js/track.js" defer></script>
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc, quote=True)}">
 <meta name="robots" content="index, follow">
