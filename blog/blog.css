@@ -1,0 +1,114 @@
+/* Shared by /blog/ and every post in it. Same stone-and-molten palette as
+   /tools.html, so moving between the two does not feel like a different site. */
+:root {
+    --stone-950: #0f1012;
+    --stone-900: #16181b;
+    --stone-800: #1e2124;
+    --stone-700: #2b2f34;
+    --stone-400: #7d848d;
+    --stone-300: #a6adb6;
+    --stone-100: #e9ebee;
+    --molten: #e8672a;
+    --molten-soft: rgba(232,103,42,0.12);
+    --edge: rgba(255,255,255,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background: var(--stone-950);
+    color: var(--stone-100);
+    font-family: "Helvetica Neue", system-ui, Arial, sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+.display {
+    font-family: "Arial Black", "Helvetica Neue", system-ui, sans-serif;
+    font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; line-height: 0.98;
+    text-wrap: balance;
+}
+.eyebrow { font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--molten); font-weight: 700; }
+a { color: var(--molten); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--molten); outline-offset: 3px; }
+
+header.page {
+    padding: 64px 0 40px;
+    border-bottom: 1px solid var(--edge);
+    background: radial-gradient(120% 90% at 50% 0%, rgba(232,103,42,0.10), transparent 60%);
+}
+header.page h1 { font-size: clamp(32px, 6vw, 54px); margin: 14px 0 16px; }
+header.page .dek { color: var(--stone-300); font-size: 18px; max-width: 62ch; }
+.meta { margin-top: 18px; font-size: 13px; color: var(--stone-400); }
+.crumbs { font-size: 13px; color: var(--stone-400); }
+.crumbs a { color: var(--stone-400); text-decoration: none; border-bottom: 1px solid var(--edge); }
+.crumbs a:hover { color: var(--molten); border-color: var(--molten); }
+
+/* ---------- Post body ---------- */
+article { padding: 36px 0 70px; }
+article > * + * { margin-top: 18px; }
+article p, article li { font-size: 17px; color: var(--stone-100); max-width: 66ch; }
+article p.muted { color: var(--stone-300); }
+article h2 {
+    font-family: "Arial Black", "Helvetica Neue", system-ui, sans-serif; font-weight: 900;
+    font-size: clamp(22px, 3.6vw, 28px); letter-spacing: -0.01em; line-height: 1.15;
+    margin-top: 52px; text-wrap: balance;
+}
+article h2 .wk {
+    display: block; font-family: "Helvetica Neue", system-ui, sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.26em; text-transform: uppercase; color: var(--molten); margin-bottom: 6px;
+}
+article h3 { font-size: 17px; margin-top: 28px; }
+article ol, article ul { padding-left: 22px; display: grid; gap: 8px; }
+article strong { color: #fff; }
+
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--edge); vertical-align: top; }
+th { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--stone-400); }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--stone-300); }
+
+/* The beat, written the way a drummer counts it. */
+.groove { background: var(--stone-900); border: 1px solid var(--edge); border-radius: 12px; padding: 16px; }
+.groove-title { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--stone-400); font-weight: 700; margin-bottom: 10px; }
+.groove-grid { display: grid; grid-template-columns: 44px repeat(8, minmax(0, 1fr)); gap: 4px; max-width: 460px; }
+.groove-grid span { font-size: 12px; text-align: center; font-variant-numeric: tabular-nums; }
+.groove-grid .lab { text-align: left; color: var(--stone-400); font-weight: 700; font-size: 11px; align-self: center; }
+.groove-grid .ct { color: var(--stone-400); }
+.groove-grid .ct.b { color: var(--stone-100); font-weight: 700; }
+.groove-grid .x { aspect-ratio: 1 / 1; border: 1px solid var(--stone-700); border-radius: 3px; }
+.groove-grid .x.on { background: var(--molten); border-color: var(--molten); }
+
+.drill {
+    display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; justify-content: space-between;
+    background: var(--molten-soft); border: 1px solid rgba(232,103,42,0.35); border-radius: 12px; padding: 14px 16px;
+}
+.drill p { font-size: 15px; margin: 0; }
+.drill .btn {
+    display: inline-block; background: var(--molten); color: #140a04; font-weight: 800; font-size: 13px;
+    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; padding: 9px 14px; border-radius: 8px;
+    white-space: nowrap;
+}
+.drill .btn:hover { background: #ff7a3a; }
+
+.goal {
+    border-left: 3px solid var(--molten); padding: 4px 0 4px 14px; color: var(--stone-100); font-weight: 700;
+}
+.rule { background: var(--stone-900); border: 1px solid var(--edge); border-radius: 12px; padding: 16px 18px; }
+.rule p { margin: 0; }
+
+/* ---------- Blog index ---------- */
+.posts { list-style: none; padding: 30px 0 70px; display: grid; gap: 16px; }
+.post-card {
+    display: grid; gap: 8px; text-decoration: none; color: inherit;
+    background: var(--stone-900); border: 1px solid var(--edge); border-radius: 14px; padding: 22px 20px;
+    transition: border-color .12s ease, transform .12s ease;
+}
+.post-card:hover { border-color: var(--molten); transform: translateY(-2px); }
+.post-card time { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone-400); font-weight: 700; }
+.post-card h2 { font-size: 22px; line-height: 1.2; }
+.post-card p { color: var(--stone-300); font-size: 15px; }
+.post-card .go { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--molten); font-weight: 700; }
+
+footer { border-top: 1px solid var(--edge); padding: 28px 0 60px; color: var(--stone-400); font-size: 14px; }
+footer a:hover { text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) { .post-card { transition: none; } .post-card:hover { transform: none; } }

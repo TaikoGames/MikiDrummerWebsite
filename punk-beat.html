@@ -5,7 +5,7 @@
 <script src="/js/track.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Punk Beat Ladder — Punk Drum Practice 70 to 200 BPM | Miki Drummer</title>
-<meta name="description" content="A free punk drum practice track that climbs from 70 to 200 BPM. Skank beat, D-beat, punk 8ths and Oi! stomp, played live in your browser.">
+<meta name="description" content="A free punk drum practice track that climbs from 70 to 200 BPM. Rock beat, skank beat, D-beat, punk 8ths and Oi! stomp, played live in your browser.">
 <link rel="canonical" href="https://www.mikidrummer.ca/punk-beat.html">
 <link rel="icon" href="favicon.ico">
 <meta name="theme-color" content="#e4e4de">
@@ -184,7 +184,7 @@
     <a class="back" href="/tools.html">← Free tools</a>
     <div class="eyebrow">Drum practice · synth kit · no samples</div>
     <h1><span class="cut">Punk beat</span> practise <span class="pink">70–200</span> BPM</h1>
-    <p class="lede">A punk take on the <a href="https://youtu.be/XZpGzpHcfdw" target="_blank" rel="noopener">rock beat practise track</a>. Pick a beat, hit play, and the tempo climbs a rung every few bars until you hit 200. Click any rung to jump straight to it.</p>
+    <p class="lede">A punk take on the <a href="https://youtu.be/XZpGzpHcfdw" target="_blank" rel="noopener">rock beat practise track</a>. Pick a beat, hit play, and the tempo climbs a rung every few bars until you hit 200. Click any rung to jump straight to it. New to drums? Follow the <a href="/blog/beginner-drum-practice-plan.html">12-week beginner plan</a>.</p>
   </header>
 
   <div class="stage">
@@ -201,7 +201,7 @@
       </div>
     </div>
     <div class="grid-box">
-      <div class="pattern-name" id="patName">Skank beat</div>
+      <div class="pattern-name" id="patName">Rock beat</div>
       <p class="pattern-blurb" id="patBlurb"></p>
       <div class="seq" id="seq" aria-label="Beat grid"></div>
     </div>
@@ -235,6 +235,11 @@
 (() => {
   // Steps are eighth notes: 1 & 2 & 3 & 4 &
   const PATTERNS = {
+    rock: {
+      name: "Rock beat",
+      blurb: "Where everyone starts: hats on every eighth, kick on 1 and 3, snare on 2 and 4. Get this solid before anything else.",
+      k: [1,0,0,0,1,0,0,0], s: [0,0,1,0,0,0,1,0], h: [1,1,1,1,1,1,1,1]
+    },
     skank: {
       name: "Skank beat",
       blurb: "Kick on every beat, snare on every “and”. The hardcore two-step — keep it loose and it’ll run away from you past 180.",
@@ -264,8 +269,8 @@
     set(k, v) { try { localStorage.setItem("pbl:" + k, JSON.stringify(v)); } catch {} }
   };
 
-  let patKey = store.get("pattern", "skank");
-  if (!PATTERNS[patKey]) patKey = "skank";
+  let patKey = store.get("pattern", "rock");
+  if (!PATTERNS[patKey]) patKey = "rock";
 
   // ---------- Settings / ladder ----------
   function settings() {
@@ -551,10 +556,21 @@
     patWrap.append(b);
   });
 
+  // A link can preset an exercise, e.g. ?beat=rock&from=70&to=120&by=5&bars=8&count=1
+  // Those values win over what this browser remembered, but are not saved over it.
+  const q = new URLSearchParams(location.search);
+  const QMAP = { from: "startBpm", to: "endBpm", by: "stepBpm", bars: "bars", count: "countEach", hold: "hold" };
+  const preset = {};
+  for (const [k, id] of Object.entries(QMAP)) if (q.has(k)) preset[id] = q.get(k);
+  if (PATTERNS[q.get("beat")]) patKey = q.get("beat");
+
   for (const id of ["startBpm","endBpm","stepBpm","bars","countEach","hold"]) {
-    const saved = store.get(id, null);
+    const saved = id in preset ? preset[id] : store.get(id, null);
     const el = $(id);
-    if (saved != null) { if (el.type === "checkbox") el.checked = saved; else el.value = saved; }
+    if (saved != null) {
+      if (el.type === "checkbox") el.checked = saved === true || saved === "1" || saved === "true";
+      else el.value = saved;
+    }
     el.addEventListener("change", () => {
       store.set(id, el.type === "checkbox" ? el.checked : el.value);
       const was = playing, rung = pos ? pos.rung : 0;
