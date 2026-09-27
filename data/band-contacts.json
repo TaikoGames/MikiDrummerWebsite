@@ -11,6 +11,22 @@
   },
   "bands": [
     {
+      "band": "Accessory",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://accessory.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Aemia",
       "checked": "2026-09-26",
       "email": "",
@@ -264,6 +280,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Black Ivar. Heavy Is The Head EP tour",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://blackivarheavyistheheadeptour.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Black Moon Cult",
@@ -523,6 +555,22 @@
       "note": "",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Carly Cosgrove",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://carlycosgrove.bandcamp.com/",
+          "found": "none"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Castrator",
@@ -1298,6 +1346,32 @@
       "instagram": ""
     },
     {
+      "band": "Gilla Band",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "gillaband",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://gillaband.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/gillaband",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43309923-gilla-band-at-white-hotel?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;The",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Good Riddance",
       "checked": "2026-09-17",
       "email": "",
@@ -1663,6 +1737,42 @@
       "instagram": ""
     },
     {
+      "band": "King Buffalo",
+      "checked": "2026-09-27",
+      "email": "info@consequence.net",
+      "email_source": "consequence.net",
+      "instagram": "kingbuffaloband",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://kingbuffalo.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://www.instagram.com/kingbuffaloband",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "http://www.twitter.com/kingbuffaloband",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.kingbuffalo.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://consequence.net/contact-us",
+          "found": "email"
+        }
+      ],
+      "note": "",
+      "by": "auto"
+    },
+    {
       "band": "Kostnatění",
       "checked": "2026-09-18",
       "email": "",
@@ -1892,6 +2002,22 @@
       "by": "auto"
     },
     {
+      "band": "Microwave & Free Throw",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://microwaveandfreethrow.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Miles to Nowhere",
       "checked": "2026-09-18",
       "email": "",
@@ -2112,6 +2238,79 @@
       "instagram": ""
     },
     {
+      "band": "Pink Fuzz",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "pinkfuzzband",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://pinkfuzz.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/pinkfuzzband/",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://instagram.com/pinkfuzzband",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Piss. Halloween",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://pisshalloween.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Plini",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "plini",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://plini.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://instagram.com/plini",
+          "found": "profile"
+        },
+        {
+          "name": "youtube.com",
+          "url": "http://youtube.com/plinimusic",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://plini.co",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Powermönger. Members of Tribulation/Enforcer",
       "checked": "2026-09-15",
       "email": "",
@@ -2126,6 +2325,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Protomartyr",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://protomartyr.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Puddy Waters",
@@ -2472,6 +2687,22 @@
         {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Space Queen. Austin TX",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://spacequeenaustintx.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -2883,6 +3114,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "The Well",
+      "checked": "2026-09-27",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://thewell.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Truck Violence",
