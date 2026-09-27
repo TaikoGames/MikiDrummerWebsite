@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="/js/track.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Punk Beat Ladder — Punk Drum Practice 70 to 200 BPM | Miki Drummer</title>
+<meta name="description" content="A free punk drum practice track that climbs from 70 to 200 BPM. Skank beat, D-beat, punk 8ths and Oi! stomp, played live in your browser.">
+<link rel="canonical" href="https://www.mikidrummer.ca/punk-beat.html">
+<link rel="icon" href="favicon.ico">
+<meta name="theme-color" content="#e4e4de">
+<meta property="og:title" content="Punk Beat Ladder">
+<meta property="og:description" content="Punk drum practice from 70 to 200 BPM, in your browser.">
+<meta property="og:url" content="https://www.mikidrummer.ca/punk-beat.html">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Special+Elite&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  /* Single look by choice: photocopied zine on grey copier paper. */
+  :root {
+    --paper: #e4e4de;
+    --paper-2: #d6d6cf;
+    --ink: #121212;
+    --ink-soft: #4a4a46;
+    --pink: #ff2e88;
+    --pink-ink: #c4005d;
+    --tape: #f3ee8a;
+    --display: "Anton", "Impact", "Arial Narrow Bold", sans-serif;
+    --type: "Special Elite", "Courier New", monospace;
+    --mono: "Space Mono", ui-monospace, "Consolas", monospace;
+    color-scheme: light;
+  }
+  body { margin: 0; }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--type);
+    font-size: 16px;
+    line-height: 1.5;
+    padding-inline: 16px;
+    padding-block: 24px 48px;
+    background-image:
+      radial-gradient(rgba(0,0,0,.06) 1px, transparent 1.2px),
+      radial-gradient(rgba(0,0,0,.04) 1px, transparent 1.2px);
+    background-size: 7px 7px, 11px 11px;
+    background-position: 0 0, 3px 5px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 28px; }
+
+  header { display: grid; gap: 6px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  h1 {
+    font-family: var(--display); font-weight: 400; margin: 0;
+    font-size: clamp(48px, 11vw, 112px); line-height: .88; letter-spacing: -.01em;
+    text-transform: uppercase; text-wrap: balance;
+  }
+  h1 .cut {
+    background: var(--ink); color: var(--paper); padding: 0 .12em; display: inline-block;
+    transform: rotate(-1.5deg);
+  }
+  h1 .pink { color: var(--pink); }
+  .lede { max-width: 62ch; margin: 4px 0 0; color: var(--ink-soft); }
+  .lede a { color: var(--ink); }
+  .back { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); text-decoration: none; }
+  .back:hover { color: var(--pink-ink); }
+
+  /* ---------- Stage ---------- */
+  .stage {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 24px;
+    border: 3px solid var(--ink); background: var(--paper); padding: 20px;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  @media (max-width: 760px) { .stage { grid-template-columns: 1fr; } }
+
+  .readout { display: grid; align-content: start; gap: 10px; }
+  .bpm {
+    font-family: var(--display); font-size: clamp(96px, 20vw, 176px); line-height: .82;
+    font-variant-numeric: tabular-nums; display: flex; align-items: flex-end; gap: 10px;
+  }
+  .bpm small { font-family: var(--mono); font-size: 14px; font-weight: 700; letter-spacing: .1em; padding-bottom: 12px; }
+  .stats { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 4px 22px; font-family: var(--mono); font-size: 13px; }
+  .stats dt { color: var(--ink-soft); text-transform: uppercase; letter-spacing: .1em; font-size: 11px; }
+  .stats dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .transport { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  button { font: inherit; cursor: pointer; }
+  .go {
+    font-family: var(--display); font-size: 30px; text-transform: uppercase; letter-spacing: .02em;
+    background: var(--pink); color: var(--ink); border: 3px solid var(--ink); padding: 6px 26px 4px;
+    box-shadow: 4px 4px 0 var(--ink); transition: transform .06s, box-shadow .06s;
+  }
+  .go:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
+  .go[aria-pressed="true"] { background: var(--ink); color: var(--pink); }
+  .ghost {
+    font-family: var(--mono); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    background: transparent; border: 2px solid var(--ink); color: var(--ink); padding: 8px 14px;
+  }
+  .ghost:hover { background: var(--ink); color: var(--paper); }
+  :focus-visible { outline: 3px dashed var(--pink-ink); outline-offset: 3px; }
+
+  /* ---------- Grid ---------- */
+  .grid-box { display: grid; gap: 8px; align-content: start; min-width: 0; }
+  .pattern-name { font-family: var(--display); font-size: 28px; text-transform: uppercase; line-height: 1; }
+  .pattern-blurb { margin: 0; color: var(--ink-soft); font-size: 14px; }
+  .seq { display: grid; grid-template-columns: 34px repeat(8, minmax(0, 1fr)); gap: 5px; margin-top: 6px; }
+  .seq .lab { font-family: var(--mono); font-size: 11px; font-weight: 700; align-self: center; color: var(--ink-soft); }
+  .seq .count { font-family: var(--mono); font-size: 12px; text-align: center; color: var(--ink-soft); }
+  .seq .count.beat { color: var(--ink); font-weight: 700; }
+  .cell {
+    aspect-ratio: 1 / 1; max-width: 100%; border: 2px solid var(--ink); background: transparent;
+    transition: background .05s;
+  }
+  .cell.on { background: var(--ink); }
+  .cell.on.accent { background: var(--pink-ink); }
+  .cell.now { outline: 3px solid var(--pink); outline-offset: 1px; }
+  .cell.on.now { background: var(--pink); }
+  .count.now { color: var(--pink-ink); }
+
+  .bar-dots { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .bar-dots span { width: 14px; height: 14px; border: 2px solid var(--ink); border-radius: 50%; }
+  .bar-dots span.done { background: var(--ink); }
+  .bar-dots span.cur { background: var(--pink); }
+
+  /* ---------- Ladder ---------- */
+  section h2 {
+    font-family: var(--display); font-weight: 400; font-size: 26px; text-transform: uppercase; margin: 0 0 10px;
+    display: inline-block; background: var(--tape); padding: 2px 10px; transform: rotate(-1deg);
+  }
+  .ladder { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rung {
+    font-family: var(--mono); font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums;
+    border: 2px solid var(--ink); background: var(--paper); color: var(--ink); padding: 6px 9px; min-width: 52px;
+  }
+  .rung:hover { background: var(--paper-2); }
+  .rung.done { text-decoration: line-through; color: var(--ink-soft); border-color: var(--ink-soft); }
+  .rung.cur { background: var(--pink); }
+  .hint { font-size: 13px; color: var(--ink-soft); margin: 8px 0 0; }
+
+  /* ---------- Setup ---------- */
+  .setup { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; }
+  @media (max-width: 760px) { .setup { grid-template-columns: 1fr; } }
+  .patterns { display: grid; gap: 8px; }
+  .pat {
+    text-align: left; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); padding: 10px 12px;
+    display: grid; gap: 2px;
+  }
+  .pat b { font-family: var(--display); font-weight: 400; font-size: 20px; text-transform: uppercase; letter-spacing: .01em; }
+  .pat span { font-size: 13px; color: var(--ink-soft); }
+  .pat[aria-checked="true"] { background: var(--ink); color: var(--paper); box-shadow: 4px 4px 0 var(--pink); }
+  .pat[aria-checked="true"] span { color: var(--paper-2); }
+
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: start; }
+  .field { display: grid; gap: 4px; }
+  .field label, .check label {
+    font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft);
+  }
+  .field input[type=number] {
+    font-family: var(--mono); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums;
+    border: 2px solid var(--ink); background: var(--paper); color: var(--ink); padding: 6px 8px; width: 100%;
+  }
+  .field input[type=range] { width: 100%; accent-color: var(--pink-ink); }
+  .check { display: flex; gap: 8px; align-items: center; grid-column: 1 / -1; }
+  .check input { width: 18px; height: 18px; accent-color: var(--pink-ink); }
+  .check label { color: var(--ink); }
+  .full { grid-column: 1 / -1; }
+  .total { font-family: var(--mono); font-size: 13px; grid-column: 1 / -1; margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .go, .cell { transition: none; }
+    h1 .cut, section h2 { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <a class="back" href="/tools.html">← Free tools</a>
+    <div class="eyebrow">Drum practice · synth kit · no samples</div>
+    <h1><span class="cut">Punk beat</span> practise <span class="pink">70–200</span> BPM</h1>
+    <p class="lede">A punk take on the <a href="https://youtu.be/XZpGzpHcfdw" target="_blank" rel="noopener">rock beat practise track</a>. Pick a beat, hit play, and the tempo climbs a rung every few bars until you hit 200. Click any rung to jump straight to it.</p>
+  </header>
+
+  <div class="stage">
+    <div class="readout">
+      <div class="bpm"><span id="bpm">70</span><small>BPM</small></div>
+      <dl class="stats">
+        <dt>Bar</dt><dt>Next</dt><dt>Elapsed</dt>
+        <dd id="barStat">– / 8</dd><dd id="nextStat">80</dd><dd id="timeStat">0:00</dd>
+      </dl>
+      <div class="bar-dots" id="barDots" aria-hidden="true"></div>
+      <div class="transport">
+        <button class="go" id="play" aria-pressed="false">Play</button>
+        <button class="ghost" id="reset">Back to start</button>
+      </div>
+    </div>
+    <div class="grid-box">
+      <div class="pattern-name" id="patName">Skank beat</div>
+      <p class="pattern-blurb" id="patBlurb"></p>
+      <div class="seq" id="seq" aria-label="Beat grid"></div>
+    </div>
+  </div>
+
+  <section>
+    <h2>The ladder</h2>
+    <div class="ladder" id="ladder"></div>
+    <p class="hint" id="ladderHint"></p>
+  </section>
+
+  <section>
+    <h2>Set it up</h2>
+    <div class="setup">
+      <div class="patterns" id="patterns" role="radiogroup" aria-label="Beat"></div>
+      <div class="fields">
+        <div class="field"><label for="startBpm">Start BPM</label><input id="startBpm" type="number" min="40" max="260" step="5" value="70"></div>
+        <div class="field"><label for="endBpm">Top BPM</label><input id="endBpm" type="number" min="40" max="300" step="5" value="200"></div>
+        <div class="field"><label for="stepBpm">Climb by</label><input id="stepBpm" type="number" min="1" max="50" step="1" value="10"></div>
+        <div class="field"><label for="bars">Bars per rung</label><input id="bars" type="number" min="1" max="64" step="1" value="8"></div>
+        <div class="check"><input id="countEach" type="checkbox"><label for="countEach">Stick count-in before every rung</label></div>
+        <div class="check"><input id="hold" type="checkbox"><label for="hold">Keep going at the top tempo</label></div>
+        <div class="field full"><label for="vol">Volume</label><input id="vol" type="range" min="0" max="1" step="0.01" value="0.8"></div>
+        <p class="total" id="total"></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  // Steps are eighth notes: 1 & 2 & 3 & 4 &
+  const PATTERNS = {
+    skank: {
+      name: "Skank beat",
+      blurb: "Kick on every beat, snare on every “and”. The hardcore two-step — keep it loose and it’ll run away from you past 180.",
+      k: [1,0,1,0,1,0,1,0], s: [0,1,0,1,0,1,0,1], h: [1,1,1,1,1,1,1,1]
+    },
+    dbeat: {
+      name: "D-beat",
+      blurb: "Kick on 1, the “and” of 2 and on 3, snare on 2 and 4. That gallop is the whole of crust punk.",
+      k: [1,0,0,1,1,0,0,0], s: [0,0,1,0,0,0,1,0], h: [1,1,1,1,1,1,1,1]
+    },
+    eights: {
+      name: "Punk 8ths",
+      blurb: "The Ramones pocket: straight eighths on the hats, kick on 1, 3 and the “and” of 3, snare on 2 and 4.",
+      k: [1,0,0,0,1,1,0,0], s: [0,0,1,0,0,0,1,0], h: [1,1,1,1,1,1,1,1]
+    },
+    stomp: {
+      name: "Oi! stomp",
+      blurb: "Four on the floor with a fat backbeat. Easy on the hands, brutal on the right foot once you’re up high.",
+      k: [1,0,1,0,1,0,1,0], s: [0,0,1,0,0,0,1,0], h: [1,1,1,1,1,1,1,1]
+    }
+  };
+  const COUNTS = ["1","&","2","&","3","&","4","&"];
+
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("pbl:" + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem("pbl:" + k, JSON.stringify(v)); } catch {} }
+  };
+
+  let patKey = store.get("pattern", "skank");
+  if (!PATTERNS[patKey]) patKey = "skank";
+
+  // ---------- Settings / ladder ----------
+  function settings() {
+    const num = (id, d, lo, hi) => { const v = Math.round(+$(id).value); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
+    const start = num("startBpm", 70, 40, 260);
+    const end = Math.max(start, num("endBpm", 200, 40, 300));
+    return {
+      start, end,
+      step: num("stepBpm", 10, 1, 50),
+      bars: num("bars", 8, 1, 64),
+      countEach: $("countEach").checked,
+      hold: $("hold").checked
+    };
+  }
+  function rungs(s) {
+    const out = [];
+    for (let b = s.start; b < s.end; b += s.step) out.push(b);
+    out.push(s.end);
+    return out;
+  }
+
+  // ---------- Audio ----------
+  let ctx = null, master = null, noiseBuf = null;
+  function initAudio() {
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -14; comp.ratio.value = 4; comp.attack.value = 0.003; comp.release.value = 0.12;
+    master = ctx.createGain();
+    master.gain.value = +$("vol").value;
+    master.connect(comp).connect(ctx.destination);
+    noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  function env(g, t, peak, decay) {
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + 0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+  }
+  function noise(t, dur) {
+    const n = ctx.createBufferSource();
+    n.buffer = noiseBuf;
+    n.start(t, Math.random() * 1.5, dur);
+    return n;
+  }
+  function kick(t) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.setValueAtTime(160, t);
+    o.frequency.exponentialRampToValueAtTime(48, t + 0.11);
+    env(g, t, 1.0, 0.3);
+    o.connect(g).connect(master); o.start(t); o.stop(t + 0.32);
+    // beater click
+    const c = noise(t, 0.02), cf = ctx.createBiquadFilter(), cg = ctx.createGain();
+    cf.type = "highpass"; cf.frequency.value = 2500;
+    env(cg, t, 0.25, 0.015);
+    c.connect(cf).connect(cg).connect(master);
+  }
+  function snare(t, ghost) {
+    const amp = ghost ? 0.35 : 0.75;
+    const n = noise(t, 0.25), hp = ctx.createBiquadFilter(), g = ctx.createGain();
+    hp.type = "highpass"; hp.frequency.value = 1400;
+    env(g, t, amp, 0.18);
+    n.connect(hp).connect(g).connect(master);
+    const o = ctx.createOscillator(), og = ctx.createGain();
+    o.type = "triangle";
+    o.frequency.setValueAtTime(220, t);
+    o.frequency.exponentialRampToValueAtTime(170, t + 0.06);
+    env(og, t, amp * 0.8, 0.09);
+    o.connect(og).connect(master); o.start(t); o.stop(t + 0.1);
+  }
+  function hat(t, accent) {
+    const n = noise(t, 0.08), hp = ctx.createBiquadFilter(), g = ctx.createGain();
+    hp.type = "highpass"; hp.frequency.value = 7500;
+    env(g, t, accent ? 0.32 : 0.18, accent ? 0.06 : 0.04);
+    n.connect(hp).connect(g).connect(master);
+  }
+  function crash(t) {
+    const n = noise(t, 1.6), hp = ctx.createBiquadFilter(), g = ctx.createGain();
+    hp.type = "highpass"; hp.frequency.value = 4200;
+    env(g, t, 0.4, 1.5);
+    n.connect(hp).connect(g).connect(master);
+  }
+  function stick(t, hi) {
+    const o = ctx.createOscillator(), g = ctx.createGain(), bp = ctx.createBiquadFilter();
+    o.type = "square"; o.frequency.value = hi ? 2100 : 1600;
+    bp.type = "bandpass"; bp.frequency.value = hi ? 2100 : 1600; bp.Q.value = 6;
+    env(g, t, 0.7, 0.05);
+    o.connect(bp).connect(g).connect(master); o.start(t); o.stop(t + 0.06);
+  }
+
+  // ---------- Sequencer ----------
+  const LOOKAHEAD = 0.12, TICK = 25;
+  let timer = null, playing = false;
+  let plan = null;          // { s, list }
+  let pos = null;           // { rung, bar, step, count, nextTime }
+  let visQ = [];            // events for the display
+  let startedAt = 0, elapsedBase = 0;
+
+  function resetPos(rungIdx = 0) {
+    const s = settings();
+    plan = { s, list: rungs(s) };
+    pos = { rung: Math.min(rungIdx, plan.list.length - 1), bar: 0, step: 0, count: 4, nextTime: 0 };
+  }
+
+  function scheduleAhead() {
+    while (pos.nextTime < ctx.currentTime + LOOKAHEAD) {
+      const bpm = plan.list[pos.rung];
+      const t = pos.nextTime;
+      if (pos.count > 0) {
+        stick(t, pos.count === 4);
+        visQ.push({ t, bpm, rung: pos.rung, bar: -1, step: (4 - pos.count) * 2, counting: true });
+        pos.count--;
+        pos.nextTime += 60 / bpm;
+        continue;
+      }
+      const p = PATTERNS[patKey];
+      const i = pos.step;
+      const first = i === 0 && pos.bar === 0;
+      if (first) crash(t); else if (p.h[i]) hat(t, i % 2 === 0);
+      if (p.k[i]) kick(t);
+      if (p.s[i]) snare(t);
+      visQ.push({ t, bpm, rung: pos.rung, bar: pos.bar, step: i, counting: false });
+      pos.nextTime += 60 / bpm / 2;
+
+      pos.step++;
+      if (pos.step === 8) {
+        pos.step = 0; pos.bar++;
+        if (pos.bar === plan.s.bars) {
+          pos.bar = 0;
+          if (pos.rung < plan.list.length - 1) {
+            pos.rung++;
+            if (plan.s.countEach) pos.count = 4;
+          } else if (!plan.s.hold) {
+            // Finish with a crash + kick on the downbeat, then stop.
+            crash(pos.nextTime); kick(pos.nextTime);
+            visQ.push({ t: pos.nextTime, end: true });
+            pos.nextTime = Infinity;
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  function play() {
+    initAudio();
+    ctx.resume();
+    if (!pos) resetPos(0);
+    plan.s = settings(); plan.list = rungs(plan.s);
+    if (pos.rung >= plan.list.length) pos.rung = plan.list.length - 1;
+    if (pos.nextTime === Infinity) resetPos(0);
+    pos.count = 4; pos.step = 0; pos.bar = 0;
+    pos.nextTime = ctx.currentTime + 0.08;
+    visQ = [];
+    startedAt = ctx.currentTime;
+    playing = true;
+    if (window.Track) Track.ev("tool_used", { tool: "punk_beat", action: "play", pattern: patKey });
+    $("play").textContent = "Stop"; $("play").setAttribute("aria-pressed", "true");
+    scheduleAhead();
+    timer = setInterval(scheduleAhead, TICK);
+    requestAnimationFrame(draw);
+  }
+  function stop(keepPlace = true) {
+    if (!playing) return;
+    playing = false;
+    clearInterval(timer); timer = null;
+    elapsedBase += ctx.currentTime - startedAt;
+    if (master) { // cut ringing crashes
+      const g = master.gain, now = ctx.currentTime;
+      g.cancelScheduledValues(now); g.setValueAtTime(g.value, now);
+      g.linearRampToValueAtTime(0, now + 0.05);
+      g.linearRampToValueAtTime(+$("vol").value, now + 0.3);
+    }
+    if (!keepPlace) resetPos(0);
+    $("play").textContent = "Play"; $("play").setAttribute("aria-pressed", "false");
+    render({ bpm: plan.list[pos.rung], rung: pos.rung, bar: -1, step: -1 });
+  }
+
+  // ---------- Display ----------
+  const seq = $("seq");
+  const cells = { h: [], s: [], k: [] }, countEls = [];
+  function buildSeq() {
+    seq.innerHTML = "";
+    seq.append(Object.assign(document.createElement("span"), { className: "lab" }));
+    COUNTS.forEach((c, i) => {
+      const el = document.createElement("span");
+      el.className = "count" + (i % 2 === 0 ? " beat" : "");
+      el.textContent = c; seq.append(el); countEls[i] = el;
+    });
+    [["h","HAT"],["s","SNR"],["k","KIK"]].forEach(([v, lab]) => {
+      seq.append(Object.assign(document.createElement("span"), { className: "lab", textContent: lab }));
+      for (let i = 0; i < 8; i++) {
+        const el = document.createElement("span");
+        el.className = "cell"; seq.append(el); cells[v][i] = el;
+      }
+    });
+  }
+  function paintPattern() {
+    const p = PATTERNS[patKey];
+    $("patName").textContent = p.name;
+    $("patBlurb").textContent = p.blurb;
+    for (const v of ["h","s","k"]) cells[v].forEach((el, i) => {
+      el.classList.toggle("on", !!p[v][i]);
+      el.classList.toggle("accent", v === "h" && i === 0);
+    });
+    document.querySelectorAll(".pat").forEach(b => b.setAttribute("aria-checked", String(b.dataset.key === patKey)));
+  }
+
+  function buildLadder() {
+    const s = settings(), list = rungs(s);
+    const lad = $("ladder"); lad.innerHTML = "";
+    list.forEach((b, i) => {
+      const r = document.createElement("button");
+      r.className = "rung"; r.textContent = b; r.dataset.i = i;
+      r.setAttribute("aria-label", `Jump to ${b} BPM`);
+      r.onclick = () => jumpTo(i);
+      lad.append(r);
+    });
+    const barSec = b => 4 * 60 / b;
+    const secs = list.reduce((a, b) => a + barSec(b) * s.bars + (s.countEach ? barSec(b) : 0), 0) + barSec(list[0]);
+    $("total").textContent = `${list.length} rungs · ${s.bars} bars each · about ${fmt(secs)} top to bottom`;
+    $("ladderHint").textContent = `${list[0]} → ${list[list.length - 1]} BPM, climbing ${s.step} at a time.`;
+    const dots = $("barDots"); dots.innerHTML = "";
+    for (let i = 0; i < s.bars; i++) dots.append(document.createElement("span"));
+  }
+  function fmt(sec) {
+    sec = Math.max(0, Math.round(sec));
+    return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+  }
+
+  let last = {};
+  function render(ev) {
+    const list = plan ? plan.list : rungs(settings());
+    const bars = plan ? plan.s.bars : settings().bars;
+    if (ev.bpm !== last.bpm) $("bpm").textContent = ev.bpm;
+    const next = list[ev.rung + 1];
+    $("nextStat").textContent = next ? next : "top";
+    $("barStat").textContent = ev.counting ? "count" : (ev.bar >= 0 ? `${ev.bar + 1} / ${bars}` : `– / ${bars}`);
+    document.querySelectorAll(".rung").forEach((r, i) => {
+      r.classList.toggle("cur", i === ev.rung);
+      r.classList.toggle("done", i < ev.rung);
+    });
+    [...$("barDots").children].forEach((d, i) => {
+      d.classList.toggle("done", i < ev.bar);
+      d.classList.toggle("cur", i === ev.bar);
+    });
+    for (const v of ["h","s","k"]) cells[v].forEach((el, i) => el.classList.toggle("now", !ev.counting && i === ev.step));
+    countEls.forEach((el, i) => el.classList.toggle("now", i === ev.step));
+    last = ev;
+  }
+
+  function draw() {
+    if (!playing) return;
+    const now = ctx.currentTime;
+    let ev = null;
+    while (visQ.length && visQ[0].t <= now) ev = visQ.shift();
+    if (ev) {
+      if (ev.end) { stop(false); $("barStat").textContent = "done!"; return; }
+      render(ev);
+    }
+    $("timeStat").textContent = fmt(elapsedBase + now - startedAt);
+    requestAnimationFrame(draw);
+  }
+
+  function jumpTo(i) {
+    const was = playing;
+    if (was) stop();
+    resetPos(i);
+    render({ bpm: plan.list[i], rung: i, bar: -1, step: -1 });
+    if (was) play();
+  }
+
+  // ---------- Wiring ----------
+  const patWrap = $("patterns");
+  Object.entries(PATTERNS).forEach(([key, p]) => {
+    const b = document.createElement("button");
+    b.className = "pat"; b.dataset.key = key; b.setAttribute("role", "radio");
+    b.innerHTML = `<b></b><span></span>`;
+    b.querySelector("b").textContent = p.name;
+    b.querySelector("span").textContent = p.blurb.split(".")[0] + ".";
+    b.onclick = () => { patKey = key; store.set("pattern", key); paintPattern(); };
+    patWrap.append(b);
+  });
+
+  for (const id of ["startBpm","endBpm","stepBpm","bars","countEach","hold"]) {
+    const saved = store.get(id, null);
+    const el = $(id);
+    if (saved != null) { if (el.type === "checkbox") el.checked = saved; else el.value = saved; }
+    el.addEventListener("change", () => {
+      store.set(id, el.type === "checkbox" ? el.checked : el.value);
+      const was = playing, rung = pos ? pos.rung : 0;
+      if (was) stop();
+      buildLadder(); resetPos(rung);
+      render({ bpm: plan.list[pos.rung], rung: pos.rung, bar: -1, step: -1 });
+      if (was) play();
+    });
+  }
+  $("vol").addEventListener("input", e => { if (master) master.gain.value = +e.target.value; });
+  $("play").onclick = () => playing ? stop() : play();
+  $("reset").onclick = () => { const was = playing; if (was) stop(); elapsedBase = 0; $("timeStat").textContent = "0:00"; jumpTo(0); if (was) play(); };
+  document.addEventListener("keydown", e => {
+    if (e.code === "Space" && !/INPUT|BUTTON/.test(e.target.tagName)) { e.preventDefault(); $("play").click(); }
+  });
+
+  buildSeq(); paintPattern(); buildLadder(); resetPos(0);
+  render({ bpm: plan.list[0], rung: 0, bar: -1, step: -1 });
+})();
+</script>
+</body>
+</html>
