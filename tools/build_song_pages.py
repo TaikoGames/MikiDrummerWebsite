@@ -74,14 +74,22 @@ def esc(s):
              .replace('"', "&quot;"))
 
 
-def difficulty(per_sec):
+def difficulty(per_beat):
     """Read off the chart rather than assigned by hand, so it cannot drift
-    away from what the chart actually does."""
-    if per_sec < 3.5:
+    away from what the chart actually does.
+
+    Notes per BEAT, not per second. Per second makes the rating a measure of
+    tempo -- a fast song looks hard and a slow one easy regardless of what is
+    being played -- and once the charts were filled in properly it had a
+    second problem: every one of the twelve tipped past the top threshold and
+    all twelve pages read "Relentless", which is no information at all.
+    Per beat, three notes is a rock beat and five is a busy one at any tempo.
+    """
+    if per_beat < 2.6:
         return "Steady", "room between the hits"
-    if per_sec < 5.0:
+    if per_beat < 3.2:
         return "Busy", "few gaps once it gets going"
-    if per_sec < 6.2:
+    if per_beat < 4.2:
         return "Fast", "close to constant"
     return "Relentless", "almost no rest in it"
 
@@ -138,7 +146,7 @@ def load():
 
     rows = []
     for fn in sorted(os.listdir(MAPS)):
-        if not fn.endswith(".json"):
+        if not fn.endswith(".json") or fn == "index.json":
             continue
         slug = fn[:-5]
         m = json.load(open(os.path.join(MAPS, fn)))
@@ -153,6 +161,7 @@ def load():
             "slug": slug, "title": song.strip() or slug, "band": band.strip(),
             "bpm": m.get("bpm", 0), "dur": m.get("duration", 0),
             "notes": len(m["notes"]), "lanes": lanes, "raw": m["notes"],
+            "beats": len(m.get("beats", [])) or 1,
         })
     rows.sort(key=lambda r: (r["band"], r["title"]))
     return rows
@@ -277,14 +286,15 @@ def build():
     for r in rows:
         lanes = r["lanes"]
         per_sec = r["notes"] / max(r["dur"], 1)
-        diff, feel = difficulty(per_sec)
+        per_beat = r["notes"] / max(r["beats"], 1)
+        diff, feel = difficulty(per_beat)
         mins, secs = int(r["dur"]) // 60, int(r["dur"]) % 60
         busiest = max(lanes, key=lambda k: lanes[k]) if lanes else "snare"
         lane_word = {"hat": "hi-hat", "snare": "snare", "kick": "kick"}[busiest]
 
         playing = (
             f"{r['title']} runs at {r['bpm']:.0f} BPM for {mins}:{secs:02d}, and the chart has "
-            f"{r['notes']} notes in it — about {per_sec:.1f} a second, which is {feel}. "
+            f"{r['notes']} notes in it — about {per_beat:.1f} to a beat, which is {feel}. "
             f"The {lane_word} lane is the busiest with {lanes.get(busiest, 0)} of them, so that "
             f"is the hand to sort out first. "
             + ("At this tempo the notes arrive quickly, so it is worth a run at the offset "

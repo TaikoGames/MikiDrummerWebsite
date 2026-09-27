@@ -148,14 +148,39 @@ jobs:
                         `${map.notes.length} notes, ${dens.toFixed(2)}/s`);
             if (!(map.bpm > 60 && map.bpm < 260)) throw new Error('chart has no plausible tempo');
             if (!(map.beats && map.beats.length > 50)) throw new Error('chart carries no beats');
-            if (dens > 9) {
-              throw new Error(`chart is saturating again (${dens.toFixed(2)} notes/s) -- ` +
-                              'that is the signature of the detector that made random charts');
+            // Density is judged per BEAT, not per second -- per second makes
+            // this a test of the tempo. The full chart is deliberately dense
+            // (the game thins it by metrical weight); what would be wrong is
+            // it drifting to a strobe or back to the sparse version nobody
+            // could hear their own drumming in.
+            const perBeat = map.notes.length / map.beats.length;
+            console.log(`  density: ${dens.toFixed(2)}/s, ${perBeat.toFixed(2)}/beat`);
+            if (perBeat > 7) {
+              throw new Error(`chart is saturating (${perBeat.toFixed(2)} notes/beat)`);
             }
-            if (dens < 2.5) {
-              throw new Error(`chart is too sparse (${dens.toFixed(2)} notes/s) -- ` +
+            if (perBeat < 1.5) {
+              throw new Error(`chart is too sparse (${perBeat.toFixed(2)} notes/beat) -- ` +
                               'the hi-hat lane went missing this way once already');
             }
+            // Every note carries its metrical position, which is what the
+            // difficulty setting filters on. Without it the setting silently
+            // does nothing and everyone gets the full part.
+            if (map.notes.some(n => n.w == null)) {
+              throw new Error('chart notes have lost their metrical weight');
+            }
+            const ws = new Set(map.notes.map(n => n.w));
+            if (ws.size < 3) {
+              throw new Error('chart uses only ' + ws.size + ' metrical positions -- ' +
+                              'the difficulty setting has nothing to sort by');
+            }
+
+            // The song list is built off a small index, not off every chart.
+            const idx = await (await p.request.get(
+              new URL('/data/beatmaps/index.json', URL_).href)).json();
+            if (!idx.charts || idx.charts.length < 5) {
+              throw new Error('the chart index is missing or short');
+            }
+            console.log(`  index: ${idx.charts.length} charts`);
             // Per-lane, because the failure that mattered was invisible in the
             // total: kicks and snares landed correctly while the hat lane sat
             // at a fifth of what a drummer plays, and the sum looked fine.

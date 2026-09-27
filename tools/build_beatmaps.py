@@ -106,7 +106,7 @@ BANDS = [
 # snare band and show up in the full-mix envelope without showing up in any of
 # these. Dropping them is most of the difference between charting a kit and
 # charting a band.
-DROP_Z = 1.2
+DROP_Z = 0.5
 
 # A kick landing under a cymbal is the single most common thing in this music
 # and the thing a one-lane-per-onset rule loses every time, because the cymbal
@@ -128,23 +128,39 @@ BIAS = 0.018
 # coarse throws away real sixteenths and cannot be recovered from.
 BPM_LO, BPM_HI, BPM_CENTRE = 100.0, 220.0, 160.0
 
-SUBDIV = 4          # sixteenth-note slots between tracked beats
+SUBDIV = 8          # thirty-second-note slots between tracked beats
 
 # How far off its slot an onset may sit and still count, as a share of the
-# slot. Loose enough for a human drummer pushing or dragging, tight enough
-# that a guitar chord ringing between beats does not qualify.
-SNAP = 0.30
+# slot. At 0.5 the slots tile without gaps, so nothing is rejected for
+# falling between them -- the grid's job here is to regularise timing, not to
+# filter. It used to be a filter, at a quarter of the notes' expense: a
+# sixteenth grid with a 0.30 window threw away everything more than 37 ms off
+# a sixteenth, which is fills, flams, ghost notes, and anything played with a
+# push. Thirty-seconds halve the spacing, so a roll no longer collapses into
+# one note per sixteenth either.
+SNAP = 0.5
 
-# Nothing human plays two of the same limb closer than this.
-MIN_GAP = {"kick": 0.100, "snare": 0.100, "hat": 0.075}
+# Nothing human plays two of the same limb closer than this. Expressed
+# against the grid rather than in fixed seconds, because a fixed floor is a
+# different musical interval at every tempo: 100 ms is comfortably under a
+# sixteenth at 120 BPM and LONGER than one at 215, so on the fast songs it was
+# deleting every sixteenth-note passage in the track. Bajo el nivel del mal
+# had the worst recall of the twelve for exactly this reason.
+# How hard the full-mix detector listens. Lower finds more; precision against
+# an independent reference stays above 95%, which is what says the extra are
+# real hits rather than invented ones.
+MIX_SENS = 1.1
+
+MIN_GAP_FLOOR = 0.050          # what two strokes of one limb really cost
+MIN_GAP_SLOTS = 0.9            # ...but never closer than this many grid slots
 
 # Each band also detects on its own, to catch the limbs that never win the
 # full-mix argmax. Sensitivity and a floor on how far that band has to have
 # risen, per lane, because they are not equally clean: the cymbal band is the
 # quietest and the one with least else living in it, the kick band is shared
 # with the bass guitar.
-BAND_SENS = {"kick": 1.7, "snare": 1.7, "hat": 1.5}
-BAND_Z = {"kick": 2.2, "snare": 2.0, "hat": 1.7}
+BAND_SENS = {"kick": 1.15, "snare": 1.15, "hat": 1.15}
+BAND_Z = {"kick": 1.5, "snare": 1.3, "hat": 1.0}
 
 # Per lane, notes per BEAT rather than per second, because that is the unit
 # the music is in -- a cap in seconds means a fast song gets a thinner part
@@ -156,8 +172,8 @@ BAND_Z = {"kick": 2.2, "snare": 2.0, "hat": 1.7}
 # The numbers are what the limbs can actually do: eighths on the hat, a
 # backbeat plus fills on the snare, and a kick that can double up but is not
 # playing sixteenths for three minutes.
-PER_LANE_PER_BEAT = {"kick": 1.5, "snare": 1.2, "hat": 2.2}
-MAX_NOTES_PER_BEAT = 3.6
+PER_LANE_PER_BEAT = {"kick": 3.0, "snare": 2.5, "hat": 3.5}
+MAX_NOTES_PER_BEAT = 6.5
 
 
 def slugify(name):
@@ -341,13 +357,26 @@ def track_beats(env, period, alpha=100.0):
 
 
 def build_grid(beat_frames):
-    """Sixteenth-note slot times, interpolated between tracked beats.
+    """Slot times, interpolated between tracked beats, with a metrical weight.
 
     Interpolated rather than generated from one tempo, so the grid follows the
-    band instead of the other way round. Returns the times and, for each, how
-    strong a position it is: 0 downbeat, 1 beat, 2 eighth, 3 sixteenth. That
-    weight is what makes thinning musical -- dropping the sixteenths off a
-    busy bar leaves the bar; dropping every other note leaves noise.
+    band instead of the other way round.
+
+    The weight says how strong a position each slot is:
+
+        0  downbeat (first beat of a bar)
+        1  beat
+        2  eighth
+        3  sixteenth
+        4  thirty-second
+
+    That weight does two jobs. It makes thinning musical -- dropping the
+    sixteenths off a busy bar leaves the bar, while dropping every other note
+    leaves noise. And it ships with the chart, so the game can offer a simpler
+    version of the same part instead of a different, thinner chart. The scale
+    has to be this fine to be useful for that: while the grid was sixteenths,
+    six of every eight slots shared one weight and there was nothing to sort
+    by.
     """
     import numpy as np
     times, weight = [], []
@@ -357,10 +386,12 @@ def build_grid(beat_frames):
             times.append(a + (b - a) * k / float(SUBDIV))
             if k == 0:
                 weight.append(0 if i % 4 == 0 else 1)
-            elif k == SUBDIV // 2:
+            elif SUBDIV % 2 == 0 and k == SUBDIV // 2:
                 weight.append(2)
-            else:
+            elif SUBDIV % 4 == 0 and k % (SUBDIV // 4) == 0:
                 weight.append(3)
+            else:
+                weight.append(4)
     return np.asarray(times), np.asarray(weight)
 
 
@@ -402,7 +433,7 @@ def zscore(v, fps, win=4.0):
     return (v - m) / np.sqrt(np.maximum(m2 - m * m, 1e-12))
 
 
-def enforce_gap(notes):
+def enforce_gap(notes, slot=None):
     """No two notes in one lane closer than a limb can move. Keeps the
     stronger of a pair."""
     by_lane = {}
@@ -411,7 +442,7 @@ def enforce_gap(notes):
     out = []
     for lane, row in by_lane.items():
         row.sort(key=lambda n: n["t"])
-        gap = MIN_GAP.get(lane, 0.09)
+        gap = max(MIN_GAP_FLOOR, (slot or 0.06) * MIN_GAP_SLOTS)
         kept = []
         for n in row:
             if kept and n["t"] - kept[-1]["t"] < gap:
@@ -479,8 +510,10 @@ def chart(path):
     grid, weight = build_grid(beat_frames)
 
     notes = []
+    slot_w = None
     if len(grid) > 1:
         slot = float(np.median(np.diff(grid)))
+        slot_w = slot
         Z = np.stack([zscore(superflux(S, lo, hi), fps) for _, lo, hi in BANDS])
 
         def to_slots(frames):
@@ -506,7 +539,8 @@ def chart(path):
         # This is the accurate part: independently checked, 95% of what it
         # produces lands within 45 ms of a real transient in the recording.
         # It is also, on its own, far too sparse -- see below.
-        mix_f, mix_j = to_slots(peak_pick(env, fps))
+        mix_f, mix_j = to_slots(peak_pick(env, fps, sensitivity=MIX_SENS,
+                                          min_gap=max(MIN_GAP_FLOOR, slot * MIN_GAP_SLOTS)))
         for f, sl in zip(mix_f, mix_j):
             z = Z[:, f]
             top = int(np.argmax(z))
@@ -532,7 +566,7 @@ def chart(path):
         for bi, (lane, lo, hi) in enumerate(BANDS):
             bf = superflux(S, lo, hi)
             f2, j2 = to_slots(peak_pick(bf, fps, sensitivity=BAND_SENS[lane],
-                                        min_gap=MIN_GAP[lane] * 0.7))
+                                        min_gap=max(MIN_GAP_FLOOR, slot * MIN_GAP_SLOTS)))
             for f, sl in zip(f2, j2):
                 if Z[bi, f] >= BAND_Z[lane]:
                     offer(lane, f, sl, bf[f])
@@ -541,10 +575,13 @@ def chart(path):
             notes.append({"t": round(float(grid[sl]), 4), "lane": lane,
                           "w": int(weight[sl]), "s": float(strength)})
 
-    notes = enforce_gap(notes)
+    notes = enforce_gap(notes, slot=slot_w)
     notes = thin(notes, duration, beats=len(beat_frames))
-    clean = [{"t": n["t"], "lane": n["lane"]} for n in sorted(notes, key=lambda n: n["t"])
-             if n["t"] >= 0]
+    # "w" is the metrical weight -- 0 downbeat, 1 beat, 2 eighth, 3+ finer.
+    # It ships with the chart so the game can offer a simpler version of the
+    # same part rather than a different, thinner chart.
+    clean = [{"t": n["t"], "lane": n["lane"], "w": n["w"]}
+             for n in sorted(notes, key=lambda n: n["t"]) if n["t"] >= 0]
     return {
         "duration": round(duration, 2),
         "bpm": round(float(bpm), 1),
@@ -697,26 +734,31 @@ def self_test():
     checks += 2
     g, w = build_grid(np.arange(0, 40) * int(0.5 * SR / HOP))
     ok(len(g) == 39 * SUBDIV, "grid has %d slots for 40 beats" % len(g))
-    ok(sorted(set(w.tolist())) == [0, 1, 2, 3],
-       "every metrical weight is represented")
+    ok(sorted(set(w.tolist())) == [0, 1, 2, 3, 4],
+       "every metrical weight is represented (got %s)" % sorted(set(w.tolist())))
+    # The weights have to actually separate the subdivisions, or the game's
+    # difficulty setting has nothing to sort by.
+    checks += 1
+    ok(w[0] == 0 and w[SUBDIV // 2] == 2 and w[1] == 4,
+       "downbeat 0, eighth 2, thirty-second 4")
 
     # --- thinning -------------------------------------------------------
     # Sixteenths go first; the backbeat stays. The old thinner took every
     # other note regardless, which is why what survived was noise.
     dense = []
     for i in range(400):
-        dense.append({"t": i * 0.125, "lane": "hat", "w": [0, 3, 2, 3][i % 4], "s": 1.0})
+        dense.append({"t": i * 0.125, "lane": "hat", "w": [0, 4, 2, 4][i % 4], "s": 1.0})
     out = thin(list(dense), 10.0, beats=20)
     checks += 2
     ok(len(out) <= int(20 * PER_LANE_PER_BEAT["hat"]) + 1,
        "hats thinned to their lane budget (%d)" % len(out))
     kept_w = [n["w"] for n in out]
-    ok(kept_w.count(0) >= kept_w.count(3),
-       "thinning keeps downbeats over sixteenths (%d vs %d)"
-       % (kept_w.count(0), kept_w.count(3)))
+    ok(kept_w.count(0) >= kept_w.count(4),
+       "thinning keeps downbeats over thirty-seconds (%d vs %d)"
+       % (kept_w.count(0), kept_w.count(4)))
 
     # A flooded kick lane must not be paid for out of the hi-hats.
-    mixed = ([{"t": i * 0.05, "lane": "kick", "w": 3, "s": 1.0} for i in range(400)] +
+    mixed = ([{"t": i * 0.05, "lane": "kick", "w": 4, "s": 1.0} for i in range(400)] +
              [{"t": i * 0.05 + 0.02, "lane": "hat", "w": 1, "s": 1.0} for i in range(400)])
     out2 = thin(sorted(mixed, key=lambda n: n["t"]), 20.0, beats=40)
     hats = sum(1 for n in out2 if n["lane"] == "hat")
@@ -798,7 +840,44 @@ def main():
             mp3 = os.path.join("/tmp", slug + "-check.mp3")
             at = preview(full, data, prev_secs, mp3)
             print("    preview from %.0fs: %s" % (at, mp3))
+
+    write_index()
     return 0
+
+
+def write_index():
+    """A small index of every chart, for the song list.
+
+    The list needs a title, a length and a note count per song, and it was
+    getting them by fetching all twelve charts on page load. That was fine
+    when a chart was 18 KB. Charting the parts properly took them to 60 KB,
+    which turned opening the page into three quarters of a megabyte of JSON
+    before anything could be shown -- on a phone, on whatever connection. The
+    full chart is now fetched only for the song actually being played.
+    """
+    index = []
+    for fn in sorted(os.listdir(OUT)):
+        if not fn.endswith(".json") or fn == "index.json":
+            continue
+        with open(os.path.join(OUT, fn)) as fh:
+            m = json.load(fh)
+        lanes = {}
+        for n in m.get("notes", []):
+            lanes[n["lane"]] = lanes.get(n["lane"], 0) + 1
+        index.append({
+            "slug": m.get("slug", fn[:-5]),
+            "duration": m.get("duration", 0),
+            "bpm": m.get("bpm", 0),
+            "notes": len(m.get("notes", [])),
+            "lanes": lanes,
+        })
+    path = os.path.join(OUT, "index.json")
+    with open(path, "w") as fh:
+        json.dump({"charts": index}, fh, separators=(",", ":"))
+    print("index: %d charts, %.1f KB (was %.0f KB of charts to open the page)"
+          % (len(index), os.path.getsize(path) / 1024,
+             sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT)
+                 if f.endswith(".json") and f != "index.json") / 1024))
 
 
 if __name__ == "__main__":

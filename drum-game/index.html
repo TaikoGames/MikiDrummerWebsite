@@ -172,6 +172,8 @@
   .tbl td{padding:9px 10px 9px 0;border-bottom:1px solid var(--edge);color:var(--mid)}
   .tbl td:first-child{color:var(--fg);font-weight:600}
   @media(max-width:560px){ .tbl th:nth-child(4),.tbl td:nth-child(4){display:none} }
+  .dens{flex:1;justify-content:center;min-width:88px}
+  .dens.on{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
   .qa h4{font-size:14px;margin:16px 0 4px;color:var(--fg)}
   .qa h4:first-child{margin-top:8px}
   .qa p{font-size:13px;color:var(--mid);max-width:74ch}
@@ -251,6 +253,20 @@
   <audio id="cal" preload="auto" playsinline></audio>
 
   <div class="settings">
+    <h3>How many notes</h3>
+    <div class="row" id="densityRow">
+      <button class="btn dens" type="button" data-w="1">Beats</button>
+      <button class="btn dens" type="button" data-w="2">Eighths</button>
+      <button class="btn dens" type="button" data-w="3">Sixteenths</button>
+      <button class="btn dens" type="button" data-w="4">Everything</button>
+    </div>
+    <p class="hint">The chart holds every hit the detector found in the recording, and this
+       decides how much of it you play. <b>Everything</b> is the full drum part — dense, and
+       the honest answer to "what did he actually play". The others drop the finer
+       subdivisions and leave the same groove underneath. Takes effect on the next song.</p>
+  </div>
+
+  <div class="settings">
     <h3>Timing</h3>
     <div class="row">
       <label for="offset" style="font-size:12.5px;color:var(--mid)">Audio offset</label>
@@ -317,18 +333,18 @@
     <table class="tbl">
       <thead><tr><th>Song</th><th>Band</th><th>Tempo</th><th>Notes</th><th>Length</th></tr></thead>
       <tbody>
-        <tr><td><a href="/drum-game/songs/noother.html">No Other</a></td><td>Bound By None</td><td>120 BPM</td><td>1080</td><td>2:58</td></tr>
-        <tr><td><a href="/drum-game/songs/onthedouble.html">On The Double</a></td><td>Bound By None</td><td>185 BPM</td><td>852</td><td>2:35</td></tr>
-        <tr><td><a href="/drum-game/songs/landsea.html">Land and Sea</a></td><td>Dead Fast</td><td>172 BPM</td><td>871</td><td>2:31</td></tr>
-        <tr><td><a href="/drum-game/songs/04-skamen.html">Skamen</a></td><td>Dead Fast</td><td>115 BPM</td><td>1203</td><td>3:08</td></tr>
-        <tr><td><a href="/drum-game/songs/audio2.html">Star Shines Trough</a></td><td>Dead Fast</td><td>178 BPM</td><td>976</td><td>2:34</td></tr>
-        <tr><td><a href="/drum-game/songs/bajo-el-nivel-del-mal.html">Bajo el nivel del mal</a></td><td>Diera</td><td>215 BPM</td><td>451</td><td>1:42</td></tr>
-        <tr><td><a href="/drum-game/songs/groenlandia.html">Groenlandia</a></td><td>Diera</td><td>148 BPM</td><td>340</td><td>1:27</td></tr>
-        <tr><td><a href="/drum-game/songs/la-tragedia-de-los-comunes.html">La tragedia de los comunes</a></td><td>Diera</td><td>148 BPM</td><td>520</td><td>1:44</td></tr>
-        <tr><td><a href="/drum-game/songs/per-mi.html">Per mi (In Catalan)</a></td><td>Diera</td><td>207 BPM</td><td>703</td><td>2:23</td></tr>
-        <tr><td><a href="/drum-game/songs/sebastopol-garcia.html">Sebastopol García</a></td><td>Diera</td><td>207 BPM</td><td>986</td><td>2:43</td></tr>
-        <tr><td><a href="/drum-game/songs/pony-up.html">Pony Up</a></td><td>Granite</td><td>162 BPM</td><td>770</td><td>3:11</td></tr>
-        <tr><td><a href="/drum-game/songs/cornered-demo-lift-the-anchor.html">Cornered (demo)</a></td><td>Lift The Anchor</td><td>148 BPM</td><td>992</td><td>3:17</td></tr>
+        <tr><td><a href="/drum-game/songs/noother.html">No Other</a></td><td>Bound By None</td><td>120 BPM</td><td>1706</td><td>2:58</td></tr>
+        <tr><td><a href="/drum-game/songs/onthedouble.html">On The Double</a></td><td>Bound By None</td><td>185 BPM</td><td>1433</td><td>2:35</td></tr>
+        <tr><td><a href="/drum-game/songs/landsea.html">Land and Sea</a></td><td>Dead Fast</td><td>172 BPM</td><td>1564</td><td>2:32</td></tr>
+        <tr><td><a href="/drum-game/songs/04-skamen.html">Skamen</a></td><td>Dead Fast</td><td>115 BPM</td><td>1784</td><td>3:08</td></tr>
+        <tr><td><a href="/drum-game/songs/audio2.html">Star Shines Trough</a></td><td>Dead Fast</td><td>178 BPM</td><td>1445</td><td>2:34</td></tr>
+        <tr><td><a href="/drum-game/songs/bajo-el-nivel-del-mal.html">Bajo el nivel del mal</a></td><td>Diera</td><td>215 BPM</td><td>785</td><td>1:42</td></tr>
+        <tr><td><a href="/drum-game/songs/groenlandia.html">Groenlandia</a></td><td>Diera</td><td>148 BPM</td><td>689</td><td>1:27</td></tr>
+        <tr><td><a href="/drum-game/songs/la-tragedia-de-los-comunes.html">La tragedia de los comunes</a></td><td>Diera</td><td>148 BPM</td><td>1015</td><td>1:45</td></tr>
+        <tr><td><a href="/drum-game/songs/per-mi.html">Per mi (In Catalan)</a></td><td>Diera</td><td>207 BPM</td><td>1234</td><td>2:23</td></tr>
+        <tr><td><a href="/drum-game/songs/sebastopol-garcia.html">Sebastopol García</a></td><td>Diera</td><td>207 BPM</td><td>1702</td><td>2:43</td></tr>
+        <tr><td><a href="/drum-game/songs/pony-up.html">Pony Up</a></td><td>Granite</td><td>162 BPM</td><td>1581</td><td>3:12</td></tr>
+        <tr><td><a href="/drum-game/songs/cornered-demo-lift-the-anchor.html">Cornered (demo)</a></td><td>Lift The Anchor</td><td>148 BPM</td><td>1793</td><td>3:17</td></tr>
       </tbody>
     </table>
     <p class="hint">More about the bands on <a href="/punkbc.html">Punk BC</a>.</p>
@@ -521,6 +537,7 @@ window.__drumGameRan = true;
 
 const $ = (id) => document.getElementById(id);
 const OFFSET_KEY = 'drumGame:offset';
+const DENSITY_KEY = 'drumGame:density';
 
 let view, chart = null, current = null;
 let library = [], index = -1;        // every charted song, and where we are in it
@@ -531,6 +548,20 @@ let score = 0, combo = 0, best = 0;
 let counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
 let live = [];                       // notes currently on screen
 let offset = Number(localStorage.getItem(OFFSET_KEY) || 0);
+
+/* How much of the chart to play: the highest metrical weight kept.
+ * 1 beats, 2 eighths, 3 sixteenths, 4 everything. */
+let density = Number(localStorage.getItem(DENSITY_KEY) || 3);
+function setDensity(w) {
+  density = Math.max(1, Math.min(4, Number(w) || 3));
+  [...document.querySelectorAll('.dens')].forEach(
+    b => b.classList.toggle('on', Number(b.dataset.w) === density));
+  try { localStorage.setItem(DENSITY_KEY, String(density)); } catch (e) {}
+}
+setDensity(density);
+[...document.querySelectorAll('.dens')].forEach((b) => {
+  b.addEventListener('click', () => setDensity(b.dataset.w));
+});
 
 function setOffset(ms) {
   offset = Number(ms) || 0;
@@ -745,15 +776,24 @@ async function loadSongs() {
 
   // Only the ones that have a chart. A song in the list that cannot be played
   // is worse than a shorter list.
-  const checked = await Promise.all(songs.map(async (s) => {
+  //
+  // The list is built from a 1.3 KB index rather than from the charts
+  // themselves. It used to fetch all twelve to read a duration and a note
+  // count off each, which was tolerable at 18 KB a chart and became 595 KB to
+  // open the page once the parts were charted properly. The chart for the
+  // song actually being played is fetched when it is picked.
+  let index = {};
+  try {
+    const r = await fetch('/data/beatmaps/index.json', { cache: 'no-store' });
+    if (r.ok) for (const c of (await r.json()).charts || []) index[c.slug] = c;
+  } catch (e) {}
+
+  const checked = songs.map((s) => {
     const slug = slugify(s.src.split('/').pop());
-    try {
-      const r = await fetch(`/data/beatmaps/${slug}.json`, { method: 'GET', cache: 'no-store' });
-      if (!r.ok) return null;
-      const map = await r.json();
-      return { ...titleOf(s.title || slug), src: '/' + s.src.replace(/^\//, ''), slug, map };
-    } catch (e) { return null; }
-  }));
+    const info = index[slug];
+    if (!info) return null;
+    return { ...titleOf(s.title || slug), src: '/' + s.src.replace(/^\//, ''), slug, info };
+  });
 
   const ready = checked.filter(Boolean);
   const box = $('songs');
@@ -771,11 +811,11 @@ async function loadSongs() {
     left.innerHTML = '<b></b><span></span>';
     left.querySelector('b').textContent = s.title;
     left.querySelector('span').textContent =
-      (s.band || '') + (s.map.bpm ? ' · ' + Math.round(s.map.bpm) + ' BPM' : '');
+      (s.band || '') + (s.info.bpm ? ' · ' + Math.round(s.info.bpm) + ' BPM' : '');
     const right = document.createElement('div');
     right.className = 'n';
-    const mins = Math.floor(s.map.duration / 60), secs = Math.round(s.map.duration % 60);
-    right.textContent = `${s.map.notes.length} notes · ${mins}:${String(secs).padStart(2, '0')}`;
+    const mins = Math.floor(s.info.duration / 60), secs = Math.round(s.info.duration % 60);
+    right.textContent = `${s.info.notes} notes · ${mins}:${String(secs).padStart(2, '0')}`;
     b.append(left, right);
     b.addEventListener('click', () => start(i));
     box.appendChild(b);
@@ -939,7 +979,25 @@ async function start(i, autoplay) {
     return fail('Could not load that one', err, song, '');
   }
 
-  chart = song.map.notes.map(n => ({ ...n, done: false, mesh: null }));
+  // The chart itself, fetched now rather than with the song list.
+  try {
+    if (!song.map) {
+      stage('Loading the chart…');
+      const r = await fetch(`/data/beatmaps/${song.slug}.json`, { cache: 'no-store' });
+      if (!r.ok) throw new Error('the chart came back ' + r.status);
+      song.map = await r.json();
+    }
+  } catch (err) {
+    return fail('Could not load the chart for that one', err, song, '');
+  }
+
+  // Density is a filter on one chart, not a different chart. Every note
+  // carries the metrical position it sits on -- downbeat, beat, eighth,
+  // sixteenth, thirty-second -- so dropping the finest ones leaves a simpler
+  // version of the same part rather than a random subset of it.
+  chart = song.map.notes
+    .filter(n => (n.w == null ? 0 : n.w) <= density)
+    .map(n => ({ ...n, done: false, mesh: null }));
   beatTimes = song.map.beats || [];
   beatAt = 0;
   score = 0; combo = 0; best = 0; cursor = 0; judgeFrom = 0; live = [];
