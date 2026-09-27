@@ -495,6 +495,155 @@ def thin(notes, duration, beats=None):
     return sorted(out, key=lambda n: n["t"])
 
 
+GROOVE_SUB = 4          # sixteenths -- the grid a groove is written on
+GROOVE_BAR = 4          # beats per bar
+GROOVE_SEC = 8          # bars before the template is re-read
+GROOVE_Z = 0.55         # how far a slot must stand out to be "played"
+GROOVE_HAT_Z = 0.75     # the cymbal band is noisier, so it asks for more
+GROOVE_FLOOR = 0.35     # a bar must have this share of the section's energy
+                        # at a slot for the template to fire there
+
+
+def sample(v, t):
+    """Band strength at a time -- the peak of a short window around it, so a
+    hit a frame either side of the grid still registers."""
+    i = int(round((t - BIAS) * SR / HOP - FRAME / 2.0 / HOP))
+    a = max(0, i - 2)
+    b = min(len(v), i + 3)
+    return float(v[a:b].max()) if b > a else 0.0
+
+
+def groove_chart(S, env, beat_times, fps):
+    """Build the chart from the repeating pattern, not hit by hit.
+
+    WHY THIS REPLACED PER-ONSET TRANSCRIPTION
+    -----------------------------------------
+    Everything before this identified each hit on its own and asked which
+    frequency band was loudest. That cannot work on a finished mix: every drum
+    is broadband, so all three bands fire on all three drums. Measured on the
+    shipped charts, the three lanes' most-used positions in the bar were the
+    same positions -- they were not three drums, they were one onset stream
+    split three ways. That is what "it feels random" is. Timing accuracy
+    could not see it: every note was on a real transient, and the chart was
+    still noise.
+
+    A drum part is the same bar over and over, which is a huge amount of
+    redundancy that none of it was using. Averaging every bar of a section
+    together lifts whatever repeats and cancels whatever does not: a snare on
+    2 and 4 over forty bars becomes two towers, while a guitar chord that
+    landed near a beat once sinks into the floor. The pattern that comes out
+    is the groove, and because the same template is emitted for every bar of
+    the section, the chart REPEATS -- which is what makes playing along feel
+    like playing the song rather than reacting to confetti.
+
+    Lanes are decided once per section from the averaged evidence rather than
+    per hit. That is both a better decision and a consistent one: the old way
+    could call the same slot a snare in one bar and a hat in the next, which
+    destroys a pattern even when every note is on time.
+    """
+    import numpy as np
+    bt = np.asarray(beat_times)
+    if len(bt) < GROOVE_BAR * 4:
+        return []
+    bands = [(lane, superflux(S, lo, hi)) for lane, lo, hi in BANDS]
+
+    # Sample every sixteenth of the whole track, once.
+    nslots = (len(bt) - 1) * GROOVE_SUB
+    G = {}
+    for lane, v in bands:
+        row = np.zeros(nslots)
+        for i in range(len(bt) - 1):
+            step = (bt[i+1] - bt[i]) / GROOVE_SUB
+            for k in range(GROOVE_SUB):
+                row[i*GROOVE_SUB + k] = sample(v, bt[i] + step * k)
+        G[lane] = row
+
+    # Where does the bar start? The beat phase is already known, so only the
+    # bar phase is in question -- search whole beats. Letting it try every
+    # sixteenth found "downbeats" three sixteenths off the beat, which is not
+    # a thing.
+    per_bar = GROOVE_BAR * GROOVE_SUB
+    best, off = -1.0, 0
+    for cand in range(0, per_bar, GROOVE_SUB):
+        total = 0.0
+        for lane in G:
+            v = G[lane][cand:]
+            n = len(v) // per_bar
+            if n < 4:
+                continue
+            m = v[:n*per_bar].reshape(n, per_bar).mean(axis=0)
+            total += float(m.std() / max(m.mean(), 1e-9))    # contrast in the bar
+        if total > best:
+            best, off = total, cand
+
+    nbars = (nslots - off) // per_bar
+    notes = []
+    for s0 in range(0, nbars, GROOVE_SEC):
+        s1 = min(s0 + GROOVE_SEC, nbars)
+        if s1 <= s0:
+            break
+        z, mean = {}, {}
+        for lane in G:
+            seg = G[lane][off + s0*per_bar: off + s1*per_bar]
+            n = len(seg) // per_bar
+            if n < 1:
+                break
+            m = seg[:n*per_bar].reshape(n, per_bar).mean(axis=0)
+            mean[lane] = m
+            z[lane] = (m - m.mean()) / max(m.std(), 1e-9)
+        if len(z) < 3:
+            break
+
+        # Which drum owns each slot.
+        #
+        # Only two things in a mix are actually separable by frequency: the
+        # kick, because nothing else but the bass has a transient under
+        # 200 Hz, and the cymbals, because nothing else lives above 7 kHz.
+        # The snare sits in the middle with the guitars, so it is not
+        # detected -- it is what is LEFT when a slot is clearly played and is
+        # neither of the other two. Deciding the ambiguous one by elimination
+        # beats asking a band that cannot answer.
+        pattern = []
+        for k in range(per_bar):
+            zk, zs, zh = z["kick"][k], z["snare"][k], z["hat"][k]
+            lanes = []
+            if zk > GROOVE_Z and zk >= zs:
+                lanes.append("kick")
+            elif zs > GROOVE_Z:
+                lanes.append("snare")
+            if zh > GROOVE_HAT_Z:            # the hat rides through the rest
+                lanes.append("hat")
+            if lanes:
+                pattern.append((k, lanes))
+        if not pattern:
+            continue
+
+        # Emit it for every bar of the section -- but only where that bar
+        # actually has energy, so a breakdown or a dropped bar stays empty
+        # instead of being papered over with the groove.
+        for bar in range(s0, s1):
+            base = off + bar * per_bar
+            for k, lanes in pattern:
+                si = base + k
+                if si >= nslots - 1:
+                    continue
+                beat = si // GROOVE_SUB
+                if beat + 1 >= len(bt):
+                    continue
+                step = (bt[beat+1] - bt[beat]) / GROOVE_SUB
+                t = bt[beat] + step * (si % GROOVE_SUB)
+                for lane in lanes:
+                    if G[lane][si] < mean[lane][k] * GROOVE_FLOOR:
+                        continue                     # nothing there this bar
+                    w = 1 if k % GROOVE_SUB == 0 else (2 if k % 2 == 0 else 3)
+                    if k == 0:
+                        w = 0
+                    notes.append({"t": round(float(t), 4), "lane": lane,
+                                  "w": w, "s": float(G[lane][si])})
+    notes.sort(key=lambda n: n["t"])
+    return notes
+
+
 def chart(path):
     import numpy as np
     x = decode(path)
@@ -574,6 +723,20 @@ def chart(path):
         for (lane, sl), (f, strength) in best.items():
             notes.append({"t": round(float(grid[sl]), 4), "lane": lane,
                           "w": int(weight[sl]), "s": float(strength)})
+
+    # The groove is the backbone: a repeating pattern read from the averaged
+    # bars. Onset-detected notes are kept only where they do not already sit
+    # on a groove note, so fills and stops survive without the groove being
+    # buried under per-hit noise again.
+    beat_times = [frame_time(b) for b in beat_frames]
+    groove = groove_chart(S, env, beat_times, fps)
+    # Groove only. Keeping the per-onset notes alongside it was tried and
+    # buries it: on No Other the groove is about 700 notes and the onset pass
+    # adds 965 on top, so the pattern you are meant to learn is one note in
+    # three and the rest is the same scatter as before. A chart you can hear
+    # the song in is worth more than a chart with everything in it.
+    if groove:
+        notes = groove
 
     notes = enforce_gap(notes, slot=slot_w)
     notes = thin(notes, duration, beats=len(beat_frames))

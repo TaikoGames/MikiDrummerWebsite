@@ -155,7 +155,7 @@ jobs:
             // could hear their own drumming in.
             const perBeat = map.notes.length / map.beats.length;
             console.log(`  density: ${dens.toFixed(2)}/s, ${perBeat.toFixed(2)}/beat`);
-            if (perBeat > 7) {
+            if (perBeat > 6) {
               throw new Error(`chart is saturating (${perBeat.toFixed(2)} notes/beat)`);
             }
             if (perBeat < 1.5) {
@@ -172,6 +172,32 @@ jobs:
             if (ws.size < 3) {
               throw new Error('chart uses only ' + ws.size + ' metrical positions -- ' +
                               'the difficulty setting has nothing to sort by');
+            }
+            // The lanes must land on DIFFERENT positions in the bar. When they
+            // land on the same ones they are not three drums, they are one
+            // onset stream split three ways -- which is what made the charts
+            // feel random while every note was still on a real hit.
+            const bt = map.beats, per = 4, sub = 4;
+            const posOf = (t) => {
+              let i = 0; while (i + 1 < bt.length && bt[i + 1] <= t) i++;
+              if (i + 1 >= bt.length) return null;
+              const f = (t - bt[i]) / Math.max(bt[i + 1] - bt[i], 1e-9);
+              return (i % per) * sub + (Math.round(f * sub) % sub);
+            };
+            const hist = { kick: {}, snare: {}, hat: {} };
+            for (const n of map.notes) {
+              const q = posOf(n.t);
+              if (q != null) hist[n.lane][q] = (hist[n.lane][q] || 0) + 1;
+            }
+            const topSet = (h, k) => new Set(Object.entries(h)
+              .sort((a, b) => b[1] - a[1]).slice(0, k).map(e => e[0]));
+            const kickTop = topSet(hist.kick, 4), snareTop = topSet(hist.snare, 4);
+            const shared = [...kickTop].filter(x => snareTop.has(x)).length;
+            console.log('  kick top-4 positions:', [...kickTop].join(','),
+                        '| snare top-4:', [...snareTop].join(','));
+            if (shared >= 4) {
+              throw new Error('kick and snare land on identical positions -- ' +
+                              'the lanes have collapsed into one onset stream again');
             }
 
             // The song list is built off a small index, not off every chart.
