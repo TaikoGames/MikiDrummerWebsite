@@ -2,55 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "The Growlers",
-      "date": "2026-09-26",
-      "time": "",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/the-growlers/1207544338248190/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
-      "band": "Covenant Festival XI — Night Three",
-      "date": "2026-09-26",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$110",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Black Metal",
-      "notes": "The Ruins of Beverast, Spite, Barshasketh, Lokabrenna, Tsalal, Zulxaxeku. 3-day pass $280. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
-    },
-    {
-      "band": "Author & Punisher",
-      "date": "2026-09-26",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://thecobalt.ca",
-      "genre": "Industrial Metal",
-      "notes": "With Guiltless",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Author_%26_Punisher_%40_Roadburn_Festival_2017_02.jpg?width=600"
-    },
-    {
-      "band": "Ten Days Late / GRRRizzly / Charles Mansion / Incompleteness",
-      "date": "2026-09-26",
-      "time": "19:00",
-      "venue": "Astoria Pub",
-      "city": "Vancouver",
-      "price": "$20",
-      "ticket": "https://astoria.pub/events/gutter-night/",
-      "genre": "Punk",
-      "notes": "Gutter Night. Riot grrrl punk, doomy psych and heavy rock. GRRRizzly are from Olympia WA",
-      "image": "https://astoria.pub/wp-content/uploads/2026/09/Gutter-Night.jpeg",
-      "curated": ""
-    },
-    {
       "band": "Judge",
       "date": "2026-09-27",
       "time": "19:00",
