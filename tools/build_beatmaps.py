@@ -553,6 +553,29 @@ def groove_chart(S, env, beat_times, fps):
         return []
     bands = [(lane, superflux(S, lo, hi)) for lane, lo, hi in BANDS]
 
+    # THE KICK LANE WAS CHARTING THE BASS PLAYER.
+    #
+    # Averaged over a whole track, the low band peaked an eighth away from
+    # where the mid and high bands peaked -- consistently, song after song.
+    # No Other: low band on slots 2 and 10, everything else on 0, 4, 8, 12.
+    # On The Double: low band on 3, 10 and 14 while the mix was on the beats.
+    #
+    # That is not a drummer playing the kick off the beat. It is a punk bass
+    # line playing offbeat eighths, which lives in the same octave as a kick
+    # drum and is louder than one in a finished master. So every chart put a
+    # kick note where the bass player was and none where the kick was, which
+    # is about the most disorienting thing a drum game can do to a drummer.
+    #
+    # What tells them apart is the beater: a kick is a broadband CLICK plus
+    # low energy, a bass note is low energy with almost no click. The low
+    # band is gated on the full mix rising at the same moment, both above
+    # their own average. On On The Double that moves the kick off slots 3, 10
+    # and 14 and onto 0, 4, 8 and 12.
+    zof = lambda v: (v - v.mean()) / max(v.std(), 1e-9)
+    z_env = zof(env)
+    bands = [(lane, np.minimum(zof(v), z_env) if lane == "kick" else v)
+             for lane, v in bands]
+
     # Sample every sixteenth of the whole track, once.
     nslots = (len(bt) - 1) * GROOVE_SUB
     G = {}
@@ -836,7 +859,7 @@ def chart(path):
     }
 
 
-def preview(src, data, seconds, out_path):
+def preview(src, data, seconds, out_path, only=None):
     """The song with a click on every charted note, so a person can hear
     whether the chart is right.
 
@@ -852,6 +875,11 @@ def preview(src, data, seconds, out_path):
     tone = {"kick": 160.0, "snare": 440.0, "hat": 1400.0}
     n = 900
     for note in data["notes"]:
+        # only=<lane> renders that lane alone. Five rounds of guessing which
+        # part is wrong is four too many; one lane clicking at a time is a
+        # question a drummer can answer in ten seconds.
+        if only and note["lane"] != only:
+            continue
         t = note["t"] - start
         if not (0 <= t < (b - a) / SR - 0.05):
             continue
