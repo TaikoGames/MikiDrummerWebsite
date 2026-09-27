@@ -501,6 +501,12 @@ GROOVE_SEC = 8          # bars before the template is re-read
 GROOVE_Z = 0.55         # how far a slot must stand out to be "played"
 GROOVE_HAT_Z = 0.75     # the cymbal band is noisier, so it asks for more
 GROOVE_FLOOR = 0.35     # a bar must have this share of the section's energy
+GROOVE_HAT_RIDE = -0.60  # a riding hat is allowed to be well under average
+GROOVE_FLOOR_HAT = 0.12  # ...and its per-bar gate is gentler, because a hat
+                         # under a snare hit is masked, not absent
+FILL_RATIO = 2.4         # how far above the template a bar must be to be a fill
+FILL_FLOOR = 0.45        # ...and how loud in absolute terms, per lane
+FILL_MAX = 3             # extra notes one bar may add, so fills stay fills
                         # at a slot for the template to fire there
 
 
@@ -594,6 +600,14 @@ def groove_chart(S, env, beat_times, fps):
         if len(z) < 3:
             break
 
+        # How hard it was hit, 0.25 to 1, against the loudest slot that lane
+        # uses in this section. The game draws accents with it; a chart where
+        # a ghost note and a backbeat look identical reads flat.
+        peak = {ln: float(mean[ln].max()) or 1e-9 for ln in mean}
+
+        def vel(lane, si):
+            return round(min(1.0, max(0.25, float(G[lane][si]) / peak[lane])), 2)
+
         # Which drum owns each slot.
         #
         # Only two things in a mix are actually separable by frequency: the
@@ -618,6 +632,33 @@ def groove_chart(S, env, beat_times, fps):
         if not pattern:
             continue
 
+        # THE HAT RIDES.
+        #
+        # A drummer playing eighths keeps playing them for the whole bar, but
+        # the cymbal band only clears its threshold on the slots where nothing
+        # louder happened to mask it. Measured on the shipped charts, the hat
+        # landed on 25-42% of the eighth slots across all twelve songs, where
+        # the part is essentially every one of them. Two thirds of the steady
+        # hand -- which is most of what you hear, and all of what you play
+        # along to -- was missing, and that is most of why the charts did not
+        # feel like the song.
+        #
+        # So: if the section already shows a hat on enough eighths to call it
+        # a ride, put it on the rest of them too, asking only that the slot is
+        # not actually silent.
+        eighths = [k for k in range(per_bar) if k % 2 == 0]
+        hat_on = {k for k, ls in pattern if "hat" in ls}
+        if len(hat_on & set(eighths)) >= max(2, len(eighths) // 3):
+            by_k = {k: ls for k, ls in pattern}
+            for k in eighths:
+                if k in hat_on or z["hat"][k] <= GROOVE_HAT_RIDE:
+                    continue
+                if k in by_k:
+                    by_k[k] = by_k[k] + ["hat"]
+                else:
+                    by_k[k] = ["hat"]
+            pattern = sorted(by_k.items())
+
         # Emit it for every bar of the section -- but only where that bar
         # actually has energy, so a breakdown or a dropped bar stays empty
         # instead of being papered over with the groove.
@@ -633,13 +674,52 @@ def groove_chart(S, env, beat_times, fps):
                 step = (bt[beat+1] - bt[beat]) / GROOVE_SUB
                 t = bt[beat] + step * (si % GROOVE_SUB)
                 for lane in lanes:
-                    if G[lane][si] < mean[lane][k] * GROOVE_FLOOR:
+                    floor = GROOVE_FLOOR_HAT if lane == "hat" else GROOVE_FLOOR
+                    if G[lane][si] < mean[lane][k] * floor:
                         continue                     # nothing there this bar
                     w = 1 if k % GROOVE_SUB == 0 else (2 if k % 2 == 0 else 3)
                     if k == 0:
                         w = 0
                     notes.append({"t": round(float(t), 4), "lane": lane,
-                                  "w": w, "s": float(G[lane][si])})
+                                  "w": w, "s": float(G[lane][si]),
+                                  "v": vel(lane, si)})
+
+            # WHAT THIS BAR DID THAT THE TEMPLATE DOES NOT.
+            #
+            # The template repeats, which is what makes a chart playable, but
+            # a drummer does not repeat for three minutes -- there are fills,
+            # crashes and extra kicks, and a chart without them is a loop
+            # rather than the song. Adding every detected onset back was tried
+            # and buries the groove three-to-one. So a bar may only add a few
+            # notes, and only where it is clearly louder than the same slot in
+            # the rest of the section.
+            tmpl = {k: set(ls) for k, ls in pattern}
+            extra = 0
+            for k in range(per_bar):
+                if extra >= FILL_MAX:
+                    break
+                si = base + k
+                if si >= nslots - 1:
+                    continue
+                beat = si // GROOVE_SUB
+                if beat + 1 >= len(bt):
+                    continue
+                step = (bt[beat+1] - bt[beat]) / GROOVE_SUB
+                t = bt[beat] + step * (si % GROOVE_SUB)
+                for lane in ("snare", "kick", "hat"):
+                    if lane in tmpl.get(k, ()):
+                        continue
+                    hi = float(mean[lane].max()) or 1e-9
+                    if (G[lane][si] > mean[lane][k] * FILL_RATIO
+                            and G[lane][si] > hi * FILL_FLOOR):
+                        w = 1 if k % GROOVE_SUB == 0 else (2 if k % 2 == 0 else 3)
+                        if k == 0:
+                            w = 0
+                        notes.append({"t": round(float(t), 4), "lane": lane,
+                                      "w": w, "s": float(G[lane][si]),
+                                      "v": vel(lane, si)})
+                        extra += 1
+                        break
     notes.sort(key=lambda n: n["t"])
     return notes
 
@@ -743,7 +823,8 @@ def chart(path):
     # "w" is the metrical weight -- 0 downbeat, 1 beat, 2 eighth, 3+ finer.
     # It ships with the chart so the game can offer a simpler version of the
     # same part rather than a different, thinner chart.
-    clean = [{"t": n["t"], "lane": n["lane"], "w": n["w"]}
+    clean = [{"t": n["t"], "lane": n["lane"], "w": n["w"],
+              "v": n.get("v", 0.8)}
              for n in sorted(notes, key=lambda n: n["t"]) if n["t"] >= 0]
     return {
         "duration": round(duration, 2),

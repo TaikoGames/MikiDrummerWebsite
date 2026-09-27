@@ -198,6 +198,10 @@
   <div id="select">
     <div class="songs" id="songs"></div>
     <p class="hint" id="songsNote">Loading the song list…</p>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn" id="share" type="button">Share this game</button>
+      <span class="hint" id="shareSaid" role="status" aria-live="polite" style="margin:0"></span>
+    </div>
   </div>
 
   <div class="stage" id="stage" hidden>
@@ -1095,8 +1099,39 @@ function tickClock() {
   else anchorMedia += err * 0.08;           // otherwise creep onto it, silently
 }
 
+/* An analyser on the audio element, so the back of the room can show the
+ * song rather than a bar that flashes on the beat.
+ *
+ * Built once, on the tap that starts a song, because a browser will not give
+ * you a running AudioContext outside a gesture. Routing the element through
+ * WebAudio means the graph now owns the sound, so it MUST reach the
+ * destination or the game plays silently -- which is the failure mode worth
+ * being careful about here. If any of it is refused, spectrum stays null and
+ * the scene falls back to the beat pulse.
+ */
+let spectrum = null, analyser = null, audioCtx = null;
+function initAnalyser() {
+  if (analyser || audioCtx === false) return;
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) { audioCtx = false; return; }
+    audioCtx = new Ctx();
+    const src = audioCtx.createMediaElementSource($('track'));
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;                 // 128 bins is plenty for 56 bars
+    analyser.smoothingTimeConstant = 0.72;
+    src.connect(analyser);
+    analyser.connect(audioCtx.destination);  // without this the song is silent
+    spectrum = new Uint8Array(analyser.frequencyBinCount);
+  } catch (e) {
+    audioCtx = false; analyser = null; spectrum = null;
+  }
+}
+
 function play() {
   const a = $('track');
+  initAnalyser();
+  if (audioCtx && audioCtx.resume) { try { audioCtx.resume(); } catch (e) {} }
   a.currentTime = 0;
   a.onended = () => { if (running) finish(); };
   lastMedia = -1;
@@ -1231,6 +1266,34 @@ addEventListener('keydown', (e) => {
   strike(lane.id);
 });
 
+/* Share. navigator.share is the good path on a phone -- it opens the sheet
+ * with Messages, WhatsApp and the rest in it. Desktop browsers mostly do not
+ * have it, so fall back to the clipboard, and if that is blocked too (it
+ * needs a secure context) show the URL so it can still be copied by hand. */
+(function () {
+  const btn = document.getElementById('share');
+  if (!btn) return;
+  const said = document.getElementById('shareSaid');
+  const url = 'https://www.mikidrummer.ca/drum-game/';
+  const data = {
+    title: 'Drum Along',
+    text: 'A free drum game in the browser — twelve real punk and metal songs, charted from the recordings.',
+    url: url
+  };
+  btn.addEventListener('click', async () => {
+    if (window.Track) Track.ev('game_share', {});
+    try {
+      if (navigator.share) { await navigator.share(data); return; }
+      await navigator.clipboard.writeText(url);
+      said.textContent = 'Link copied.';
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;      // they closed the sheet
+      said.textContent = url;
+    }
+    setTimeout(() => { said.textContent = ''; }, 4000);
+  });
+})();
+
 /* How recently the song had a beat, 1 down to 0 over about a fifth of a
  * second. The beats come from the chart, which got them from a tracker that
  * followed the actual recording, so the background is in time with the record
@@ -1270,7 +1333,7 @@ function loop() {
     const dt = n.t - now;
     if (n.mesh) {
       n.mesh.position.z = view.HIT_Z - dt * view.SPEED;
-      view.styleNote(n.mesh, dt);
+      view.styleNote(n.mesh, dt, n.v);
     }
     if (dt < -MISS_AFTER) {
       // Gone past. A miss breaks the combo whether or not anything was pressed.
@@ -1298,7 +1361,8 @@ function loop() {
   $('progress').textContent =
     `${Math.floor(secs / 60)}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
 
-  if (view.update) view.update(dt, beatPulse(now));
+  if (analyser && spectrum) { try { analyser.getByteFrequencyData(spectrum); } catch (e) {} }
+  if (view.update) view.update(dt, beatPulse(now), spectrum);
   view.renderer.render(view.scene, view.camera);
   requestAnimationFrame(loop);
 }

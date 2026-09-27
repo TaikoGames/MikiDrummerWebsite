@@ -137,7 +137,7 @@ def shape_of(notes, dur):
 def load():
     """Every charted song, with its title and band from playlist.json."""
     titles = {}
-    pl = json.load(open(os.path.join(ROOT, "playlist.json")))
+    pl = json.load(open(os.path.join(ROOT, "playlist.json"), encoding="utf-8"))
     for s in pl.get("songs", []):
         src = s.get("src", "")
         if src.lower().endswith(".mp3"):
@@ -149,7 +149,7 @@ def load():
         if not fn.endswith(".json") or fn == "index.json":
             continue
         slug = fn[:-5]
-        m = json.load(open(os.path.join(MAPS, fn)))
+        m = json.load(open(os.path.join(MAPS, fn), encoding="utf-8"))
         if not m.get("notes"):
             continue
         raw = titles.get(slug, slug)
@@ -339,7 +339,9 @@ def build():
             siblings=sib, ld=ld)
 
         path = os.path.join(OUT, r["slug"] + ".html")
-        with open(path, "w") as fh:
+        # encoding is explicit: the page contains "→" and Windows would
+        # otherwise write it in cp1252 and die halfway through the file.
+        with open(path, "w", encoding="utf-8") as fh:
             fh.write(html)
         written.append((r["slug"], r["title"], r["band"], r["notes"], per_sec, diff))
 

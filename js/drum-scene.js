@@ -251,6 +251,38 @@ export function buildScene(canvas) {
   horizon.position.set(0, 0.5, -GRID_BACK * 0.42);
   scene.add(horizon);
 
+  // The song itself, across the far end.
+  //
+  // The horizon bar above only knew where the beats were, so the back of the
+  // room did the same thing on every beat of every song. These bars are fed
+  // from an analyser on the audio element, so what is back there is the
+  // record: the kick moves the left end, cymbals move the right, and a
+  // breakdown empties it. Instanced, because 56 separate meshes across the
+  // sky is 56 draw calls for decoration.
+  const SPEC_BARS = small ? 40 : 56;
+  const SPEC_W = 26;
+  const specGeo = new THREE.PlaneGeometry(SPEC_W / SPEC_BARS * 0.62, 1);
+  specGeo.translate(0, 0.5, 0);                 // grow upward, not from the middle
+  const spectrum = new THREE.InstancedMesh(
+    specGeo,
+    new THREE.MeshBasicMaterial({ color: 0xe8672a, transparent: true, opacity: 0.5,
+                                  fog: true, depthWrite: false }),
+    SPEC_BARS
+  );
+  spectrum.frustumCulled = false;
+  spectrum.position.set(0, 0.16, -GRID_BACK * 0.43);
+  scene.add(spectrum);
+
+  const specM = new THREE.Object3D();
+  const specH = new Float32Array(SPEC_BARS);    // smoothed, so it does not strobe
+  for (let i = 0; i < SPEC_BARS; i++) {
+    specM.position.set((i / (SPEC_BARS - 1) - 0.5) * SPEC_W, 0, 0);
+    specM.scale.set(1, 0.01, 1);
+    specM.updateMatrix();
+    spectrum.setMatrixAt(i, specM.matrix);
+  }
+  spectrum.instanceMatrix.needsUpdate = true;
+
   // Notes are pooled. A three minute song is a couple of thousand notes and
   // thirty of them are on screen; allocating a mesh per note would spend the
   // whole frame budget in the garbage collector.
@@ -278,14 +310,21 @@ export function buildScene(canvas) {
    * it is the biggest thing on screen and sitting directly in front of the
    * target you are trying to read -- so the moment you most need to see the
    * pad is the moment a missed note is covering it. */
-  function styleNote(mesh, dt) {
+  function styleNote(mesh, dt, v) {
+    // How hard it was hit, from the chart. A backbeat and a ghost note used
+    // to be the same object, so the chart read flat however dynamic the part
+    // was. Scaled gently -- this is a reading aid, not a size puzzle.
+    const vel = v == null ? 0.8 : v;
+    const g = 0.78 + vel * 0.42;
     if (dt >= 0) {
-      if (mesh.material.opacity !== 1) { mesh.material.opacity = 1; mesh.scale.set(1, 1, 1); }
+      if (mesh.material.opacity !== 1) mesh.material.opacity = 1;
+      mesh.scale.set(g, 1, g);
+      mesh.material.emissiveIntensity = 0.30 + vel * 0.38;
       return;
     }
     const k = Math.max(0, 1 + dt / 0.16);      // 1 at the line, 0 just past it
     mesh.material.opacity = k;
-    const s = 0.45 + k * 0.55;
+    const s = (0.45 + k * 0.55) * g;
     mesh.scale.set(s, 1, s);
   }
   function freeNote(mesh) {
@@ -301,7 +340,7 @@ export function buildScene(canvas) {
    * same speed on a 60 Hz phone and a 120 Hz one -- and, unlike the notes,
    * nothing here is judged, so the frame clock is the right clock for it. */
   const starPos = starGeo.attributes.position;
-  function update(dt, pulse) {
+  function update(dt, pulse, spec) {
     if (!(dt > 0)) return;
     const d = Math.min(dt, 0.1);            // a tab coming back from sleep
 
@@ -326,8 +365,33 @@ export function buildScene(canvas) {
     // watching is the moment the music is marking.
     hitLine.material.opacity = 0.72 + p * 0.28;
     hitGlow.material.opacity = 0.06 + p * 0.14;
-    horizon.material.opacity = 0.14 + p * 0.42;
-    horizon.scale.y = 1 + p * 2.2;
+    horizon.material.opacity = 0.10 + p * 0.30;
+    horizon.scale.y = 1 + p * 1.6;
+
+    // Spectrum. Falls back to the beat pulse when there is no analyser --
+    // Safari can refuse an AudioContext, and a dead flat line across the back
+    // looks broken, whereas something moving on the beat looks intended.
+    for (let i = 0; i < SPEC_BARS; i++) {
+      let want;
+      if (spec && spec.length) {
+        // Low bins hold most of the energy in a mix, so walk the array with a
+        // curve rather than linearly or the right-hand half never moves.
+        const f = i / (SPEC_BARS - 1);
+        const bin = Math.min(spec.length - 1, Math.floor(Math.pow(f, 1.7) * spec.length * 0.72));
+        want = (spec[bin] / 255) * (0.55 + f * 0.9);
+      } else {
+        want = p * (0.35 + 0.5 * Math.abs(Math.sin(i * 0.7)));
+      }
+      // Fast up, slow down: a meter that decays slowly reads as level, one
+      // that decays as fast as it rises reads as noise.
+      specH[i] += (want - specH[i]) * (want > specH[i] ? 0.55 : 0.10);
+      specM.position.set((i / (SPEC_BARS - 1) - 0.5) * SPEC_W, 0, 0);
+      specM.scale.set(1, Math.max(0.01, specH[i] * 5.2), 1);
+      specM.updateMatrix();
+      spectrum.setMatrixAt(i, specM.matrix);
+    }
+    spectrum.instanceMatrix.needsUpdate = true;
+    spectrum.material.opacity = 0.34 + p * 0.22;
     stars.material.opacity = 0.42 + p * 0.3;
     grid.material.opacity = 0.45 + p * 0.35;
   }
