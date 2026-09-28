@@ -559,20 +559,35 @@ GROOVES = [
 GROOVE_SWITCH = 0.12
 
 
-def fit_groove(prof, per_bar, previous=None):
+def fit_groove(prof, per_bar, previous=None, only_rot=None):
     """Which groove, and at which rotation, best matches the measured energy."""
     import numpy as np
     zed = lambda v: (v - v.mean()) / max(v.std(), 1e-9)
     A = {lane: zed(prof[lane]) for lane in prof}
     best = None
+    rots = [only_rot] if only_rot is not None else range(per_bar)
+    # Choosing the ROTATION and choosing the GROOVE are different questions and
+    # want different evidence.
+    #
+    # For the rotation, the hi-hat is worthless -- it rides eighths, so it
+    # scores the same at every even rotation and only adds noise. The snare is
+    # the natural anchor but is the one drum that cannot be seen: on No Other
+    # the mid band alternates by a ratio of 1.07, which is nothing. The kick
+    # CAN be seen now that it is gated off the bass, and it alternates hard
+    # there (+0.70, +0.03, +0.55, -0.06 across the four beats). So the kick
+    # anchors the bar and the snare follows onto the beats the kick leaves.
+    weights = ({"kick": 2.0, "snare": 1.0, "hat": 0.0} if only_rot is None
+               else {"kick": 1.0, "snare": 1.0, "hat": 1.0})
     for name, kick, snare, hat in GROOVES:
-        for rot in range(per_bar):
+        for rot in rots:
             score = 0.0
             for lane, slots in (("kick", kick), ("snare", snare), ("hat", hat)):
+                if not weights[lane]:
+                    continue
                 m = np.zeros(per_bar)
                 for sl in slots:
                     m[(sl + rot) % per_bar] = 1.0
-                score += float((A[lane] * zed(m)).mean())
+                score += weights[lane] * float((A[lane] * zed(m)).mean())
             if previous and (name, rot) == previous:
                 score += GROOVE_SWITCH        # stay put unless clearly beaten
             if best is None or score > best[0]:
@@ -581,6 +596,22 @@ def fit_groove(prof, per_bar, previous=None):
 
 
 GROOVE_LOG = None          # set by main() to report what was fitted
+SLUG = [None]              # the song being charted, for the override below
+
+# WHERE THE BACKBEAT GOES, WHEN THE AUDIO WILL NOT SAY.
+#
+# Deciding which pair of beats carries the snare is one bit of information per
+# song, and six rounds of signal processing could not get it reliably: the mid
+# band says one thing because the guitars are in it, the kick says another.
+# But a drummer listening to their own track knows the answer in five seconds.
+#
+# So it is a setting. List a slug here to move that song's backbeat one beat,
+# and run the beatmaps workflow. This is not a defeat dressed up -- it is one
+# bit that a person can supply for free and a machine cannot supply reliably,
+# and pretending otherwise is what produced five rounds of "it feels random".
+SNARE_SHIFT = {
+    # "noother": True,
+}
 
 
 def groove_chart(S, env, beat_times, fps):
@@ -673,6 +704,73 @@ def groove_chart(S, env, beat_times, fps):
     notes = []
     last_fit = [None]
     chosen = GROOVE_LOG
+
+    # THE ROTATION IS A PROPERTY OF THE SONG, NOT OF A SECTION.
+    #
+    # It was being fitted per eight-bar section with a stickiness bonus, which
+    # meant the FIRST section chose it -- and the first eight bars of a punk
+    # song are usually an intro with no drums in them at all. A rotation
+    # picked off a guitar intro then stuck for the whole track, and on On The
+    # Double that put the snare on the quieter alternating beat: the backbeat
+    # landed on 1 and 3 instead of 2 and 4, so every snare you heard came at
+    # you as a kick. That is precisely "it does not feel like the song", and
+    # no amount of per-hit accuracy would have shown it.
+    #
+    # Fitted once across every bar, where the choruses outvote the intro.
+    whole = {}
+    for lane in G:
+        v = G[lane][off:off + nbars * per_bar]
+        n = len(v) // per_bar
+        whole[lane] = v[:n*per_bar].reshape(n, per_bar).mean(axis=0) if n else np.zeros(per_bar)
+    # ANCHOR THE BACKBEAT EXPLICITLY, THEN FIT AROUND IT.
+    #
+    # The rotation decides where the snare goes, and getting it wrong by one
+    # beat puts the backbeat on 1 and 3 -- so every snare you hear arrives as
+    # a kick. Left to the overall fit it came out right on about half the
+    # songs, because the mid band is a weak witness (No Other alternates by a
+    # ratio of 1.07, which is nothing) and the hi-hat and an all-four kick are
+    # both rotation-blind, so there is often nothing to break the tie.
+    #
+    # But the question is narrow: of the two alternating pairs of beats, which
+    # carries the backbeat? That is answerable directly -- it is the louder
+    # pair in the mid band, averaged over the whole song, where the choruses
+    # outvote everything. Answer that first, then let the fit choose the
+    # groove among the rotations that agree with it.
+    # Anchored on the KICK, not on the mid band.
+    #
+    # The obvious reading -- the backbeat is the louder alternating pair in
+    # the mid band -- got it right on only seven of the twelve, because in
+    # this music the guitars are in the mid band too and they accent one and
+    # three. So the loudest mid beats are often the DOWNbeats, and anchoring
+    # there puts the snare exactly one beat wrong.
+    #
+    # The kick is the one drum that can now be seen on its own, since gating
+    # it against the full mix took the bass guitar out of it. In this genre
+    # the kick is on one and three, so the pair of beats where the gated kick
+    # is strongest IS one and three -- and the snare goes on the other pair.
+    # Deriving the weak drum from the strong one beats measuring it directly.
+    # WHICH ALTERNATING PAIR OF BEATS CARRIES THE BACKBEAT.
+    #
+    # Getting this wrong by one beat puts the snare on 1 and 3, so every snare
+    # you hear arrives as a kick -- the single most disorienting thing this
+    # can do, and invisible to any check that only asks whether a note is on a
+    # real hit.
+    #
+    # Two witnesses were tried and neither is trustworthy. The louder pair in
+    # the mid band gets 7 of 12, because the guitars are in that band too and
+    # accent one and three. Anchoring on the gated kick instead gets 5 of 12.
+    # So the chart simply always lays a backbeat, and SNARE_SHIFT moves it for
+    # the songs where that lands on the wrong pair. See its comment.
+    # The rotations that put a groove's snare on slots 4 and 12 -- a backbeat.
+    # Every chart gets a coherent one, and SNARE_SHIFT moves it a beat for the
+    # songs where the ear says the audio's backbeat is the other pair.
+    allowed = [0, per_bar // 2]
+    if SNARE_SHIFT.get(SLUG[0]):
+        allowed = [(r + GROOVE_SUB) % per_bar for r in allowed]
+    ROT = max(allowed,
+              key=lambda r: fit_groove(whole, per_bar, only_rot=r)[0])
+    if chosen is not None:
+        chosen.append(("downbeat", off, ROT))
     for s0 in range(0, nbars, GROOVE_SEC):
         s1 = min(s0 + GROOVE_SEC, nbars)
         if s1 <= s0:
@@ -710,7 +808,8 @@ def groove_chart(S, env, beat_times, fps):
         # happened to be loudest -- that is what produced three lanes landing
         # on the same positions.
         score, gname, rot, gk, gs, gh = fit_groove(
-            {lane: mean[lane] for lane in mean}, per_bar, previous=last_fit[0])
+            {lane: mean[lane] for lane in mean}, per_bar,
+            previous=last_fit[0], only_rot=ROT)
         last_fit[0] = (gname, rot)
         if chosen is not None:
             chosen.append((s0, gname, score))
@@ -902,7 +1001,11 @@ def chart(path):
     # on a groove note, so fills and stops survive without the groove being
     # buried under per-hit noise again.
     beat_times = [frame_time(b) for b in beat_frames]
+    global GROOVE_LOG
+    GROOVE_LOG = []
     groove = groove_chart(S, env, beat_times, fps)
+    fitted = [(a, b) for a, b, _ in GROOVE_LOG if a != "downbeat"]
+    downbeat = next((b for a, b, _ in GROOVE_LOG if a == "downbeat"), 0)
     # Groove only. Keeping the per-onset notes alongside it was tried and
     # buries it: on No Other the groove is about 700 notes and the onset pass
     # adds 965 on top, so the pattern you are meant to learn is one note in
@@ -925,6 +1028,13 @@ def chart(path):
         # The tracked beats, for anything that wants to move in time with the
         # song rather than guess at it.
         "beats": [round(float(frame_time(b)), 3) for b in beat_frames],
+        # Which sixteenth of the beat sequence a bar starts on, and the
+        # grooves that were fitted. Recorded because a bar-aligned view of the
+        # chart is the only way to see whether the backbeat is in the right
+        # place -- and because reading it back with the wrong alignment is how
+        # a correct chart got diagnosed as broken.
+        "downbeat": int(downbeat),
+        "grooves": sorted({g for _, g in fitted}),
         "notes": clean,
     }
 
@@ -1163,6 +1273,7 @@ def main():
     for src in srcs:
         full = os.path.join(ROOT, src) if not os.path.isabs(src) else src
         slug = slugify(os.path.splitext(os.path.basename(src))[0])
+        SLUG[0] = slug
         import build_beatmaps as _self
         _self.GROOVE_LOG = []
         data = chart(full)
