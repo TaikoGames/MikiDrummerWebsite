@@ -89,6 +89,13 @@ jobs:
             # demucs writes /tmp/stems/<model>/in/drums.wav
             ffmpeg -nostdin -y -loglevel error -i "/tmp/stems/$MODEL/in/drums.wav" \
                    -ac 1 -ar 22050 "/tmp/out/$SLUG.wav"
+            # Keep the stem in the repo, small. Separating is the expensive
+            # step and it only has to happen once per song; with the stems
+            # committed, the charting can be re-tuned in seconds instead of
+            # re-running an hour of CPU for every change to a threshold.
+            mkdir -p audio/drums
+            ffmpeg -nostdin -y -loglevel error -i "/tmp/out/$SLUG.wav" \
+                   -ac 1 -ar 22050 -b:a 48k "audio/drums/$SLUG.mp3"
             rm -rf /tmp/stems/$MODEL/in /tmp/in.wav
             ls -la "/tmp/out/$SLUG.wav"
             echo "::endgroup::"
@@ -132,7 +139,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/beatmaps drum-game/songs 2>/dev/null || true
+          git add data/beatmaps drum-game/songs audio/drums 2>/dev/null || true
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git commit -m "Charts rebuilt from isolated drum stems
 
