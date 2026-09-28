@@ -55,6 +55,11 @@ const GRID_BACK = 60;         // how far the floor grid reaches
  * depth testing off it is drawn over the notes rather than through them, so
  * being level with them costs nothing. */
 export const NOTE_Y = 0.17;
+
+// How long a struck pad takes to go dark, and a missed one to stop glowing
+// red. Seconds.
+const FLASH_FADE = 0.16;
+const MISS_FADE = 0.28;
 const NOTE_H = 0.14;
 
 /* A vertical gradient for the sky, drawn once into a 2-pixel-wide canvas.
@@ -167,7 +172,7 @@ export function buildScene(canvas) {
     ring.position.set(lane.x, 0.07, HIT_Z);
     scene.add(ring);
 
-    return { ...lane, mesh, pad, ring, rails: [rail, rail2], flash: 0 };
+    return { ...lane, mesh, pad, ring, rails: [rail, rail2], flash: 0, miss: 0 };
   });
 
   /* ---- the world the runway sits in --------------------------------- */
@@ -359,6 +364,35 @@ export function buildScene(canvas) {
       if (a[k + 1] > 15) a[k + 1] = -1;
     }
     starPos.needsUpdate = true;
+
+    // What a hit looks like.
+    //
+    // The pad and the ring were both built to do this -- "lit from inside
+    // when struck", "a ring that flares on a hit" -- and neither was ever
+    // connected to anything. game.html has always set lane.flash = 1 on every
+    // strike and nothing read it or brought it back down, so the pads sat at
+    // their resting glow and the ring sat at opacity 0 for the whole song.
+    // The only feedback a hit produced was a line of small text.
+    //
+    // The ring GROWS as it fades, which is what makes it read as something
+    // leaving the pad rather than a light turning off. Decay is 160 ms:
+    // shorter and it is gone before the eye finds it, longer and at eight
+    // notes a second the three lanes never go dark.
+    //
+    // There is deliberately no screen shake. At these note densities a kick
+    // on every hit is four or five jolts a second, which stops being impact
+    // and becomes nausea -- and it would shake the runway the player is
+    // trying to read the next bar off.
+    for (const lane of lanes) {
+      if (lane.flash > 0) lane.flash = Math.max(0, lane.flash - d / FLASH_FADE);
+      if (lane.miss > 0) lane.miss = Math.max(0, lane.miss - d / MISS_FADE);
+      const f = lane.flash, m = lane.miss;
+      lane.pad.material.emissiveIntensity = 0.22 + f * 1.9;
+      lane.ring.material.opacity = f * 0.9 + m * 0.5;
+      lane.ring.scale.setScalar(1 + (1 - f) * 0.5 * (f > 0 ? 1 : 0) + m * 0.12);
+      lane.ring.material.color.setHex(m > f ? 0xff4d4d : lane.colour);
+      for (const r of lane.rails) r.material.opacity = 0.30 + f * 0.55;
+    }
 
     const p = pulse || 0;
     // The judgement line breathes on the beat too, so the moment the eye is

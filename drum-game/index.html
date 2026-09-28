@@ -112,6 +112,12 @@
   .pick.on{border-color:var(--hot);background:#241a13}
   .pick.on b{color:var(--hot)}
   @media(pointer:coarse){ .pick{padding:14px 13px} }
+  /* The milestone kick. transform only -- animating font-size or width would
+     lay the page out again 400 times a song. */
+  @keyframes comboPop{
+    0%{transform:scale(1)} 34%{transform:scale(1.42)} 100%{transform:scale(1)} }
+  .combo.pop{animation:comboPop .34s cubic-bezier(.2,1.4,.4,1)}
+  @media(prefers-reduced-motion:reduce){ .combo.pop{animation:none} }
   .combo{align-self:center;font-family:'Arial Black',system-ui,sans-serif;
          font-size:clamp(28px,7vw,52px);color:var(--hot);opacity:0;transition:opacity .12s}
   .combo small{display:block;font:700 11px/1 'Helvetica Neue',sans-serif;letter-spacing:.24em;
@@ -558,6 +564,10 @@ let beatTimes = [], beatAt = 0;      // the tracked beats, for the background
 let running = false, cursor = 0, judgeFrom = 0;
 let lastFrame = 0;
 let score = 0, combo = 0, best = 0;
+// Where a run starts to feel like an achievement. Close together early so
+// something happens in the first few seconds, further apart later so the
+// blip does not become wallpaper.
+const COMBO_STEPS = [10, 25, 50, 100, 200, 400];
 let counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
 let live = [];                       // notes currently on screen
 let offset = Number(localStorage.getItem(OFFSET_KEY) || 0);
@@ -1158,6 +1168,100 @@ function initAnalyser() {
   }
 }
 
+/* The sound your own hit makes.
+ *
+ * This is the thing the game was most obviously missing. You tapped a pad and
+ * the only thing that happened was a small word appearing -- the record kept
+ * playing whatever it was going to play whether you were there or not, so
+ * there was no loop between the hand and the ears, which is the loop the
+ * whole genre runs on.
+ *
+ * Synthesised rather than sampled: three short sounds is about 40 lines of
+ * WebAudio and nothing to download, against three files to fetch before the
+ * first note on a phone. They are deliberately dry and quiet -- they sit
+ * UNDER the record and confirm the hit, rather than trying to be the drum
+ * part, which is already in the song.
+ *
+ * Volume follows the judgement, so a Perfect is not just worth more points,
+ * it sounds more solid than an OK. That is the feedback doing its job before
+ * the player has read anything.
+ */
+function hitSound(laneId, gain) {
+  if (!audioCtx || audioCtx.state === 'closed') return;
+  const t = audioCtx.currentTime;
+  const out = audioCtx.createGain();
+  out.gain.value = gain;
+  out.connect(audioCtx.destination);
+
+  if (laneId === 'kick') {
+    // A pitch sweep is what makes a sine sound like a beater rather than a
+    // beep: 150 Hz down to 48 in 90 ms.
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.frequency.setValueAtTime(150, t);
+    o.frequency.exponentialRampToValueAtTime(48, t + 0.09);
+    g.gain.setValueAtTime(1, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+    o.connect(g); g.connect(out); o.start(t); o.stop(t + 0.18);
+    return;
+  }
+
+  // Snare and hat are both noise; the difference is the filter and how long
+  // it lasts. The snare keeps a little 190 Hz body under it so it reads as a
+  // drum and not as static.
+  const len = laneId === 'hat' ? 0.05 : 0.16;
+  const buf = audioCtx.createBuffer(1, Math.ceil(audioCtx.sampleRate * len),
+                                    audioCtx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  const f = audioCtx.createBiquadFilter();
+  const g = audioCtx.createGain();
+  if (laneId === 'hat') {
+    f.type = 'highpass'; f.frequency.value = 7000;
+    g.gain.setValueAtTime(0.5, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+  } else {
+    f.type = 'bandpass'; f.frequency.value = 1900; f.Q.value = 0.7;
+    g.gain.setValueAtTime(0.85, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+    const body = audioCtx.createOscillator();
+    const bg = audioCtx.createGain();
+    body.frequency.setValueAtTime(190, t);
+    bg.gain.setValueAtTime(0.5, t);
+    bg.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    body.connect(bg); bg.connect(out); body.start(t); body.stop(t + 0.1);
+  }
+  src.connect(f); f.connect(g); g.connect(out);
+  src.start(t); src.stop(t + len);
+}
+
+/* A rising two-note blip when the combo crosses a milestone. Short enough to
+ * land between notes at 200 BPM. */
+function comboSound(step) {
+  if (!audioCtx || audioCtx.state === 'closed') return;
+  const t = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'triangle';
+  const base = 520 * Math.pow(1.12, step);
+  o.frequency.setValueAtTime(base, t);
+  o.frequency.setValueAtTime(base * 1.5, t + 0.07);
+  g.gain.setValueAtTime(0.10, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.20);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(t); o.stop(t + 0.22);
+}
+
+/* Phones only, and Safari has never supported it, so it is wrapped rather
+ * than feature-branched: a hit is a tick you feel, a miss is a longer buzz.
+ * The durations are small on purpose -- a rhythm game firing 60 ms of motor
+ * per note at eight notes a second is a phone that feels broken. */
+function buzz(ms) {
+  try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {}
+}
+
 function play() {
   const a = $('track');
   initAnalyser();
@@ -1241,9 +1345,15 @@ function strike(laneId) {
     judgeFrom++;
   }
   const found = nearestNote(chart, laneId, now, judgeFrom);
-  if (!found) return;
+  // A swing at nothing, or one too far out to count. It still makes its
+  // sound -- a pad you hit that stays silent feels like the game stopped
+  // listening -- but quietly, and the ring goes red instead of lane-coloured.
+  if (!found || !judge(found.delta)) {
+    hitSound(laneId, 0.10);
+    if (lane) lane.miss = 1;
+    return;
+  }
   const w = judge(found.delta);
-  if (!w) return;
 
   found.note.done = true;
   combo += 1;
@@ -1251,10 +1361,36 @@ function strike(laneId) {
   counts[w.name] += 1;
   score += hitScore(w.score, combo);
   $('score').textContent = score.toLocaleString();
+
+  // Louder the better you played it.
+  hitSound(laneId, w.name === 'Perfect' ? 0.34 : w.name === 'Good' ? 0.26 : 0.18);
+  buzz(w.name === 'Perfect' ? 12 : 7);
+
   const c = $('combo');
   c.firstChild.textContent = String(combo);
   c.style.opacity = combo >= 3 ? '1' : '0';
-  flashVerdict(w.name, w.name === 'Perfect' ? '#7ee7c7' : w.name === 'Good' ? '#f4b400' : '#a6adb6');
+  // Milestones. Something has to happen at ten, or a long clean run feels
+  // exactly like a short one.
+  const step = COMBO_STEPS.indexOf(combo);
+  if (step >= 0) {
+    comboSound(step);
+    buzz([14, 20]);
+    c.classList.remove('pop');
+    void c.offsetWidth;                  // restart the animation
+    c.classList.add('pop');
+  }
+
+  // Early or late, not just how close. Which side you are on is the only
+  // part of this a player can actually act on -- "Good" tells you to try
+  // harder, "Good · late" tells you what to change. Perfect says nothing,
+  // because inside 45 ms there is nothing to fix.
+  //
+  // delta is note.t - now, so a positive delta means the note had not got
+  // here yet: you were early.
+  const side = w.name === 'Perfect' ? ''
+             : found.delta > 0 ? ' · early' : ' · late';
+  flashVerdict(w.name + side,
+               w.name === 'Perfect' ? '#7ee7c7' : w.name === 'Good' ? '#f4b400' : '#a6adb6');
   if (found.note.mesh) { view.freeNote(found.note.mesh); found.note.mesh = null; }
   live = live.filter(n => n !== found.note);
 }
@@ -1400,22 +1536,24 @@ function loop() {
       if (!n.done) {
         n.done = true;
         counts.Miss += 1;
+        // Losing a long combo should cost something you notice. A bare
+        // "Miss" looked the same whether you had two in a row or fifty.
+        if (combo >= 10) { buzz([30, 40, 30]); flashVerdict('Combo lost', '#ff8f8f'); }
+        else { buzz(22); flashVerdict('Miss', '#ff8f8f'); }
         combo = 0;
         $('combo').style.opacity = '0';
-        flashVerdict('Miss', '#ff8f8f');
+        const ml = view.lanes.find(l => l.id === n.lane);
+        if (ml) ml.miss = 1;
       }
       if (n.mesh) { view.freeNote(n.mesh); n.mesh = null; }
       live.splice(i, 1);
     }
   }
 
-  view.lanes.forEach((l) => {
-    l.flash = Math.max(0, l.flash - 0.08);
-    l.pad.material.emissiveIntensity = 0.22 + l.flash * 1.5;
-    l.ring.material.opacity = l.flash * 0.7;
-    const s = 1 + l.flash * 0.18;
-    l.ring.scale.set(s, s, s);
-  });
+  // (The pad glow and the ring live in the renderer now. They were decayed
+  // here by a fixed 0.08 per FRAME, which is a different length of time on
+  // every display -- a 200 ms flash on a 60 Hz laptop and a 100 ms one on a
+  // 120 Hz phone. The renderer has the real elapsed time.)
 
   const secs = Math.max(0, now);
   $('progress').textContent =
