@@ -52,7 +52,7 @@ jobs:
           path: ~/.cache/torch/hub/checkpoints
           key: demucs-${{ github.event.inputs.model || 'htdemucs' }}-v1
 
-      - name: Separate and chart
+      - name: Separate
         env:
           MODEL: ${{ github.event.inputs.model || 'htdemucs' }}
           WANT: ${{ github.event.inputs.songs || 'all' }}
@@ -103,13 +103,32 @@ jobs:
 
           echo "stems produced:"; ls -la /tmp/out
 
-          # Chart from the stems. Any song without a stem keeps its old chart.
-          ARGS=""
+      - name: Commit the stems first
+        # Separation is the expensive half. It gets committed before anything
+        # else can fail, because the first run of this lost fourteen minutes
+        # of it to a filename with spaces in the charting step afterwards.
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audio/drums 2>/dev/null || true
+          if git diff --cached --quiet; then echo "no new stems"; else
+            git commit -m "Drum stems, separated with demucs"
+            for i in 1 2 3 4; do git push && break || { git pull --rebase; sleep $((2**i)); }; done
+          fi
+
+      - name: Chart from the stems
+        run: |
+          set -euo pipefail
+          # An array, and quoted. "audio/Cornered Demo - Lift The Anchor.mp3"
+          # is three shell words if you let it be.
+          declare -a ARGS=()
           while IFS=$'\t' read -r SLUG SRC; do
-            [ -f "/tmp/out/$SLUG.wav" ] && ARGS="$ARGS $SRC"
+            [ -f "/tmp/out/$SLUG.wav" ] && ARGS+=("$SRC")
           done < /tmp/songs.txt
-          if [ -n "$ARGS" ]; then
-            python3 tools/build_beatmaps.py --drums /tmp/out $ARGS
+          if [ ${#ARGS[@]} -gt 0 ]; then
+            python3 tools/build_beatmaps.py --drums /tmp/out "${ARGS[@]}"
+          else
+            echo "no stems to chart"
           fi
 
       - name: Show what changed
