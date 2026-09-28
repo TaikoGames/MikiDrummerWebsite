@@ -864,6 +864,7 @@ function padKeys() {
  * and give the screen back. */
 function backToSelect() {
   running = false;
+  clearLive();
   document.body.classList.remove('playing', 'ingame');
   try { $('track').pause(); } catch (e) {}
   $('overlay').hidden = true;
@@ -923,6 +924,25 @@ function loadTrack(src) {
     a.src = src;
     a.load();
   });
+}
+
+/* Take every note currently on screen off it.
+ *
+ * start() used to just do `live = []`, which drops the references and leaves
+ * the meshes in the scene. Switching songs therefore left the previous song's
+ * notes hanging wherever they happened to be, permanently, overlapping the
+ * new song's notes as they came down -- and because the pool only ever gets a
+ * mesh back through freeNote, those meshes were leaked too. */
+function clearLive() {
+  if (view) {
+    for (const n of live) {
+      if (n.mesh) { view.freeNote(n.mesh); n.mesh = null; }
+    }
+  }
+  live = [];
+  if (chart) {
+    for (const n of chart) n.mesh = null;
+  }
 }
 
 async function start(i, autoplay) {
@@ -1004,7 +1024,8 @@ async function start(i, autoplay) {
     .map(n => ({ ...n, done: false, mesh: null }));
   beatTimes = song.map.beats || [];
   beatAt = 0;
-  score = 0; combo = 0; best = 0; cursor = 0; judgeFrom = 0; live = [];
+  clearLive();
+  score = 0; combo = 0; best = 0; cursor = 0; judgeFrom = 0;
   counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
   $('score').textContent = '0';
   $('combo').style.opacity = '0';
@@ -1371,8 +1392,7 @@ function finish() {
   running = false;
   document.body.classList.remove('playing');
   try { $('track').pause(); } catch (e) {}
-  live.forEach(n => { if (n.mesh) view.freeNote(n.mesh); });
-  live = [];
+  clearLive();
   const acc = accuracy(counts);
   const grade = rank(acc);
   $('overlay').hidden = false;

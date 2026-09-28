@@ -428,6 +428,12 @@ export function buildScene(canvas) {
     camera.updateProjectionMatrix();
   }
 
+  // So a leak is measurable. Notes are pooled, so the scene's child count
+  // must come back down when a song ends -- if it climbs every time you skip
+  // to the next song, meshes are being dropped rather than returned, and the
+  // previous song's notes are still sitting on the runway.
+  window.__drumScene = () => ({ children: scene.children.length, pooled: pool.length });
+
   return { renderer, scene, camera, lanes, takeNote, freeNote, styleNote, resize, update,
            SPEED, LOOKAHEAD, HIT_Z, NOTE_Y };
 }
