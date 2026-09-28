@@ -519,6 +519,70 @@ def sample(v, t):
     return float(v[a:b].max()) if b > a else 0.0
 
 
+
+# Grooves that drummers in this genre actually play, one bar of 4/4 at
+# sixteenth resolution.
+#
+# WHY A LIBRARY AND NOT DETECTION. Five rounds of transcription did not
+# converge, and the reason is that the information is not in the mix: a snare
+# shares its entire range with two guitars, so no threshold on a band can
+# find it, and measuring proved it -- the three lanes' most-used positions in
+# the bar came out identical, one onset stream split three ways.
+#
+# What IS reliable is the beat grid (tempo and beats check out against an
+# independent reference) and the relative energy of the low, mid and high
+# bands at each sixteenth. That is enough to say WHICH of these a section is
+# playing, even though it is not enough to transcribe it hit by hit. Scoring
+# every rotation also settles the downbeat, which contrast-scoring cannot:
+# [loud, quiet, loud, quiet] looks the same starting at 0 as at 1.
+#
+# This is a fit, not a transcription, and the page says so. A chart that is
+# the right groove in the right place beats a per-hit chart that is right
+# about every note and reads as noise.
+GROOVES = [
+    ("punk eighths",      [0, 8],                  [4, 12], [0,2,4,6,8,10,12,14]),
+    ("punk, double kick", [0, 3, 8, 11],           [4, 12], [0,2,4,6,8,10,12,14]),
+    ("d-beat",            [0, 3, 6, 8, 11, 14],    [4, 12], [0,2,4,6,8,10,12,14]),
+    ("driving eighths",   [0,2,4,6,8,10,12,14],    [4, 12], [0,2,4,6,8,10,12,14]),
+    ("four on the floor", [0, 4, 8, 12],           [4, 12], [0,2,4,6,8,10,12,14]),
+    ("skank",             [0, 8],                  [4, 12], [2, 6, 10, 14]),
+    ("half time",         [0, 10],                 [8],     [0,2,4,6,8,10,12,14]),
+    ("sixteenth hats",    [0, 8],                  [4, 12], list(range(16))),
+    ("blast",             [0,2,4,6,8,10,12,14],    [1,3,5,7,9,11,13,15],
+                                                            [0,2,4,6,8,10,12,14]),
+]
+
+# How much better a different groove must fit before a section is allowed to
+# change to it. Without this the fit flips between near-equal candidates and
+# the mapping a player just learned breaks every eight bars -- measured at up
+# to 31% of slots changing lane between sections.
+GROOVE_SWITCH = 0.12
+
+
+def fit_groove(prof, per_bar, previous=None):
+    """Which groove, and at which rotation, best matches the measured energy."""
+    import numpy as np
+    zed = lambda v: (v - v.mean()) / max(v.std(), 1e-9)
+    A = {lane: zed(prof[lane]) for lane in prof}
+    best = None
+    for name, kick, snare, hat in GROOVES:
+        for rot in range(per_bar):
+            score = 0.0
+            for lane, slots in (("kick", kick), ("snare", snare), ("hat", hat)):
+                m = np.zeros(per_bar)
+                for sl in slots:
+                    m[(sl + rot) % per_bar] = 1.0
+                score += float((A[lane] * zed(m)).mean())
+            if previous and (name, rot) == previous:
+                score += GROOVE_SWITCH        # stay put unless clearly beaten
+            if best is None or score > best[0]:
+                best = (score, name, rot, kick, snare, hat)
+    return best
+
+
+GROOVE_LOG = None          # set by main() to report what was fitted
+
+
 def groove_chart(S, env, beat_times, fps):
     """Build the chart from the repeating pattern, not hit by hit.
 
@@ -607,6 +671,8 @@ def groove_chart(S, env, beat_times, fps):
 
     nbars = (nslots - off) // per_bar
     notes = []
+    last_fit = [None]
+    chosen = GROOVE_LOG
     for s0 in range(0, nbars, GROOVE_SEC):
         s1 = min(s0 + GROOVE_SEC, nbars)
         if s1 <= s0:
@@ -640,16 +706,20 @@ def groove_chart(S, env, beat_times, fps):
         # detected -- it is what is LEFT when a slot is clearly played and is
         # neither of the other two. Deciding the ambiguous one by elimination
         # beats asking a band that cannot answer.
+        # Fit a groove rather than deciding each slot from whichever band
+        # happened to be loudest -- that is what produced three lanes landing
+        # on the same positions.
+        score, gname, rot, gk, gs, gh = fit_groove(
+            {lane: mean[lane] for lane in mean}, per_bar, previous=last_fit[0])
+        last_fit[0] = (gname, rot)
+        if chosen is not None:
+            chosen.append((s0, gname, score))
+        want = {"kick": set((x + rot) % per_bar for x in gk),
+                "snare": set((x + rot) % per_bar for x in gs),
+                "hat": set((x + rot) % per_bar for x in gh)}
         pattern = []
         for k in range(per_bar):
-            zk, zs, zh = z["kick"][k], z["snare"][k], z["hat"][k]
-            lanes = []
-            if zk > GROOVE_Z and zk >= zs:
-                lanes.append("kick")
-            elif zs > GROOVE_Z:
-                lanes.append("snare")
-            if zh > GROOVE_HAT_Z:            # the hat rides through the rest
-                lanes.append("hat")
+            lanes = [lane for lane in ("kick", "snare", "hat") if k in want[lane]]
             if lanes:
                 pattern.append((k, lanes))
         if not pattern:
@@ -1093,7 +1163,10 @@ def main():
     for src in srcs:
         full = os.path.join(ROOT, src) if not os.path.isabs(src) else src
         slug = slugify(os.path.splitext(os.path.basename(src))[0])
+        import build_beatmaps as _self
+        _self.GROOVE_LOG = []
         data = chart(full)
+        fitted = _self.GROOVE_LOG
         data["audio"] = "/" + src.replace("\\", "/")
         data["slug"] = slug
         path = os.path.join(OUT, slug + ".json")
@@ -1108,6 +1181,11 @@ def main():
                  len(data["notes"]) / dur,
                  " ".join("%s %d" % (k, v) for k, v in sorted(counts.items())),
                  os.path.getsize(path) / 1024))
+        if fitted:
+            from collections import Counter
+            c = Counter(g for _, g, _ in fitted)
+            print("    grooves: " + ", ".join("%s x%d" % (k, v)
+                                              for k, v in c.most_common()))
         if prev_secs:
             mp3 = os.path.join("/tmp", slug + "-check.mp3")
             at = preview(full, data, prev_secs, mp3)
