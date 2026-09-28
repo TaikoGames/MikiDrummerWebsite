@@ -1039,6 +1039,104 @@ def chart(path):
     }
 
 
+
+# ---------------------------------------------------------------------------
+# CHARTING FROM AN ISOLATED DRUM STEM
+# ---------------------------------------------------------------------------
+
+DRUM_BANDS = [
+    ("kick",  30,  140),
+    ("snare", 180, 400),      # the shell, not the crack -- see below
+    ("hat",   6500, 13000),
+]
+DRUM_SENS = {"kick": 1.25, "snare": 1.35, "hat": 1.25}
+DRUM_MIN_GAP = {"kick": 0.055, "snare": 0.055, "hat": 0.040}
+
+
+def chart_drums(path, source_duration=None):
+    """Transcribe a drum stem, where the bands really are the drums.
+
+    Six rounds of work on the finished mixes failed for one reason, and it was
+    never a threshold: the bands are not the drums. The low band carries the
+    bass guitar, the mid band carries two guitars, the high band carries vocal
+    sibilance -- so all three fire on all three drums, and the lanes come out
+    as one onset stream split three ways. Measured: the three lanes' most-used
+    positions in the bar were identical.
+
+    Given a stem with only the kit in it, that problem is simply gone, and the
+    honest per-band transcription that could never work before works now. No
+    groove library, no fitting, no template -- the notes are the hits.
+
+    The snare band is deliberately the SHELL (180-400 Hz) rather than the
+    crack around 2-5 kHz. On a stem, the shell is unambiguous, while the crack
+    overlaps the hi-hat's lower reach and would make snares and hats fight
+    again for no reason.
+    """
+    import numpy as np
+    x = decode(path)
+    duration = source_duration or len(x) / float(SR)
+    fps = SR / float(HOP)
+    S = spectrogram(x)
+    if not len(S):
+        return {"duration": round(duration, 2), "bpm": 0, "beats": [], "notes": []}
+
+    env = superflux(S, 0, SR / 2)
+    bpm, lag = estimate_tempo(env, fps)
+    beat_frames = track_beats(env, lag)
+    grid, weight = build_grid(beat_frames)
+    slot = float(np.median(np.diff(grid))) if len(grid) > 1 else 0.06
+
+    bands = {lane: superflux(S, lo, hi) for lane, lo, hi in DRUM_BANDS}
+    Z = {lane: zscore(v, fps) for lane, v in bands.items()}
+
+    notes = []
+    for lane, _, _ in DRUM_BANDS:
+        v = bands[lane]
+        for i in peak_pick(v, fps, sensitivity=DRUM_SENS[lane],
+                           min_gap=DRUM_MIN_GAP[lane]):
+            # A cymbal crash lights up every band; a kick does not light up the
+            # cymbal band. So a hit belongs to a lane only if that lane is the
+            # one that rose most, with the kick allowed to coexist because a
+            # foot and a hand are genuinely simultaneous all the time.
+            z = {l: float(Z[l][i]) for l in Z}
+            top = max(z, key=z.get)
+            if top != lane and not (lane == "kick" and z["kick"] > 1.6):
+                continue
+            t = frame_time(i)
+            if len(grid) > 1:
+                j = int(np.clip(np.searchsorted(grid, t), 1, len(grid) - 1))
+                if abs(grid[j] - t) > abs(grid[j - 1] - t):
+                    j -= 1
+                if abs(grid[j] - t) < slot * 0.5:
+                    t, w = float(grid[j]), int(weight[j])
+                else:
+                    w = 4
+            else:
+                w = 4
+            notes.append({"t": round(float(t), 4), "lane": lane, "w": w,
+                          "s": float(v[i]), "v": 1.0})
+
+    # One note per lane per grid slot, strongest wins.
+    best = {}
+    for n in notes:
+        k = (n["lane"], round(n["t"], 3))
+        if k not in best or n["s"] > best[k]["s"]:
+            best[k] = n
+    notes = enforce_gap(sorted(best.values(), key=lambda n: n["t"]), slot=slot)
+
+    peak = max((n["s"] for n in notes), default=1.0) or 1.0
+    clean = [{"t": n["t"], "lane": n["lane"], "w": n["w"],
+              "v": round(min(1.0, n["s"] / peak) ** 0.5, 3)}
+             for n in notes if n["t"] >= 0]
+    return {
+        "duration": round(duration, 2),
+        "bpm": round(float(bpm), 1),
+        "beats": [round(float(frame_time(b)), 3) for b in beat_frames],
+        "downbeat": 0,
+        "grooves": ["transcribed from an isolated drum stem"],
+        "notes": clean,
+    }
+
 def preview(src, data, seconds, out_path, only=None):
     """The song with a click on every charted note, so a person can hear
     whether the chart is right.
@@ -1264,6 +1362,11 @@ def main():
         k = args.index("--preview")
         prev_secs = int(args[k + 1])
         del args[k:k + 2]
+    drums_dir = None
+    if "--drums" in args:
+        k = args.index("--drums")
+        drums_dir = args[k + 1]
+        del args[k:k + 2]
     srcs = [a for a in args if not a.startswith("-")]
     if not srcs:
         print("give it one or more audio files", file=sys.stderr)
@@ -1276,8 +1379,17 @@ def main():
         SLUG[0] = slug
         import build_beatmaps as _self
         _self.GROOVE_LOG = []
-        data = chart(full)
-        fitted = _self.GROOVE_LOG
+        stem = os.path.join(drums_dir, slug + ".wav") if drums_dir else None
+        if stem and os.path.exists(stem):
+            import wave as _w
+            with _w.open(stem) as _f:
+                src_dur = _f.getnframes() / float(_f.getframerate())
+            data = chart_drums(stem, source_duration=src_dur)
+            fitted = []
+            print("    (from isolated drum stem)")
+        else:
+            data = chart(full)
+            fitted = [(a, b) for a, b, _ in _self.GROOVE_LOG if a != "downbeat"]
         data["audio"] = "/" + src.replace("\\", "/")
         data["slug"] = slug
         path = os.path.join(OUT, slug + ".json")

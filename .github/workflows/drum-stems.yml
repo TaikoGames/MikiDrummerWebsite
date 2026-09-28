@@ -1,0 +1,142 @@
+name: Chart from isolated drums
+
+# Separate each song into a drums-only stem, then chart THAT.
+#
+# WHY THIS EXISTS. Six rounds of work on the finished stereo mixes could not
+# make the charts feel like the songs, and the reason was never a threshold:
+# the frequency bands are not the drums. The low band carries the bass guitar,
+# the mid band carries two guitars, the high band carries vocal sibilance. All
+# three fire on all three drums, so the lanes came out as one onset stream
+# split three ways -- measured, the three lanes' most-used positions in the
+# bar were identical.
+#
+# Given a stem with only the kit in it, that problem is simply gone and the
+# honest per-band transcription that never worked before works.
+#
+# It runs here rather than in the session container because the container's
+# egress proxy blocks the model weights (403 on dl.fbaipublicfiles.com), and
+# because separating twelve songs is an hour of CPU that a runner has and an
+# interactive session should not spend.
+
+on:
+  workflow_dispatch:
+    inputs:
+      songs:
+        description: "Space-separated slugs, or 'all'"
+        default: "all"
+      model:
+        description: "demucs model (htdemucs is best, mdx_extra_q is ~3x faster)"
+        default: "htdemucs"
+
+permissions:
+  contents: write
+
+jobs:
+  separate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install --quiet --upgrade pip
+          pip install --quiet torch --index-url https://download.pytorch.org/whl/cpu
+          pip install --quiet demucs numpy
+          python -c "import torch, demucs; print('torch', torch.__version__, 'demucs', demucs.__version__)"
+
+      - name: Cache the model weights
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/torch/hub/checkpoints
+          key: demucs-${{ github.event.inputs.model || 'htdemucs' }}-v1
+
+      - name: Separate and chart
+        env:
+          MODEL: ${{ github.event.inputs.model || 'htdemucs' }}
+          WANT: ${{ github.event.inputs.songs || 'all' }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/stems /tmp/out
+
+          python - <<'PY' > /tmp/songs.txt
+          import json, os, unicodedata
+          def slug(n):
+              a = unicodedata.normalize("NFKD", n).encode("ascii","ignore").decode()
+              s = "".join(c if c.isalnum() else "-" for c in a.lower()).strip("-")
+              while "--" in s: s = s.replace("--","-")
+              return s
+          out = []
+          pl = json.load(open("playlist.json"))
+          for s in pl.get("songs", []):
+              src = s.get("src","")
+              if src.lower().endswith(".mp3"):
+                  out.append((slug(os.path.splitext(os.path.basename(src))[0]), src))
+          out.append(("pony-up", "audio/granite/pony-up.mp3"))
+          for sl, src in out:
+              print(sl + "\t" + src)
+          PY
+
+          while IFS=$'\t' read -r SLUG SRC; do
+            if [ "$WANT" != "all" ] && ! echo " $WANT " | grep -q " $SLUG "; then continue; fi
+            [ -f "$SRC" ] || { echo "missing $SRC"; continue; }
+            echo "::group::$SLUG"
+            # Mono 44.1k is plenty for the model and halves the work.
+            ffmpeg -nostdin -y -loglevel error -i "$SRC" -ac 2 -ar 44100 "/tmp/in.wav"
+            python -m demucs --two-stems=drums -n "$MODEL" --jobs 2 \
+                   -o /tmp/stems "/tmp/in.wav"
+            # demucs writes /tmp/stems/<model>/in/drums.wav
+            ffmpeg -nostdin -y -loglevel error -i "/tmp/stems/$MODEL/in/drums.wav" \
+                   -ac 1 -ar 22050 "/tmp/out/$SLUG.wav"
+            rm -rf /tmp/stems/$MODEL/in /tmp/in.wav
+            ls -la "/tmp/out/$SLUG.wav"
+            echo "::endgroup::"
+          done < /tmp/songs.txt
+
+          echo "stems produced:"; ls -la /tmp/out
+
+          # Chart from the stems. Any song without a stem keeps its old chart.
+          ARGS=""
+          while IFS=$'\t' read -r SLUG SRC; do
+            [ -f "/tmp/out/$SLUG.wav" ] && ARGS="$ARGS $SRC"
+          done < /tmp/songs.txt
+          if [ -n "$ARGS" ]; then
+            python3 tools/build_beatmaps.py --drums /tmp/out $ARGS
+          fi
+
+      - name: Show what changed
+        run: |
+          python3 - <<'PY'
+          import json, glob, os, numpy as np
+          for f in sorted(glob.glob('data/beatmaps/*.json')):
+              if f.endswith('index.json'): continue
+              m = json.load(open(f))
+              if not m.get('notes'): continue
+              b = np.asarray(m['beats']); off = m.get('downbeat', 0)
+              grid = {}
+              for n in m['notes']:
+                  i = np.searchsorted(b, n['t']) - 1
+                  if i < 0 or i >= len(b) - 1: continue
+                  fr = (n['t'] - b[i]) / max(b[i+1] - b[i], 1e-9)
+                  grid.setdefault(i*4 + int(round(fr*4)), set()).add(n['lane'])
+              row = lambda l, bar: "".join(
+                  '#' if l in grid.get(off + bar*16 + k, ()) else '.' for k in range(16))
+              print(f"{os.path.basename(f)[:-5]:30s} {len(m['notes']):5d} notes "
+                    f"{len(m['notes'])/m['duration']:5.2f}/s")
+              for bar in (11, 12):
+                  print(f"    K|{row('kick',bar)}| S|{row('snare',bar)}| H|{row('hat',bar)}|")
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/beatmaps drum-game/songs 2>/dev/null || true
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git commit -m "Charts rebuilt from isolated drum stems
+
+          Separated with demucs and charted from the drums-only stem, so the
+          frequency bands really are the drums instead of the bass guitar, two
+          guitars and vocal sibilance sharing them."
+          for i in 1 2 3 4; do git push && break || { git pull --rebase; sleep $((2**i)); }; done
