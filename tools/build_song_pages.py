@@ -351,5 +351,35 @@ def build():
     return rows
 
 
+def refresh_index_table(rows):
+    """Rewrite the song table on /drum-game/ from the charts.
+
+    It was hand-written, so every re-chart left it advertising note counts
+    that no longer existed. Twelve numbers nobody would notice were wrong is
+    exactly the kind of thing to generate rather than maintain.
+    """
+    path = os.path.join(ROOT, "drum-game", "index.html")
+    with open(path, encoding="utf-8") as fh:
+        html = fh.read()
+    body = []
+    for r in rows:
+        mins, secs = int(r["dur"] // 60), int(round(r["dur"] % 60))
+        body.append(
+            '        <tr><td><a href="/drum-game/songs/%s.html">%s</a></td>'
+            '<td>%s</td><td>%d BPM</td><td>%d</td><td>%d:%02d</td></tr>'
+            % (r["slug"], esc(r["title"]), esc(r["band"]), round(r["bpm"]),
+               r["notes"], mins, secs))
+    new = "<tbody>\n" + "\n".join(body) + "\n      </tbody>"
+    a = html.find("<tbody>")
+    b = html.find("</tbody>")
+    if a < 0 or b < 0:
+        print("no song table on /drum-game/ -- left alone")
+        return
+    html = html[:a] + new + html[b + len("</tbody>"):]
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write(html)
+    print("song table on /drum-game/ refreshed: %d rows" % len(rows))
+
+
 if __name__ == "__main__":
-    build()
+    refresh_index_table(build())
