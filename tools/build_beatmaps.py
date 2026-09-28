@@ -1044,33 +1044,34 @@ def chart(path):
 # CHARTING FROM AN ISOLATED DRUM STEM
 # ---------------------------------------------------------------------------
 
-DRUM_BANDS = [
-    ("kick",  30,  140),
-    ("snare", 180, 400),      # the shell, not the crack -- see below
-    ("hat",   6500, 13000),
-]
-DRUM_SENS = {"kick": 1.25, "snare": 1.35, "hat": 1.25}
-DRUM_MIN_GAP = {"kick": 0.055, "snare": 0.055, "hat": 0.040}
+# Bands, on an isolated drum stem.
+#
+# The snare's SHELL (190-420 Hz) rather than its crack at 2-5 kHz: on a stem
+# the shell is unambiguous, while the crack overlaps the hi-hat's lower reach.
+# Both of these peak squarely on the beats once the guitars are gone, with the
+# snare emphasising two and four -- which is the first time in this whole
+# effort that a band has behaved like the drum it is named after.
+DRUM_SNARE = (190, 420)
+DRUM_HAT = (7000, 13000)
+DRUM_SNARE_Z = 2.5
+DRUM_HAT_Z = 0.8
 
 
 def chart_drums(path, source_duration=None):
-    """Transcribe a drum stem, where the bands really are the drums.
+    """Transcribe a drum stem.
 
-    Six rounds of work on the finished mixes failed for one reason, and it was
-    never a threshold: the bands are not the drums. The low band carries the
-    bass guitar, the mid band carries two guitars, the high band carries vocal
-    sibilance -- so all three fire on all three drums, and the lanes come out
-    as one onset stream split three ways. Measured: the three lanes' most-used
-    positions in the bar were identical.
+    WHY THE KICK IS NOT DETECTED, IT IS DEDUCED. Separation does not fully
+    remove the bass: checked in the time domain on the isolated stem, where no
+    FFT window can smear the answer, the low-frequency thumps sit a median of
+    141 ms from the nearest beat -- more than a sixteenth. That is a bass line
+    playing offbeat eighths, still in there. Detecting a kick from the low band
+    would chart the bass player again, which is the exact mistake this whole
+    exercise has been trying to stop making.
 
-    Given a stem with only the kit in it, that problem is simply gone, and the
-    honest per-band transcription that could never work before works now. No
-    groove library, no fitting, no template -- the notes are the hits.
-
-    The snare band is deliberately the SHELL (180-400 Hz) rather than the
-    crack around 2-5 kHz. On a stem, the shell is unambiguous, while the crack
-    overlaps the hi-hat's lower reach and would make snares and hats fight
-    again for no reason.
+    The snare and the cymbals ARE trustworthy now. So they are named, and the
+    kick is what is left: an onset with no snare in it and no cymbal in it is
+    a kick. Deducing the unreliable one from the reliable ones beats measuring
+    it directly with an instrument known to be lying.
     """
     import numpy as np
     x = decode(path)
@@ -1086,37 +1087,133 @@ def chart_drums(path, source_duration=None):
     grid, weight = build_grid(beat_frames)
     slot = float(np.median(np.diff(grid))) if len(grid) > 1 else 0.06
 
-    bands = {lane: superflux(S, lo, hi) for lane, lo, hi in DRUM_BANDS}
-    Z = {lane: zscore(v, fps) for lane, v in bands.items()}
+    snare_z = zscore(superflux(S, *DRUM_SNARE), fps)
+    hat_z = zscore(superflux(S, *DRUM_HAT), fps)
 
-    notes = []
-    for lane, _, _ in DRUM_BANDS:
-        v = bands[lane]
-        for i in peak_pick(v, fps, sensitivity=DRUM_SENS[lane],
-                           min_gap=DRUM_MIN_GAP[lane]):
-            # A cymbal crash lights up every band; a kick does not light up the
-            # cymbal band. So a hit belongs to a lane only if that lane is the
-            # one that rose most, with the kick allowed to coexist because a
-            # foot and a hand are genuinely simultaneous all the time.
-            z = {l: float(Z[l][i]) for l in Z}
-            top = max(z, key=z.get)
-            if top != lane and not (lane == "kick" and z["kick"] > 1.6):
-                continue
-            t = frame_time(i)
-            if len(grid) > 1:
-                j = int(np.clip(np.searchsorted(grid, t), 1, len(grid) - 1))
-                if abs(grid[j] - t) > abs(grid[j - 1] - t):
-                    j -= 1
-                if abs(grid[j] - t) < slot * 0.5:
-                    t, w = float(grid[j]), int(weight[j])
-                else:
-                    w = 4
-            else:
-                w = 4
+    notes, unnamed, every = [], [], []
+    for i in peak_pick(env, fps, sensitivity=1.2, min_gap=0.045):
+        i = int(i)
+        a, b = max(0, i - 1), min(len(S), i + 3)
+        sn = float(snare_z[a:b].max())
+        ht = float(hat_z[a:b].max())
+        if sn >= DRUM_SNARE_Z and sn >= ht:
+            lane = "snare"
+        elif ht >= DRUM_HAT_Z:
+            lane = "hat"
+        else:
+            lane = None          # see the kick pass below
+
+        t = frame_time(i)
+        w = 4
+        if len(grid) > 1:
+            j = int(np.clip(np.searchsorted(grid, t), 1, len(grid) - 1))
+            if abs(grid[j] - t) > abs(grid[j - 1] - t):
+                j -= 1
+            if abs(grid[j] - t) < slot * 0.5:
+                t, w = float(grid[j]), int(weight[j])
+        if lane:
             notes.append({"t": round(float(t), 4), "lane": lane, "w": w,
-                          "s": float(v[i]), "v": 1.0})
+                          "s": float(env[i]), "v": 1.0})
+        else:
+            unnamed.append((round(float(t), 4), w, float(env[i])))
+        every.append(round(float(t), 4))
 
-    # One note per lane per grid slot, strongest wins.
+    # THE KICK, PLACED BY METRE RATHER THAN DETECTED.
+    #
+    # Everything that is not a snare and not a cymbal ought to be the kick,
+    # and on these stems it is not: the leftovers land on offbeat eighths,
+    # because that is where the leaked bass line is. Charting them would put a
+    # kick note under every bass note and none under the actual foot, which is
+    # the single most disorienting thing this can do to a drummer and is the
+    # mistake this whole exercise exists to stop making.
+    #
+    # So the kick goes where the kick goes in this music -- on the beats the
+    # snare does not have -- and only where the stem shows something happening
+    # at all, so a breakdown stays a breakdown. The hi-hat and the snare are
+    # genuinely transcribed; the kick is the one lane that is inferred, and
+    # saying so is better than pretending the bass guitar is a foot.
+    # WHICH TWO BEATS ARE THE BACKBEAT.
+    #
+    # The snare band fires on all four beats -- a backbeat is louder but the
+    # shell rings on the others too -- so left alone it occupies the whole bar
+    # and there is nowhere for a kick. But now that the snare is genuinely
+    # detected, its own distribution answers the question: count the snares
+    # landing on each beat OF THE BAR and take the stronger alternating pair.
+    # That is the backbeat, measured rather than assumed, and the other pair
+    # is where the foot goes.
+    if len(grid) > 1:
+        beat_of_bar = {}
+        for n in notes:
+            if n["lane"] != "snare":
+                continue
+            gi = int(np.clip(np.searchsorted(grid, n["t"]), 1, len(grid) - 1))
+            if abs(grid[gi] - n["t"]) > abs(grid[gi - 1] - n["t"]):
+                gi -= 1
+            if weight[gi] <= 1:                      # on a beat
+                beat_of_bar[(gi // SUBDIV) % 4] = beat_of_bar.get((gi // SUBDIV) % 4, 0) + 1
+        odd = beat_of_bar.get(0, 0) + beat_of_bar.get(2, 0)
+        even = beat_of_bar.get(1, 0) + beat_of_bar.get(3, 0)
+        back = (1, 3) if even >= odd else (0, 2)
+        kept = []
+        for n in notes:
+            if n["lane"] == "snare":
+                gi = int(np.clip(np.searchsorted(grid, n["t"]), 1, len(grid) - 1))
+                if abs(grid[gi] - n["t"]) > abs(grid[gi - 1] - n["t"]):
+                    gi -= 1
+                # On a beat it must be the backbeat; between beats it is a
+                # fill or a ghost note and stays.
+                if weight[gi] <= 1 and (gi // SUBDIV) % 4 not in back:
+                    continue
+            kept.append(n)
+        notes = kept
+
+    snare_at = {round(n["t"], 3) for n in notes if n["lane"] == "snare"}
+    # Every onset, not only the unclassified ones: a kick under a hi-hat is
+    # the most ordinary thing on a kit, and that onset has already been spent
+    # on the hat. Requiring an unclaimed one left the kick lane with seven
+    # notes in a three minute song.
+    if len(grid) > 1 and every:
+        ht = np.array(sorted(every))
+        for gi in range(len(grid)):
+            if weight[gi] > 1:          # beats and downbeats only
+                continue
+            gt = float(grid[gi])
+            if round(gt, 3) in snare_at:
+                continue
+            k = int(np.clip(np.searchsorted(ht, gt), 1, len(ht) - 1))
+            near = min(abs(ht[k] - gt), abs(ht[k - 1] - gt))
+            if near < slot * 0.75:
+                notes.append({"t": round(gt, 4), "lane": "kick",
+                              "w": int(weight[gi]), "s": 1.0, "v": 1.0})
+
+    # THE HAT RIDES.
+    #
+    # A drummer playing eighths plays them all bar long, but the cymbal band
+    # only clears a threshold where nothing louder masked it -- so detection
+    # alone gives a hat on the loud quarters and nothing between, and the
+    # steady hand that the whole game is read against is missing. If the stem
+    # shows a hat on enough beats to call it a ride, fill the eighths in
+    # between wherever the cymbal band is not actually silent.
+    if len(grid) > 1:
+        hat_at = {round(n["t"], 3) for n in notes if n["lane"] == "hat"}
+        beats_with_hat = sum(1 for gi in range(len(grid))
+                             if weight[gi] <= 1 and round(float(grid[gi]), 3) in hat_at)
+        n_beats = max(1, sum(1 for gi in range(len(grid)) if weight[gi] <= 1))
+        if beats_with_hat >= n_beats * 0.35:
+            raw_hat = superflux(S, *DRUM_HAT)
+            floor = float(np.percentile(raw_hat, 45))
+            for gi in range(len(grid)):
+                if weight[gi] > 2:                  # eighths and stronger
+                    continue
+                gt = round(float(grid[gi]), 3)
+                if gt in hat_at:
+                    continue
+                fi = int(round((grid[gi] - BIAS) * SR / HOP - FRAME / 2.0 / HOP))
+                fi = max(0, min(len(raw_hat) - 1, fi))
+                if float(raw_hat[max(0, fi - 2):fi + 3].max()) > floor:
+                    notes.append({"t": round(float(grid[gi]), 4), "lane": "hat",
+                                  "w": int(weight[gi]), "s": 0.6, "v": 0.55})
+
     best = {}
     for n in notes:
         k = (n["lane"], round(n["t"], 3))
@@ -1136,6 +1233,7 @@ def chart_drums(path, source_duration=None):
         "grooves": ["transcribed from an isolated drum stem"],
         "notes": clean,
     }
+
 
 def preview(src, data, seconds, out_path, only=None):
     """The song with a click on every charted note, so a person can hear
@@ -1379,12 +1477,17 @@ def main():
         SLUG[0] = slug
         import build_beatmaps as _self
         _self.GROOVE_LOG = []
+        # Only with an explicit --drums. The stem path is the right direction
+        # and is not finished: the snare and the cymbals come out of a stem
+        # correctly, but the classifier thresholds around them are not tuned,
+        # and the charts it produces today are worse than the fitted grooves.
+        # Shipping it as the default would be a regression on the live game.
         stem = os.path.join(drums_dir, slug + ".wav") if drums_dir else None
+        if drums_dir and not (stem and os.path.exists(stem)):
+            local = os.path.join(ROOT, "audio", "drums", slug + ".mp3")
+            stem = local if os.path.exists(local) else stem
         if stem and os.path.exists(stem):
-            import wave as _w
-            with _w.open(stem) as _f:
-                src_dur = _f.getnframes() / float(_f.getframerate())
-            data = chart_drums(stem, source_duration=src_dur)
+            data = chart_drums(stem, source_duration=None)
             fitted = []
             print("    (from isolated drum stem)")
         else:
