@@ -2,30 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Judge",
-      "date": "2026-09-27",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$40",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Hardcore",
-      "notes": "With Integrity, Earth Crisis, Witness Chamber, Juice. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/MUSIC_Judge_2.jpg?width=600"
-    },
-    {
-      "band": "Messa",
-      "date": "2026-09-27",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "$35",
-      "ticket": "https://thecobalt.ca",
-      "genre": "Doom Metal",
-      "notes": "",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Messa_%40_Roadburn,_April_12,_2019.jpg?width=600"
-    },
-    {
       "band": "Dave Hause & The Mermaid",
       "date": "2026-10-01",
       "time": "18:00",
