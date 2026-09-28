@@ -74,6 +74,17 @@ def esc(s):
              .replace('"', "&quot;"))
 
 
+def jsq(t):
+    """Escape for a single-quoted JavaScript string literal.
+
+    The song titles go into one, and "Per mi (In Catalan)" is fine while an
+    apostrophe would end the literal and take the rest of the page with it.
+    < is escaped too, so no title can close the surrounding script element.
+    """
+    return (str(t).replace("\\", "\\\\").replace("'", "\\'")
+            .replace("<", "\\x3c").replace("\n", " ").replace("\r", " "))
+
+
 def difficulty(per_beat):
     """Read off the chart rather than assigned by hand, so it cannot drift
     away from what the chart actually does.
@@ -211,6 +222,10 @@ PAGE = """<!DOCTYPE html>
        color:#160802;border-radius:999px;padding:14px 26px;font:inherit;font-size:15px;
        font-weight:800;margin-top:22px}}
   .btn:hover{{text-decoration:none;opacity:.92}}
+  .btn.ghost{{background:transparent;border-color:var(--edge);color:var(--fg)}}
+  .btn.ghost:hover{{border-color:var(--hot)}}
+  .cta{{display:flex;gap:10px;flex-wrap:wrap;align-items:center}}
+  .said{{min-height:1.2em;font-size:13px;color:var(--dim);margin-top:8px;word-break:break-all}}
   .stats{{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--edge);
          border:1px solid var(--edge);border-radius:12px;overflow:hidden;margin-top:22px}}
   @media(min-width:560px){{.stats{{grid-template-columns:repeat(4,1fr)}}}}
@@ -236,7 +251,11 @@ PAGE = """<!DOCTYPE html>
     <span class="eyebrow">Play the drums to</span>
     <h1>{title_e}</h1>
     <p class="by">{band_e} · {bpm:.0f} BPM · {mins}:{secs:02d}</p>
-    <a class="btn" href="/drum-game/?song={slug}">Play this song →</a>
+    <div class="cta">
+      <a class="btn" href="/drum-game/?song={slug}">Play this song →</a>
+      <button class="btn ghost" id="share" type="button">Share this song</button>
+    </div>
+    <p class="said" id="said" role="status" aria-live="polite"></p>
   </header>
 
   <div class="stats">
@@ -272,6 +291,41 @@ PAGE = """<!DOCTYPE html>
     <a href="/">Miki Drummer</a>. Shows across BC on <a href="/punkbc.html">Punk BC</a>.
   </footer>
 </div>
+<script>
+/* Share this one song. navigator.share opens the phone's own sheet; desktop
+   browsers mostly lack it, so fall back to the clipboard, and if that is
+   blocked as well show the URL so it can still be copied by hand. The link
+   is to this page, not to /drum-game/?song={slug}: both open the song, but
+   only this one unfurls in a message with the song's own name and blurb. */
+(function () {{
+  var b = document.getElementById('share'), said = document.getElementById('said');
+  if (!b) return;
+  var url = '{site}/drum-game/songs/{slug}.html';
+  var data = {{ title: '{title_j} \u2014 {band_j}',
+               text: 'Play the drums to {title_j} by {band_j}, free in the browser.',
+               url: url }};
+  b.addEventListener('click', function () {{
+    if (window.Track) Track.ev('song_share', {{ song: '{slug}' }});
+    var done = function (msg) {{
+      said.textContent = msg;
+      setTimeout(function () {{ said.textContent = ''; }}, 4000);
+    }};
+    if (navigator.share) {{
+      navigator.share(data).catch(function (e) {{
+        if (!e || e.name !== 'AbortError') done(url);
+      }});
+      return;
+    }}
+    if (navigator.clipboard) {{
+      navigator.clipboard.writeText(url)
+        .then(function () {{ done('Link copied.'); }})
+        .catch(function () {{ done(url); }});
+      return;
+    }}
+    done(url);
+  }});
+}})();
+</script>
 </body>
 </html>
 """
@@ -335,6 +389,7 @@ def build():
             mins=mins, secs=secs,
             hat=lanes.get("hat", 0), snare=lanes.get("snare", 0), kick=lanes.get("kick", 0),
             playing=esc(playing), shape=esc(shape_of(r["raw"], r["dur"])),
+            title_j=jsq(r["title"]), band_j=jsq(r["band"]),
             bandtext=esc(BANDS.get(r["band"], "")),
             siblings=sib, ld=ld)
 

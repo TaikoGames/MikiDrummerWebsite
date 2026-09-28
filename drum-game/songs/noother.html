@@ -42,6 +42,10 @@
        color:#160802;border-radius:999px;padding:14px 26px;font:inherit;font-size:15px;
        font-weight:800;margin-top:22px}
   .btn:hover{text-decoration:none;opacity:.92}
+  .btn.ghost{background:transparent;border-color:var(--edge);color:var(--fg)}
+  .btn.ghost:hover{border-color:var(--hot)}
+  .cta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .said{min-height:1.2em;font-size:13px;color:var(--dim);margin-top:8px;word-break:break-all}
   .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--edge);
          border:1px solid var(--edge);border-radius:12px;overflow:hidden;margin-top:22px}
   @media(min-width:560px){.stats{grid-template-columns:repeat(4,1fr)}}
@@ -103,7 +107,11 @@
     <span class="eyebrow">Play the drums to</span>
     <h1>No Other</h1>
     <p class="by">Bound By None · 120 BPM · 2:58</p>
-    <a class="btn" href="/drum-game/?song=noother">Play this song →</a>
+    <div class="cta">
+      <a class="btn" href="/drum-game/?song=noother">Play this song →</a>
+      <button class="btn ghost" id="share" type="button">Share this song</button>
+    </div>
+    <p class="said" id="said" role="status" aria-live="polite"></p>
   </header>
 
   <div class="stats">
@@ -139,5 +147,40 @@
     <a href="/">Miki Drummer</a>. Shows across BC on <a href="/punkbc.html">Punk BC</a>.
   </footer>
 </div>
+<script>
+/* Share this one song. navigator.share opens the phone's own sheet; desktop
+   browsers mostly lack it, so fall back to the clipboard, and if that is
+   blocked as well show the URL so it can still be copied by hand. The link
+   is to this page, not to /drum-game/?song=noother: both open the song, but
+   only this one unfurls in a message with the song's own name and blurb. */
+(function () {
+  var b = document.getElementById('share'), said = document.getElementById('said');
+  if (!b) return;
+  var url = 'https://www.mikidrummer.ca/drum-game/songs/noother.html';
+  var data = { title: 'No Other — Bound By None',
+               text: 'Play the drums to No Other by Bound By None, free in the browser.',
+               url: url };
+  b.addEventListener('click', function () {
+    if (window.Track) Track.ev('song_share', { song: 'noother' });
+    var done = function (msg) {
+      said.textContent = msg;
+      setTimeout(function () { said.textContent = ''; }, 4000);
+    };
+    if (navigator.share) {
+      navigator.share(data).catch(function (e) {
+        if (!e || e.name !== 'AbortError') done(url);
+      });
+      return;
+    }
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url)
+        .then(function () { done('Link copied.'); })
+        .catch(function () { done(url); });
+      return;
+    }
+    done(url);
+  });
+})();
+</script>
 </body>
 </html>
