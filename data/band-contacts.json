@@ -282,6 +282,22 @@
       "instagram": ""
     },
     {
+      "band": "Black Death Cult",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://blackdeathcult.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Black Ivar. Heavy Is The Head EP tour",
       "checked": "2026-09-27",
       "email": "",
@@ -710,6 +726,32 @@
       "instagram": ""
     },
     {
+      "band": "Crimson Shadows",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "crimsonshadowsmetal",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://crimsonshadows.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/crimsonshadowsmetal/",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://instagram.com/crimsonshadowsmetal",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Curb Zombie",
       "checked": "2026-09-13",
       "email": "",
@@ -932,6 +974,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Deliriant Fracture",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://deliriantfracture.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Demon Hunter",
@@ -1346,6 +1404,22 @@
       "instagram": ""
     },
     {
+      "band": "Genre Is Death. Timbre presents",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://genreisdeathtimbrepresents.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Gilla Band",
       "checked": "2026-09-27",
       "email": "",
@@ -1612,6 +1686,22 @@
       "by": "auto"
     },
     {
+      "band": "Insomnium & Amorphis",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://insomniumandamorphis.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Integrity",
       "checked": "2026-09-16",
       "email": "",
@@ -1648,6 +1738,27 @@
           "name": "Bandcamp",
           "url": "https://jarheadfertilizer.bandcamp.com/",
           "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Jon Spencer",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://jonspencer.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43211563-jon-spencer-at-rickshaw-theatre?utm_source=1471&utm_medium=partner",
+          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1773,6 +1884,27 @@
       "by": "auto"
     },
     {
+      "band": "Korpiklaani",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://korpiklaani.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43387844-korpiklaani-at-overflow-brewing-co?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Kostnatění",
       "checked": "2026-09-18",
       "email": "",
@@ -1782,6 +1914,22 @@
         {
           "name": "Bandcamp",
           "url": "https://kostnatn.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "L.A. Witch",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://lawitch.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -2185,6 +2333,22 @@
       "by": "auto"
     },
     {
+      "band": "Occisor. A Night of Death and Doom. Music starts 9pm",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://occisoranightofdeathanddoommusicstarts9pm.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Out Of Order",
       "checked": "2026-09-13",
       "email": "",
@@ -2211,6 +2375,32 @@
           "name": "Bandcamp",
           "url": "https://painoftruth.bandcamp.com/",
           "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Perdurabo",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "perduraboworld",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://perdurabo.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://www.instagram.com/perduraboworld",
+          "found": "profile"
+        },
+        {
+          "name": "twitter.com",
+          "url": "http://www.twitter.com/perduraboworld",
+          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2305,6 +2495,27 @@
           "name": "Site",
           "url": "http://plini.co",
           "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Pointed Sticks",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://pointedsticks.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "youtube.com",
+          "url": "https://www.youtube.com/results?search_query=Pointed+Sticks",
+          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3219,6 +3430,37 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "WAAX",
+      "checked": "2026-09-28",
+      "email": "",
+      "email_source": "",
+      "instagram": "waax_band",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://waax.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/waax_band/",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43305433-waax-at-avalon-beach-rsl-club?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.waaxband.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "WAIT//LESS",
