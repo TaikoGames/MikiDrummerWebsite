@@ -521,6 +521,22 @@
       "instagram": "brehdren"
     },
     {
+      "band": "Bridge City Sinners",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://bridgecitysinners.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Burn Pattern",
       "checked": "2026-09-13",
       "email": "",
@@ -1153,6 +1169,22 @@
       "instagram": ""
     },
     {
+      "band": "Eluveitie",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://eluveitie.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Elvenking",
       "checked": "2026-09-17",
       "email": "",
@@ -1404,6 +1436,32 @@
       "instagram": ""
     },
     {
+      "band": "Gates to Hell",
+      "checked": "2026-09-29",
+      "email": "gatestohell502@gmail.com",
+      "email_source": "linktr.ee",
+      "instagram": "gatestohell502",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://gatestohell.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://instagram.com/gatestohell502",
+          "found": "profile"
+        },
+        {
+          "name": "Linktree",
+          "url": "http://linktr.ee/gatestohell",
+          "found": "profile"
+        }
+      ],
+      "note": "",
+      "by": "auto"
+    },
+    {
       "band": "Genre Is Death. Timbre presents",
       "checked": "2026-09-28",
       "email": "",
@@ -1509,6 +1567,32 @@
       "by": "auto"
     },
     {
+      "band": "Guilt Trip",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://guilttrip.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43333345-sepultura-at-pepsi-center-wtc?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.mediafire.com/contact",
+          "found": "email"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Guiltless",
       "checked": "2026-09-15",
       "email": "info@evilgreed.net",
@@ -1592,6 +1676,22 @@
       "by": "auto"
     },
     {
+      "band": "Hinayana. MRG presents",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://hinayanamrgpresents.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Hot Water Music",
       "checked": "2026-09-18",
       "email": "",
@@ -1633,6 +1733,32 @@
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Illumishade",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "illumishade_official",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://illumishade.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/illumishade_official/",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43387898-sirenia-at-legend-club?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Legend",
+          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1821,6 +1947,22 @@
         {
           "name": "Bandcamp",
           "url": "https://kalel.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Kaonashi",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://kaonashi.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -2073,6 +2215,22 @@
       "instagram": "mares_of_thrace"
     },
     {
+      "band": "Mauled",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://mauled.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Mean Bikini",
       "checked": "2026-09-10",
       "email": "Outhousepr@gmail.com",
@@ -2317,6 +2475,22 @@
       "instagram": "nightcourtpunk"
     },
     {
+      "band": "NiNi",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://nini.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "No Faith In Fortune",
       "checked": "2026-09-26",
       "email": "",
@@ -2538,6 +2712,42 @@
       "instagram": ""
     },
     {
+      "band": "Protest the Hero",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "protestthehero",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://protestthehero.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "http://instagram.com/protestthehero/",
+          "found": "profile"
+        },
+        {
+          "name": "youtube.com",
+          "url": "https://www.youtube.com/channel/UCO9wYfwEZD9W2cOSIvDHLxQ",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.protestthehero.ca",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://www.sheethappenspublishing.com",
+          "found": "email"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Protomartyr",
       "checked": "2026-09-27",
       "email": "",
@@ -2683,6 +2893,37 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Royal Tusk",
+      "checked": "2026-09-29",
+      "email": "",
+      "email_source": "",
+      "instagram": "royaltuskmusic",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://royaltusk.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/royaltuskmusic/",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43365653-big-wreck-at-hard-rock-hotel-and-casino-ottawa?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.royaltuskband.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Sabbat",
