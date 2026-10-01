@@ -1,6 +1,6 @@
 {
   "_readme": "What the site assistant knows. Plain facts only, each with the page it came from, so an answer can always point at something real. Edit freely — chat.html reads this at load and needs no rebuild. Keep 'a' short: it is spoken back almost verbatim.",
-  "updated": "2026-09-19",
+  "updated": "2026-10-01",
   "topics": [
     {
       "id": "who",
@@ -80,7 +80,11 @@
         "projects",
         "current bands",
         "play in",
-        "plays in"
+        "plays in",
+        "oct 30",
+        "october 30",
+        "bullys",
+        "bully's"
       ],
       "q": "What bands does Miki play in?",
       "a": "Currently Lift the Anchor (punk rock) and Granite (metal and grunge). Past projects include Bound By None, Dead Fast and Bound.",
@@ -94,7 +98,11 @@
         "anchor",
         "lift the anchor",
         "lta",
-        "punk rock band"
+        "punk rock band",
+        "oct 30",
+        "october 30",
+        "bullys",
+        "bully's"
       ],
       "q": "Who are Lift the Anchor?",
       "a": "A melodic Vancouver punk rock band — big hooks, gang vocals, songs about fresh starts. For fans of Sum 41, Silverstein and Four Year Strong. The press kit has photos, video, and a Book the band form.",
@@ -106,7 +114,11 @@
       "k": [
         "granite",
         "metal",
-        "grunge"
+        "grunge",
+        "oct 30",
+        "october 30",
+        "bullys",
+        "bully's"
       ],
       "q": "Who are Granite?",
       "a": "A genre-bending metal and grunge band from Vancouver — heavy riffs, raw vocals, a relentless live show. The press kit has photos, music and booking.",
@@ -158,10 +170,14 @@
         "taking bookings",
         "book a date",
         "play my venue",
-        "play our venue"
+        "play our venue",
+        "next show",
+        "next gig",
+        "playing next",
+        "when do you play"
       ],
       "q": "Are the bands available on a given date?",
-      "a": "Dates are not posted publicly — the quickest way to find out is to ask with the date in hand. The Book the band form on Lift the Anchor's press kit takes the date, the venue and the city and goes straight to Miki.",
+      "a": "The next one is Oct 30 at Bully's Studios in Vancouver. Beyond that, dates are not all posted publicly — the quickest way to find out about a specific date is to ask through the booking form.",
       "link": "/lift-the-anchor-epk.html#book",
       "label": "Book the band"
     },
@@ -226,10 +242,14 @@
         "free tools",
         "what can i use",
         "generator",
-        "maker"
+        "maker",
+        "drum along",
+        "game",
+        "ten tools",
+        "what tools"
       ],
       "q": "What tools are on the site?",
-      "a": "Eight free ones, all running in your browser with nothing to sign up for: a gig poster maker, a merch mockup maker, a QR code maker, a gig checklist, a click track maker, a cymbal designer, a drum trigger visualiser and an audio splitter.",
+      "a": "Ten free ones, all running in your browser with nothing to sign up for: the Drum Along game, a gig poster maker, merch mockups, a QR code maker, a gig checklist, a click track, the punk beat ladder, a cymbal designer, a drum trigger visualiser and Razor Cut for splitting recordings.",
       "link": "/tools.html",
       "label": "All the tools"
     },
@@ -368,6 +388,229 @@
       "a": "Engrave or paint artwork onto a virtual cymbal. Quarter symmetry repeats every stroke at 90, 180 and 270 degrees, so one gesture wraps the whole thing. Pick the size and finish, then download it as a PNG.",
       "link": "/cymbal-designer.html",
       "label": "Cymbal Designer"
+    },
+    {
+      "id": "nextshow",
+      "k": [
+        "next show",
+        "next gig",
+        "upcoming",
+        "playing next",
+        "when do you play",
+        "when are you playing",
+        "oct 30",
+        "october 30",
+        "bullys",
+        "bully's",
+        "bullys studios",
+        "seconds flat",
+        "pen pal aloha",
+        "crown of ashes",
+        "gig"
+      ],
+      "q": "When is the next show?",
+      "a": "Oct 30 at Bully's Studios in Vancouver — Granite and Lift the Anchor, with Seconds Flat, Pen Pal Aloha and Crown of Ashes. Miki is playing it in both bands.",
+      "link": "https://www.bullysstudios.ca",
+      "label": "Bully's Studios"
+    },
+    {
+      "id": "game",
+      "k": [
+        "game",
+        "drum along",
+        "drum game",
+        "play the drums",
+        "rhythm game",
+        "guitar hero",
+        "rock band",
+        "browser game",
+        "free game",
+        "play along"
+      ],
+      "q": "What is Drum Along?",
+      "a": "A free drum game you play in the browser — three lanes, twelve real punk and metal songs, no download and no account. It works on a phone; turn it sideways and the pads get bigger.",
+      "link": "/drum-game/",
+      "label": "Drum Along"
+    },
+    {
+      "id": "gamesongs",
+      "k": [
+        "what songs",
+        "which songs",
+        "song list",
+        "songs in the game",
+        "tracks in the game",
+        "what can i play",
+        "twelve songs",
+        "12 songs"
+      ],
+      "q": "What songs can I play in the game?",
+      "a": "Twelve, by the bands Miki has played in and with: Bound By None, Dead Fast, Diera, Granite and Lift the Anchor. Each one has its own page with the tempo, the note count and how busy the chart is.",
+      "link": "/drum-game/",
+      "label": "Drum Along"
+    },
+    {
+      "id": "gamehow",
+      "k": [
+        "how do i play",
+        "how to play",
+        "controls",
+        "keys",
+        "keyboard",
+        "hi-hat key",
+        "snare key",
+        "kick key",
+        "how does the game work"
+      ],
+      "q": "How do I play Drum Along?",
+      "a": "Hi-hat on A, snare on S, kick on the space bar — or tap the three pads along the bottom on a phone. There is a tap calibration on the page if the timing feels off, which is worth a run on Bluetooth headphones.",
+      "link": "/drum-game/",
+      "label": "Drum Along"
+    },
+    {
+      "id": "gamecharts",
+      "k": [
+        "how are the charts made",
+        "who made the charts",
+        "charted",
+        "detected",
+        "beatmap",
+        "are the notes real",
+        "did someone chart",
+        "made the notes",
+        "notes in the game",
+        "where do the notes come from",
+        "charted by hand",
+        "who charted",
+        "how were the notes made",
+        "are the notes real",
+        "drum stem",
+        "stems"
+      ],
+      "q": "Where do the game's notes come from?",
+      "a": "Nobody charted them by hand. Each song is split into a drums-only track and the kick, snare and hi-hat are detected from it, so the notes you are hitting are the drum parts that were actually played on the record.",
+      "link": "/drum-game/",
+      "label": "Drum Along"
+    },
+    {
+      "id": "listen",
+      "k": [
+        "listen",
+        "music",
+        "hear",
+        "songs",
+        "streaming",
+        "spotify",
+        "bandcamp",
+        "soundcloud",
+        "where can i hear",
+        "records",
+        "releases",
+        "album"
+      ],
+      "q": "Where can I hear the music?",
+      "a": "The bands page links each project out to Bandcamp and Spotify, the press kits have players built in, and the jukebox spins a playlist on the site itself.",
+      "link": "/bands.html",
+      "label": "Bands"
+    },
+    {
+      "id": "social",
+      "k": [
+        "social",
+        "socials",
+        "instagram",
+        "tiktok",
+        "youtube",
+        "follow",
+        "channel",
+        "where can i follow"
+      ],
+      "q": "Where can I follow Miki?",
+      "a": "@mikibdrummer on Instagram and TikTok, and the YouTube channel is @MikiDrummerBC — drum covers, live clips and the odd behind-the-kit video.",
+      "link": "https://www.instagram.com/mikibdrummer/",
+      "label": "Instagram"
+    },
+    {
+      "id": "practice",
+      "k": [
+        "practice",
+        "practise",
+        "beginner",
+        "start drumming",
+        "learn at home",
+        "routine",
+        "twelve week",
+        "12 week",
+        "practice plan",
+        "where do i start"
+      ],
+      "q": "I am a beginner — where do I start?",
+      "a": "There is a twelve-week beginner practice plan written out on the site, and the punk beat ladder is a good companion to it: pick a beat and the tempo climbs a rung every few bars until you hit 200.",
+      "link": "/blog/beginner-drum-practice-plan.html",
+      "label": "Practice plan"
+    },
+    {
+      "id": "punkbeat",
+      "k": [
+        "punk beat",
+        "beat ladder",
+        "tempo ladder",
+        "speed up",
+        "build speed",
+        "200 bpm"
+      ],
+      "q": "What is the punk beat ladder?",
+      "a": "A practice track that climbs: pick a beat, hit play, and the tempo goes up a rung every few bars until it reaches 200. You can click any rung to jump straight to it.",
+      "link": "/punk-beat.html",
+      "label": "Punk Beat Ladder"
+    },
+    {
+      "id": "razor",
+      "k": [
+        "razor",
+        "razor cut",
+        "split",
+        "splitter",
+        "silence",
+        "cut clips",
+        "trim",
+        "chop recording"
+      ],
+      "q": "What is Razor Cut?",
+      "a": "It splits a long recording into separate clips wherever the silence falls, then lets you name, tighten and level them and send them straight out. Useful for turning one practice-room take into shareable clips.",
+      "link": "/razor-cut-tool.html",
+      "label": "Razor Cut"
+    },
+    {
+      "id": "viz",
+      "k": [
+        "visualiser",
+        "visualizer",
+        "trigger",
+        "drum viz",
+        "kit lights up",
+        "trigger viz"
+      ],
+      "q": "What is the drum trigger visualiser?",
+      "a": "A drum kit on screen that lights up piece by piece as you play, so you can see what you are hitting and when.",
+      "link": "/drum-viz.html",
+      "label": "Drum Visualiser"
+    },
+    {
+      "id": "roomwalk",
+      "k": [
+        "room",
+        "room walk",
+        "walk through",
+        "studio",
+        "space",
+        "scan",
+        "3d"
+      ],
+      "q": "What is the room walk-through?",
+      "a": "A first-person walk around the room the kit is set up in, scanned and put on the site so you can see the space before booking anything in it.",
+      "link": "/room-walk.html",
+      "label": "Room walk-through"
     }
   ]
 }

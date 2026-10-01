@@ -323,6 +323,25 @@
 
   function today() { return new Date().toISOString().slice(0, 10); }
 
+  // "When is the next show" asked on THIS site means Miki's next show, not
+  // the next of the fifty-odd gigs on the public board. The board was winning
+  // these outright and answering "where are you playing next" with somebody
+  // else's gig in somebody else's venue, stated as though it were his -- the
+  // most confidently wrong thing the chat could do.
+  //
+  // A listings question still goes to the board: "what's on this weekend" and
+  // "anything in Victoria" name no one and want the board, so they are
+  // excluded first. What is left is a question that either addresses them, or
+  // asks for THE next one in the singular.
+  function asksOurNext(n) {
+    if (/\b(whats on|what is on|listing|listings|board|all shows|any shows|anything (in|on|at)|whos playing|who is playing)\b/.test(n)) return false;
+    var dateish = /\b(next|upcoming|coming up|soon|when)\b/.test(n) &&
+                  /\b(show|shows|gig|gigs|play|plays|playing|date|dates)\b/.test(n);
+    var addressed = /\b(you|your|youre|miki|granite|anchor|band|bands|guys|he|his|they|them)\b/.test(n);
+    var theNextOne = /\b(next (show|gig|one)|when (is|are)( the)? next)\b/.test(n);
+    return dateish && (addressed || theNextOne);
+  }
+
   function upcoming() {
     var t = today();
     return (shows || []).filter(function (s) { return (s.date || '') >= t; })
@@ -406,6 +425,29 @@
       return listShows(there, there.length + (there.length === 1 ? ' show' : ' shows') +
                        ' coming up' + where) ||
              'Nothing upcoming listed' + where + '.';
+    }
+
+    // A BC town the board happens to have nothing in right now.
+    //
+    // `places` is built FROM the listings, so a city with no shows in it is a
+    // city the matcher has never heard of, and "anything in Victoria" fell all
+    // the way through to "I do not know that one" -- which reads as not having
+    // understood the question rather than as having no listings. The board is
+    // mostly Vancouver most of the time, so this is the common case for
+    // anybody outside it, not an edge case.
+    if (nameMayWin) {
+      var ELSEWHERE = ['victoria', 'surrey', 'abbotsford', 'nanaimo', 'kelowna',
+                       'prince george', 'new westminster', 'burnaby', 'richmond',
+                       'coquitlam', 'langley', 'kamloops', 'whistler', 'squamish',
+                       'chilliwack', 'vernon', 'penticton', 'courtenay', 'duncan'];
+      for (var ei = 0; ei < ELSEWHERE.length; ei++) {
+        if (n.indexOf(ELSEWHERE[ei]) >= 0) {
+          var pretty = ELSEWHERE[ei].replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+          return 'Nothing in ' + pretty + ' on the board right now — the listings are ' +
+                 'mostly Vancouver. The whole board is on the Punk BC page, and you can ' +
+                 'submit a show to it from there.';
+        }
+      }
     }
 
     // A band asked for by name.
@@ -655,6 +697,14 @@
     //   4. then the catch-all listing, then a loose topic match.
     var hiring = hiringIntent(n) ? answerKB(q, 3, HIRE_TOPICS) : null;
     if (hiring) { remember(hiring.topic, q); say('bot', hiring.text, hiring.links); return; }
+
+    // Their own next date beats the public board -- see asksOurNext. Only when
+    // there is actually a date in the knowledge base to give; otherwise this
+    // falls through and the board answers as it always did.
+    if (asksOurNext(n)) {
+      var ours = allTopics().filter(function (t) { return t.id === 'nextshow'; })[0];
+      if (ours) { remember(ours, q); say('bot', ours.a, [{ label: ours.label, href: ours.link }]); return; }
+    }
 
     var pinned = answerShows(q, true);
     if (pinned) { lastTopicId = ''; lastSubject = ''; say('bot', pinned, [{ label: 'Punk BC', href: '/punkbc.html' }]); return; }
