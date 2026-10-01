@@ -23,9 +23,8 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 3,
-    "status": "ok",
-    "final": "https://woodiesdrumsticks.com/"
+    "pages": 0,
+    "status": "http 429"
   },
   {
     "name": "Rickshaw Theatre",
@@ -80,7 +79,7 @@
     "follow": [],
     "mention_only": false,
     "pages": 0,
-    "status": "http 403"
+    "status": "URLError"
   },
   {
     "name": "The Pearl Vancouver",
@@ -251,6 +250,20 @@
     "final": "https://music.neurotrecordings.com"
   },
   {
+    "name": "King Buffalo",
+    "url": "http://www.kingbuffalo.com",
+    "kind": "band",
+    "weight": 7,
+    "email": "info@consequence.net",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 3,
+    "status": "ok",
+    "final": "https://kingbuffalo.com/"
+  },
+  {
     "name": "Longshot",
     "url": "http://morsecoderecordings.limitedrun.com",
     "kind": "band",
@@ -277,6 +290,47 @@
     "pages": 3,
     "status": "ok",
     "final": "https://outhouseproductionsandrecords.com/bands/mean-bikini/"
+  },
+  {
+    "name": "The OBGMs",
+    "url": "http://theobgms.com/contact",
+    "kind": "band",
+    "weight": 7,
+    "email": "mgmt@theobgms.com",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 2,
+    "status": "ok",
+    "final": "https://theobgms.com/contact"
+  },
+  {
+    "name": "Aemia",
+    "url": "http://www.aemia.se",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 0,
+    "status": "URLError"
+  },
+  {
+    "name": "Anger Within",
+    "url": "http://www.reverbnation.com",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://www.reverbnation.com/"
   },
   {
     "name": "Author & Punisher",
@@ -356,9 +410,8 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 2,
-    "status": "ok",
-    "final": "http://gorefuckingmetal.blogspot.com/"
+    "pages": 0,
+    "status": "http 429"
   },
   {
     "name": "Fotocrime",
@@ -373,6 +426,75 @@
     "pages": 3,
     "status": "ok",
     "final": "https://www.fotocrime.com/"
+  },
+  {
+    "name": "Guilt Trip",
+    "url": "http://www.mediafire.com/contact",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 6,
+    "status": "ok",
+    "final": "https://www.mediafire.com/contact"
+  },
+  {
+    "name": "Nervosa",
+    "url": "https://nervosaband.co.uk",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://nervosaband.co.uk"
+  },
+  {
+    "name": "Plini",
+    "url": "http://plini.co",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 0,
+    "status": "http 429"
+  },
+  {
+    "name": "Protest the Hero",
+    "url": "http://www.protestthehero.ca",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 2,
+    "status": "ok",
+    "final": "http://protestthehero.ca/"
+  },
+  {
+    "name": "Royal Tusk",
+    "url": "http://www.royaltuskband.com",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "http://www.royaltuskband.com"
   },
   {
     "name": "SiM",
@@ -402,6 +524,20 @@
     "status": "URLError"
   },
   {
+    "name": "The Aggrolites",
+    "url": "https://music.aggroreggae.com",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://music.aggroreggae.com/album/super-atomic"
+  },
+  {
     "name": "The Menzingers",
     "url": "http://themenzingers.com",
     "kind": "band",
@@ -411,8 +547,21 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 3,
+    "pages": 0,
+    "status": "http 429"
+  },
+  {
+    "name": "WAAX",
+    "url": "http://www.waaxband.com",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 2,
     "status": "ok",
-    "final": "https://themenzingers.com/"
+    "final": "https://www.waaxband.com/"
   }
 ]
