@@ -348,6 +348,7 @@
     { id: '', name: 'None', src: '' },
     { id: 'granite', name: 'Granite', src: '/images/granite/logo.png' },
     { id: 'secondsflat', name: 'Seconds Flat', src: '/images/band-logos/seconds-flat.png' },
+    { id: 'penpalaloha', name: 'Pen Pal Aloha', src: '/images/band-logos/pen-pal-aloha.png' },
     { id: 'miki', name: 'Miki mark', src: '/images/brand.png' }
   ];
 
@@ -616,7 +617,7 @@
     // thing that must never happen is a poster whose band name is unreadable.
     // Drawing them first was not enough on its own -- they used to go after
     // the kicker, which swallowed "PUNK BC PRESENTS" whole at top-left.
-    var bottomRightTaken = false;
+    var bottomRightTaken = false, bottomLeftTaken = false;
     state.logos.forEach(function (L, i) {
       var r = place(L, i, W, H, pad);
       ctx.globalAlpha = 0.96;
@@ -643,6 +644,7 @@
         var c = r.y - Math.round(W * 0.03);
         logoCeiling = logoCeiling ? Math.min(logoCeiling, c) : c;
         if (L.pos === 'br') bottomRightTaken = true;
+        if (L.pos === 'bl') bottomLeftTaken = true;
       }
     });
 
@@ -783,7 +785,17 @@
     // above; this is the one corner that cannot be solved by moving up.
     ctx.font = text(Math.round(W * 0.021));
     ctx.fillStyle = 'rgba(160,154,148,.85)';
-    if (bottomRightTaken) {
+    if (bottomRightTaken && bottomLeftTaken) {
+      // Both bottom corners carry a mark, which is the normal case once a
+      // five-band bill deals its logos along the bottom. Moving the credit
+      // from one corner to the other just printed it underneath the logo in
+      // the other corner. There is no free corner, so it goes ABOVE the row
+      // instead -- the one direction still empty.
+      ctx.textAlign = 'right';
+      ctx.fillText('mikidrummer.ca/punkbc', W - pad,
+                   Math.max(pad, (logoCeiling || H - pad) - Math.round(W * 0.012)));
+      ctx.textAlign = 'left';
+    } else if (bottomRightTaken) {
       ctx.textAlign = 'left';
       ctx.fillText('mikidrummer.ca/punkbc', pad, H - pad);
     } else {
