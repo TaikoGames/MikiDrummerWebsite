@@ -153,7 +153,29 @@
       </div>
 
       <div class="panel">
+        <h2>Build it for me</h2>
+        <label for="autoBands">The bands — one per line, or separated by commas</label>
+        <textarea id="autoBands" rows="5" autocomplete="off"
+          placeholder="Granite&#10;Lift the Anchor&#10;Seconds Flat&#10;Pen Pal Aloha&#10;Crown of Ashes"></textarea>
+        <div class="row" style="margin-top:10px">
+          <div><label for="autoDate">Date</label><input type="date" id="autoDate"></div>
+          <div><label for="autoVenue">Venue</label><input type="text" id="autoVenue"
+               list="venues" placeholder="Bully&#39;s Studios" autocomplete="off"></div>
+        </div>
+        <label style="margin-top:12px" for="driveLink">Google Drive folder with the logos (optional)</label>
+        <input type="text" id="driveLink" autocomplete="off"
+               placeholder="https://drive.google.com/drive/folders/…">
+        <div class="btns" style="margin-top:12px">
+          <button class="btn go" id="autoBuild">Build the poster</button>
+        </div>
+        <div class="hint" id="autoSaid"></div>
+      </div>
+
+      <div class="panel">
         <h2>The bill</h2>
+        <label class="chk" style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+          <input type="checkbox" id="equalBill"> <span>Equal billing — no headliner, every band the same size</span>
+        </label>
         <label for="headliner">Headliner</label>
         <input type="text" id="headliner" placeholder="Lift the Anchor" autocomplete="off">
         <label for="support">Support — one per line</label>
@@ -519,6 +541,43 @@
     // once on load instead, so the canvas is not blank on arrival but the
     // field still does what deleting its contents ought to do.
     var head = $('headliner').value.trim();
+
+    // --- equal billing
+    //
+    // A punk bill is usually five bands and no headliner, and drawing one of
+    // them four times the size of the others states a pecking order that the
+    // show does not have. In this mode every name is set at ONE size: the
+    // largest that fits the longest name on a single line, so "Diera" and
+    // "Pen Pal Aloha" are given the same weight rather than the same box.
+    if ($('equalBill').checked) {
+      var all = [head].concat($('support').value.split('\n'))
+                      .map(function (b) { return b.trim(); }).filter(Boolean);
+      if (all.length) {
+        // One size for the lot: start from what a headline would get, step
+        // down until the longest name fits, and leave room for them all.
+        var px = Math.round(W * 0.115);
+        var floor = Math.max(Math.round(W * 0.03), 18);
+        while (px > floor) {
+          var tooWide = false;
+          for (var ei = 0; ei < all.length; ei++) {
+            ctx.font = disp(px);
+            if (ctx.measureText(all[ei].toUpperCase()).width > inner) { tooWide = true; break; }
+          }
+          // Also has to fit the space between here and the bottom block.
+          if (!tooWide && (all.length * px * 1.14) < (H * 0.56)) break;
+          px -= 3;
+        }
+        y += Math.round(px * 0.92);
+        ctx.fillStyle = '#f6f3f0';
+        for (var eq = 0; eq < all.length; eq++) {
+          ctx.font = disp(px);
+          ctx.fillText(all[eq].toUpperCase(), pad, y);
+          y += Math.round(px * 1.14);
+        }
+      }
+      head = '';                       // the blocks below must not draw again
+    }
+
     if (head) {
       var fit = fitLines(head.toUpperCase(), Math.round(W * 0.155), Math.round(W * 0.055), inner, 3);
       y += Math.round(fit.px * 0.92);
@@ -531,7 +590,8 @@
     }
 
     // --- support, each on its own line
-    var sup = $('support').value.split('\n').map(function (s) { return s.trim(); })
+    var sup = $('equalBill').checked ? [] :
+              $('support').value.split('\n').map(function (s) { return s.trim(); })
                 .filter(Boolean);
     if (sup.length) {
       y += Math.round(W * 0.012);
@@ -764,6 +824,85 @@
     showNudge();
   }
 
+  // ---- logos out of a Google Drive folder ---------------------------------
+  //
+  // Everything goes through www.googleapis.com, never drive.google.com or
+  // lh3.googleusercontent.com. That is not a style choice: the poster is drawn
+  // on a canvas and then saved from it, and an image fetched from a host that
+  // sends no CORS headers TAINTS the canvas -- the poster still draws, and
+  // then Save and Share throw a SecurityError and there is no way to get the
+  // thing out. googleapis.com sends access-control-allow-origin, so both the
+  // listing and the image bytes come back clean and the poster stays saveable.
+  //
+  // A key is needed to read even a world-readable folder. It is the visitor's
+  // own, kept in this browser, exactly as the chat page does it -- a static
+  // site has nowhere to hide one, and a key baked into the page is a key
+  // anyone can spend. Restrict it to this domain when you make it.
+  var DRIVE_KEY = 'posterTool:driveKey';
+
+  function driveKey() { try { return localStorage.getItem(DRIVE_KEY) || ''; } catch (e) { return ''; } }
+
+  function folderId(link) {
+    var m = String(link || '').match(/\/folders\/([-\w]{10,})/) ||
+            String(link || '').match(/[?&]id=([-\w]{10,})/);
+    return m ? m[1] : (/^[-\w]{10,}$/.test(String(link || '').trim()) ? link.trim() : '');
+  }
+
+  function driveList(id, key) {
+    var u = 'https://www.googleapis.com/drive/v3/files'
+          + '?q=' + encodeURIComponent("'" + id + "' in parents and trashed=false")
+          + '&fields=' + encodeURIComponent('files(id,name,mimeType)')
+          + '&pageSize=100&key=' + encodeURIComponent(key);
+    return fetch(u).then(function (r) {
+      return r.json().then(function (j) {
+        if (!r.ok) throw new Error((j.error && j.error.message) || ('Drive answered ' + r.status));
+        return (j.files || []).filter(function (f) { return /^image\//.test(f.mimeType || ''); });
+      });
+    }, function () {
+      // fetch rejects rather than resolving for a network-level failure, and
+      // the browser's own message for it is "Failed to fetch", which tells
+      // nobody anything. The causes worth naming are all fixable.
+      throw new Error('Could not reach Google at all — check the connection, '
+        + 'and that the key is allowed to call the Drive API from this site.');
+    });
+  }
+
+  // alt=media on googleapis.com, read as a blob and handed to the image as an
+  // object URL -- same-origin by the time it reaches the canvas.
+  function driveImage(fileId, key) {
+    return fetch('https://www.googleapis.com/drive/v3/files/' + encodeURIComponent(fileId)
+                 + '?alt=media&key=' + encodeURIComponent(key))
+      .catch(function () { throw new Error('Could not reach Google to read the logo.'); })
+      .then(function (r) { if (!r.ok) throw new Error('Could not read that file (' + r.status + ')'); return r.blob(); })
+      .then(function (b) {
+        var url = URL.createObjectURL(b);
+        return loadImage(url).then(function (im) { URL.revokeObjectURL(url); return im; });
+      });
+  }
+
+  // A file called "lift-the-anchor-logo.png" belongs to the band "Lift the
+  // Anchor". Compared on letters and digits only, so punctuation, spacing and
+  // the word "logo" cannot stop a match that is obviously right.
+  function slugOf(s) {
+    return String(s || '').toLowerCase()
+      .replace(/\.[a-z0-9]+$/, '')
+      .replace(/\b(logo|logotype|wordmark|mark|white|black|transparent|final|png|jpg)\b/g, '')
+      .replace(/[^a-z0-9]+/g, '');
+  }
+
+  function matchFile(band, files) {
+    var want = slugOf(band);
+    if (!want) return null;
+    var exact = null, loose = null;
+    files.forEach(function (f) {
+      var got = slugOf(f.name);
+      if (!got) return;
+      if (got === want) exact = exact || f;
+      else if (!loose && (got.indexOf(want) >= 0 || want.indexOf(got) >= 0) && want.length > 3) loose = f;
+    });
+    return exact || loose;
+  }
+
   // ---- logo chips: each one adds, rather than replacing ------------------
   LOGOS.filter(function (l) { return l.src; }).forEach(function (l) {
     var b = document.createElement('button');
@@ -773,6 +912,105 @@
     });
     $('logoChips').appendChild(b);
   });
+
+  // ---- build it from a list of bands, a date and a folder ----------------
+  $('equalBill').addEventListener('change', draw);
+
+  $('autoBuild').addEventListener('click', function () {
+    var said = $('autoSaid'), btn = this;
+    var bands = $('autoBands').value.split(/[\n,]+/)
+                  .map(function (b) { return b.trim(); }).filter(Boolean);
+    if (!bands.length) { said.textContent = 'Put the bands in first — one per line.'; return; }
+
+    // Equal billing is what a five-band punk bill actually is, so the fields
+    // are filled in that shape: every name in the list, nobody promoted.
+    $('equalBill').checked = true;
+    $('headliner').value = bands[0];
+    $('support').value = bands.slice(1).join('\n');
+    if ($('autoDate').value) $('date').value = $('autoDate').value;
+    if ($('autoVenue').value.trim()) $('venue').value = $('autoVenue').value.trim();
+    draw();
+
+    var link = $('driveLink').value.trim();
+    if (!link) {
+      // The built-in library still gets a go: a band the site already has a
+      // mark for does not need Drive at all.
+      var hits = autoLogosFromLibrary(bands);
+      said.textContent = hits
+        ? 'Built, with ' + hits + (hits === 1 ? ' logo' : ' logos') + ' from the site. Paste a Drive folder for the rest.'
+        : 'Built. Paste a Drive folder of logos, or upload them below.';
+      return;
+    }
+
+    var id = folderId(link);
+    if (!id) { said.textContent = 'That does not look like a Drive folder link.'; return; }
+    var key = driveKey();
+    if (!key) {
+      key = prompt('Google API key for reading that folder.\n\nIt is kept in this browser only. '
+                   + 'Make one at console.cloud.google.com with the Drive API on, and restrict it '
+                   + 'to this site.');
+      if (!key) { said.textContent = 'No key, so the folder was not read. The logos can still be uploaded below.'; return; }
+      try { localStorage.setItem(DRIVE_KEY, key.trim()); } catch (e) {}
+      key = key.trim();
+    }
+
+    var was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Reading the folder…';
+    said.textContent = '';
+    driveList(id, key).then(function (files) {
+      if (!files.length) throw new Error('No images in that folder — is it shared so anyone with the link can view?');
+      var jobs = bands.map(function (b) {
+        var f = matchFile(b, files);
+        return f ? driveImage(f.id, key).then(function (im) { addLogo(im, b); return b; })
+                     .catch(function () { return null; })
+                 : Promise.resolve(null);
+      });
+      return Promise.all(jobs).then(function (got) {
+        var found = got.filter(Boolean);
+        var missing = bands.filter(function (b) { return found.indexOf(b) < 0; });
+        btn.disabled = false; btn.textContent = was;
+        spreadLogos();
+        said.textContent = found.length + ' of ' + bands.length + ' logos matched'
+          + (missing.length ? ' — nothing for ' + missing.join(', ') + '. Upload those below.' : '.');
+      });
+    }).catch(function (e) {
+      btn.disabled = false; btn.textContent = was;
+      said.textContent = e.message;
+    });
+  });
+
+  // Marks the site already carries, matched by name. Costs nothing and means
+  // a bill with Granite on it is one field and a button.
+  function autoLogosFromLibrary(bands) {
+    var n = 0;
+    bands.forEach(function (b) {
+      LOGOS.forEach(function (l) {
+        if (l.src && slugOf(l.name) === slugOf(b)) {
+          n++;
+          loadImage(l.src).then(function (im) { addLogo(im, b); spreadLogos(); }).catch(function () {});
+        }
+      });
+    });
+    return n;
+  }
+
+  // Five logos all defaulting to the top-right corner is five logos in a pile.
+  // Deal them along the bottom instead, which is where a bill's marks go, and
+  // size them to the number there are.
+  function spreadLogos() {
+    var L = state.logos, n = L.length;
+    if (!n) return;
+    var scale = Math.min(0.20, Math.max(0.09, 0.82 / n));
+    var slots = ['bl', 'bc', 'br'];
+    L.forEach(function (l, i) {
+      l.scale = scale;
+      l.pos = slots[i % slots.length];
+      l.dy = 0;
+      // Stack rows when there are more than the three bottom anchors.
+      l.dx = (Math.floor(i / slots.length) ? 0 : 0);
+    });
+    renderLogos(); syncControls(); draw();
+  }
 
   // ---- logo position and size act on the selected one --------------------
   $('logoPos').addEventListener('click', function (e) {
