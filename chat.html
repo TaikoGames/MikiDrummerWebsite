@@ -34,6 +34,19 @@
         border-radius:20px;padding:6px 12px}
   .back:hover{color:var(--ink);border-color:var(--accent)}
 
+  /* Embedded in the floating bubble (chat.html?embed=1).
+     Same page, same brain -- the page chrome just gets out of the way and the
+     log grows to fill the frame instead of being capped at 60vh. Running the
+     bubble off this page rather than a second copy of the matcher is the whole
+     point: there is one implementation to tune, not two that drift. */
+  body.embed{padding:12px 12px 14px;min-height:100%;background:var(--bg)}
+  body.embed .wrap{max-width:none}
+  body.embed .top, body.embed .sub{display:none}
+  body.embed .log{min-height:0;max-height:none;flex:1;border-radius:12px}
+  body.embed{height:100%;display:flex}
+  body.embed .wrap{display:flex;flex-direction:column;flex:1;min-height:0}
+  html.embed{height:100%}
+
   .log{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);
        border-radius:16px;padding:16px;min-height:280px;max-height:60vh;overflow-y:auto;
        display:flex;flex-direction:column;gap:12px}
@@ -82,6 +95,13 @@
 </style>
 </head>
 <body>
+<script>
+  // Set before paint, so an embedded chat never flashes its page header.
+  if (/[?&]embed=1\b/.test(location.search)) {
+    document.documentElement.className += ' embed';
+    document.body.className += ' embed';
+  }
+</script>
 <div class="wrap">
 
   <div class="top">
