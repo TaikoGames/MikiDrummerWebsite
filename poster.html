@@ -131,6 +131,20 @@
         font-size:12px;color:var(--dim);flex-wrap:wrap}
   footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
   .warn{color:#ffb38a;font-size:12px;margin-top:8px}
+  /* Right-click menu. Fixed, because it is positioned from pointer
+     coordinates, and those are viewport coordinates. */
+  .ctxm{position:fixed;z-index:60;min-width:190px;padding:6px;border-radius:10px;
+        background:#15181c;border:1px solid var(--edge2);
+        box-shadow:0 18px 44px rgba(0,0,0,.6);font-size:13px}
+  .ctxm[hidden]{display:none}
+  .ctxm h4{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+           font-weight:700;padding:7px 9px 5px}
+  .ctxm button{display:block;width:100%;text-align:left;background:none;border:0;
+               color:var(--ink,#e9ebee);padding:7px 9px;border-radius:6px;cursor:pointer;
+               font:inherit}
+  .ctxm button:hover{background:#241309;color:#fff}
+  .ctxm button[aria-pressed=true]{color:var(--hot)}
+  .ctxm hr{border:0;border-top:1px solid var(--edge2);margin:5px 2px}
 </style>
 </head>
 <body>
@@ -395,6 +409,7 @@
   </footer>
 </div>
 
+<div class="ctxm" id="ctxm" hidden role="menu"></div>
 <script src="/js/share-ping.js"></script>
 <script>
 (function () {
@@ -1688,6 +1703,38 @@
   // and clears every pixel close to that colour. Pixels just outside the
   // tolerance fade rather than cut, or the result keeps a one-pixel halo of
   // the old background all the way round the mark.
+  /* Invert a logo's colours, in place.
+   *
+   * The common case this solves: a mark drawn in black, dropped on a dark
+   * poster, where the answer is the same mark in white. Done on a copy of the
+   * pixels rather than with a canvas filter at draw time, so it survives an
+   * export and can be toggled back off.
+   *
+   * Alpha is left alone -- inverting that would turn a knocked-out background
+   * back into a solid box, which is the opposite of what anyone wants here.
+   */
+  function invertLogo(L) {
+    var im = L.img, w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    var x = c.getContext('2d', { willReadFrequently: true });
+    x.drawImage(im, 0, 0, w, h);
+    var d;
+    try {
+      d = x.getImageData(0, 0, w, h);
+    } catch (err) {
+      return 'tainted';
+    }
+    var q = d.data;
+    for (var i = 0; i < q.length; i += 4) {
+      q[i] = 255 - q[i]; q[i + 1] = 255 - q[i + 1]; q[i + 2] = 255 - q[i + 2];
+    }
+    x.putImageData(d, 0, 0);
+    L.img = c;
+    L._inverted = !L._inverted;
+    return 'ok';
+  }
+
   function knockout(L, tol) {
     var im = L.img, w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
     var c = document.createElement('canvas');
@@ -1740,6 +1787,121 @@
   $('blend').addEventListener('change', function () { state.blend = this.value; draw(); saveWork(); });
   $('showRule').addEventListener('change', function () { state.rule = this.checked; draw(); saveWork(); });
   $('showCredit').addEventListener('change', function () { state.credit = this.checked; draw(); saveWork(); });
+
+  // ---- right-click menus --------------------------------------------------
+  //
+  // The side panel has all of this already, but it is a long way from the
+  // poster: to change a logo's blending you had to find the logo in a list,
+  // then find the control. Right-clicking the thing you want to change is
+  // where people look for it. Same state, same draw -- these are another door
+  // into the controls, not a second copy of them, so the selects stay in step.
+  (function () {
+    var menu = $('ctxm');
+    if (!menu) return;
+
+    function close() { menu.hidden = true; menu.innerHTML = ''; }
+
+    function item(label, fn, pressed) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      if (pressed != null) b.setAttribute('aria-pressed', String(!!pressed));
+      b.addEventListener('click', function () { close(); fn(); });
+      menu.appendChild(b);
+      return b;
+    }
+    function heading(t) {
+      var h = document.createElement('h4');
+      h.textContent = t;
+      menu.appendChild(h);
+    }
+    function rule() { menu.appendChild(document.createElement('hr')); }
+
+    function openAt(x, y) {
+      menu.hidden = false;
+      // Measure, then keep it on screen: a menu opened near the right edge
+      // would otherwise run off it.
+      var r = menu.getBoundingClientRect();
+      var vw = document.documentElement.clientWidth;
+      var vh = document.documentElement.clientHeight;
+      menu.style.left = Math.max(6, Math.min(x, vw - r.width - 6)) + 'px';
+      menu.style.top = Math.max(6, Math.min(y, vh - r.height - 6)) + 'px';
+    }
+
+    // Built from the selects themselves, so a preset added to one appears in
+    // the menu without being written out twice.
+    function optionsOf(sel) {
+      return [].slice.call(sel.options).map(function (o) {
+        return { v: o.value, label: o.textContent.trim() };
+      });
+    }
+
+    function logoMenu(i) {
+      var L = state.logos[i];
+      state.sel = i;
+      syncControls();
+      draw();
+
+      heading(L.name || 'Logo');
+      item(L._inverted ? 'Un-invert the colours' : 'Invert the colours', function () {
+        if (invertLogo(L) === 'tainted') {
+          alert('That logo came from another site, so this page is not allowed to read its pixels. Download it and upload the file instead.');
+        }
+        draw();
+      });
+      item('Remove the background', function () {
+        L._knock = (L._knock || 0) + 1;
+        if (knockout(L, 60 + L._knock * 25) === 'tainted') {
+          alert('That logo came from another site, so this page is not allowed to read its pixels. Download it and upload the file instead.');
+        }
+        draw();
+      });
+      rule();
+      heading('Blending');
+      optionsOf($('blend')).forEach(function (o) {
+        item(o.label, function () {
+          state.blend = o.v;
+          $('blend').value = o.v;
+          draw(); saveWork();
+        }, state.blend === o.v);
+      });
+    }
+
+    function bgMenu() {
+      heading('Filter');
+      optionsOf($('fx')).forEach(function (o) {
+        item(o.label, function () {
+          state.fx = o.v;
+          $('fx').value = o.v;
+          draw(); saveWork();
+        }, state.fx === o.v);
+      });
+    }
+
+    cv.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+      close();
+      var b = cv.getBoundingClientRect();
+      var pt = { x: (e.clientX - b.left) * (cv.width / b.width),
+                 y: (e.clientY - b.top) * (cv.height / b.height) };
+      // Topmost logo under the pointer, same rule the drag uses.
+      var i = -1;
+      for (var k = state.logos.length - 1; k >= 0; k--) {
+        var r = state.logos[k]._r;
+        if (r && pt.x >= r.x && pt.x <= r.x + r.w && pt.y >= r.y && pt.y <= r.y + r.h) { i = k; break; }
+      }
+      if (i >= 0) logoMenu(i); else bgMenu();
+      openAt(e.clientX, e.clientY);
+    });
+
+    document.addEventListener('pointerdown', function (e) {
+      if (!menu.hidden && !menu.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+    window.addEventListener('blur', close);
+  })();
 
   // ---- render for export --------------------------------------------------
   function renderBlob(type, quality) {
