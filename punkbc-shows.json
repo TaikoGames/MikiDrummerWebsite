@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Dave Hause & The Mermaid",
-      "date": "2026-10-01",
-      "time": "18:00",
-      "venue": "Green Auto",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://gigpit.ca/shows/event:o7fRp_qkLUU",
-      "genre": "Punk Rock",
-      "notes": "With American Steel & Dead End Drive-In",
-      "image": "https://images.squarespace-cdn.com/content/v1/6393ab94ff1778776733443e/4bfee01a-5e3d-46de-8f72-e9e64a1f048c/DAVE+HAUSE-22.png?format=1500w"
-    },
-    {
       "band": "Failure",
       "date": "2026-10-02",
       "time": "19:00",
