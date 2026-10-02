@@ -348,6 +348,7 @@
     { id: '', name: 'None', src: '' },
     { id: 'granite', name: 'Granite', src: '/images/band-logos/granite.png' },
     { id: 'lta', name: 'Lift the Anchor', src: '/images/band-logos/lift-the-anchor.png' },
+    { id: 'bullys', name: "Bully's Studios", src: '/images/band-logos/bullys-studios.png' },
     { id: 'secondsflat', name: 'Seconds Flat', src: '/images/band-logos/seconds-flat.png' },
     { id: 'penpalaloha', name: 'Pen Pal Aloha', src: '/images/band-logos/pen-pal-aloha.png' },
     { id: 'miki', name: 'Miki mark', src: '/images/brand.png' }
@@ -1080,7 +1081,10 @@
     if (!link) {
       // The built-in library still gets a go: a band the site already has a
       // mark for does not need Drive at all.
-      var hits = autoLogosFromLibrary(bands);
+      // The venue gets its mark on too when the site has one. A gig poster
+      // carries the room's logo as readily as the bands'.
+      var vn = $('autoVenue').value.trim();
+      var hits = autoLogosFromLibrary(bands.concat([vn]), vn);
       said.textContent = hits
         ? 'Built, with ' + hits + (hits === 1 ? ' logo' : ' logos') + ' from the site. Paste a Drive folder for the rest.'
         : 'Built. Paste a Drive folder of logos, or upload them below.';
@@ -1126,13 +1130,18 @@
 
   // Marks the site already carries, matched by name. Costs nothing and means
   // a bill with Granite on it is one field and a button.
-  function autoLogosFromLibrary(bands) {
+  function autoLogosFromLibrary(bands, venueName) {
     var n = 0;
     bands.forEach(function (b) {
       LOGOS.forEach(function (l) {
         if (l.src && slugOf(l.name) === slugOf(b)) {
           n++;
-          loadImage(l.src).then(function (im) { addLogo(im, b); spreadLogos(); }).catch(function () {});
+          var isVenue = venueName && slugOf(b) === slugOf(venueName);
+          loadImage(l.src).then(function (im) {
+            addLogo(im, b);
+            state.logos[state.logos.length - 1].venue = !!isVenue;
+            spreadLogos();
+          }).catch(function () {});
         }
       });
     });
@@ -1143,7 +1152,17 @@
   // Deal them along the bottom instead, which is where a bill's marks go, and
   // size them to the number there are.
   function spreadLogos() {
-    var L = state.logos, n = L.length;
+    // The venue's mark is not one of the bands and does not belong in their
+    // row: set to a band's cap height it reads as an afterthought, and set
+    // bigger it unbalances the strip. It goes top right, where a poster puts
+    // the room, clear of the bill which is set from the left.
+    state.logos.forEach(function (l) {
+      if (!l.venue) return;
+      l.pos = 'tr'; l.norow = true; l.dx = 0; l.dy = 0;
+      l.scale = 0.17;
+    });
+    var L = state.logos.filter(function (l) { return !l.venue; });
+    var n = L.length;
     if (!n) return;
     // One row, centred, spaced by hand.
     //
@@ -1156,14 +1175,47 @@
     // has to give. Everything goes in ONE row instead, anchored to the centre
     // and stepped left and right from it, so the reserved height never grows
     // no matter how many bands are on the bill.
-    var scale = Math.min(0.17, Math.max(0.075, 0.74 / n));
-    var step = Math.round(cv.width * 0.82 / n);
+    // Match the marks on HEIGHT, then space them by their real WIDTHS.
+    //
+    // Two halves, and each one breaks without the other. place() fits a logo
+    // inside a square of W * scale, so a single scale makes a round venue
+    // badge as tall as that square while a wide wordmark comes out a fraction
+    // of it -- the badge towers over the row. Solving for a common rendered
+    // height fixes that and immediately breaks the spacing, because equal
+    // heights mean wildly unequal widths and a fixed step per slot had Granite
+    // sitting on top of Seconds Flat. So the row is measured: every logo's
+    // drawn width is worked out, they are laid end to end with a fixed gap,
+    // and the whole strip is centred. If it comes out wider than the poster
+    // the height is reduced until it fits, which keeps the marks matched
+    // rather than shrinking one of them on its own.
+    var W = cv.width, H = cv.height;
+    var gap = Math.round(W * 0.045);
+    var targetH = H * 0.040;
+    var widths, total;
+    for (var guard = 0; guard < 40; guard++) {
+      // A round badge set to a wordmark's cap height reads as smaller than it
+      // is: the wordmark is a band of solid letterforms the whole way across,
+      // the badge is mostly the space inside a circle. Anything close to
+      // square gets a boost, which is what anyone laying this out by hand
+      // would do by eye.
+      widths = L.map(function (l) {
+        var ar = l.img.width / l.img.height;
+        l.boost = ar < 1.5 ? 1.45 : 1;
+        return targetH * l.boost * ar;
+      });
+      total = widths.reduce(function (a, b) { return a + b; }, 0) + gap * (n - 1);
+      if (total <= W * 0.88) break;
+      targetH *= 0.94;
+    }
+    var x = -total / 2;
     L.forEach(function (l, i) {
-      l.scale = scale;
+      var long = Math.max(l.img.width, l.img.height);
+      l.scale = Math.min(0.30, targetH * (l.boost || 1) * long / (l.img.height * W));
       l.pos = 'bc';
       l.norow = true;
       l.dy = 0;
-      l.dx = Math.round((i - (n - 1) / 2) * step);
+      l.dx = Math.round(x + widths[i] / 2);
+      x += widths[i] + gap;
     });
     renderLogos(); syncControls(); draw();
   }
