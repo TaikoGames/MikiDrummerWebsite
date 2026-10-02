@@ -227,7 +227,20 @@
 
       <div class="panel">
         <h2>Look</h2>
-        <label for="fx">Filter</label>
+        <label for="typeface">Type</label>
+        <select id="typeface">
+          <option value="kiln">Kiln — the house face</option>
+          <option value="black">Heavy sans</option>
+          <option value="impact">Condensed poster</option>
+          <option value="grotesk">Plain grotesk</option>
+          <option value="serif">Serif</option>
+          <option value="slab">Typewriter</option>
+        </select>
+        <div class="hint">The headline and the supporting type together. Kiln is the one
+          the site ships; the rest are faces every machine already has, so a poster built
+          with them looks the same on yours as on mine.</div>
+
+        <label for="fx" style="margin-top:12px">Filter</label>
         <select id="fx">
           <option value="none">None</option>
           <option value="bw">Black &amp; white</option>
@@ -362,6 +375,8 @@
           <span style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn" id="share" role="status" aria-live="polite">⤴ <span id="shareLabel">Share</span></button>
             <button class="btn go" id="save">↓ Save PNG</button>
+            <button class="btn" id="saveWork" type="button">Save work</button>
+            <button class="btn" id="loadWork" type="button">Restore</button>
           </span>
         </div>
         <div class="hint" id="shareHint" style="margin-top:8px"></div>
@@ -427,7 +442,8 @@
     // sit on it. chrome is the selection outline, which is screen furniture
     // and must be off while the canvas is being exported or it ships inside
     // the PNG somebody prints.
-    fx: 'none', blend: 'source-over', rule: true, credit: false, chrome: true
+    fx: 'none', blend: 'source-over', rule: true, credit: false, chrome: true,
+    face: 'kiln'
   };
 
   // Filters are CSS filter strings, which Canvas2D takes directly on ctx.filter.
@@ -492,8 +508,44 @@
       document.fonts.load('400 40px KilnRegular')
     ]).then(function () { fontsReady = true; }).catch(function () { fontsReady = true; });
   }
-  function disp(px) { return (fontsReady ? '700 ' + px + 'px KilnSpiked, ' : 'bold ' + px + 'px ') + 'Impact, sans-serif'; }
-  function text(px) { return (fontsReady ? '400 ' + px + 'px KilnRegular, ' : px + 'px ') + 'Helvetica, Arial, sans-serif'; }
+  /* The headline face and the body face, as a pair.
+   *
+   * Only Kiln is shipped with the site; everything else here is a family that
+   * is already on the machine, which for a canvas matters more than it does
+   * for a page -- canvas has no fallback cascade it can show you failing, it
+   * just silently draws in something else. So the alternatives are the handful
+   * that are genuinely everywhere.
+   *
+   * Kiln is still gated on fontsReady: asking canvas for a webfont before it
+   * has loaded draws the fallback and never redraws, which is why the poster
+   * used to come out in Impact if you were quick. */
+  var FACES = {
+    kiln:    { d: ['700', 'KilnSpiked, Impact, sans-serif'],
+               t: ['400', 'KilnRegular, Helvetica, Arial, sans-serif'], web: true },
+    black:   { d: ['900', '"Arial Black", "Helvetica Neue", sans-serif'],
+               t: ['400', 'Helvetica, Arial, sans-serif'] },
+    impact:  { d: ['400', 'Impact, "Haettenschweiler", sans-serif'],
+               t: ['400', 'Helvetica, Arial, sans-serif'] },
+    grotesk: { d: ['700', '"Helvetica Neue", Helvetica, Arial, sans-serif'],
+               t: ['400', '"Helvetica Neue", Helvetica, Arial, sans-serif'] },
+    serif:   { d: ['700', 'Georgia, "Times New Roman", serif'],
+               t: ['400', 'Georgia, "Times New Roman", serif'] },
+    slab:    { d: ['700', '"Courier New", Courier, monospace'],
+               t: ['400', '"Courier New", Courier, monospace'] }
+  };
+
+  function face() { return FACES[state.face] || FACES.kiln; }
+
+  function disp(px) {
+    var f = face();
+    if (f.web && !fontsReady) return 'bold ' + px + 'px Impact, sans-serif';
+    return f.d[0] + ' ' + px + 'px ' + f.d[1];
+  }
+  function text(px) {
+    var f = face();
+    if (f.web && !fontsReady) return px + 'px Helvetica, Arial, sans-serif';
+    return f.t[0] + ' ' + px + 'px ' + f.t[1];
+  }
 
   // ---- drawing helpers ---------------------------------------------------
   function loadImage(src) {
@@ -1683,6 +1735,7 @@
   });
 
   // ---- look controls ------------------------------------------------------
+  $('typeface').addEventListener('change', function () { state.face = this.value; draw(); saveWork(); });
   $('fx').addEventListener('change', function () { state.fx = this.value; draw(); saveWork(); });
   $('blend').addEventListener('change', function () { state.blend = this.value; draw(); saveWork(); });
   $('showRule').addEventListener('change', function () { state.rule = this.checked; draw(); saveWork(); });
@@ -1712,7 +1765,15 @@
   // pictures: a background and a few logos are megabytes of image data against
   // a localStorage budget of a few, so storing them here is a quota error
   // rather than a feature.
-  var WORK_KEY = 'poster:work';
+  // Two keys, because they are two different promises.
+  //
+  // AUTO is "you will not lose your place": it follows every keystroke and is
+  // what comes back when the page reloads. SNAP is "I liked that one": it is
+  // written only when the button is pressed, and Restore reads it. They were
+  // one key to begin with, which made Save work pointless -- the next
+  // keystroke's autosave overwrote the snapshot before Restore could read it.
+  var WORK_KEY = 'poster:auto';
+  var SNAP_KEY = 'poster:work';
   var WORK_FIELDS = ['kicker', 'headliner', 'support', 'venue', 'city', 'date',
                      'time', 'price', 'foot'];
   var saveTimer = 0;
@@ -1721,19 +1782,20 @@
     saveTimer = setTimeout(function () {
       try {
         var o = { fx: state.fx, blend: state.blend, rule: state.rule,
-                  credit: state.credit, f: {} };
+                  credit: state.credit, face: state.face, f: {} };
         WORK_FIELDS.forEach(function (id) { if ($(id)) o.f[id] = $(id).value; });
         localStorage.setItem(WORK_KEY, JSON.stringify(o));
       } catch (e) {}
     }, 400);
   }
-  function loadWork() {
+  function loadWork(key) {
     var o = null;
-    try { o = JSON.parse(localStorage.getItem(WORK_KEY) || 'null'); } catch (e) {}
+    try { o = JSON.parse(localStorage.getItem(key || WORK_KEY) || 'null'); } catch (e) {}
     if (!o) return;
     WORK_FIELDS.forEach(function (id) {
       if ($(id) && o.f && typeof o.f[id] === 'string') $(id).value = o.f[id];
     });
+    if (o.face && $('typeface')) { state.face = o.face; $('typeface').value = o.face; }
     if (o.fx && $('fx')) { state.fx = o.fx; $('fx').value = o.fx; }
     if (o.blend && $('blend')) { state.blend = o.blend; $('blend').value = o.blend; }
     state.rule = o.rule !== false;
@@ -1744,6 +1806,41 @@
   WORK_FIELDS.forEach(function (id) {
     if ($(id)) $(id).addEventListener('input', saveWork);
   });
+
+  // It saves as you type, but a thing that only happens invisibly is a thing
+  // nobody trusts -- so there is a button that does it now and says so, and
+  // one to put the last save back if a poster has been taken somewhere wrong.
+  if ($('saveWork')) {
+    $('saveWork').addEventListener('click', function () {
+      clearTimeout(saveTimer);
+      saveTimer = 0;
+      try {
+        var o = { fx: state.fx, blend: state.blend, rule: state.rule,
+                  credit: state.credit, face: state.face, f: {} };
+        WORK_FIELDS.forEach(function (id) { if ($(id)) o.f[id] = $(id).value; });
+        localStorage.setItem(SNAP_KEY, JSON.stringify(o));
+        flashBtn(this, 'Saved ✓');
+      } catch (e) {
+        flashBtn(this, 'Could not save');
+      }
+    });
+  }
+  if ($('loadWork')) {
+    $('loadWork').addEventListener('click', function () {
+      if (!localStorage.getItem(SNAP_KEY)) { flashBtn(this, 'Nothing saved'); return; }
+      loadWork(SNAP_KEY);
+      saveWork();                       // the restored poster is now the place
+
+      draw();
+      flashBtn(this, 'Restored');
+    });
+  }
+  function flashBtn(btn, msg) {
+    var was = btn.textContent;
+    btn.textContent = msg;
+    setTimeout(function () { btn.textContent = was; }, 1600);
+  }
+
   loadWork();
 
   // ---- save --------------------------------------------------------------
