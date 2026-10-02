@@ -226,6 +226,46 @@
       </div>
 
       <div class="panel">
+        <h2>Look</h2>
+        <label for="fx">Filter</label>
+        <select id="fx">
+          <option value="none">None</option>
+          <option value="bw">Black &amp; white</option>
+          <option value="bwhard">High-contrast B&amp;W</option>
+          <option value="faded">Faded</option>
+          <option value="warm">Warm</option>
+          <option value="cold">Cold</option>
+          <option value="sepia">Sepia</option>
+          <option value="punch">Punch</option>
+          <option value="bleach">Bleach bypass</option>
+          <option value="night">Night</option>
+        </select>
+        <div class="hint">Applies to the background picture only — the type stays clean.</div>
+
+        <label for="blend" style="margin-top:12px">Logo blending</label>
+        <select id="blend">
+          <option value="source-over">Normal</option>
+          <option value="overlay">Overlay</option>
+          <option value="screen">Screen</option>
+          <option value="multiply">Multiply</option>
+          <option value="soft-light">Soft light</option>
+          <option value="hard-light">Hard light</option>
+          <option value="color-dodge">Colour dodge</option>
+          <option value="luminosity">Luminosity</option>
+          <option value="difference">Difference</option>
+        </select>
+        <div class="hint">Screen drops a black box behind a logo; multiply drops a white one.</div>
+
+        <label style="margin-top:12px">Show</label>
+        <label class="chk" style="font-weight:600;text-transform:none;letter-spacing:0">
+          <input type="checkbox" id="showRule" checked> The orange rule
+        </label>
+        <label class="chk" style="font-weight:600;text-transform:none;letter-spacing:0">
+          <input type="checkbox" id="showCredit"> The mikidrummer.ca/punkbc credit
+        </label>
+      </div>
+
+      <div class="panel">
         <h2>Logos</h2>
         <div class="chips" id="logoChips"></div>
         <div class="btns">
@@ -234,6 +274,13 @@
         </div>
 
         <ul class="loaded" id="logoList"></ul>
+
+        <div class="btns" style="margin-top:10px">
+          <button class="btn" id="knockout" type="button">Remove the logo's background</button>
+        </div>
+        <div class="hint">For a logo that came as a JPEG with a white or black box behind it.
+          It samples the corners and clears everything close to that colour. Press it again on
+          the same logo to take a bit more.</div>
 
         <label style="margin-top:14px" id="posLabel">Position</label>
         <div class="placer">
@@ -375,7 +422,26 @@
   // its own size. sel is the one the position grid and slider are editing.
   var state = {
     bg: null, bgCredit: '', logos: [], sel: -1,
-    w: 1080, h: 1350, tab: 'pd'
+    w: 1080, h: 1350, tab: 'pd',
+    // Look. fx is a CSS filter on the background only; blend is how the logos
+    // sit on it. chrome is the selection outline, which is screen furniture
+    // and must be off while the canvas is being exported or it ships inside
+    // the PNG somebody prints.
+    fx: 'none', blend: 'source-over', rule: true, credit: false, chrome: true
+  };
+
+  // Filters are CSS filter strings, which Canvas2D takes directly on ctx.filter.
+  var FX = {
+    none:   'none',
+    bw:     'grayscale(1) contrast(1.08)',
+    bwhard: 'grayscale(1) contrast(1.55) brightness(0.92)',
+    faded:  'contrast(0.82) saturate(0.7) brightness(1.1)',
+    warm:   'saturate(1.15) sepia(0.28) contrast(1.05)',
+    cold:   'saturate(1.05) hue-rotate(-12deg) brightness(1.02) contrast(1.08)',
+    sepia:  'sepia(0.75) contrast(1.1) brightness(0.98)',
+    punch:  'saturate(1.5) contrast(1.25)',
+    bleach: 'grayscale(0.55) contrast(1.4) brightness(1.08) saturate(0.8)',
+    night:  'brightness(0.7) contrast(1.25) saturate(0.85) hue-rotate(8deg)'
   };
 
   function current() { return state.logos[state.sel] || null; }
@@ -588,7 +654,14 @@
 
     ctx.fillStyle = '#0a0908';
     ctx.fillRect(0, 0, W, H);
-    if (state.bg) { cover(state.bg, W, H); }
+    if (state.bg) {
+      // The filter goes on the photograph and nothing else. Setting it once
+      // for the whole draw would also grade the type, the rule and the logos,
+      // which is how a poster ends up with grey-brown headline text.
+      ctx.filter = FX[state.fx] || 'none';
+      cover(state.bg, W, H);
+      ctx.filter = 'none';
+    }
 
     // Darken from the bottom so the type sits on ink and the picture still
     // reads through. A flat wash would kill the photograph.
@@ -644,9 +717,12 @@
       if (L.bill) return;              // drawn with the bill, not as a corner mark
       var r = place(L, i, W, H, pad);
       ctx.globalAlpha = 0.96;
+      L._r = r;                       // where it landed, for dragging
+      ctx.globalCompositeOperation = state.blend;
       ctx.drawImage(L.img, Math.round(r.x), Math.round(r.y),
                     Math.round(r.w), Math.round(r.h));
       ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
 
       // All the type is left-aligned from the padding, so a logo on the top
       // left or top centre lands exactly where the kicker and headline start.
@@ -846,8 +922,10 @@
       by -= Math.round(W * 0.004);
     }
 
-    ctx.fillStyle = '#e8672a';
-    ctx.fillRect(pad, by, Math.round(W * 0.14), Math.max(4, Math.round(W * 0.007)));
+    if (state.rule) {
+      ctx.fillStyle = '#e8672a';
+      ctx.fillRect(pad, by, Math.round(W * 0.14), Math.max(4, Math.round(W * 0.007)));
+    }
 
     // --- the mark, bottom right -- unless the logo is already sitting there,
     // in which case it swaps to the left rather than printing over it. The
@@ -855,11 +933,12 @@
     // above; this is the one corner that cannot be solved by moving up.
     ctx.font = text(Math.round(W * 0.021));
     ctx.fillStyle = 'rgba(160,154,148,.85)';
-    // A poster carrying the venue's own mark does not also need a URL for the
-    // listings board: the mark is the attribution, and the line was only ever
-    // standing in for one.
+    // Two reasons to leave the URL off, and they are both "off": the credit
+    // is a toggle now and starts off, because most posters leaving this tool
+    // are the band's; and a poster already carrying the venue's own mark has
+    // its attribution, which is all the line was ever standing in for.
     var hasVenueMark = state.logos.some(function (l) { return l.venue; });
-    if (hasVenueMark) {
+    if (!state.credit || hasVenueMark) {
       /* nothing */
     } else if (bottomRow || (bottomRightTaken && bottomLeftTaken)) {
       // Both bottom corners carry a mark, which is the normal case once a
@@ -882,6 +961,23 @@
 
     drawFrame(W, H);
     drawDistress(W, H);
+
+    // The selected logo's outline and its corner grip. Screen furniture only:
+    // state.chrome is switched off around every export, so this never ends up
+    // inside a file somebody prints.
+    var selL = current();
+    if (state.chrome && selL && selL._r) {
+      var rr = selL._r, gs = Math.max(16, Math.round(W * 0.028));
+      ctx.save();
+      ctx.strokeStyle = '#e8672a';
+      ctx.lineWidth = Math.max(2, Math.round(W * 0.004));
+      ctx.setLineDash([Math.round(W * 0.018), Math.round(W * 0.012)]);
+      ctx.strokeRect(rr.x, rr.y, rr.w, rr.h);
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#e8672a';
+      ctx.fillRect(rr.x + rr.w - gs, rr.y + rr.h - gs, gs, gs);
+      ctx.restore();
+    }
   }
 
   // ---- frame and distress, drawn over everything --------------------------
@@ -1433,10 +1529,226 @@
     $('pick').innerHTML = '<option value="">— board unavailable, type it in —</option>';
   });
 
+  // ---- dragging a logo on the poster itself ------------------------------
+  //
+  // The nine anchors and the slider still work and are still the quickest way
+  // to a tidy corner, but "a bit left and smaller" is something you do with
+  // your hand, not with a grid. Drag anywhere on a logo to move it; drag the
+  // orange grip at its bottom-right to size it. The canvas is drawn at poster
+  // resolution and displayed much smaller, so every pointer position has to be
+  // scaled back up before it means anything.
+  (function () {
+    var drag = null;
+
+    function atCanvas(e) {
+      var b = cv.getBoundingClientRect();
+      return { x: (e.clientX - b.left) * (cv.width / b.width),
+               y: (e.clientY - b.top) * (cv.height / b.height) };
+    }
+
+    function grip() { return Math.max(16, Math.round(state.w * 0.028)); }
+
+    function onGrip(pt, L) {
+      if (!L || !L._r) return false;
+      var r = L._r, g = grip();
+      return pt.x >= r.x + r.w - g && pt.x <= r.x + r.w &&
+             pt.y >= r.y + r.h - g && pt.y <= r.y + r.h;
+    }
+
+    function hit(pt) {
+      // Topmost first: the last one drawn is the one on top, so it is the one
+      // a click on an overlap should get.
+      for (var i = state.logos.length - 1; i >= 0; i--) {
+        var r = state.logos[i]._r;
+        if (r && pt.x >= r.x && pt.x <= r.x + r.w && pt.y >= r.y && pt.y <= r.y + r.h) return i;
+      }
+      return -1;
+    }
+
+    cv.style.touchAction = 'none';
+
+    cv.addEventListener('pointerdown', function (e) {
+      if (!state.logos.length) return;
+      var pt = atCanvas(e), sel = current();
+
+      // The grip is checked first because it sits inside the logo's own box.
+      if (onGrip(pt, sel)) {
+        drag = { mode: 'size', L: sel, x0: pt.x, s0: sel.scale, w0: sel._r.w };
+        cv.setPointerCapture(e.pointerId);
+        e.preventDefault();
+        return;
+      }
+
+      var i = hit(pt);
+      if (i < 0) return;
+      state.sel = i;
+      syncControls();
+      var L = state.logos[i];
+      drag = { mode: 'move', L: L, x0: pt.x, y0: pt.y, dx0: L.dx || 0, dy0: L.dy || 0 };
+      cv.setPointerCapture(e.pointerId);
+      draw();
+      e.preventDefault();
+    });
+
+    cv.addEventListener('pointermove', function (e) {
+      var pt = atCanvas(e);
+      if (!drag) {
+        // Tell them what a press would do before they press it.
+        cv.style.cursor = onGrip(pt, current()) ? 'nwse-resize'
+                        : (hit(pt) >= 0 ? 'move' : 'default');
+        return;
+      }
+      if (drag.mode === 'move') {
+        drag.L.dx = drag.dx0 + (pt.x - drag.x0);
+        drag.L.dy = drag.dy0 + (pt.y - drag.y0);
+      } else {
+        // Size from how far the grip moved, against the width it started at.
+        var grow = (drag.w0 + (pt.x - drag.x0)) / Math.max(1, drag.w0);
+        drag.L.scale = Math.max(0.06, Math.min(0.9, drag.s0 * grow));
+      }
+      draw();
+      e.preventDefault();
+    });
+
+    function end(e) {
+      if (!drag) return;
+      // Whole pixels: the readout says "nudged 378px left", and 377.9999 is
+      // not a thing anyone wants to read.
+      if (drag.L) {
+        drag.L.dx = Math.round(drag.L.dx || 0);
+        drag.L.dy = Math.round(drag.L.dy || 0);
+        drag.L.scale = Math.round(drag.L.scale * 1000) / 1000;
+      }
+      drag = null;
+      draw();
+      syncControls();
+      saveWork();
+      try { cv.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+    cv.addEventListener('pointerup', end);
+    cv.addEventListener('pointercancel', end);
+  })();
+
+  // ---- knocking a flat background out of a logo --------------------------
+  //
+  // Most logos arrive as a JPEG with a white or black box around them, and on
+  // a poster that box is exactly what you see. This samples the four corners,
+  // and clears every pixel close to that colour. Pixels just outside the
+  // tolerance fade rather than cut, or the result keeps a one-pixel halo of
+  // the old background all the way round the mark.
+  function knockout(L, tol) {
+    var im = L.img, w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    var x = c.getContext('2d', { willReadFrequently: true });
+    x.drawImage(im, 0, 0, w, h);
+    var d;
+    try {
+      d = x.getImageData(0, 0, w, h);
+    } catch (err) {
+      // A logo fetched from another origin taints the canvas and its pixels
+      // cannot be read at all. Worth saying so rather than doing nothing.
+      return 'tainted';
+    }
+    var p = d.data;
+    function px(i) { return [p[i], p[i + 1], p[i + 2]]; }
+    var corners = [px(0), px((w - 1) * 4), px((h - 1) * w * 4), px(((h - 1) * w + w - 1) * 4)];
+    var r = 0, g = 0, b = 0;
+    corners.forEach(function (q) { r += q[0]; g += q[1]; b += q[2]; });
+    r /= 4; g /= 4; b /= 4;
+
+    var t = tol || 70, soft = t * 1.6;
+    for (var i = 0; i < p.length; i += 4) {
+      var dr = p[i] - r, dg = p[i + 1] - g, db = p[i + 2] - b;
+      var dist = Math.sqrt(dr * dr + dg * dg + db * db);
+      if (dist < t) p[i + 3] = 0;
+      else if (dist < soft) p[i + 3] = Math.round(p[i + 3] * ((dist - t) / (soft - t)));
+    }
+    x.putImageData(d, 0, 0);
+    L.img = c;
+    return 'ok';
+  }
+
+  $('knockout').addEventListener('click', function () {
+    var L = current();
+    if (!L) return;
+    // Pressing it again takes more, which is the natural thing to try when the
+    // first pass leaves a fringe.
+    L._knock = (L._knock || 0) + 1;
+    var res = knockout(L, 60 + L._knock * 25);
+    draw();
+    if (res === 'tainted') {
+      alert('That logo came from another site, so this page is not allowed to read its pixels. Download it and upload the file instead.');
+    }
+  });
+
+  // ---- look controls ------------------------------------------------------
+  $('fx').addEventListener('change', function () { state.fx = this.value; draw(); saveWork(); });
+  $('blend').addEventListener('change', function () { state.blend = this.value; draw(); saveWork(); });
+  $('showRule').addEventListener('change', function () { state.rule = this.checked; draw(); saveWork(); });
+  $('showCredit').addEventListener('change', function () { state.credit = this.checked; draw(); saveWork(); });
+
+  // ---- render for export --------------------------------------------------
+  function renderBlob(type, quality) {
+    // Size is chosen above, by the canvas-size chips -- including a real
+    // 3300x5100 at 300 dpi for an 11x17 print -- so there is nothing to scale
+    // here. All this does is take the selection outline off before the pixels
+    // are read, and put it back afterwards.
+    var had = state.chrome;
+    state.chrome = false;
+    draw();
+    return new Promise(function (res) {
+      cv.toBlob(function (bl) {
+        state.chrome = had;
+        draw();
+        res(bl);
+      }, type, quality);
+    });
+  }
+
+  // ---- keeping the work ---------------------------------------------------
+  //
+  // The words and the look, in this browser, restored next time. Not the
+  // pictures: a background and a few logos are megabytes of image data against
+  // a localStorage budget of a few, so storing them here is a quota error
+  // rather than a feature.
+  var WORK_KEY = 'poster:work';
+  var WORK_FIELDS = ['kicker', 'headliner', 'support', 'venue', 'city', 'date',
+                     'time', 'price', 'foot'];
+  var saveTimer = 0;
+  function saveWork() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try {
+        var o = { fx: state.fx, blend: state.blend, rule: state.rule,
+                  credit: state.credit, f: {} };
+        WORK_FIELDS.forEach(function (id) { if ($(id)) o.f[id] = $(id).value; });
+        localStorage.setItem(WORK_KEY, JSON.stringify(o));
+      } catch (e) {}
+    }, 400);
+  }
+  function loadWork() {
+    var o = null;
+    try { o = JSON.parse(localStorage.getItem(WORK_KEY) || 'null'); } catch (e) {}
+    if (!o) return;
+    WORK_FIELDS.forEach(function (id) {
+      if ($(id) && o.f && typeof o.f[id] === 'string') $(id).value = o.f[id];
+    });
+    if (o.fx && $('fx')) { state.fx = o.fx; $('fx').value = o.fx; }
+    if (o.blend && $('blend')) { state.blend = o.blend; $('blend').value = o.blend; }
+    state.rule = o.rule !== false;
+    state.credit = !!o.credit;
+    if ($('showRule')) $('showRule').checked = state.rule;
+    if ($('showCredit')) $('showCredit').checked = state.credit;
+  }
+  WORK_FIELDS.forEach(function (id) {
+    if ($(id)) $(id).addEventListener('input', saveWork);
+  });
+  loadWork();
+
   // ---- save --------------------------------------------------------------
   $('save').addEventListener('click', function () {
-    draw();
-    cv.toBlob(function (blob) {
+    renderBlob('image/png').then(function (blob) {
       var name = ($('headliner').value.trim() || 'poster')
                    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       var a = document.createElement('a');
@@ -1444,7 +1756,7 @@
       a.download = name + '-' + ($('date').value || 'poster') + '.png';
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
-    }, 'image/png');
+    });
   });
 
   // ---- share -------------------------------------------------------------
@@ -1474,8 +1786,7 @@
     // PNG only makes the handoff slower for the same end result. A file
     // someone saves to keep or print is a different question, and stays PNG.
     function blob() {
-      draw();
-      return new Promise(function (res) { cv.toBlob(res, 'image/jpeg', 0.92); });
+      return renderBlob('image/jpeg', 0.92);
     }
 
     function filename() {
