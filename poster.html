@@ -287,7 +287,23 @@
           <button class="chip" data-w="1080" data-h="1080" aria-pressed="false">Square</button>
           <button class="chip" data-w="1080" data-h="1920" aria-pressed="false">Story 9:16</button>
           <button class="chip" data-w="1191" data-h="1684" aria-pressed="false">Print A4</button>
+          <!-- 11x17 inches at 300 dpi: the size a gig poster actually gets
+               printed at, and the smallest that holds up pasted on a wall. -->
+          <button class="chip" data-w="3300" data-h="5100" aria-pressed="false">Print 11×17 · 300dpi</button>
         </div>
+      </div>
+
+      <div class="panel">
+        <h2>Finish</h2>
+        <label class="chk" style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <input type="checkbox" id="frameOn" checked> <span>Frame</span>
+        </label>
+        <label for="distress">Distress</label>
+        <select id="distress">
+          <option value="0">None</option>
+          <option value="1" selected>Light</option>
+          <option value="2">Heavy</option>
+        </select>
       </div>
     </div>
 
@@ -560,7 +576,7 @@
     if (!d) return t ? t : '';
     var parts = d.split('-');
     var dt = new Date(+parts[0], +parts[1] - 1, +parts[2]);   // local, not UTC
-    var s = dt.toLocaleDateString('en-CA', { weekday: 'long', day: 'numeric', month: 'long' });
+    var s = dt.toLocaleDateString('en-CA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     return (t ? s + ' · ' + t : s).toUpperCase();
   }
 
@@ -625,6 +641,7 @@
     // the kicker, which swallowed "PUNK BC PRESENTS" whole at top-left.
     var bottomRightTaken = false, bottomLeftTaken = false, bottomRow = false;
     state.logos.forEach(function (L, i) {
+      if (L.bill) return;              // drawn with the bill, not as a corner mark
       var r = place(L, i, W, H, pad);
       ctx.globalAlpha = 0.96;
       ctx.drawImage(L.img, Math.round(r.x), Math.round(r.y),
@@ -689,26 +706,69 @@
       var all = [head].concat($('support').value.split('\n'))
                       .map(function (b) { return b.trim(); }).filter(Boolean);
       if (all.length) {
-        // One size for the lot: start from what a headline would get, step
-        // down until the longest name fits, and leave room for them all.
-        var px = Math.round(W * 0.115);
-        var floor = Math.max(Math.round(W * 0.03), 18);
-        while (px > floor) {
-          var tooWide = false;
-          for (var ei = 0; ei < all.length; ei++) {
-            ctx.font = disp(px);
-            if (ctx.measureText(all[ei].toUpperCase()).width > inner) { tooWide = true; break; }
-          }
-          // Also has to fit the space between here and the bottom block.
-          if (!tooWide && (all.length * px * 1.14) < (H * 0.56)) break;
-          px -= 3;
+        // Each act is its own MARK if it has one, and its NAME if it does not,
+        // and the two have to carry the same weight down the bill or the band
+        // without artwork reads as an afterthought. A wordmark is matched on
+        // cap height to the type, not fitted to a box: fitting to a box makes
+        // a long name small and a short one huge, which is the opposite of
+        // equal billing.
+        var marks = all.map(function (name) {
+          var hit = null;
+          state.logos.forEach(function (l) {
+            if (l.bill && slugOf(l.name) === slugOf(name)) hit = l;
+          });
+          return { name: name, img: hit ? hit.img : null };
+        });
+
+        // Match on WIDTH, not cap height.
+        //
+        // Cap height is right when type and marks are mixed at body size. For
+        // a bill it is wrong: a wordmark is a wide, short thing and a long
+        // name like CROWN OF ASHES is wide too, so matching their heights left
+        // the marks looking like captions beside it. Setting every act to the
+        // SAME WIDTH is what a logo-led poster does -- each act owns a full
+        // line of the poster, and the eye reads them as equals.
+        var colW = inner;
+        var gapY = Math.round(H * 0.018);
+        var heights, totalH;
+        for (var guard2 = 0; guard2 < 60; guard2++) {
+          heights = marks.map(function (m) {
+            if (m.img) return colW * m.img.height / m.img.width;
+            // For a name, find the size whose drawn width is colW.
+            var px = Math.round(H * 0.05), lo = 6, hi = Math.round(H * 0.22);
+            for (var t = 0; t < 22; t++) {
+              px = (lo + hi) / 2;
+              ctx.font = disp(px);
+              if (ctx.measureText(m.name.toUpperCase()).width > colW) hi = px; else lo = px;
+            }
+            m.px = Math.round(lo);
+            return Math.round(lo) * 0.78;        // cap height of that size
+          });
+          totalH = heights.reduce(function (a, b) { return a + b; }, 0)
+                 + gapY * (marks.length - 1);
+          if (totalH <= H * 0.62) break;
+          colW *= 0.97;
         }
-        y += Math.round(px * 0.92);
-        ctx.fillStyle = '#f6f3f0';
-        for (var eq = 0; eq < all.length; eq++) {
-          ctx.font = disp(px);
-          billText(all[eq].toUpperCase(), pad, y);
-          y += Math.round(px * 1.14);
+
+        // y has been tracking the TOP of the next thing to draw; from here it
+        // is a baseline, so the first item has to be dropped by its own height.
+        var pal0 = PALETTES[$('posterize') ? $('posterize').value : 'none'];
+        var off = Math.max(2, Math.round(W * 0.0055));
+        for (var k = 0; k < marks.length; k++) {
+          var it = marks[k], ih = heights[k];
+          if (it.img) {
+            if (pal0) {
+              ctx.save(); ctx.globalAlpha = 0.85;
+              ctx.drawImage(it.img, pad + off, y + off, colW, ih);
+              ctx.restore();
+            }
+            ctx.drawImage(it.img, pad, y, colW, ih);
+          } else {
+            ctx.font = disp(it.px);
+            ctx.fillStyle = '#f6f3f0';
+            billText(it.name.toUpperCase(), pad, y + ih);   // y is the top here
+          }
+          y += Math.round(ih + gapY);
         }
       }
       head = '';                       // the blocks below must not draw again
@@ -795,7 +855,13 @@
     // above; this is the one corner that cannot be solved by moving up.
     ctx.font = text(Math.round(W * 0.021));
     ctx.fillStyle = 'rgba(160,154,148,.85)';
-    if (bottomRow || (bottomRightTaken && bottomLeftTaken)) {
+    // A poster carrying the venue's own mark does not also need a URL for the
+    // listings board: the mark is the attribution, and the line was only ever
+    // standing in for one.
+    var hasVenueMark = state.logos.some(function (l) { return l.venue; });
+    if (hasVenueMark) {
+      /* nothing */
+    } else if (bottomRow || (bottomRightTaken && bottomLeftTaken)) {
       // Both bottom corners carry a mark, which is the normal case once a
       // five-band bill deals its logos along the bottom. Moving the credit
       // from one corner to the other just printed it underneath the logo in
@@ -813,6 +879,91 @@
       ctx.fillText('mikidrummer.ca/punkbc', W - pad, H - pad);
       ctx.textAlign = 'left';
     }
+
+    drawFrame(W, H);
+    drawDistress(W, H);
+  }
+
+  // ---- frame and distress, drawn over everything --------------------------
+
+  /* A rule inset from the edge. Two weights, because one hairline at 3300 px
+     wide is invisible in the hand and one heavy line at 1080 is a border on a
+     certificate. Both are a share of the width, so the frame looks the same
+     at every size the tool offers. */
+  function drawFrame(W, H) {
+    if (!$('frameOn').checked) return;
+    var inset = Math.round(W * 0.030);
+    var thick = Math.max(2, Math.round(W * 0.0055));
+    var thin = Math.max(1, Math.round(W * 0.0016));
+    ctx.strokeStyle = 'rgba(246,243,240,.92)';
+    ctx.lineWidth = thick;
+    ctx.strokeRect(inset, inset, W - inset * 2, H - inset * 2);
+    ctx.lineWidth = thin;
+    var g = Math.round(W * 0.011);
+    ctx.strokeRect(inset + g, inset + g, W - (inset + g) * 2, H - (inset + g) * 2);
+  }
+
+  /* Distress.
+   *
+   * Print wear, not a filter: a screen print loses ink in SPECKS where the
+   * mesh clogged and in SCRAPES along the squeegee's travel, and both take
+   * colour away rather than adding grey on top. So this punches holes --
+   * destination-out -- instead of laying a texture over the art, which is why
+   * it reads as the ink having failed rather than as dirt on a lens.
+   *
+   * Everything is a share of the canvas, so the same setting gives the same
+   * look at 1080 px and at 3300: specks scale, and their COUNT scales with
+   * area, or a print-size poster would come out nearly clean.
+   */
+  function drawDistress(W, H) {
+    var level = +($('distress') ? $('distress').value : 0);
+    if (!level) return;
+    var area = W * H;
+    var rnd = (function (seed) {           // fixed seed: redraws stay identical
+      return function () {
+        seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+        return seed / 0x7fffffff;
+      };
+    })(20261030);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+
+    // Specks.
+    var n = Math.round(area / 2600) * level;
+    var rmax = W * 0.0035;
+    for (var i = 0; i < n; i++) {
+      var r = rnd() * rmax + W * 0.0004;
+      ctx.globalAlpha = 0.12 + rnd() * 0.5;
+      ctx.beginPath();
+      ctx.arc(rnd() * W, rnd() * H, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Scrapes, roughly vertical, following the pull.
+    var m = Math.round(Math.sqrt(area) / 26) * level;
+    ctx.lineCap = 'round';
+    for (var j = 0; j < m; j++) {
+      var x = rnd() * W, y = rnd() * H;
+      var len = (0.02 + rnd() * 0.12) * H;
+      ctx.globalAlpha = 0.07 + rnd() * 0.22;
+      ctx.lineWidth = W * (0.0006 + rnd() * 0.0022);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + (rnd() - 0.5) * W * 0.02, y + len);
+      ctx.stroke();
+    }
+
+    // The edges go first on a real print, where the paper was handled.
+    var edge = ctx.createLinearGradient(0, 0, W, 0);
+    edge.addColorStop(0, 'rgba(0,0,0,' + (0.10 * level) + ')');
+    edge.addColorStop(0.08, 'rgba(0,0,0,0)');
+    edge.addColorStop(0.92, 'rgba(0,0,0,0)');
+    edge.addColorStop(1, 'rgba(0,0,0,' + (0.10 * level) + ')');
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = edge;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
   }
 
   // ---- background picker -------------------------------------------------
@@ -1071,6 +1222,7 @@
     // Equal billing is what a five-band punk bill actually is, so the fields
     // are filled in that shape: every name in the list, nobody promoted.
     $('equalBill').checked = true;
+    $('kicker').value = '';            // the venue's mark says who is presenting
     $('headliner').value = bands[0];
     $('support').value = bands.slice(1).join('\n');
     if ($('autoDate').value) $('date').value = $('autoDate').value;
@@ -1175,48 +1327,14 @@
     // has to give. Everything goes in ONE row instead, anchored to the centre
     // and stepped left and right from it, so the reserved height never grows
     // no matter how many bands are on the bill.
-    // Match the marks on HEIGHT, then space them by their real WIDTHS.
+    // The band marks ARE the bill now, not a strip of small logos under it.
     //
-    // Two halves, and each one breaks without the other. place() fits a logo
-    // inside a square of W * scale, so a single scale makes a round venue
-    // badge as tall as that square while a wide wordmark comes out a fraction
-    // of it -- the badge towers over the row. Solving for a common rendered
-    // height fixes that and immediately breaks the spacing, because equal
-    // heights mean wildly unequal widths and a fixed step per slot had Granite
-    // sitting on top of Seconds Flat. So the row is measured: every logo's
-    // drawn width is worked out, they are laid end to end with a fixed gap,
-    // and the whole strip is centred. If it comes out wider than the poster
-    // the height is reduced until it fits, which keeps the marks matched
-    // rather than shrinking one of them on its own.
-    var W = cv.width, H = cv.height;
-    var gap = Math.round(W * 0.045);
-    var targetH = H * 0.040;
-    var widths, total;
-    for (var guard = 0; guard < 40; guard++) {
-      // A round badge set to a wordmark's cap height reads as smaller than it
-      // is: the wordmark is a band of solid letterforms the whole way across,
-      // the badge is mostly the space inside a circle. Anything close to
-      // square gets a boost, which is what anyone laying this out by hand
-      // would do by eye.
-      widths = L.map(function (l) {
-        var ar = l.img.width / l.img.height;
-        l.boost = ar < 1.5 ? 1.45 : 1;
-        return targetH * l.boost * ar;
-      });
-      total = widths.reduce(function (a, b) { return a + b; }, 0) + gap * (n - 1);
-      if (total <= W * 0.88) break;
-      targetH *= 0.94;
-    }
-    var x = -total / 2;
-    L.forEach(function (l, i) {
-      var long = Math.max(l.img.width, l.img.height);
-      l.scale = Math.min(0.30, targetH * (l.boost || 1) * long / (l.img.height * W));
-      l.pos = 'bc';
-      l.norow = true;
-      l.dy = 0;
-      l.dx = Math.round(x + widths[i] / 2);
-      x += widths[i] + gap;
-    });
+    // A gig poster sells the bands by their own lettering, at the size the
+    // name would have been set. So the marks are not placed here at all --
+    // they are flagged, the draw loop skips them, and the bill draws each one
+    // in place of the band's name, matched to a common cap height with the
+    // names of any bands that have no mark.
+    state.logos.forEach(function (l) { l.bill = !l.venue; });
     renderLogos(); syncControls(); draw();
   }
 
@@ -1504,6 +1622,8 @@
   ['headliner', 'support', 'kicker', 'date', 'time', 'venue', 'city', 'price', 'foot']
     .forEach(function (id) { $(id).addEventListener('input', draw); });
   $('posterize').addEventListener('change', draw);
+  $('frameOn').addEventListener('change', draw);
+  $('distress').addEventListener('change', draw);
 
   // sensible defaults so the canvas is never blank on arrival
   $('kicker').value = 'Punk BC presents';
