@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Failure",
-      "date": "2026-10-02",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$35",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Alt Rock",
-      "notes": "With Quannnic. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Failure_band_2014.jpg?width=600"
-    },
-    {
       "band": "BRASS / WAIT//LESS / sundress",
       "date": "2026-10-03",
       "time": "",
