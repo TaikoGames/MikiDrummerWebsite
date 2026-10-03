@@ -408,6 +408,20 @@
       "first_seen": "2026-09-13"
     },
     {
+      "band": "Dropkick Murphys",
+      "date": "2027-02-12",
+      "time": "",
+      "venue": "PNE Forum",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/dropkick-murphys-at-pne-forum/1067398236158457/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-03"
+    },
+    {
       "band": "The Bouncing Souls, Suicide Machines, The Aggrolites, Dead Bars",
       "date": "2027-02-21",
       "time": "",
@@ -424,7 +438,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1113
+    "vancouver-punk-calendar": 1114
   },
-  "updated": "2026-10-02"
+  "updated": "2026-10-03"
 }
