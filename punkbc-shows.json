@@ -2,31 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "BRASS / WAIT//LESS / sundress",
-      "date": "2026-10-03",
-      "time": "",
-      "venue": "Green Auto",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://gigpit.ca/shows/event:NEiBuFN9Qg8",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/images/shows/brass-2026-10-03.jpg",
-      "image_source": "https://api.gigpit.ca/services/images/ZTK3GoPCR0U?height=1200"
-    },
-    {
-      "band": "The Fomites / Kids on Fire / Terminal City Rats / SLOFX",
-      "date": "2026-10-03",
-      "time": "",
-      "venue": "Red Gate Arts Society",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/the-fomites-album-release-part/1780733306596620/",
-      "genre": "",
-      "notes": "Smoke a Joint About It release party",
-      "image": "https://cdn-az.allevents.in/events8/banners/c2b9218e24874f1e20c9b455b3c276c6af5e320834f8723619dc831ba50583ce-rimg-w1200-h1500-dc080808-gmir?v=1789187351"
-    },
-    {
       "band": "Aemia",
       "date": "2026-10-04",
       "time": "19:00",
