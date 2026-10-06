@@ -56,10 +56,17 @@
   figure{margin:18px auto 0;max-width:600px}
   figure img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:var(--panel2)}
   figcaption{color:var(--dim);font-size:13px;margin-top:8px}
-  .finishes{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding:0;list-style:none}
-  .finishes li{margin:0;background:var(--panel2);border:1px solid var(--line);border-radius:999px;
-               padding:6px 13px;font-size:13.5px;color:var(--mid);display:flex;align-items:center;gap:8px}
-  .finishes i{width:11px;height:11px;border-radius:50%;flex:none;border:1px solid rgba(255,255,255,.32)}
+  /* Real crops out of the shelf photo rather than flat colour swatches. A wrap
+     colour printed as a hex value tells you nothing; the grain and the sparkle
+     are the whole point of looking. */
+  /* 150px lands on four across in this column and two on a phone, so the seven
+     tiles break 4+3 rather than stranding two on their own row. */
+  .finishes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+            gap:10px;margin-top:16px;padding:0;list-style:none}
+  .finishes li{margin:0;background:var(--panel2);border:1px solid var(--line);
+               border-radius:10px;overflow:hidden}
+  .finishes img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover}
+  .finishes span{display:block;padding:8px 10px 9px;font-size:12.5px;line-height:1.35;color:var(--mid)}
   .faq{border-top:1px solid var(--line);margin-top:10px;padding-top:14px}
   .faq h3{margin-top:0}
   footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);
@@ -112,7 +119,7 @@
         {"@type":"Question","name":"What is in the kit?",
          "acceptedAnswer":{"@type":"Answer","text":"A PDP Pacific kit — 22 inch kick, 14x5.5 snare, 10, 12 and 16 inch toms — with Soultone Abbey cymbals: 14 inch hats, 16 inch crash, 18 inch china, 20 inch ride and a 10 inch splash. Hardware, stands and a kick pedal come with it. You bring sticks. The snare can be swapped for any of the ones on the snare shelf at no extra cost."}},
         {"@type":"Question","name":"Can I choose the snare?",
-         "acceptedAnswer":{"@type":"Answer","text":"Yes. There is a shelf of snares in the room — steel and wood, deep and shallow, in finishes from polished steel and silver sparkle to satin black, natural maple, red glitter and figured ebony. Describe the sound you need rather than the drum and I will bring two or three to the date so you can pick at soundcheck. Swapping the kit snare costs nothing."}},
+         "acceptedAnswer":{"@type":"Answer","text":"Yes. There is a shelf of snares in the room — steel and wood, deep and shallow, in finishes from polished steel and silver sparkle to satin black, wine-red glitter, dark figured wood and striped hardwood. There are photographs of each on the page. Describe the sound you need rather than the drum and I will bring two or three to the date so you can pick at soundcheck. Swapping the kit snare costs nothing."}},
         {"@type":"Question","name":"Can I rent a snare on its own?",
          "acceptedAnswer":{"@type":"Answer","text":"Yes. It is a common booking for drummers flying into Vancouver with sticks and a pedal who need exactly one drum at the other end, and for sessions that want a second snare to try against the one already in the room."}},
         {"@type":"Question","name":"Can I rent part of a kit?",
@@ -179,20 +186,28 @@
 
   <figure>
     <img src="/images/snare-rental-vancouver.jpg" width="1240" height="1436" loading="lazy"
-         alt="Two shelves of snare drums in a sound-treated room: steel, maple, satin black,
-              red glitter and figured ebony shells in deep and shallow sizes, with kick drums
-              and cases on the shelves below.">
+         alt="Two shelves of snare drums in a sound-treated room: polished steel, silver sparkle,
+              satin black, wine-red glitter and figured hardwood shells in deep and shallow
+              sizes, with kick drums and cases on the shelves below.">
     <figcaption>The shelf, in the room the rentals go out of — there is a
       <a href="/room-walk.html">walk-through of it</a> if you want to see the rest.</figcaption>
   </figure>
 
   <ul class="finishes">
-    <li><i style="background:#c9cdd2"></i>Polished steel</li>
-    <li><i style="background:#b6b9bd"></i>Silver sparkle</li>
-    <li><i style="background:#2b2a2c"></i>Satin black</li>
-    <li><i style="background:#d8b685"></i>Natural maple</li>
-    <li><i style="background:#8d2026"></i>Red glitter</li>
-    <li><i style="background:#5c3b23"></i>Figured ebony</li>
+    <li><img src="/images/snares/snare-polished-steel.jpg" width="440" height="440" loading="lazy"
+             alt="Close-up of a polished steel snare shell with chrome tube lugs."><span>Polished steel</span></li>
+    <li><img src="/images/snares/snare-silver-sparkle.jpg" width="440" height="440" loading="lazy"
+             alt="Close-up of a silver sparkle wrapped snare shell with a round badge."><span>Silver sparkle</span></li>
+    <li><img src="/images/snares/snare-satin-black.jpg" width="440" height="440" loading="lazy"
+             alt="Close-up of a satin black snare shell with chrome hardware."><span>Satin black</span></li>
+    <li><img src="/images/snares/snare-red-glitter.jpg" width="440" height="440" loading="lazy"
+             alt="Close-up of a deep wine-red glitter snare shell."><span>Wine-red glitter</span></li>
+    <li><img src="/images/snares/snare-figured-wood.jpg" width="440" height="440" loading="lazy"
+             alt="Close-up of a dark figured wood snare shell with a round metal badge."><span>Dark figured wood</span></li>
+    <li><img src="/images/snares/snare-striped-hardwood.jpg" width="440" height="440" loading="lazy"
+             alt="Close-up of a striped hardwood snare shell with a chrome throw-off."><span>Striped hardwood</span></li>
+    <li><img src="/images/snares/snare-charcoal-satin.jpg" width="440" height="440" loading="lazy"
+             alt="Close-up of a charcoal satin snare shell with chrome lugs and a vent badge."><span>Charcoal satin</span></li>
   </ul>
 
   <p>Tell me the sound rather than the drum. <em>Loud and cracky for a punk set</em>,
