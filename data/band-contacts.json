@@ -768,6 +768,22 @@
       "by": "auto"
     },
     {
+      "band": "Crown of Ashes",
+      "checked": "2026-10-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://crownofashes.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Curb Zombie",
       "checked": "2026-09-13",
       "email": "",
@@ -1546,6 +1562,22 @@
       "by": "auto"
     },
     {
+      "band": "Granite",
+      "checked": "2026-10-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://granite.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "GRRRizzly",
       "checked": "2026-09-26",
       "email": "",
@@ -2079,6 +2111,22 @@
       "by": "auto"
     },
     {
+      "band": "Lift The Anchor",
+      "checked": "2026-10-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://lifttheanchor.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Liminal Shroud",
       "checked": "2026-09-18",
       "email": "",
@@ -2555,6 +2603,32 @@
       "by": "auto"
     },
     {
+      "band": "Pen Pal Aloha",
+      "checked": "2026-10-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "penpalaloha",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://penpalaloha.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://instagram.com/penpalaloha",
+          "found": "profile"
+        },
+        {
+          "name": "Linktree",
+          "url": "https://linktr.ee/penpalaloha",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Perdurabo",
       "checked": "2026-09-28",
       "email": "",
@@ -3003,6 +3077,27 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Seconds Flat",
+      "checked": "2026-10-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "secondsflathxc",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://secondsflat.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/secondsflathxc/",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Shady Nasty",
