@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site tree — mikidrummer.ca</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="A branch graph of every page on mikidrummer.ca, rebuilt from the site itself.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#f2f1ef; --surface:#fff; --line:#dcd6cf; --line2:#eae5df;
+    --fg:#2e2b28; --mid:#5c544e; --dim:#8b8178; --ink:#3a3a3a;
+    --blue:#aee0f8; --green:#6fcf97; --purple:#a98be0; --amber:#f2c261;
+    --good:#2f6f4f; --warn:#9a5b10; --bad:#a32d20;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+    --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+    --disp:'Nunito',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){ :root{
+    --bg:#17150f; --surface:#201d1a; --line:#36302a; --line2:#282420;
+    --fg:#f1ece5; --mid:#bcb2aa; --dim:#8b8178; --ink:#0f0e0d;
+    --blue:#8ec9e6; --green:#5fb886; --purple:#9a7bd0; --amber:#dcae50;
+    --good:#64c295; --warn:#e0a24a; --bad:#e8705f; color-scheme:dark; } }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.6;margin:0}
+  .wrap{max-width:900px;margin:0 auto;padding-block:40px 64px;padding-left:20px;padding-right:20px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid)}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(32px,7vw,50px);line-height:1.04;
+     margin:10px 0 0;letter-spacing:-.015em;text-wrap:balance}
+  .sub{color:var(--mid);font-size:16px;margin:12px 0 0;max-width:62ch}
+  h2{font-family:var(--disp);font-weight:700;font-size:23px;margin:48px 0 4px;
+     padding-bottom:8px;border-bottom:2px solid var(--fg);letter-spacing:-.01em}
+  h3{font-size:15px;margin:0 0 6px}
+  p{color:var(--mid);font-size:15px;margin:10px 0 0;max-width:68ch}
+  code{font-family:var(--mono);font-size:.9em;background:var(--line2);padding:1px 5px;border-radius:3px;color:var(--fg)}
+  a{color:var(--good)}
+  .nums{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);
+        border:1px solid var(--line);border-radius:5px;overflow:hidden;margin-top:26px}
+  @media(min-width:620px){.nums{grid-template-columns:repeat(4,1fr)}}
+  .nums div{background:var(--surface);padding:14px 16px}
+  .nums b{display:block;font-family:var(--disp);font-size:31px;font-weight:700;
+          font-variant-numeric:tabular-nums;line-height:1.1}
+  .nums span{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim)}
+  .graph{overflow-x:auto;margin-top:22px;padding-bottom:8px;background:var(--surface);
+         border:1px solid var(--line);border-radius:6px}
+  .graph svg{display:block;min-width:900px;width:100%;height:auto}
+  .hint{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:8px}
+  .find{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin-top:24px}
+  .find.ok{border-left-color:var(--good)} .find.warn{border-left-color:var(--warn)}
+  .find.bad{border-left-color:var(--bad)}
+  .find h3{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+       padding:2px 7px;border-radius:3px;background:var(--line2);color:var(--dim)}
+  .tag.ok{color:var(--good)} .tag.warn{color:var(--warn)} .tag.bad{color:var(--bad)}
+  .scroll{overflow-x:auto}
+  table.data{border-collapse:collapse;width:100%;margin-top:14px;font-size:13.5px;min-width:420px}
+  table.data th,table.data td{text-align:left;padding:7px 10px 7px 0;border-bottom:1px solid var(--line2);vertical-align:baseline}
+  table.data th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  table.data td.num{font-variant-numeric:tabular-nums;text-align:right;padding-right:16px;white-space:nowrap}
+  footer{margin-top:54px;padding-top:18px;border-top:1px solid var(--line);
+         color:var(--dim);font-size:12.5px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="eyebrow">mikidrummer.ca &middot; rebuilt 6 October 2026</span>
+  <h1>Site tree</h1>
+  <p class="sub">191 pages drawn the way a branch graph is drawn: the public site runs
+     along the trunk, and each section hangs off it with its page count in the node. Rebuilt
+     from the site itself every time anything is pushed, so the numbers are never a guess.</p>
+
+  <div class="nums">
+    <div><b>191</b><span>pages</span></div>
+    <div><b>155</b><span>in sitemap</span></div>
+    <div><b>0</b><span>dead links</span></div>
+    <div><b>39,522</b><span>words</span></div>
+  </div>
+
+  <div class="graph">
+  <svg viewBox="0 0 1180 840" role="img" aria-label="Branch diagram of the site: a trunk of front-door pages with Drum Along and the toolbox branching above it and Punk BC branching below.">
+    <defs>
+      <marker id="ar" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M1,1 L11,6 L1,11 Z" fill="var(--ink)"/></marker>
+      <style>
+        .ln{fill:none;stroke:var(--ink);stroke-width:5}
+        .nd{stroke:var(--ink);stroke-width:5}
+        .bx{stroke:var(--ink);stroke-width:4}
+        .cnt{font-family:'Nunito',sans-serif;font-size:21px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+        .cap{font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;fill:var(--fg);text-anchor:middle}
+        .lbl{font-family:'Nunito',sans-serif;font-size:21px;font-weight:700;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+        .sml{font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;fill:var(--mid);text-anchor:middle}
+      </style>
+    </defs>
+    <path class="ln" d="M80,430 H1095"/>
+    <path class="ln" d="M150,430 C250,430 230,235 330,235 H470"/>
+    <path class="ln" d="M620,430 C720,430 700,235 800,235 H950"/>
+    <path class="ln" d="M390,430 C490,430 470,625 570,625 H870"/>
+
+    <circle class="nd" cx="80" cy="430" r="30" fill="var(--blue)"/>
+    <circle class="nd" cx="880" cy="430" r="30" fill="var(--blue)"/>
+    <circle class="nd" cx="1095" cy="430" r="30" fill="var(--blue)"/>
+    <text class="cnt" x="80" y="430">8</text>
+    <text class="cnt" x="880" y="430">16</text>
+    <text class="cnt" x="1095" y="430">7</text>
+    <text class="cap" x="80" y="494">front door</text><text class="sml" x="80" y="513">index &middot; services &middot; rental</text>
+    <text class="cap" x="880" y="494">admin</text><text class="sml" x="880" y="513">chat &middot; queue &middot; reports</text>
+    <text class="cap" x="1095" y="494">stubs</text><text class="sml" x="1095" y="513">404 &middot; redirects</text>
+
+    <circle class="nd" cx="330" cy="235" r="30" fill="var(--purple)"/>
+    <circle class="nd" cx="470" cy="235" r="30" fill="var(--purple)"/>
+    <text class="cnt" x="330" y="235">1</text><text class="cnt" x="470" y="235">12</text>
+    <text class="sml" x="330" y="299">the game</text><text class="sml" x="470" y="299">song pages</text>
+
+    <circle class="nd" cx="800" cy="235" r="30" fill="var(--amber)"/>
+    <circle class="nd" cx="950" cy="235" r="30" fill="var(--amber)"/>
+    <text class="cnt" x="800" y="235">16</text><text class="cnt" x="950" y="235">4</text>
+    <text class="sml" x="800" y="299">tools</text><text class="sml" x="950" y="299">kits &middot; blog</text>
+
+    <circle class="nd" cx="570" cy="625" r="30" fill="var(--green)"/>
+    <circle class="nd" cx="720" cy="625" r="38" fill="var(--green)"/>
+    <circle class="nd" cx="870" cy="625" r="30" fill="var(--green)"/>
+    <text class="cnt" x="570" y="625">9</text><text class="cnt" x="720" y="625">111</text><text class="cnt" x="870" y="625">8</text>
+    <text class="sml" x="570" y="689">board &middot; venues</text>
+    <text class="sml" x="720" y="697">band pages</text>
+    <text class="sml" x="870" y="689">digest</text>
+
+    <rect class="bx" x="200" y="60" width="260" height="66" rx="3" fill="var(--purple)"/>
+    <text class="lbl" x="330" y="94">Drum Along</text>
+    <path class="ln" d="M330,135 V185" marker-end="url(#ar)"/>
+    <rect class="bx" x="700" y="60" width="200" height="66" rx="3" fill="var(--amber)"/>
+    <text class="lbl" x="800" y="94">Toolbox</text>
+    <path class="ln" d="M800,135 V185" marker-end="url(#ar)"/>
+    <rect class="bx" x="600" y="750" width="240" height="66" rx="3" fill="var(--green)"/>
+    <text class="lbl" x="720" y="784">Punk BC</text>
+    <path class="ln" d="M720,742 V694" marker-end="url(#ar)"/>
+    <rect class="bx" x="20" y="300" width="190" height="60" rx="3" fill="var(--blue)"/>
+    <text class="lbl" x="115" y="330">The site</text>
+    <path class="ln" d="M115,369 V400" marker-end="url(#ar)"/>
+  </svg>
+  </div>
+  <p class="hint">Numbers inside the nodes are page counts. Scroll sideways on a phone.</p>
+
+  <h2>Weight per branch</h2>
+  <p>Average words of visible text per page &mdash; the clearest read on where the site is
+     substantial and where it is thin.</p>
+  <div class="scroll"><table class="data">
+    <tr><th>Branch</th><th style="text-align:right">Pages</th><th style="text-align:right">Avg words</th></tr>
+    <tr><td>Game</td><td class="num">1</td><td class="num">921</td></tr>
+    <tr><td>Digest</td><td class="num">8</td><td class="num">904</td></tr>
+    <tr><td>Blog</td><td class="num">2</td><td class="num">540</td></tr>
+    <tr><td>Press kits</td><td class="num">2</td><td class="num">441</td></tr>
+    <tr><td>Front door</td><td class="num">8</td><td class="num">411</td></tr>
+    <tr><td>Tools</td><td class="num">16</td><td class="num">302</td></tr>
+    <tr><td>Admin</td><td class="num">16</td><td class="num">284</td></tr>
+    <tr><td>Song pages</td><td class="num">12</td><td class="num">243</td></tr>
+    <tr><td>Venue &amp; city</td><td class="num">8</td><td class="num">194</td></tr>
+    <tr><td>Band pages</td><td class="num">111</td><td class="num">107</td></tr>
+    <tr><td>Redirect stubs</td><td class="num">7</td><td class="num">36</td></tr>
+  </table></div>
+
+  <h2>What the walk found</h2>
+  <div class="find bad">
+    <h3>Band pages are near-duplicates <span class="tag bad">worth fixing</span></h3>
+    <p>The 111 band pages are 0.69 similar to each other by word set. 14 groups of them are byte-identical apart from the band name and image path. 110 of them are in the sitemap.</p>
+    <p>That is the shape Google calls doorway pages. The fix is not deletion: give each page something only that band has, or fold the single-show ones back into the board and keep standalone pages for bands with enough to say.</p>
+  </div>
+  <div class="find warn">
+    <h3>The board does not link its own band pages <span class="tag warn">check</span></h3>
+    <p>None of the 111 are linked from <code>punkbc.html</code>. They are in the sitemap and reached from elsewhere.</p>
+    <p>A page Google is told about but given no internal links is a page it is given no reason to value. Linking each band name on the board is a small change with a direct effect.</p>
+  </div>
+  <div class="find ok">
+    <h3>No dead internal links <span class="tag ok">clean</span></h3>
+    <p>Every <code>href</code> across all 191 pages resolves to a file that exists, relative and absolute, across directories.</p>
+  </div>
+  <div class="find warn">
+    <h3>13 pages are unreachable by link <span class="tag warn">mostly fine</span></h3>
+    <p>Nothing links to: <code>404.html</code>, <code>digest/2026-08.email.html</code>, <code>digest/2026-09.email.html</code>, <code>digest/2026-10.email.html</code>, <code>digest/send.html</code>, <code>files/about.html</code>, <code>files/index.html</code>, <code>files/services.html</code>, <code>files/video.html</code>&hellip;</p>
+    <p>Email bodies, admin tools, the 404 page and redirect stubs belong here. Anything else on the list is worth a look.</p>
+  </div>
+
+  <footer>Walked 191 files &middot; 39,522 words of visible text &middot;
+     21 workflows &middot; rebuilt by tools/build_site_tree.py</footer>
+</div>
+</body>
+</html>

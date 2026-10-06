@@ -1,0 +1,58 @@
+name: Site tree
+
+# Redraw /site-tree.html from the site.
+#
+# It runs on every push because the thing it measures changes on every push,
+# and a diagram with stale counts on it is worse than no diagram: it is read as
+# current. Several of this repo's workflows ADD pages on their own schedule --
+# the shows refresh writes band pages, the beatmap build writes song pages --
+# so a count typed in by hand is wrong within days and nobody notices.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  # Pushes land in bursts, and two runs committing the same generated file
+  # would collide. Only the newest matters, so cancel the one in flight.
+  group: site-tree
+  cancel-in-progress: true
+
+jobs:
+  draw:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Draw it
+        run: python3 tools/build_site_tree.py
+
+      - name: Commit if it changed
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site-tree.html
+          if git diff --cached --quiet; then
+            echo "nothing moved"
+            exit 0
+          fi
+          # The message carries the headline numbers, so `git log` on its own
+          # reads as a history of the site's shape.
+          SUMMARY=$(python3 - <<'PY'
+          import re
+          s = open('site-tree.html', encoding='utf-8').read()
+          n = re.findall(r'<b>([\d,]+)</b><span>(pages|dead links)</span>', s)
+          print(", ".join("%s %s" % (v, k) for v, k in n) or "redrawn")
+          PY
+          )
+          git commit -m "Site tree: $SUMMARY"
+          # This workflow runs on push, so another push may have landed while it
+          # was drawing. Rebase and retry rather than fail the run.
+          for i in 1 2 3 4; do
+            git push && break || { git pull --rebase; sleep $((2**i)); }
+          done
