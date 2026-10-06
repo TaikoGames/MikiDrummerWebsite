@@ -6,14 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Drum Rental Vancouver | Backline Kit Hire — Miki Drummer</title>
-<meta name="description" content="Drum rental in Vancouver and the Lower Mainland. A gig-ready PDP kit with Soultone cymbals, hardware and pedal, delivered, set up and tuned if you want it. Touring bands, fly-in dates, studio sessions.">
+<meta name="description" content="Drum rental in Vancouver and the Lower Mainland. A gig-ready PDP kit with Soultone cymbals, hardware and pedal, plus a shelf of snares to pick from. Delivered, set up and tuned if you want it. Touring bands, fly-in dates, studio sessions.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://www.mikidrummer.ca/drum-rental-vancouver.html">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.mikidrummer.ca/drum-rental-vancouver.html">
 <meta property="og:title" content="Drum Rental Vancouver — backline kit hire">
-<meta property="og:description" content="A gig-ready PDP kit with Soultone cymbals, hardware and pedal. Delivered, set up and tuned if you want it. Vancouver and the Lower Mainland.">
+<meta property="og:description" content="A gig-ready PDP kit with Soultone cymbals, hardware and pedal, and a shelf of snares to pick from. Delivered, set up and tuned if you want it. Vancouver and the Lower Mainland.">
 <meta property="og:image" content="https://www.mikidrummer.ca/images/miki-drummer-drum-kit.png">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -51,6 +51,15 @@
   ul{margin:12px 0 0 20px;color:var(--mid);font-size:15.5px}
   li{margin-bottom:7px}
   .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-top:18px}
+  /* The photo is portrait, so left at full column width it towers over the text it
+     belongs to. Capped at a width that still shows the badges. */
+  figure{margin:18px auto 0;max-width:600px}
+  figure img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:var(--panel2)}
+  figcaption{color:var(--dim);font-size:13px;margin-top:8px}
+  .finishes{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding:0;list-style:none}
+  .finishes li{margin:0;background:var(--panel2);border:1px solid var(--line);border-radius:999px;
+               padding:6px 13px;font-size:13.5px;color:var(--mid);display:flex;align-items:center;gap:8px}
+  .finishes i{width:11px;height:11px;border-radius:50%;flex:none;border:1px solid rgba(255,255,255,.32)}
   .faq{border-top:1px solid var(--line);margin-top:10px;padding-top:14px}
   .faq h3{margin-top:0}
   footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);
@@ -65,9 +74,13 @@
       "@type": "Service",
       "@id": "https://www.mikidrummer.ca/drum-rental-vancouver.html#service",
       "name": "Drum rental in Vancouver",
-      "alternateName": ["Drum kit hire Vancouver", "Backline drum rental Vancouver"],
+      "alternateName": ["Drum kit hire Vancouver", "Backline drum rental Vancouver", "Snare drum rental Vancouver"],
       "serviceType": "Drum rental",
-      "description": "Gig-ready drum kit rental for touring bands, fly-in dates, studio sessions and festivals, across Vancouver and the Lower Mainland. Delivery, setup and tuning available.",
+      "description": "Gig-ready drum kit rental for touring bands, fly-in dates, studio sessions and festivals, across Vancouver and the Lower Mainland. A shelf of snares in steel and wood to choose from, and delivery, setup and tuning available.",
+      "image": [
+        "https://www.mikidrummer.ca/images/miki-drummer-drum-kit.png",
+        "https://www.mikidrummer.ca/images/snare-rental-vancouver.jpg"
+      ],
       "provider": {
         "@type": "ProfessionalService",
         "name": "Miki Drummer",
@@ -97,9 +110,13 @@
         {"@type":"Question","name":"Do you deliver the kit?",
          "acceptedAnswer":{"@type":"Answer","text":"Yes, across Vancouver and the Lower Mainland. Delivery can include setting the kit up at the venue and tuning it before doors, which is the part most rentals leave to you."}},
         {"@type":"Question","name":"What is in the kit?",
-         "acceptedAnswer":{"@type":"Answer","text":"A PDP Pacific kit — 22 inch kick, 14x5.5 snare, 10, 12 and 16 inch toms — with Soultone Abbey cymbals: 14 inch hats, 16 inch crash, 18 inch china, 20 inch ride and a 10 inch splash. Hardware, stands and a kick pedal come with it. You bring sticks and your own snare if you have a favourite."}},
+         "acceptedAnswer":{"@type":"Answer","text":"A PDP Pacific kit — 22 inch kick, 14x5.5 snare, 10, 12 and 16 inch toms — with Soultone Abbey cymbals: 14 inch hats, 16 inch crash, 18 inch china, 20 inch ride and a 10 inch splash. Hardware, stands and a kick pedal come with it. You bring sticks. The snare can be swapped for any of the ones on the snare shelf at no extra cost."}},
+        {"@type":"Question","name":"Can I choose the snare?",
+         "acceptedAnswer":{"@type":"Answer","text":"Yes. There is a shelf of snares in the room — steel and wood, deep and shallow, in finishes from polished steel and silver sparkle to satin black, natural maple, red glitter and figured ebony. Describe the sound you need rather than the drum and I will bring two or three to the date so you can pick at soundcheck. Swapping the kit snare costs nothing."}},
+        {"@type":"Question","name":"Can I rent a snare on its own?",
+         "acceptedAnswer":{"@type":"Answer","text":"Yes. It is a common booking for drummers flying into Vancouver with sticks and a pedal who need exactly one drum at the other end, and for sessions that want a second snare to try against the one already in the room."}},
         {"@type":"Question","name":"Can I rent part of a kit?",
-         "acceptedAnswer":{"@type":"Answer","text":"Yes. Plenty of bookings are cymbals only, or a kick and snare to fill a gap in a backline that is already at the venue. Tell me what is missing rather than what you want."}},
+         "acceptedAnswer":{"@type":"Answer","text":"Yes. Plenty of bookings are cymbals only, a snare on its own, or a kick and snare to fill a gap in a backline that is already at the venue. Tell me what is missing rather than what you want."}},
         {"@type":"Question","name":"How much does drum rental cost in Vancouver?",
          "acceptedAnswer":{"@type":"Answer","text":"It depends on the date, how long you need it and whether you want it delivered, set up and tuned. There is no price list because a one-night fly-in date and a week in a studio are not the same job. Ask with your dates and you get a straight number."}},
         {"@type":"Question","name":"Do you rent for recording sessions?",
@@ -138,7 +155,7 @@
 
   <div class="kit">
     <div><b>Kick</b>PDP Pacific · 22"</div>
-    <div><b>Snare</b>PDP Pacific · 14"×5.5"</div>
+    <div><b>Snare</b>PDP Pacific · 14"×5.5", or <a href="#snares">pick one off the shelf</a></div>
     <div><b>Rack toms</b>PDP Pacific · 10" and 12"</div>
     <div><b>Floor tom</b>PDP Pacific · 16"</div>
     <div><b>Hi-hats</b>Soultone Abbey · 14"</div>
@@ -146,12 +163,47 @@
     <div><b>Ride</b>Soultone Abbey · 20"</div>
     <div><b>China &amp; splash</b>Soultone Abbey · 18" and 10"</div>
     <div><b>Hardware</b>Stands, throne, kick pedal</div>
-    <div><b>You bring</b>Sticks, and your own snare if you have one</div>
+    <div><b>You bring</b>Sticks, and your own snare if you have a favourite</div>
   </div>
 
   <p>You can take part of it. A lot of bookings are cymbals only, or a kick and snare to
      fill the gap in a backline that is already at the venue — tell me what is missing
      rather than what you want.</p>
+
+  <h2 id="snares">The snare shelf</h2>
+  <p>The kit comes with a snare, but it is not the only one in the room. There is a shelf
+     of them — steel and wood, deep and shallow — and they do not sound remotely alike.
+     A snare is the one drum the whole room hears on every second beat, so it is the
+     piece most worth getting right, and the cheapest thing to change if the first one
+     is wrong.</p>
+
+  <figure>
+    <img src="/images/snare-rental-vancouver.jpg" width="1240" height="1436" loading="lazy"
+         alt="Two shelves of snare drums in a sound-treated room: steel, maple, satin black,
+              red glitter and figured ebony shells in deep and shallow sizes, with kick drums
+              and cases on the shelves below.">
+    <figcaption>The shelf, in the room the rentals go out of — there is a
+      <a href="/room-walk.html">walk-through of it</a> if you want to see the rest.</figcaption>
+  </figure>
+
+  <ul class="finishes">
+    <li><i style="background:#c9cdd2"></i>Polished steel</li>
+    <li><i style="background:#b6b9bd"></i>Silver sparkle</li>
+    <li><i style="background:#2b2a2c"></i>Satin black</li>
+    <li><i style="background:#d8b685"></i>Natural maple</li>
+    <li><i style="background:#8d2026"></i>Red glitter</li>
+    <li><i style="background:#5c3b23"></i>Figured ebony</li>
+  </ul>
+
+  <p>Tell me the sound rather than the drum. <em>Loud and cracky for a punk set</em>,
+     <em>dry and low for a session</em>, <em>it has to cut through two guitars and a
+     half-stack</em> — that is enough to go on. I will bring two or three to the date and
+     you pick at soundcheck, which costs nothing and settles an argument that otherwise
+     runs all night.</p>
+
+  <p>Swapping the kit snare for one off the shelf does not change the price of the rental.
+     A snare on its own is also a booking — plenty of drummers fly in with sticks and a
+     pedal and need exactly one drum at the other end.</p>
 
   <h2>Who rents it</h2>
   <ul>
@@ -191,6 +243,17 @@
     <h3>Can I see the kit first?</h3>
     <p>Yes — it is mapped out piece by piece on the <a href="/drum-map.html">drum map</a>,
        and there is a <a href="/room-walk.html">walk-through of the room</a> it lives in.</p>
+  </div>
+  <div class="faq">
+    <h3>Can I choose the snare?</h3>
+    <p>Yes, and it costs nothing to swap. Describe the sound you need and I will bring two
+       or three off <a href="#snares">the shelf</a> so you can pick at soundcheck.</p>
+  </div>
+  <div class="faq">
+    <h3>Can I rent a snare on its own?</h3>
+    <p>Yes. Drummers flying into Vancouver with sticks and a pedal need exactly one drum at
+       the other end, and sessions often want a second snare to try against the one already
+       in the room.</p>
   </div>
   <div class="faq">
     <h3>Do you rent to players you have not met?</h3>

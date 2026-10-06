@@ -638,9 +638,36 @@
         "can i rent"
       ],
       "q": "Can I rent a drum kit?",
-      "a": "Yes — a PDP kit with Soultone cymbals, hardware and pedal, around Vancouver and the Lower Mainland. It can be delivered, set up on the riser and tuned before doors, and you can take part of it rather than all of it.",
+      "a": "Yes — a PDP kit with Soultone cymbals, hardware and pedal, around Vancouver and the Lower Mainland. It can be delivered, set up on the riser and tuned before doors, and you can take part of it rather than all of it. There is also a shelf of snares to pick from at no extra cost.",
       "link": "/drum-rental-vancouver.html",
       "label": "Drum rental"
+    },
+    {
+      "id": "snares",
+      "k": [
+        "snare",
+        "snares",
+        "snare drum",
+        "rent a snare",
+        "snare rental",
+        "snare hire",
+        "which snare",
+        "pick a snare",
+        "choose the snare",
+        "swap the snare",
+        "snare collection",
+        "snare shelf",
+        "steel snare",
+        "maple snare",
+        "wood snare",
+        "piccolo",
+        "deep snare",
+        "what snares"
+      ],
+      "q": "Can I pick the snare?",
+      "a": "Yes. There is a shelf of them in the room — steel and wood, deep and shallow, from polished steel and silver sparkle to satin black, natural maple, red glitter and figured ebony. Describe the sound you want rather than the drum and two or three come to the date so you can pick at soundcheck. Swapping the kit snare costs nothing, and a snare on its own is a booking too.",
+      "link": "/drum-rental-vancouver.html#snares",
+      "label": "The snare shelf"
     }
   ]
 }
