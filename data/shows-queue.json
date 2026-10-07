@@ -434,11 +434,25 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "vancouver-punk-calendar",
       "first_seen": "2026-09-10"
+    },
+    {
+      "band": "Larry and His Flask",
+      "date": "2027-03-28",
+      "time": "",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-07"
     }
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1114
+    "vancouver-punk-calendar": 1115
   },
-  "updated": "2026-10-06"
+  "updated": "2026-10-07"
 }
