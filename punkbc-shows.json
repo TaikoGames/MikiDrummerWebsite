@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Nekrogoblikon",
-      "date": "2026-10-06",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$39.50",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Melodic Death Metal",
-      "notes": "With Rivers of Nihil, Cyborg Octopus. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/13-06-09_RaR_Nekrogoblikon_01.jpg?width=600"
-    },
-    {
       "band": "Dead Pioneers",
       "date": "2026-10-07",
       "time": "",
