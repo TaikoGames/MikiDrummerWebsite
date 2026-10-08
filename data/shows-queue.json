@@ -352,6 +352,20 @@
       "first_seen": "2026-09-21"
     },
     {
+      "band": "Lethbridge Invasion Night 1 Golers, Squidz, Brutalize, Built to Decay, Void of Mood",
+      "date": "2026-11-13",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion/1653147899703601/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-08"
+    },
+    {
       "band": "Lethbridge Invasion night 2 @ Bullys",
       "date": "2026-11-14",
       "time": "",
@@ -364,6 +378,20 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "vancouver-punk-calendar",
       "first_seen": "2026-09-21"
+    },
+    {
+      "band": "Lethbridge Invasion Night 2: Golers, Squidz, Brutalize, Built to Decay, Void of Mood @ Bullys",
+      "date": "2026-11-14",
+      "time": "",
+      "venue": "Bully's Studios",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion-night-2/2907068749648249/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-08"
     },
     {
       "band": "The Restarts, Alien Boys, Mean Bikini",
@@ -392,6 +420,20 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "vancouver-punk-calendar",
       "first_seen": "2026-09-10"
+    },
+    {
+      "band": "The Meteors",
+      "date": "2026-12-03",
+      "time": "",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-08"
     },
     {
       "band": "Protest The Hero",
@@ -452,7 +494,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1115
+    "vancouver-punk-calendar": 1116
   },
-  "updated": "2026-10-07"
+  "updated": "2026-10-08"
 }
