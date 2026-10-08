@@ -2,31 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Dead Pioneers",
-      "date": "2026-10-07",
-      "time": "",
-      "venue": "The WISE Hall",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/dead-pioneers/1638179281064348/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/images/shows/dead-pioneers-2026-10-07.jpg",
-      "image_source": "https://f4.bcbits.com/img/a2527826895_5.jpg"
-    },
-    {
-      "band": "HammerFall",
-      "date": "2026-10-07",
-      "time": "18:30",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$35",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Power Metal",
-      "notes": "With Evergrey, Elvenking. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Hammerfall_-_Wacken_Open_Air_2023_37_(cropped).jpg?width=600"
-    },
-    {
       "band": "Shiner",
       "date": "2026-10-08",
       "time": "19:00",
