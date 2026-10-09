@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Shiner",
-      "date": "2026-10-08",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.eventbrite.ca/e/shiner-and-fotocrime-tickets-1988356700416",
-      "genre": "Rock",
-      "notes": "With Fotocrime",
-      "image": "https://www.timmcmahan.com/graphics/shiner4.jpg"
-    },
-    {
       "band": "Longshot",
       "date": "2026-10-09",
       "time": "19:00",
