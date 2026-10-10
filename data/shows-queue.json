@@ -464,6 +464,20 @@
       "first_seen": "2026-09-13"
     },
     {
+      "band": "1876 with Terminal City Rats",
+      "date": "2026-12-04",
+      "time": "",
+      "venue": "Green Auto",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/1876-with-terminal-city-rats-d/974565791671228/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-10"
+    },
+    {
       "band": "Dropkick Murphys",
       "date": "2027-02-12",
       "time": "",
@@ -508,7 +522,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1117
+    "vancouver-punk-calendar": 1118
   },
-  "updated": "2026-10-09"
+  "updated": "2026-10-10"
 }
