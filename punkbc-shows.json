@@ -3,31 +3,6 @@
   "shows": [
     {
       "band": "Longshot",
-      "date": "2026-10-09",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.eventbrite.ca/e/longshot-30-year-anniversary-tickets-1994373470738",
-      "genre": "",
-      "notes": "30 year anniversary — night 1",
-      "image": "https://www.mikidrummer.ca/images/shows/longshot-2026-10-09.jpg",
-      "image_source": "https://www.eventbrite.ca/e/_next/image?url=https%3A%2F%2Fimg.evbuc.com%2Fhttps%253A%252F%252Fcdn.evbuc.com%252Fimages%252F1189091659%252F2995626124549%252F1%252Foriginal.20260717-191158%3Fcrop%3Dfocalpoint%26fit%3Dcrop%26w%3D940%26auto%3Dformat%252Ccompress%26q%3D75%26sharp%3D10%26fp-x%3D0.492%26fp-y%3D0.01%26s%3D4acbb407612d03997d21ba96a8632488&w=940&q=75"
-    },
-    {
-      "band": "Good Riddance",
-      "date": "2026-10-09",
-      "time": "20:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Melodic Hardcore",
-      "notes": "",
-      "image": "/images/shows/good-riddance-2026-10-09.jpg"
-    },
-    {
-      "band": "Longshot",
       "date": "2026-10-10",
       "time": "",
       "venue": "The Cobalt",
