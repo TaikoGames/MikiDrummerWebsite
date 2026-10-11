@@ -2,43 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Longshot",
-      "date": "2026-10-10",
-      "time": "",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.eventbrite.ca/e/longshot-30-year-anniversary-tickets-1994373470738",
-      "genre": "",
-      "notes": "30 year anniversary — night 2",
-      "image": "https://www.mikidrummer.ca/images/shows/longshot-2026-10-10.jpg",
-      "image_source": "https://www.eventbrite.ca/e/_next/image?url=https%3A%2F%2Fimg.evbuc.com%2Fhttps%253A%252F%252Fcdn.evbuc.com%252Fimages%252F1189091659%252F2995626124549%252F1%252Foriginal.20260717-191158%3Fcrop%3Dfocalpoint%26fit%3Dcrop%26w%3D940%26auto%3Dformat%252Ccompress%26q%3D75%26sharp%3D10%26fp-x%3D0.492%26fp-y%3D0.01%26s%3D4acbb407612d03997d21ba96a8632488&w=940&q=75"
-    },
-    {
-      "band": "Militarie Gun",
-      "date": "2026-10-10",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$20",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Punk",
-      "notes": "With Softcult, Shady Nasty, Dazy. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Militarie-Gun-Roll-4_031.jpg?width=500"
-    },
-    {
-      "band": "Corner Boys",
-      "date": "2026-10-10",
-      "time": "20:00",
-      "venue": "Cobalt",
-      "city": "Vancouver",
-      "price": "$10",
-      "ticket": "",
-      "genre": "Punk",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
       "band": "The Menzingers / Hot Water Music",
       "date": "2026-10-11",
       "time": "19:00",
