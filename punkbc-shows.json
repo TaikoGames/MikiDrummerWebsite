@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "The Menzingers / Hot Water Music",
-      "date": "2026-10-11",
-      "time": "19:00",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/the-menzingers-hot-water-music/876640818807374/",
-      "genre": "Punk",
-      "notes": "",
-      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/b8867cfe9516d94e98f4cf3fd56a82cc"
-    },
-    {
       "band": "The Corps / Danger Box / Miles to Nowhere / Dusty Pines",
       "date": "2026-10-17",
       "time": "",
