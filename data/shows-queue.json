@@ -338,6 +338,20 @@
       "first_seen": "2026-10-09"
     },
     {
+      "band": "Post-Halloween Party with Space Crash Echoes, Glitterbomb, Slowicide",
+      "date": "2026-11-01",
+      "time": "",
+      "venue": "Green Auto Music 1822 Pandora St",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.instagram.com/p/DeXV8PYzMo5/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-12"
+    },
+    {
       "band": "Russian Tim's Disorganized Orchestra \"Siberian Cabaret\" EP Release Show w/ Dirty Bellows and KitchenSpoon",
       "date": "2026-11-07",
       "time": "",
@@ -522,7 +536,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1118
+    "vancouver-punk-calendar": 1119
   },
-  "updated": "2026-10-11"
+  "updated": "2026-10-12"
 }
