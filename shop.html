@@ -12,8 +12,10 @@
     * prices            (search PLACEHOLDER-PRICE)
     * materials / specs (search PLACEHOLDER-SPEC)
     * lead time, shipping cost and pickup spot (search PLACEHOLDER-TERMS)
-    * product art is drawn, not photographed -- swap each <svg> for a photo
-      when there is one, and set the Product image in the JSON-LD too
+    * product art is drawn, not photographed. The three files in
+      /images/shop/ are renderings; replace each one in place with a real
+      photo at 900x630 and nothing in this file has to change except
+      deleting the three <span class="stand-in"> markers and their rule.
 
   Prices appear twice per product: once in the card and once in the JSON-LD
   at the top of the file. Change both or the rich result lies.
@@ -61,7 +63,13 @@
   .item{background:var(--panel);border:1px solid var(--line);border-radius:14px;
         overflow:hidden;display:flex;flex-direction:column;position:relative}
   .shot{background:var(--panel2);border-bottom:1px solid var(--line);
-        display:block;width:100%;height:auto;aspect-ratio:10/7}
+        display:block;width:100%;height:auto;aspect-ratio:10/7;object-fit:cover}
+  /* Says out loud that the picture is a drawing of the part, not the part.
+     Delete the three spans and this rule when real photos go in. */
+  .stand-in{position:absolute;top:12px;right:12px;z-index:2;border-radius:999px;
+            background:rgba(13,11,12,.72);border:1px solid rgba(255,255,255,.1);
+            color:var(--dim);font-size:9.5px;font-weight:700;letter-spacing:.14em;
+            text-transform:uppercase;padding:4px 9px}
   .body{padding:15px 17px 17px;display:flex;flex-direction:column;flex:1}
   .name{font-size:16.5px;font-weight:800;letter-spacing:-.01em;color:var(--ink)}
   .blurb{font-size:14.5px;color:var(--mid);margin-top:7px;flex:1}
@@ -123,6 +131,7 @@
       "brand": {"@type":"Brand","name":"Miki Drummer"},
       "material": "PETG",
       "url": "https://www.mikidrummer.ca/shop.html#drum-key",
+      "image": "https://www.mikidrummer.ca/images/shop/drum-key.jpg",
       "offers": {
         "@type":"Offer","price":"12.00","priceCurrency":"CAD",
         "availability":"https://schema.org/InStock",
@@ -138,6 +147,7 @@
       "material": "PETG",
       "isAccessoryOrSparePartFor": {"@type":"Product","name":"Behringer XR18"},
       "url": "https://www.mikidrummer.ca/shop.html#xr18-ears",
+      "image": "https://www.mikidrummer.ca/images/shop/xr18-ears.jpg",
       "offers": {
         "@type":"Offer","price":"38.00","priceCurrency":"CAD",
         "availability":"https://schema.org/InStock",
@@ -152,6 +162,7 @@
       "brand": {"@type":"Brand","name":"Miki Drummer"},
       "material": "PETG",
       "url": "https://www.mikidrummer.ca/shop.html#stick-holder",
+      "image": "https://www.mikidrummer.ca/images/shop/stick-holder.jpg",
       "offers": {
         "@type":"Offer","price":"28.00","priceCurrency":"CAD",
         "availability":"https://schema.org/OutOfStock",
@@ -187,16 +198,9 @@
 
     <!-- ============================ drum key ============================ -->
     <article class="item" id="drum-key">
-      <svg class="shot" viewBox="0 0 200 140" role="img" aria-label="Drawing of a T-handled drum key with a keyring hole in the handle and a square socket at the tip.">
-        <g fill="none" stroke="#e7b53c" stroke-width="3.2" stroke-linejoin="round">
-          <rect x="55" y="23" width="90" height="21" rx="10.5" fill="#241c1e"/>
-          <circle cx="70" cy="33.5" r="5.4" fill="#1c1719"/>
-          <path d="M93 44 v46" />
-          <path d="M107 44 v46" />
-          <rect x="79" y="90" width="42" height="30" rx="4" fill="#241c1e"/>
-          <rect x="91" y="99" width="18" height="13" rx="1.5" fill="#0d0b0c" stroke-width="2.6"/>
-        </g>
-      </svg>
+      <img class="shot" src="/images/shop/drum-key.jpg" width="900" height="630" loading="lazy"
+           alt="Rendering of a T-handled drum key in orange printed plastic, with a keyring hole through the handle and a square socket at the tip.">
+      <span class="stand-in">Rendering</span>
       <div class="body">
         <div class="name">The drum key</div>
         <p class="blurb">Lives on your keyring instead of at the bottom of the stick bag.
@@ -213,21 +217,9 @@
 
     <!-- ============================ xr18 ears ============================ -->
     <article class="item" id="xr18-ears">
-      <svg class="shot" viewBox="0 0 200 140" role="img" aria-label="Drawing of a small digital mixer with a rack-mount bracket bolted to each side, each bracket drilled with two holes.">
-        <g fill="none" stroke="#e7b53c" stroke-width="3.2" stroke-linejoin="round">
-          <rect x="68" y="42" width="64" height="56" rx="5" fill="#241c1e"/>
-          <circle cx="84" cy="58" r="4.2"/><circle cx="100" cy="58" r="4.2"/><circle cx="116" cy="58" r="4.2"/>
-          <rect x="80" y="74" width="40" height="14" rx="2" fill="#0d0b0c" stroke-width="2.6"/>
-          <rect x="52" y="58" width="16" height="24" fill="#241c1e"/>
-          <rect x="132" y="58" width="16" height="24" fill="#241c1e"/>
-          <rect x="38" y="28" width="15" height="84" rx="3" fill="#1c1719"/>
-          <rect x="147" y="28" width="15" height="84" rx="3" fill="#1c1719"/>
-          <circle cx="45.5" cy="44" r="4" fill="#0d0b0c" stroke-width="2.6"/>
-          <circle cx="45.5" cy="96" r="4" fill="#0d0b0c" stroke-width="2.6"/>
-          <circle cx="154.5" cy="44" r="4" fill="#0d0b0c" stroke-width="2.6"/>
-          <circle cx="154.5" cy="96" r="4" fill="#0d0b0c" stroke-width="2.6"/>
-        </g>
-      </svg>
+      <img class="shot" src="/images/shop/xr18-ears.jpg" width="900" height="630" loading="lazy"
+           alt="Rendering of a small dark digital mixer with an orange printed rack-mount bracket bolted to each side, each bracket drilled with two holes.">
+      <span class="stand-in">Rendering</span>
       <div class="body">
         <div class="name">Rack ears for the XR18</div>
         <p class="blurb">A pair of brackets that turn a Behringer XR18 into rack gear, so it
@@ -246,17 +238,9 @@
     <!-- ========================== stick holder =========================== -->
     <article class="item gone" id="stick-holder">
       <span class="flag">Sold out</span>
-      <svg class="shot" viewBox="0 0 200 140" role="img" aria-label="Drawing of a stick holder clamped to a vertical stand tube, with two drumsticks angled out of the open top.">
-        <g fill="none" stroke="#e7b53c" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">
-          <rect x="40" y="16" width="13" height="108" rx="2.5" fill="#241c1e"/>
-          <rect x="53" y="60" width="28" height="26" rx="4" fill="#1c1719"/>
-          <path d="M81 68 h8" stroke-width="2.6"/>
-          <path d="M95 25 L104 66" stroke-width="6.4"/>
-          <path d="M131 31 L116 68" stroke-width="6.4"/>
-          <path d="M82 58 v44 a6 6 0 0 0 6 6 h40 a6 6 0 0 0 6 -6 v-44" fill="#241c1e"/>
-          <ellipse cx="111" cy="58" rx="29" ry="8.5" fill="#0d0b0c"/>
-        </g>
-      </svg>
+      <img class="shot" src="/images/shop/stick-holder.jpg" width="900" height="630" loading="lazy"
+           alt="Rendering of an orange printed stick holder clamped to a vertical stand tube, with two drumsticks angled out of the open top.">
+      <span class="stand-in">Rendering</span>
       <div class="body">
         <div class="name">The stick holder</div>
         <p class="blurb">Clamps to a stand tube and holds a spare pair where your hand already
