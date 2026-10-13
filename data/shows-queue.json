@@ -338,6 +338,20 @@
       "first_seen": "2026-10-09"
     },
     {
+      "band": "Halloween Bash @ Lanalous with Ten Days Late, Nobody, Customer Service, Felonious Punk",
+      "date": "2026-10-31",
+      "time": "",
+      "venue": "LanaLou's",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/halloween-bash/1309853804507388/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-13"
+    },
+    {
       "band": "Post-Halloween Party with Space Crash Echoes, Glitterbomb, Slowicide",
       "date": "2026-11-01",
       "time": "",
@@ -350,6 +364,20 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "vancouver-punk-calendar",
       "first_seen": "2026-10-12"
+    },
+    {
+      "band": "Brasser / Big Time / The Fomites / Mooshy Face",
+      "date": "2026-11-06",
+      "time": "",
+      "venue": "Red Gate Arts Society 1965 Main St",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/brasser-big-time-the-fomites-m/1568455571746398/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-13"
     },
     {
       "band": "Russian Tim's Disorganized Orchestra \"Siberian Cabaret\" EP Release Show w/ Dirty Bellows and KitchenSpoon",
@@ -536,7 +564,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1119
+    "vancouver-punk-calendar": 1121
   },
-  "updated": "2026-10-12"
+  "updated": "2026-10-13"
 }
