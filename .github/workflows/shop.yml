@@ -1,0 +1,69 @@
+name: Shop
+
+# Rebuild shop.html from shop-prices.xlsx.
+#
+# The spreadsheet is the thing a person edits -- on a phone, between loads of
+# gear -- and HTML is not. This turns an edit to that file into the page, the
+# structured data and the sitemap date, so changing a price is one commit and
+# nobody has to remember which three places the number lives in.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'shop-prices.xlsx'
+      - 'tools/build_shop.py'
+      - '.github/workflows/shop.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: shop
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install openpyxl
+        run: pip install --quiet openpyxl
+
+      - name: Build the shop
+        run: python3 tools/build_shop.py
+
+      - name: Commit if it changed
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add shop.html data/shop.json sitemap.xml
+          if git diff --cached --quiet; then
+            echo "prices unchanged"
+            exit 0
+          fi
+          # The message carries the prices, so `git log` reads as a price history.
+          SUMMARY=$(python3 - <<'PY'
+          import json
+          d = json.load(open('data/shop.json'))
+          bits = []
+          for p in d['products']:
+              n = p['price']
+              bits.append("%s $%s%s" % (p['slug'],
+                                        ("%d" % n) if n % 1 == 0 else ("%.2f" % n),
+                                        "" if p['in_stock'] else " (out)"))
+          print(", ".join(bits))
+          PY
+          )
+          git commit -m "Shop: $SUMMARY"
+          # Another push may have landed while this ran. Rebase and retry.
+          for i in 1 2 3 4; do
+            git push && break || { git pull --rebase; sleep $((2**i)); }
+          done

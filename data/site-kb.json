@@ -668,6 +668,32 @@
       "a": "Yes. There is a shelf of them in the room — steel and wood, deep and shallow, from polished steel and silver sparkle to satin black, wine-red glitter, dark figured wood and striped hardwood. There are photographs of each one on the rental page — two of them are Mapex and the sparkle one is badged Voyager; ask about the others and you get the name rather than a guess. Describe the sound you want rather than the drum and two or three come to the date so you can pick at soundcheck. Swapping the kit snare costs nothing, and a snare on its own is a booking too.",
       "link": "/drum-rental-vancouver.html#snares",
       "label": "The snare shelf"
+    },
+    {
+      "id": "shop",
+      "k": [
+        "shop",
+        "store",
+        "buy",
+        "merch",
+        "for sale",
+        "drum key",
+        "3d printed",
+        "3d print",
+        "printed",
+        "rack ears",
+        "xr18",
+        "xr 18",
+        "stick holder",
+        "drumstick holder",
+        "do you sell",
+        "can i buy",
+        "price of"
+      ],
+      "q": "What do you sell?",
+      "a": "Three printed things: a drum key that lives on your keyring, a pair of rack ears that turn a Behringer XR18 into rack gear, and a clamp-on drumstick holder. They are made one at a time in Vancouver, so the list is short and something is occasionally sold out. Prices and what is in stock are on the shop page.",
+      "link": "/shop.html",
+      "label": "The shop"
     }
   ]
 }
