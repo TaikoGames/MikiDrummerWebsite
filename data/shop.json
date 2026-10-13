@@ -13,7 +13,7 @@
       "checkout": "",
       "image": "drum-key.jpg",
       "alt": "Rendering of a T-handled drum key in orange printed plastic, with a keyring hole through the handle and a square socket at the tip.",
-      "rendering": true
+      "rendering": false
     },
     {
       "slug": "xr18-ears",
@@ -27,7 +27,7 @@
       "checkout": "",
       "image": "xr18-ears.jpg",
       "alt": "Rendering of a small dark digital mixer with an orange printed rack-mount bracket bolted to each side, each bracket drilled with two holes.",
-      "rendering": true
+      "rendering": false
     },
     {
       "slug": "stick-holder",
@@ -41,7 +41,7 @@
       "checkout": "",
       "image": "stick-holder.jpg",
       "alt": "Rendering of an orange printed stick holder clamped to a vertical stand tube, with two drumsticks angled out of the open top.",
-      "rendering": true
+      "rendering": false
     }
   ]
 }

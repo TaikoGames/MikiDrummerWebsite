@@ -13,9 +13,10 @@
     * materials / specs (search PLACEHOLDER-SPEC)
     * lead time, shipping cost and pickup spot (search PLACEHOLDER-TERMS)
     * product art is drawn, not photographed. The three files in
-      /images/shop/ are renderings; replace each one in place with a real
-      photo at 900x630 and nothing in this file has to change except
-      deleting the three <span class="stand-in"> markers and their rule.
+      /images/shop/ are renderings. Drop a real photo over any of them at
+      900x630, same filename, and the page picks it up -- nothing in here
+      changes. (The .stand-in rule below draws a small RENDERING tag; the
+      spreadsheet's last column turns it on per product. It is off now.)
 
   Prices appear twice per product: once in the card and once in the JSON-LD
   at the top of the file. Change both or the rich result lies.
@@ -240,7 +241,6 @@
     <article class="item" id="drum-key">
       <img class="shot" src="/images/shop/drum-key.jpg" width="900" height="630" loading="lazy"
            alt="Rendering of a T-handled drum key in orange printed plastic, with a keyring hole through the handle and a square socket at the tip.">
-      <span class="stand-in">Rendering</span>
       <div class="body">
         <div class="name">The drum key</div>
         <p class="blurb">Lives on your keyring instead of at the bottom of the stick bag. Square socket, so it turns any tension rod on any kit you walk up to.</p>
@@ -255,7 +255,6 @@
     <article class="item" id="xr18-ears">
       <img class="shot" src="/images/shop/xr18-ears.jpg" width="900" height="630" loading="lazy"
            alt="Rendering of a small dark digital mixer with an orange printed rack-mount bracket bolted to each side, each bracket drilled with two holes.">
-      <span class="stand-in">Rendering</span>
       <div class="body">
         <div class="name">Rack ears for the XR18</div>
         <p class="blurb">A pair of brackets that turn a Behringer XR18 into rack gear, so it rides in the case with everything else instead of loose in the back of the van. Uses the mixer&#x27;s own case screws — nothing to drill.</p>
@@ -271,7 +270,6 @@
       <span class="flag">Sold out</span>
       <img class="shot" src="/images/shop/stick-holder.jpg" width="900" height="630" loading="lazy"
            alt="Rendering of an orange printed stick holder clamped to a vertical stand tube, with two drumsticks angled out of the open top.">
-      <span class="stand-in">Rendering</span>
       <div class="body">
         <div class="name">The stick holder</div>
         <p class="blurb">Clamps to a stand tube and holds a spare pair where your hand already goes. The first run went in a week and there is not a second one yet.</p>
