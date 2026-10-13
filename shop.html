@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="/js/track.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!--
+  PROTOTYPE. Everything in the list below is a placeholder and needs the real
+  value before this page goes in the nav:
+
+    * prices            (search PLACEHOLDER-PRICE)
+    * materials / specs (search PLACEHOLDER-SPEC)
+    * lead time, shipping cost and pickup spot (search PLACEHOLDER-TERMS)
+    * product art is drawn, not photographed -- swap each <svg> for a photo
+      when there is one, and set the Product image in the JSON-LD too
+
+  Prices appear twice per product: once in the card and once in the JSON-LD
+  at the top of the file. Change both or the rich result lies.
+-->
+
+<title>Shop — 3D printed drum gear | Miki Drummer</title>
+<meta name="description" content="Small-batch 3D printed gear for drummers and engineers: a drum key that lives on your keyring, rack ears for the Behringer XR18, and a stick holder. Made in Vancouver, shipped across Canada.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://www.mikidrummer.ca/shop.html">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mikidrummer.ca/shop.html">
+<meta property="og:title" content="Shop — 3D printed drum gear">
+<meta property="og:description" content="A drum key, rack ears for the XR18, and a stick holder. Printed in Vancouver, one at a time.">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+  :root{
+    --bg:#0d0b0c; --panel:#151113; --panel2:#1c1719; --line:#2a2124;
+    --hot:#e8672a; --gold:#e7b53c; --ink:#f4efe6; --mid:#c8bdb6; --dim:#8d827c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);
+       font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+       line-height:1.65;padding:0 16px 56px}
+  .wrap{max-width:920px;margin:0 auto}
+  nav{font-size:13px;color:var(--dim);padding:18px 0}
+  nav a{color:var(--gold);text-decoration:none}
+  nav a:hover{text-decoration:underline}
+  header{padding:14px 0 6px;max-width:680px}
+  .eyebrow{color:var(--hot);font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+  h1{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(28px,6vw,44px);
+     letter-spacing:-.02em;line-height:1.08;margin:8px 0 10px}
+  h2{font-size:19px;margin:38px 0 10px;letter-spacing:-.01em}
+  h3{font-size:15.5px;margin:20px 0 6px}
+  p{color:var(--mid);font-size:15.5px;margin-top:12px}
+  a{color:var(--gold)}
+  .lede{font-size:17px;color:var(--ink)}
+
+  /* ---- the grid of products ---- */
+  /* Stretch, not start: a short card next to a long one looks like a mistake,
+     and the buy row is pinned to the bottom of each so they still line up. */
+  .rack{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));
+        gap:16px;margin-top:22px}
+  .item{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+        overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .shot{background:var(--panel2);border-bottom:1px solid var(--line);
+        display:block;width:100%;height:auto;aspect-ratio:10/7}
+  .body{padding:15px 17px 17px;display:flex;flex-direction:column;flex:1}
+  .name{font-size:16.5px;font-weight:800;letter-spacing:-.01em;color:var(--ink)}
+  .blurb{font-size:14.5px;color:var(--mid);margin-top:7px;flex:1}
+  .spec{font-size:12.5px;color:var(--dim);margin-top:11px;
+        border-top:1px solid var(--line);padding-top:10px}
+  .spec b{display:block;color:var(--mid);font-weight:600}
+  .buyrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+  .price{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.01em;white-space:nowrap}
+  .price small{font-size:11.5px;font-weight:600;color:var(--dim);letter-spacing:.06em}
+  .buy{background:var(--hot);border:1px solid var(--hot);color:#160802;border-radius:999px;
+       padding:10px 18px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;
+       text-decoration:none;display:inline-block;white-space:nowrap}
+  .buy:hover{opacity:.92}
+  .buy[disabled]{background:transparent;border-color:var(--line);color:var(--dim);cursor:not-allowed}
+
+  /* Sold out: the card stays legible, the photo does not pretend to be in stock. */
+  .item.gone .shot{filter:grayscale(1) brightness(.62)}
+  .item.gone .price{color:var(--dim);text-decoration:line-through;text-decoration-thickness:1.5px}
+  /* A pill, not a corner ribbon -- the card clips its overflow to keep the
+     image corners rounded, which ate a diagonal banner entirely. */
+  .flag{position:absolute;top:12px;left:12px;z-index:2;border-radius:999px;
+        background:rgba(13,11,12,.86);border:1px solid #3a2f33;color:var(--mid);
+        font-size:10.5px;font-weight:800;letter-spacing:.16em;
+        text-transform:uppercase;padding:5px 12px}
+  .notify{margin-top:10px;font-size:12.5px;color:var(--dim)}
+  .notify button{background:none;border:0;padding:0;font:inherit;color:var(--gold);
+                 text-decoration:underline;cursor:pointer}
+
+  /* ---- order panel ---- */
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:18px}
+  label{display:block;font-size:12px;letter-spacing:.11em;text-transform:uppercase;
+        color:var(--dim);font-weight:700;margin:14px 0 5px}
+  input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);
+        color:var(--ink);border-radius:9px;padding:11px 13px;font-size:15px;font-family:inherit}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--hot);outline-offset:1px}
+  textarea{min-height:78px;resize:vertical}
+  .send{margin-top:16px;background:var(--hot);border:1px solid var(--hot);color:#160802;
+        border-radius:999px;padding:13px 26px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+  .send[disabled]{opacity:.55;cursor:wait}
+  .said{margin-top:11px;font-size:14px;color:var(--mid);min-height:20px}
+  .said.err{color:#f09a7a}
+  .said.ok{color:var(--gold)}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+  ul{margin:12px 0 0 20px;color:var(--mid);font-size:15.5px}
+  li{margin-bottom:7px}
+  footer{margin-top:46px;padding-top:18px;border-top:1px solid var(--line);
+         color:var(--dim);font-size:13px}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "name": "3D printed drum key",
+      "description": "A drum key with a keyring loop, printed small-batch in Vancouver. Standard square socket, so it fits any tension rod.",
+      "brand": {"@type":"Brand","name":"Miki Drummer"},
+      "material": "PETG",
+      "url": "https://www.mikidrummer.ca/shop.html#drum-key",
+      "offers": {
+        "@type":"Offer","price":"12.00","priceCurrency":"CAD",
+        "availability":"https://schema.org/InStock",
+        "url":"https://www.mikidrummer.ca/shop.html#drum-key",
+        "seller":{"@type":"ProfessionalService","name":"Miki Drummer","url":"https://www.mikidrummer.ca/"}
+      }
+    },
+    {
+      "@type": "Product",
+      "name": "Rack ears for the Behringer XR18",
+      "description": "A pair of printed brackets that turn a Behringer XR18 into rack gear, using the mixer's own case screws.",
+      "brand": {"@type":"Brand","name":"Miki Drummer"},
+      "material": "PETG",
+      "isAccessoryOrSparePartFor": {"@type":"Product","name":"Behringer XR18"},
+      "url": "https://www.mikidrummer.ca/shop.html#xr18-ears",
+      "offers": {
+        "@type":"Offer","price":"38.00","priceCurrency":"CAD",
+        "availability":"https://schema.org/InStock",
+        "url":"https://www.mikidrummer.ca/shop.html#xr18-ears",
+        "seller":{"@type":"ProfessionalService","name":"Miki Drummer","url":"https://www.mikidrummer.ca/"}
+      }
+    },
+    {
+      "@type": "Product",
+      "name": "Drumstick holder",
+      "description": "A clamp-on stick holder that grips a standard stand tube and keeps a spare pair within reach.",
+      "brand": {"@type":"Brand","name":"Miki Drummer"},
+      "material": "PETG",
+      "url": "https://www.mikidrummer.ca/shop.html#stick-holder",
+      "offers": {
+        "@type":"Offer","price":"28.00","priceCurrency":"CAD",
+        "availability":"https://schema.org/OutOfStock",
+        "url":"https://www.mikidrummer.ca/shop.html#stick-holder",
+        "seller":{"@type":"ProfessionalService","name":"Miki Drummer","url":"https://www.mikidrummer.ca/"}
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Miki Drummer","item":"https://www.mikidrummer.ca/"},
+        {"@type":"ListItem","position":2,"name":"Shop","item":"https://www.mikidrummer.ca/shop.html"}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+
+  <nav><a href="/">Miki Drummer</a> · <a href="/services.html">Services</a> · Shop</nav>
+
+  <header>
+    <span class="eyebrow">Printed in Vancouver</span>
+    <h1>Small things that go missing</h1>
+    <p class="lede">Three bits of gear I kept needing and kept not finding, so I drew them
+       and printed them. Made one at a time on a machine in the same room as the drums —
+       not a warehouse, which is why the list is short and sometimes something runs out.</p>
+  </header>
+
+  <div class="rack">
+
+    <!-- ============================ drum key ============================ -->
+    <article class="item" id="drum-key">
+      <svg class="shot" viewBox="0 0 200 140" role="img" aria-label="Drawing of a T-handled drum key with a keyring hole in the handle and a square socket at the tip.">
+        <g fill="none" stroke="#e7b53c" stroke-width="3.2" stroke-linejoin="round">
+          <rect x="55" y="23" width="90" height="21" rx="10.5" fill="#241c1e"/>
+          <circle cx="70" cy="33.5" r="5.4" fill="#1c1719"/>
+          <path d="M93 44 v46" />
+          <path d="M107 44 v46" />
+          <rect x="79" y="90" width="42" height="30" rx="4" fill="#241c1e"/>
+          <rect x="91" y="99" width="18" height="13" rx="1.5" fill="#0d0b0c" stroke-width="2.6"/>
+        </g>
+      </svg>
+      <div class="body">
+        <div class="name">The drum key</div>
+        <p class="blurb">Lives on your keyring instead of at the bottom of the stick bag.
+           Square socket, so it turns any tension rod on any kit you walk up to.</p>
+        <!-- PLACEHOLDER-SPEC -->
+        <div class="spec"><b>PETG · standard square socket</b>Keyring loop. Prints in a few hours.</div>
+        <div class="buyrow">
+          <!-- PLACEHOLDER-PRICE -->
+          <span class="price">$12 <small>CAD</small></span>
+          <button class="buy" type="button" data-order="The drum key">Order</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============================ xr18 ears ============================ -->
+    <article class="item" id="xr18-ears">
+      <svg class="shot" viewBox="0 0 200 140" role="img" aria-label="Drawing of a small digital mixer with a rack-mount bracket bolted to each side, each bracket drilled with two holes.">
+        <g fill="none" stroke="#e7b53c" stroke-width="3.2" stroke-linejoin="round">
+          <rect x="68" y="42" width="64" height="56" rx="5" fill="#241c1e"/>
+          <circle cx="84" cy="58" r="4.2"/><circle cx="100" cy="58" r="4.2"/><circle cx="116" cy="58" r="4.2"/>
+          <rect x="80" y="74" width="40" height="14" rx="2" fill="#0d0b0c" stroke-width="2.6"/>
+          <rect x="52" y="58" width="16" height="24" fill="#241c1e"/>
+          <rect x="132" y="58" width="16" height="24" fill="#241c1e"/>
+          <rect x="38" y="28" width="15" height="84" rx="3" fill="#1c1719"/>
+          <rect x="147" y="28" width="15" height="84" rx="3" fill="#1c1719"/>
+          <circle cx="45.5" cy="44" r="4" fill="#0d0b0c" stroke-width="2.6"/>
+          <circle cx="45.5" cy="96" r="4" fill="#0d0b0c" stroke-width="2.6"/>
+          <circle cx="154.5" cy="44" r="4" fill="#0d0b0c" stroke-width="2.6"/>
+          <circle cx="154.5" cy="96" r="4" fill="#0d0b0c" stroke-width="2.6"/>
+        </g>
+      </svg>
+      <div class="body">
+        <div class="name">Rack ears for the XR18</div>
+        <p class="blurb">A pair of brackets that turn a Behringer XR18 into rack gear, so it
+           rides in the case with everything else instead of loose in the back of the van.
+           Uses the mixer's own case screws — nothing to drill.</p>
+        <!-- PLACEHOLDER-SPEC -->
+        <div class="spec"><b>PETG · sold as a pair</b>Fits the XR18. Screws included.</div>
+        <div class="buyrow">
+          <!-- PLACEHOLDER-PRICE -->
+          <span class="price">$38 <small>CAD</small></span>
+          <button class="buy" type="button" data-order="Rack ears for the XR18">Order</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- ========================== stick holder =========================== -->
+    <article class="item gone" id="stick-holder">
+      <span class="flag">Sold out</span>
+      <svg class="shot" viewBox="0 0 200 140" role="img" aria-label="Drawing of a stick holder clamped to a vertical stand tube, with two drumsticks angled out of the open top.">
+        <g fill="none" stroke="#e7b53c" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">
+          <rect x="40" y="16" width="13" height="108" rx="2.5" fill="#241c1e"/>
+          <rect x="53" y="60" width="28" height="26" rx="4" fill="#1c1719"/>
+          <path d="M81 68 h8" stroke-width="2.6"/>
+          <path d="M95 25 L104 66" stroke-width="6.4"/>
+          <path d="M131 31 L116 68" stroke-width="6.4"/>
+          <path d="M82 58 v44 a6 6 0 0 0 6 6 h40 a6 6 0 0 0 6 -6 v-44" fill="#241c1e"/>
+          <ellipse cx="111" cy="58" rx="29" ry="8.5" fill="#0d0b0c"/>
+        </g>
+      </svg>
+      <div class="body">
+        <div class="name">The stick holder</div>
+        <p class="blurb">Clamps to a stand tube and holds a spare pair where your hand already
+           goes. The first run went in a week and there is not a second one yet.</p>
+        <!-- PLACEHOLDER-SPEC -->
+        <div class="spec"><b>PETG · fits a standard stand tube</b>Thumbscrew clamp, no tools.</div>
+        <div class="buyrow">
+          <!-- PLACEHOLDER-PRICE -->
+          <span class="price">$28 <small>CAD</small></span>
+          <button class="buy" type="button" disabled>Sold out</button>
+        </div>
+        <p class="notify">Next batch has no date yet —
+          <button type="button" data-order="The stick holder (restock)">tell me when it is back</button>.</p>
+      </div>
+    </article>
+
+  </div>
+
+  <h2 id="order">Ordering</h2>
+  <p>There is no checkout here, and for three products there does not need to be. Tell me
+     what you want and you get a note back with the total and how to pay. Nothing is charged
+     until you have said yes to a number.</p>
+
+  <div class="box">
+    <form id="orderForm" novalidate>
+      <label for="pick">What do you want</label>
+      <select id="pick" name="product">
+        <option>The drum key</option>
+        <option>Rack ears for the XR18</option>
+        <option>The stick holder (restock)</option>
+      </select>
+
+      <label for="qty">How many</label>
+      <input id="qty" name="qty" type="number" min="1" max="20" value="1" inputmode="numeric">
+
+      <label for="contact">Email or Instagram handle</label>
+      <input id="contact" name="contact" type="text" autocomplete="email"
+             placeholder="you@example.com or @yourhandle">
+
+      <label for="note">Anything else</label>
+      <textarea id="note" name="note" placeholder="Vancouver pickup, shipping to somewhere else, a colour, a question…"></textarea>
+
+      <div class="hp"><label for="company">Company</label><input id="company" name="company" tabindex="-1" autocomplete="off"></div>
+
+      <button class="send" id="sendBtn" type="submit">Send it</button>
+      <div class="said" id="said" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <!-- PLACEHOLDER-TERMS -->
+  <h2>How it actually works</h2>
+  <ul>
+    <li><b>Made to order.</b> Nothing sits in a box waiting. Expect a few days before it ships,
+        longer if a few orders land at once.</li>
+    <li><b>Vancouver pickup is free</b>, and usually faster than the post.</li>
+    <li><b>Shipping across Canada</b> at cost — these are small and light, so it is not much.</li>
+    <li><b>If it breaks, tell me.</b> It is a printed part made in my room, not a moulding from
+        a factory. A replacement costs me an afternoon, which is cheaper than an argument.</li>
+  </ul>
+
+  <h2>Questions</h2>
+  <p>Easiest is <a href="https://www.instagram.com/mikibdrummer/" target="_blank" rel="noopener">a DM on Instagram</a>
+     — the form above goes to the same place, just slower. If you want something that is not on
+     this page but should be, say so; two of these three exist because somebody asked.</p>
+
+  <footer>
+    Drum gear, <a href="/drum-rental-vancouver.html">drum rental</a>, recording and lessons in
+    Vancouver, BC — by <a href="/">Miki Drummer</a>. Shows across BC on
+    <a href="/punkbc.html">Punk BC</a>.
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var FORM = 'https://formspree.io/f/xpqgrqvb';
+  var $ = function (id) { return document.getElementById(id); };
+
+  function say(msg, kind) {
+    var e = $('said');
+    e.textContent = msg;
+    e.className = 'said' + (kind ? ' ' + kind : '');
+  }
+
+  // Clicking a card's button is the same action as using the form -- it just
+  // fills the product in and drops you on it, so nobody has to scroll down and
+  // then re-pick the thing they already pointed at.
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('[data-order]');
+    if (!btn) return;
+    var want = btn.getAttribute('data-order');
+    var sel = $('pick');
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].text === want) { sel.selectedIndex = i; break; }
+    }
+    $('order').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Focus the first thing they still have to type, not the select they just set.
+    setTimeout(function () { $('contact').focus({ preventScroll: true }); }, 420);
+  });
+
+  $('orderForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+
+    var product = $('pick').value;
+    var qty     = $('qty').value || '1';
+    var contact = $('contact').value.trim();
+
+    if (!contact) { say('I need an email or a handle, or there is nowhere to reply.', 'err'); $('contact').focus(); return; }
+
+    var btn = $('sendBtn'), was = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    say('');
+
+    fetch(FORM, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'Shop: ' + product + ' ×' + qty,
+        product: product,
+        qty: qty,
+        contact: contact,
+        note: $('note').value.trim(),
+        _gotcha: $('company').value
+      })
+    }).then(function (r) {
+      btn.disabled = false; btn.textContent = was;
+      if (r.ok) {
+        $('orderForm').reset();
+        say('Got it — you will hear back with a total. Usually same day.', 'ok');
+        return;
+      }
+      say('That did not send. DM @mikibdrummer and we will sort it there.', 'err');
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = was;
+      say('No connection. Try again in a minute.', 'err');
+    });
+  });
+})();
+</script>
+</body>
+</html>
