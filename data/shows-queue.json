@@ -369,6 +369,20 @@
       "band": "Brasser / Big Time / The Fomites / Mooshy Face",
       "date": "2026-11-06",
       "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/brasser-big-time-the-fomites-m/1568455571746398/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-14"
+    },
+    {
+      "band": "Brasser / Big Time / The Fomites / Mooshy Face",
+      "date": "2026-11-06",
+      "time": "",
       "venue": "Red Gate Arts Society 1965 Main St",
       "city": "Vancouver",
       "price": "",
@@ -520,6 +534,20 @@
       "first_seen": "2026-10-10"
     },
     {
+      "band": "Bridge City Sinners New Years Evil",
+      "date": "2027-01-02",
+      "time": "",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/bridge-city-sinners-new-years-/1736773791311662/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-14"
+    },
+    {
       "band": "Dropkick Murphys",
       "date": "2027-02-12",
       "time": "",
@@ -564,7 +592,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1121
+    "vancouver-punk-calendar": 1122
   },
-  "updated": "2026-10-13"
+  "updated": "2026-10-14"
 }
