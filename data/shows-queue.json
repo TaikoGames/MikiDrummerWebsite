@@ -324,6 +324,34 @@
       "first_seen": "2026-09-24"
     },
     {
+      "band": "Dead Churches with The Highsides at Blue Light Studies",
+      "date": "2026-10-30",
+      "time": "",
+      "venue": "Blue Light Studio",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.facebook.com/share/p/1bzWAhxwRE/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-16"
+    },
+    {
+      "band": "Dead Disco ft. Beastie / Rougaroux / Doom Loops / DJ Stickeykeys B2B Casus / DJ Allophonic",
+      "date": "2026-10-30",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.instagram.com/p/DdXHGBjSh8Q/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-16"
+    },
+    {
       "band": "Dead Disco ft. Beastie / Rougaroux / Doom Loops / DJ Stickeykeys B2B Casus / DJ Allophonic",
       "date": "2026-10-30",
       "time": "",
@@ -592,7 +620,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1122
+    "vancouver-punk-calendar": 1123
   },
-  "updated": "2026-10-15"
+  "updated": "2026-10-16"
 }
