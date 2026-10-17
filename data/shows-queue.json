@@ -310,6 +310,20 @@
       "first_seen": "2026-09-10"
     },
     {
+      "band": "Mean Bikini, Die Job, Grrlzilla, Bad Luck Charm",
+      "date": "2026-10-22",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.instagram.com/p/Dd24_Y_pR9A/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-17"
+    },
+    {
       "band": "Best in Vancouver: Revel in the Chaos, Cursed Words, Dusty Pines, The Lily Dippers @ The Roxy (battle of the bands)",
       "date": "2026-10-28",
       "time": "",
@@ -562,6 +576,20 @@
       "first_seen": "2026-10-10"
     },
     {
+      "band": "Emo Orchestra with The Spill Canvas and Greywind @ Harbour Events Centre",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "Harbour Event & Convention Centre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/emo-orchestra-w-the-spill-canv/1416258253798343/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-17"
+    },
+    {
       "band": "Bridge City Sinners New Years Evil",
       "date": "2027-01-02",
       "time": "",
@@ -574,6 +602,20 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "vancouver-punk-calendar",
       "first_seen": "2026-10-14"
+    },
+    {
+      "band": "Desiel Boy with Downway and Another Joe @ Wise Hall",
+      "date": "2027-01-30",
+      "time": "",
+      "venue": "The WISE Hall",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/dieselboy-with-downway-another/29192009527083481/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-17"
     },
     {
       "band": "Dropkick Murphys",
@@ -620,7 +662,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1123
+    "vancouver-punk-calendar": 1125
   },
-  "updated": "2026-10-16"
+  "updated": "2026-10-17"
 }
