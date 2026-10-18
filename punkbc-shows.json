@@ -2,44 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "The Corps / Danger Box / Miles to Nowhere / Dusty Pines",
-      "date": "2026-10-17",
-      "time": "",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/the-corps-western-spice-tour-a/1334691088869652/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "image_source": "supplied by Miki"
-    },
-    {
-      "band": "SiM",
-      "date": "2026-10-17",
-      "time": "18:00",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.livenation.com",
-      "genre": "Metalcore",
-      "notes": "HOOMAN World Tour. With Zero 9:36",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400   ← UNCHANGED, see note",
-      "curated": ""
-    },
-    {
-      "band": "Hulder",
-      "date": "2026-10-17",
-      "time": "19:00",
-      "venue": "The Astoria",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://theastoria.ca",
-      "genre": "Black Metal",
-      "notes": "Verbolgen 2026 Tour. With Antichrist Siege Machine",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400"
-    },
-    {
       "band": "The Well",
       "date": "2026-10-18",
       "time": "19:00",
