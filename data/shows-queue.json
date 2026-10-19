@@ -450,6 +450,20 @@
       "first_seen": "2026-09-25"
     },
     {
+      "band": "Bad Waitress with Cursed Words and Die Job @ The Cobalt",
+      "date": "2026-11-10",
+      "time": "",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/bad-waitress-with-guests-curse/1103815968689228/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-19"
+    },
+    {
       "band": "Lethbridge Invasion night 1",
       "date": "2026-11-13",
       "time": "",
@@ -662,7 +676,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1125
+    "vancouver-punk-calendar": 1126
   },
-  "updated": "2026-10-18"
+  "updated": "2026-10-19"
 }
