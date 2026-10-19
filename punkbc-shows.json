@@ -2,19 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "The Well",
-      "date": "2026-10-18",
-      "time": "19:00",
-      "venue": "Astoria Pub",
-      "city": "Vancouver",
-      "price": "$26.45 adv",
-      "ticket": "https://astoria.pub/events/the-well-pink-fuzz-space-queen/",
-      "genre": "Psych/Stoner Metal",
-      "notes": "With Pink Fuzz, Space Queen. Austin TX",
-      "image": "https://astoria.pub/wp-content/uploads/2026/08/The-Well-663x1024.jpg",
-      "curated": ""
-    },
-    {
       "band": "Demon Hunter",
       "date": "2026-10-20",
       "time": "18:30",
