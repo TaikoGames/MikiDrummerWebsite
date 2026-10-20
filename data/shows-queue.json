@@ -394,6 +394,34 @@
       "first_seen": "2026-10-13"
     },
     {
+      "band": "Covers From The Crypt",
+      "date": "2026-10-31",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.instagram.com/p/DecbEXigZaI/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-20"
+    },
+    {
+      "band": "RAMORES, Bad People, New West Dolls, & Neil E Dee!",
+      "date": "2026-10-31",
+      "time": "",
+      "venue": "The WISE Hall",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/joey-ramores-halloween-bash-at/1560912095790625/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-20"
+    },
+    {
       "band": "Post-Halloween Party with Space Crash Echoes, Glitterbomb, Slowicide",
       "date": "2026-11-01",
       "time": "",
@@ -632,6 +660,20 @@
       "first_seen": "2026-10-17"
     },
     {
+      "band": "Diesel Boy with Downway and Another Joe @ Wise Hall",
+      "date": "2027-01-30",
+      "time": "",
+      "venue": "The WISE Hall",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/dieselboy-with-downway-another/29192009527083481/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-20"
+    },
+    {
       "band": "Dropkick Murphys",
       "date": "2027-02-12",
       "time": "",
@@ -676,7 +718,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1126
+    "vancouver-punk-calendar": 1128
   },
-  "updated": "2026-10-19"
+  "updated": "2026-10-20"
 }
