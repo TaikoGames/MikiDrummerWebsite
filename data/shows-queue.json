@@ -576,6 +576,20 @@
       "first_seen": "2026-09-10"
     },
     {
+      "band": "Demolition Days: Vic Bondi And His Issues / Slip~Ons / Uptights / Earmarked",
+      "date": "2026-11-21",
+      "time": "",
+      "venue": "Red Gate Arts Society 1965 Main St",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/demolition-days-vic-bondi-and-/1113248167832234/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-21"
+    },
+    {
       "band": "The Meteors",
       "date": "2026-12-03",
       "time": "",
@@ -714,11 +728,25 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "vancouver-punk-calendar",
       "first_seen": "2026-10-07"
+    },
+    {
+      "band": "Lambrini Girls: No Refunds tour",
+      "date": "2027-04-13",
+      "time": "",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lambrini-girls-no-refunds-tour/1588490812461975/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-21"
     }
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1128
+    "vancouver-punk-calendar": 1130
   },
-  "updated": "2026-10-20"
+  "updated": "2026-10-21"
 }
