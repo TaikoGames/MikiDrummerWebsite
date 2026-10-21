@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Demon Hunter",
-      "date": "2026-10-20",
-      "time": "18:30",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$39.50",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Metalcore",
-      "notes": "With Wolves At The Gate, Bloodlines. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Demon_Hunter_Band_Lineup_Collage.jpg?width=600"
-    },
-    {
       "band": "Die Job / Mean Bikini",
       "date": "2026-10-22",
       "time": "",
