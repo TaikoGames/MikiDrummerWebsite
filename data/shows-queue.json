@@ -579,6 +579,20 @@
       "band": "Demolition Days: Vic Bondi And His Issues / Slip~Ons / Uptights / Earmarked",
       "date": "2026-11-21",
       "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/demolition-days-vic-bondi-and-/1113248167832234/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-22"
+    },
+    {
+      "band": "Demolition Days: Vic Bondi And His Issues / Slip~Ons / Uptights / Earmarked",
+      "date": "2026-11-21",
+      "time": "",
       "venue": "Red Gate Arts Society 1965 Main St",
       "city": "Vancouver",
       "price": "",
@@ -748,5 +762,5 @@
   "last_good": {
     "vancouver-punk-calendar": 1130
   },
-  "updated": "2026-10-21"
+  "updated": "2026-10-22"
 }
