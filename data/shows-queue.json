@@ -660,6 +660,20 @@
       "first_seen": "2026-10-17"
     },
     {
+      "band": "X-Mas in Skaville @ Wise Hall",
+      "date": "2026-12-12",
+      "time": "",
+      "venue": "The WISE Hall",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-23"
+    },
+    {
       "band": "Bridge City Sinners New Years Evil",
       "date": "2027-01-02",
       "time": "",
@@ -760,7 +774,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1130
+    "vancouver-punk-calendar": 1131
   },
-  "updated": "2026-10-22"
+  "updated": "2026-10-23"
 }
