@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Die Job / Mean Bikini",
-      "date": "2026-10-22",
-      "time": "",
-      "venue": "Red Gate Arts Society",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "",
-      "genre": "Punk",
-      "notes": "Northwest for the Wicked tour",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
       "band": "Kostnatění",
       "date": "2026-10-23",
       "time": "19:00",
