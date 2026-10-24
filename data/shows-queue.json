@@ -604,6 +604,20 @@
       "first_seen": "2026-10-21"
     },
     {
+      "band": "Anchoress / Storm Boy / Bad Luck Charm / Skung / Skellytune",
+      "date": "2026-11-27",
+      "time": "",
+      "venue": "LANALOU'S Rock n' Roll Eatery 362 Powell St",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.instagram.com/p/De2fYOyAuhP/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-24"
+    },
+    {
       "band": "The Meteors",
       "date": "2026-12-03",
       "time": "",
@@ -774,7 +788,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1131
+    "vancouver-punk-calendar": 1132
   },
-  "updated": "2026-10-23"
+  "updated": "2026-10-24"
 }
