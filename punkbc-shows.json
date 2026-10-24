@@ -2,16 +2,16 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Kostnatění",
-      "date": "2026-10-23",
-      "time": "19:00",
-      "venue": "Astoria Pub",
+      "band": "Nameless King",
+      "date": "2026-10-24",
+      "time": "18:00",
+      "venue": "The Cobalt",
       "city": "Vancouver",
-      "price": "",
-      "ticket": "https://astoria.pub/",
-      "genre": "Black Metal",
-      "notes": "With Liminal Shroud, Xiphoid Dementia, Infinexhuma",
-      "image": "https://f4.bcbits.com/img/0042157612_16.jpg",
+      "price": "$18 presale / $25 door",
+      "ticket": "https://www.thecobalt.ca/calendar/coltons-birthday-extravaganza-viii-nameless-king-w-guests",
+      "genre": "Metal",
+      "notes": "Colton's Birthday Extravaganza VIII. With WMD, Omniesia, Skeksis, Plaguedoctor, Hallucide. Bands 7pm. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
       "curated": ""
     },
     {
@@ -218,6 +218,19 @@
       "image": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84f7d3dcb488936e0ea2a6c59e"
     },
     {
+      "band": "Bad Waitress",
+      "date": "2026-11-10",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "$20 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/bad-waitress/",
+      "genre": "Punk",
+      "notes": "West Coast Tour. With Cursed Words, Die Job. Rickshaw presents. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bad_Waitress_%2852062784998%29.jpg?width=600",
+      "curated": ""
+    },
+    {
       "band": "Ride For Revenge",
       "date": "2026-11-11",
       "time": "19:00",
@@ -252,6 +265,19 @@
       "genre": "Black Metal",
       "notes": "SOLD OUT",
       "image": "https://lastfm.freetls.fastly.net/i/u/300x300/7a50a7b866ac7710257c061c4eb53bfa"
+    },
+    {
+      "band": "Deathtape",
+      "date": "2026-11-13",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$25 + fees",
+      "ticket": "https://astoria.pub/events/deathtape-live-in-vancouver/",
+      "genre": "Metal",
+      "notes": "Las Vegas metal. The Invisible Orange presents. More TBA. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
     },
     {
       "band": "Truck Violence",
@@ -327,6 +353,19 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
     },
     {
+      "band": "Devil Master",
+      "date": "2026-11-18",
+      "time": "19:00",
+      "venue": "Astoria Pub",
+      "city": "Vancouver",
+      "price": "$30 + fees",
+      "ticket": "https://astoria.pub/events/devil-master/",
+      "genre": "Black Metal / Punk",
+      "notes": "The Invisible Orange presents. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Devil_Master.jpg?width=500",
+      "curated": ""
+    },
+    {
       "band": "Korpiklaani",
       "date": "2026-11-18",
       "time": "19:00",
@@ -392,6 +431,19 @@
       "curated": ""
     },
     {
+      "band": "The Meteors",
+      "date": "2026-12-03",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$28 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/the-meteors/",
+      "genre": "Psychobilly",
+      "notes": "With Billy and The Parole Models, Cryptyds. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Meteors_live_in_Pordenone%2C_Italy%2C_2006.jpg?width=600",
+      "curated": ""
+    },
+    {
       "band": "Protest the Hero",
       "date": "2026-12-03",
       "time": "20:00",
@@ -418,6 +470,19 @@
       "curated": ""
     },
     {
+      "band": "Angry Snowmans",
+      "date": "2026-12-18",
+      "time": "20:00",
+      "venue": "LanaLou's",
+      "city": "Vancouver",
+      "price": "$15",
+      "ticket": "https://lanalous.wixsite.com/lanalous",
+      "genre": "Punk",
+      "notes": "Holiday punk. With The Rubes",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
       "band": "Bridge City Sinners",
       "date": "2027-01-02",
       "time": "19:00",
@@ -428,6 +493,58 @@
       "genre": "Gospel Punk",
       "notes": "New Years Evil Tour. With Riley Downing, Roselit Bone. 19+",
       "image": "https://images.weserv.nl/?url=i.ticketweb.com/i/00/13/03/84/14_Edp.jpg&w=500&output=jpg&q=75",
+      "curated": ""
+    },
+    {
+      "band": "Wolves in the Throne Room",
+      "date": "2027-01-12",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$36.50 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/wolves-in-the-throne-room-3/",
+      "genre": "Black Metal",
+      "notes": "Estuary tour. With Stygian Bough, Spirit Possession. MRG Live presents. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/WOLVES_IN_THE_THRONE_ROOM.jpg?width=500",
+      "curated": ""
+    },
+    {
+      "band": "3 Inches of Blood",
+      "date": "2027-01-15",
+      "time": "18:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.commodoreballroom.com/shows",
+      "genre": "Heavy Metal",
+      "notes": "Night 1 of 2. With Unleash The Archers",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/3_inches_of_blood_toronto.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "3 Inches of Blood",
+      "date": "2027-01-16",
+      "time": "18:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.commodoreballroom.com/shows",
+      "genre": "Heavy Metal",
+      "notes": "Night 2 of 2. With Unleash The Archers",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/3_inches_of_blood_toronto.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Winona Fighter",
+      "date": "2027-02-05",
+      "time": "19:30",
+      "venue": "Biltmore Cabaret",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.biltmorecabaret.com",
+      "genre": "Punk",
+      "notes": "",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
       "curated": ""
     },
     {
@@ -466,6 +583,84 @@
       "genre": "Thrash Metal",
       "notes": "With Castrator, Anger Within. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nervosa_Rock_%26_Metal_Day%27z_2024_07.jpg?width=600"
+    },
+    {
+      "band": "Northlane",
+      "date": "2027-03-16",
+      "time": "18:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.commodoreballroom.com/shows",
+      "genre": "Metalcore",
+      "notes": "Anemoia Tour. With Reliqa, ALLT, Aviana. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Northlane_2019_gen_use_lores.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Beherit",
+      "date": "2027-03-27",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$84 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/beherit/",
+      "genre": "Black Metal",
+      "notes": "With Grave Infestation, Sorguinazia. The Invisible Orange, Covenant Festival and Nuclear War Now present. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
+      "band": "Death from Above 1979",
+      "date": "2027-03-27",
+      "time": "20:00",
+      "venue": "Capital Ballroom",
+      "city": "Victoria",
+      "price": "",
+      "ticket": "https://www.thecapitalballroom.com",
+      "genre": "Noise Rock / Punk",
+      "notes": "",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/DeathFromAbove1979LiveApril2004.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "Larry and His Flask",
+      "date": "2027-03-28",
+      "time": "18:30",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$30 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/larry-and-his-flask/",
+      "genre": "Folk Punk",
+      "notes": "19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Larry_and_His_Flask_-_Pfingsttheatron_2013_Munich.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "The Damned",
+      "date": "2027-04-03",
+      "time": "19:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.commodoreballroom.com/shows",
+      "genre": "Punk",
+      "notes": "",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Damned_-_Live_2018.jpg?width=500",
+      "curated": ""
+    },
+    {
+      "band": "Lambrini Girls",
+      "date": "2027-04-13",
+      "time": "19:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.commodoreballroom.com/shows",
+      "genre": "Punk",
+      "notes": "With SPRINTS",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/WideAwake250524_%2811_of_209%29_%2853748502026%29_%28cropped%29.jpg?width=400",
+      "curated": ""
     }
   ]
 }
