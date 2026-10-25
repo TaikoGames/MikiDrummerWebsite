@@ -11,6 +11,22 @@
   },
   "bands": [
     {
+      "band": "3 Inches of Blood",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://3inchesofblood.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Accessory",
       "checked": "2026-09-27",
       "email": "",
@@ -156,6 +172,27 @@
       "by": "auto"
     },
     {
+      "band": "Angry Snowmans",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://angrysnowmans.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43478284-angry-snowmans-at-lanalous?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Lanalou&#39;s&quot;,&quot;utc_date&quot;:1797552000,&quot;event_date&quot;:&quot;18",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Antifa Dance Party",
       "checked": "2026-09-18",
       "email": "",
@@ -256,6 +293,22 @@
       "instagram": "authorandpunisher"
     },
     {
+      "band": "Bad Waitress",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://badwaitress.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Baron",
       "checked": "2026-09-13",
       "email": "",
@@ -280,6 +333,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Billy and The Parole Models",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://billyandtheparolemodels.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Black Death Cult",
@@ -784,6 +853,22 @@
       "by": "auto"
     },
     {
+      "band": "Cryptyds",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://cryptyds.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Curb Zombie",
       "checked": "2026-09-13",
       "email": "",
@@ -966,6 +1051,32 @@
       "instagram": "dead.pioneers"
     },
     {
+      "band": "Deathtape",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "death.tape",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://deathtape.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/death.tape/",
+          "found": "profile"
+        },
+        {
+          "name": "tiktok.com",
+          "url": "https://www.tiktok.com/@death.tape16",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Defeated Sanity",
       "checked": "2026-09-14",
       "email": "",
@@ -1034,6 +1145,27 @@
           "name": "Bandcamp",
           "url": "https://demonhunter.bandcamp.com/",
           "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Devil Master",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "devilisyourmaster",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://devilmaster.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/devilisyourmaster/",
+          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2446,6 +2578,22 @@
       "by": "auto"
     },
     {
+      "band": "Nameless King",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://namelessking.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Nekrogoblikon",
       "checked": "2026-09-17",
       "email": "",
@@ -2549,6 +2697,32 @@
           "name": "Bandcamp",
           "url": "https://nofaithinfortune.bandcamp.com/",
           "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Northlane",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "northlane",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://northlane.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/northlane/",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43351332-northlane-at-metro-city?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Metro",
+          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3595,6 +3769,32 @@
       "by": "auto"
     },
     {
+      "band": "The Meteors",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://themeteors.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43399878-meteors-at-soda-bar?utm_source=1471&utm_medium=partner",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.myspace.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "The OBGMs",
       "checked": "2026-09-19",
       "email": "mgmt@theobgms.com",
@@ -3831,6 +4031,22 @@
       "instagram": ""
     },
     {
+      "band": "Winona Fighter",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://winonafighter.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Witiko",
       "checked": "2026-09-14",
       "email": "",
@@ -3882,6 +4098,37 @@
         {
           "name": "Site",
           "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Wolves in the Throne Room",
+      "checked": "2026-10-25",
+      "email": "",
+      "email_source": "",
+      "instagram": "wittrofficial",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://wolvesinthethroneroom.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/wittrofficial",
+          "found": "profile"
+        },
+        {
+          "name": "youtube.com",
+          "url": "https://www.youtube.com/@wolvesinthethroneroomofficial",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.wittr.com",
           "found": "form"
         }
       ],
