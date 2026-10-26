@@ -335,6 +335,22 @@
       "instagram": ""
     },
     {
+      "band": "Beherit",
+      "checked": "2026-10-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://beherit.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Billy and The Parole Models",
       "checked": "2026-10-25",
       "email": "",
@@ -763,6 +779,22 @@
       "instagram": ""
     },
     {
+      "band": "Covenant Festival and Nuclear War Now present",
+      "checked": "2026-10-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://covenantfestivalandnuclearwarnowpresent.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Covenant Festival XI — Night One",
       "checked": "2026-09-15",
       "email": "",
@@ -1049,6 +1081,27 @@
       ],
       "note": "On Alternative Tentacles and Hassle Records, so likely booked through management. Contact form is the only direct route published.",
       "instagram": "dead.pioneers"
+    },
+    {
+      "band": "Death from Above 1979",
+      "checked": "2026-10-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://deathfromabove1979.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://DeathFromAbove1979.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Deathtape",
@@ -1710,6 +1763,22 @@
       "by": "auto"
     },
     {
+      "band": "Grave Infestation",
+      "checked": "2026-10-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://graveinfestation.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "GRRRizzly",
       "checked": "2026-09-26",
       "email": "",
@@ -2236,6 +2305,68 @@
         {
           "name": "Bandcamp",
           "url": "https://lawitch.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Lambrini Girls",
+      "checked": "2026-10-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "lambrinigirlz",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://lambrinigirls.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/lambrinigirlz/",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43416112-lambrini-girls-at-j1-cambridge-junction?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;J1",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Larry and His Flask",
+      "checked": "2026-10-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://larryandhisflask.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "twitter.com",
+          "url": "http://www.twitter.com/larrysflask",
+          "found": "profile"
+        },
+        {
+          "name": "youtube.com",
+          "url": "http://www.youtube.com/larryandhisflask",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.larryandhisflask.com",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "http://www.myspace.com",
           "found": "form"
         }
       ],
@@ -3415,6 +3546,22 @@
       "by": "auto"
     },
     {
+      "band": "Sorguinazia. The Invisible Orange",
+      "checked": "2026-10-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://sorguinaziatheinvisibleorange.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Space Queen. Austin TX",
       "checked": "2026-09-27",
       "email": "",
@@ -3445,6 +3592,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "SPRINTS",
+      "checked": "2026-10-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://sprints.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Suicide Machines",
@@ -3649,6 +3812,22 @@
           "name": "open.spotify.com",
           "url": "https://open.spotify.com/artist/4FjyhVV0npeLb8IKkpX8tK",
           "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "The Damned",
+      "checked": "2026-10-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://thedamned.bandcamp.com/",
+          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
