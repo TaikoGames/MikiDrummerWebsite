@@ -2,18 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Youth Fountain",
-      "date": "2026-10-25",
-      "time": "21:00",
-      "venue": "Jackknife Brewing",
-      "city": "Kelowna",
-      "price": "",
-      "ticket": "https://www.eventbrite.ca/b/canada--kelowna/music/punkhardcore/",
-      "genre": "Punk",
-      "notes": "",
-      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/49b19b8c582ae0c3419af66d26d22ad5"
-    },
-    {
       "band": "Microwave & Free Throw",
       "date": "2026-10-26",
       "time": "18:30",
