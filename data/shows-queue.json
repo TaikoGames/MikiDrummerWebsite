@@ -450,6 +450,20 @@
       "first_seen": "2026-10-20"
     },
     {
+      "band": "Daddy Issues, The Judges, The Satanic Alex Harvey Band @ Wolf Bar",
+      "date": "2026-10-31",
+      "time": "",
+      "venue": "The Wolf Bar",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/daddy-issues-last-show-ever/28034748902893748/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-27"
+    },
+    {
       "band": "Post-Halloween Party with Space Crash Echoes, Glitterbomb, Slowicide",
       "date": "2026-11-01",
       "time": "",
@@ -674,6 +688,34 @@
       "first_seen": "2026-10-24"
     },
     {
+      "band": "Anchoress / Storm Boy / Bad Luck Charm / Skung / Skellytune",
+      "date": "2026-11-27",
+      "time": "",
+      "venue": "LanaLou's",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.instagram.com/p/De2fYOyAuhP/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-27"
+    },
+    {
+      "band": "The Oldest Man I Know, The Oldest Man I Know, Beastie, Staggers and Jags, Call Before You Dig, Shorefox",
+      "date": "2026-11-28",
+      "time": "",
+      "venue": "Green Auto",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://gigpit.ca/shows/event:1vnttTAwF3c",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-27"
+    },
+    {
       "band": "The Meteors",
       "date": "2026-12-03",
       "time": "",
@@ -858,7 +900,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1136
+    "vancouver-punk-calendar": 1138
   },
-  "updated": "2026-10-26"
+  "updated": "2026-10-27"
 }
