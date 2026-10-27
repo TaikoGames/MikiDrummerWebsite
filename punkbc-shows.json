@@ -2,31 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Microwave & Free Throw",
-      "date": "2026-10-26",
-      "time": "18:30",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://thepearlvancouver.com/tm-event/microwave-free-throw-with-carly-cosgrove/",
-      "genre": "Emo/Punk",
-      "notes": "With Carly Cosgrove. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Free_Throw_at_the_Black_Cat_%282025%29.jpg?width=500",
-      "curated": ""
-    },
-    {
-      "band": "The Dillinger Escape Plan",
-      "date": "2026-10-26",
-      "time": "19:00",
-      "venue": "Commodore Ballroom",
-      "city": "Vancouver",
-      "price": "From $68",
-      "ticket": "https://www.commodoreballroom.com/shows",
-      "genre": "Mathcore",
-      "notes": "Final Calculating Infinity shows. With Squid Pisser, XCOMM",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Dillinger_Escape_Plan_Furnace_Fest_2025_Birmingham_Alabama_3.png?width=300"
-    },
-    {
       "band": "Protomartyr",
       "date": "2026-10-28",
       "time": "19:00",
