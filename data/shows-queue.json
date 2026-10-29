@@ -828,6 +828,20 @@
       "first_seen": "2026-10-20"
     },
     {
+      "band": "Frank Turner and The Sleeping Souls",
+      "date": "2027-02-10",
+      "time": "",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/frank-turner-the-sleeping-soul/1457102043304201/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-10-29"
+    },
+    {
       "band": "Dropkick Murphys",
       "date": "2027-02-12",
       "time": "",
@@ -900,7 +914,7 @@
   ],
   "dismissed": [],
   "last_good": {
-    "vancouver-punk-calendar": 1138
+    "vancouver-punk-calendar": 1139
   },
-  "updated": "2026-10-28"
+  "updated": "2026-10-29"
 }
