@@ -2,19 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Protomartyr",
-      "date": "2026-10-28",
-      "time": "19:00",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://thepearlvancouver.com/tm-event/protomartyr-with-accessory/",
-      "genre": "Post-Punk",
-      "notes": "With Accessory. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Protomartyr.jpg?width=600",
-      "curated": ""
-    },
-    {
       "band": "Granite, Lift the Anchor, Seconds Flat, Pen Pal Aloha, Crown of Ashes",
       "date": "2026-10-30",
       "time": "",
