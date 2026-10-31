@@ -2,32 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Granite, Lift the Anchor, Seconds Flat, Pen Pal Aloha, Crown of Ashes",
-      "date": "2026-10-30",
-      "time": "",
-      "venue": "Bully's Studios",
-      "city": "New Westminster",
-      "price": "",
-      "ticket": "https://www.bullysstudios.ca",
-      "genre": "Punk / Metal",
-      "notes": "19+ · tickets at the door",
-      "image": "https://www.mikidrummer.ca/images/shows/oct30-bullys.png",
-      "curated": false
-    },
-    {
-      "band": "Granite / Seconds Flat / Crown of Ashes / Pen Pal Aloha / Lift The Anchor",
-      "date": "2026-10-30",
-      "time": "19:00",
-      "venue": "Bully's studios",
-      "city": "New Westminster",
-      "price": "$15 / $20",
-      "ticket": "https://www.bullysstudios.ca/event-details/67-presents-granite-seconds-flat-crown-of-ashes-pen-pal-aloha-lift-the-anchor",
-      "genre": "",
-      "notes": "$15 Online, $20 at door",
-      "image": "https://static.wixstatic.com/media/3470bd_0e09969c533b4cc8a6c1e15da2dd5df1~mv2.jpg/v1/fill/w_1080,h_540,fp_0.50_0.50,q_85,enc_auto/3470bd_0e09969c533b4cc8a6c1e15da2dd5df1~mv2.jpg",
-      "curated": ""
-    },
-    {
       "band": "Gilla Band",
       "date": "2026-10-31",
       "time": "18:00",
