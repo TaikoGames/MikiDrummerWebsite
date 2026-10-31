@@ -50,25 +50,205 @@ export function hitScore(base, combo) {
 /* Which window a hit falls in, or null for no hit at all. Exported because
  * the timing rules are the game, and rules that cannot be tested without a
  * browser and a keyboard do not get tested. */
-export function judge(delta) {
+export function judge(delta, scale = 1) {
   const d = Math.abs(delta);
-  for (const w of WINDOWS) if (d <= w.t) return w;
+  for (const w of WINDOWS) if (d <= w.t * scale) return w;
   return null;
 }
 
 /* The note a keypress should be judged against: the nearest unhit note in
  * that lane. Nearest rather than next, because pressing slightly early for a
  * note you already hit must not eat the one behind it. */
-export function nearestNote(notes, lane, now, from) {
+export function nearestNote(notes, lane, now, from, scale = 1) {
+  const miss = MISS_AFTER * scale;
   let best = null, bestD = Infinity, bestI = -1;
   for (let i = from; i < notes.length; i++) {
     const n = notes[i];
-    if (n.t - now > MISS_AFTER * 4) break;      // too far ahead to matter
+    if (n.t - now > miss * 4) break;            // too far ahead to matter
     if (n.lane !== lane || n.done) continue;
     const d = Math.abs(n.t - now);
     if (d < bestD) { bestD = d; best = n; bestI = i; }
   }
-  return bestD <= MISS_AFTER ? { note: best, index: bestI, delta: best.t - now } : null;
+  return bestD <= miss ? { note: best, index: bestI, delta: best.t - now } : null;
+}
+
+/* ---- difficulty -------------------------------------------------------
+ *
+ * The full chart is every hit the detector found, often a kick, a snare and
+ * a hat on the same instant at 200 BPM. That is the honest drum part and it
+ * is a wall of notes for anyone who just wants to play along. The levels
+ * below are the same part with the busy bits taken out, not a different
+ * chart, so whatever is left still lands on something you can hear:
+ *
+ *   easy    beats only, one pad at a time, never faster than the pulse,
+ *           and the timing windows are wider
+ *   medium  eighths, one pad at a time
+ *   hard    sixteenths with chords -- what the game used to default to
+ *   expert  everything the detector found
+ *
+ * maxW is the finest metrical position kept (0 downbeat, 1 beat, 2 eighth,
+ * 3 sixteenth, 4 anything). gapBeats is the shortest gap allowed between two
+ * notes, in beats, so it scales with the song; minGap is a floor in seconds,
+ * so at 207 BPM Easy drops to half time -- still on the beat, just every
+ * other one -- instead of asking a beginner for three and a half taps a
+ * second. scale widens the judgement windows. */
+export const LEVELS = {
+  easy:   { label: 'Easy',   maxW: 1, single: true,  gapBeats: 0.9,  minGap: 0.4,  scale: 1.45 },
+  medium: { label: 'Medium', maxW: 2, single: true,  gapBeats: 0.45, minGap: 0.2,  scale: 1.2 },
+  hard:   { label: 'Hard',   maxW: 3, single: false, gapBeats: 0,    minGap: 0,    scale: 1 },
+  expert: { label: 'Expert', maxW: 4, single: false, gapBeats: 0,    minGap: 0,    scale: 1 }
+};
+
+// When several pads land on the same instant and only one can stay, the one
+// that stands out: each hit is measured against how hard that drum is usually
+// hit in this song, because a mix that buries the kick still has a kick that
+// is loud for a kick. The snare and kick get a nudge over the hat underneath.
+const LANE_PULL = { snare: 0.4, kick: 0.45, hat: 0 };
+const CHORD = 0.03;   // seconds; hits closer than this are the same instant
+
+/* The median gap between tracked beats, or a guess from the tempo. */
+export function beatLength(beats, bpm) {
+  if (beats && beats.length > 2) {
+    const g = [];
+    for (let i = 1; i < beats.length; i++) g.push(beats[i] - beats[i - 1]);
+    g.sort((a, b) => a - b);
+    const m = g[g.length >> 1];
+    if (m > 0.15 && m < 2) return m;
+  }
+  return bpm > 0 ? 60 / bpm : 0.5;
+}
+
+/* The chart for a level. Notes in, notes out, sorted by time. */
+export function simplifyChart(notes, level, beats, bpm) {
+  const L = LEVELS[level] || LEVELS.easy;
+  const kept = notes.filter(n => (n.w == null ? 0 : n.w) <= L.maxW)
+                    .slice().sort((a, b) => a.t - b.t);
+  if (!L.single) return kept;
+
+  // One note per instant: the one that stands out most.
+  const typical = {};
+  for (const lane of new Set(kept.map(n => n.lane))) {
+    const vs = kept.filter(n => n.lane === lane).map(n => n.v == null ? 0.5 : n.v)
+                   .sort((a, b) => a - b);
+    typical[lane] = Math.max(0.05, vs[vs.length >> 1]);
+  }
+  const pull = n => (n.v == null ? 0.5 : n.v) / (typical[n.lane] || 0.5)
+                    + (LANE_PULL[n.lane] || 0);
+  const single = [];
+  for (let i = 0; i < kept.length;) {
+    let j = i, best = kept[i];
+    while (j < kept.length && kept[j].t - kept[i].t < CHORD) {
+      if (pull(kept[j]) > pull(best)) best = kept[j];
+      j++;
+    }
+    single.push(best);
+    i = j;
+  }
+
+  // Then thin out anything faster than the level allows. Stronger metrical
+  // positions win a clash, so what survives is the pulse of the song.
+  const gap = Math.max(L.gapBeats * beatLength(beats, bpm), L.minGap || 0);
+  if (!(gap > 0)) return single;
+  const out = [];
+  for (const n of single) {
+    const last = out[out.length - 1];
+    if (!last || n.t - last.t >= gap) { out.push(n); continue; }
+    const wn = n.w == null ? 0 : n.w, wl = last.w == null ? 0 : last.w;
+    if (wn < wl || (wn === wl && pull(n) > pull(last) + 0.2)) {
+      out.pop();
+      const prev = out[out.length - 1];
+      if (!prev || n.t - prev.t >= gap) out.push(n);
+      else out.push(last);              // swapping would crowd the one before
+    }
+  }
+  return out;
+}
+
+/* ---- the loud parts ---------------------------------------------------
+ *
+ * Where the song goes off: choruses, blast sections, the bit where the whole
+ * band comes back in. Found from the full chart rather than from the audio,
+ * because the chart is already a list of how hard and how often the drums
+ * were hit, and because it can be worked out before the song starts, so a
+ * moment is ready on the exact beat rather than a frame after the analyser
+ * noticed.
+ *
+ * Drum energy is summed into quarter-second bins, smoothed over three
+ * seconds, and the runs that sit in the top fifth of the song are the hype
+ * sections. Each one starts on the tracked beat nearest to where it begins,
+ * so the picture lands with the music. Returns [{ start, end, peak }]. */
+const LANE_WEIGHT = { kick: 1, snare: 1, hat: 0.55 };
+
+export function hypeMoments(notes, duration, beats, opts = {}) {
+  const BIN = 0.25;
+  const smooth = opts.smooth || 3;          // seconds
+  const minLen = opts.minLen || 3;          // shortest section worth a moment
+  const spacing = opts.spacing || 12;       // seconds between moment starts
+  const top = opts.top == null ? 0.8 : opts.top;
+  const dur = duration || (notes.length ? notes[notes.length - 1].t + 1 : 0);
+  const nb = Math.ceil(dur / BIN);
+  if (nb < 8) return [];
+
+  const raw = new Float64Array(nb);
+  for (const n of notes) {
+    const b = Math.floor(n.t / BIN);
+    if (b >= 0 && b < nb) raw[b] += (n.v == null ? 0.5 : n.v) * (LANE_WEIGHT[n.lane] || 0.5);
+  }
+  const half = Math.max(1, Math.round(smooth / BIN / 2));
+  const e = new Float64Array(nb);
+  let sum = 0, cnt = 0;
+  for (let i = 0; i < Math.min(half, nb); i++) { sum += raw[i]; cnt++; }
+  for (let i = 0; i < nb; i++) {
+    if (i + half < nb) { sum += raw[i + half]; cnt++; }
+    if (i - half - 1 >= 0) { sum -= raw[i - half - 1]; cnt--; }
+    e[i] = sum / cnt;
+  }
+
+  // Ignore the count-in and the ring-out when deciding what "loud" means.
+  const edge = Math.min(Math.floor(nb / 6), Math.round(4 / BIN));
+  const body = Array.from(e.slice(edge, nb - edge)).sort((a, b) => a - b);
+  if (!body.length) return [];
+  const thr = body[Math.min(body.length - 1, Math.floor(body.length * top))];
+  const loud = body[body.length - 1];
+  if (!(thr > 0) || loud <= 0) return [];
+
+  // Runs above the line, with short dips bridged.
+  const runs = [];
+  let s = -1;
+  for (let i = 0; i <= nb; i++) {
+    const on = i < nb && e[i] >= thr;
+    if (on && s < 0) s = i;
+    if (!on && s >= 0) {
+      const prev = runs[runs.length - 1];
+      if (prev && (s - prev.e) * BIN < 2) prev.e = i;
+      else runs.push({ s, e: i });
+      s = -1;
+    }
+  }
+
+  const snap = (t) => {
+    if (!beats || !beats.length) return t;
+    let best = t, bd = 0.6;
+    for (const b of beats) {
+      const d = Math.abs(b - t);
+      if (d < bd) { bd = d; best = b; }
+      if (b > t + 0.6) break;
+    }
+    return best;
+  };
+
+  const out = [];
+  for (const r of runs) {
+    if ((r.e - r.s) * BIN < minLen) continue;
+    const start = snap(r.s * BIN);
+    if (start < 2) continue;                       // not on the first note
+    const last = out[out.length - 1];
+    if (last && start - last.start < spacing) continue;
+    let peak = 0;
+    for (let i = r.s; i < r.e; i++) peak = Math.max(peak, e[i]);
+    out.push({ start, end: Math.min(dur, r.e * BIN), peak: peak / loud });
+  }
+  return out;
 }
 
 export function accuracy(counts) {

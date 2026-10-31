@@ -83,7 +83,7 @@
     body.ingame .stage{position:fixed;inset:0;margin:0;border:0;border-radius:0;z-index:60}
     body.ingame canvas{height:100vh;height:100dvh}
   }
-  .hud{position:absolute;inset:0;pointer-events:none;padding:16px 18px;
+  .hud{position:absolute;inset:0;pointer-events:none;padding:16px 18px;z-index:3;
        padding-bottom:max(16px,env(safe-area-inset-bottom));
        display:flex;flex-direction:column;justify-content:space-between}
   .hud .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
@@ -156,7 +156,7 @@
   .keycap.kick{border-color:rgba(232,103,42,.6)}
   .keycap.down{background:var(--hot);color:#160802} .keycap.down b{color:#160802}
 
-  .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  .overlay{position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;
            background:rgba(8,9,11,.88);text-align:center;padding:24px}
   .overlay[hidden]{display:none}
   .panel{max-width:440px}
@@ -178,14 +178,79 @@
   .tbl td{padding:9px 10px 9px 0;border-bottom:1px solid var(--edge);color:var(--mid)}
   .tbl td:first-child{color:var(--fg);font-weight:600}
   @media(max-width:560px){ .tbl th:nth-child(4),.tbl td:nth-child(4){display:none} }
-  .dens{flex:1;justify-content:center;min-width:88px}
-  .dens.on{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
   .qa h4{font-size:14px;margin:16px 0 4px;color:var(--fg)}
   .qa h4:first-child{margin-top:8px}
   .qa p{font-size:13px;color:var(--mid);max-width:74ch}
   .calDot{width:64px;height:64px;border-radius:50%;background:#1b1e22;border:2px solid var(--edge2);
           margin:0 auto;transition:transform .06s ease-out,background .06s,border-color .06s}
   .calDot.on{background:var(--hot);border-color:var(--hot);transform:scale(1.25)}
+  /* ---- hype: the band shows up when the song goes off ----
+     Everything here sits over the canvas with pointer-events off, so a
+     picture can never eat a tap meant for a pad. The photo is blended with
+     screen: on a dark runway that keeps every lit note visible through it,
+     and the bottom of it is masked away so the hit line stays clean. */
+  .hype{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:2}
+  .hype img{position:absolute;left:50%;top:42%;width:min(92%,760px);max-height:78%;
+            object-fit:cover;border-radius:6px;opacity:0;
+            transform:translate(-50%,-50%) scale(1.6) rotate(-6deg);
+            filter:grayscale(1) contrast(1.5) brightness(1.05);
+            mix-blend-mode:screen;will-change:transform,opacity;
+            -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 92%);
+            mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 92%)}
+  .hype img.slam{animation:slam 2.6s cubic-bezier(.16,1,.3,1) forwards}
+  .hype img.slam.r{animation-name:slamR}
+  @keyframes slam{
+    0%  {opacity:0;transform:translate(-50%,-50%) scale(1.7) rotate(-7deg)}
+    9%  {opacity:1;transform:translate(-50%,-50%) scale(.97) rotate(-2deg)}
+    16% {opacity:.95;transform:translate(-50%,-50%) scale(1.02) rotate(-2deg)}
+    70% {opacity:.55;transform:translate(-50%,-50%) scale(1.07) rotate(-1deg)}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(1.12) rotate(0)}}
+  @keyframes slamR{
+    0%  {opacity:0;transform:translate(-50%,-50%) scale(1.7) rotate(7deg)}
+    9%  {opacity:1;transform:translate(-50%,-50%) scale(.97) rotate(2deg)}
+    16% {opacity:.95;transform:translate(-50%,-50%) scale(1.02) rotate(2deg)}
+    70% {opacity:.55;transform:translate(-50%,-50%) scale(1.07) rotate(1deg)}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(1.12) rotate(0)}}
+  .hype .flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,
+               rgba(255,240,220,.85),rgba(232,103,42,.55) 40%,transparent 75%);opacity:0}
+  .hype .flash.on{animation:flash .5s ease-out forwards}
+  @keyframes flash{0%{opacity:1}100%{opacity:0}}
+  .hype .shout{position:absolute;left:0;right:0;top:16%;text-align:center;
+               font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(34px,9vw,92px);
+               letter-spacing:-.03em;line-height:.95;color:#fff;text-transform:uppercase;opacity:0;
+               text-shadow:0 0 18px rgba(232,103,42,.9),0 4px 0 #160802}
+  .hype .shout small{display:block;font:800 clamp(11px,2vw,15px)/1.4 'Helvetica Neue',sans-serif;
+                     letter-spacing:.35em;color:var(--hot);text-shadow:none}
+  .hype .shout.on{animation:shout 1.8s cubic-bezier(.16,1,.3,1) forwards}
+  @keyframes shout{
+    0%{opacity:0;transform:scale(2.2)} 10%{opacity:1;transform:scale(.95)}
+    18%{transform:scale(1)} 75%{opacity:1} 100%{opacity:0;transform:scale(1.05)}}
+  /* The edge glow that holds for as long as the section does. */
+  .stage::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0;
+                box-shadow:inset 0 0 90px 10px rgba(232,103,42,.75);transition:opacity .4s}
+  .stage.fever::after{opacity:1;animation:feverPulse var(--beat,.4s) ease-out infinite}
+  @keyframes feverPulse{0%{opacity:1}100%{opacity:.45}}
+  .fever-tag{display:inline-block;margin-top:4px;background:var(--hot);color:#160802;border-radius:4px;
+             padding:2px 7px;font-size:11px;font-weight:900;letter-spacing:.14em;opacity:0;
+             transition:opacity .2s}
+  .stage.fever .fever-tag{opacity:1}
+  /* One hard jolt when a section lands -- not on every hit, which at eight
+     notes a second is nausea -- and none at all for anyone who asked for less
+     motion. */
+  .stage.shake canvas{animation:shake .42s cubic-bezier(.36,.07,.19,.97)}
+  @keyframes shake{
+    10%,90%{transform:translate(-2px,1px)} 20%,80%{transform:translate(5px,-3px)}
+    30%,50%,70%{transform:translate(-8px,4px)} 40%,60%{transform:translate(8px,-4px)}}
+  @media(prefers-reduced-motion:reduce){
+    .stage.shake canvas{animation:none}
+    .hype img.slam,.hype img.slam.r{animation:fadeOnly 2.6s ease-out forwards}
+    .hype .shout.on{animation:fadeOnly 1.8s ease-out forwards}
+    .stage.fever::after{animation:none}
+    @keyframes fadeOnly{0%{opacity:0}12%{opacity:.8}100%{opacity:0}}
+  }
+  .lvl{flex:1;justify-content:center;min-width:80px}
+  .lvl.on{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .lvlPick{display:flex;gap:6px;justify-content:center;margin:4px 0 16px;flex-wrap:wrap}
   footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
 </style>
 </head>
@@ -194,14 +259,23 @@
   <header>
     <span class="eyebrow">Free · No download · Works on a phone</span>
     <h1>Drum Along</h1>
-    <p class="lead">A drum game you play in the browser. Three lanes, twelve real punk and metal
-       songs, and the charts are not hand-written — they are detected from the recordings, so the
-       notes you are hitting are the drum parts that were actually played. Hi-hat on <b>A</b>,
-       snare on <b>S</b>, kick on <b>space</b>, or tap the three pads along the bottom on a
-       phone — turn it sideways and they get bigger.</p>
+    <p class="lead">Pick a song, tap the pads when the notes hit the line. That's it.
+       Twelve real punk and metal tracks, charted from the recordings, so every note lands on
+       a drum you can hear. When the song goes off, the band shows up and your points double.
+       Keys: <b>A</b> hi-hat, <b>S</b> snare, <b>space</b> kick — or tap the three pads on a phone.</p>
   </header>
 
   <div id="select">
+    <div class="settings" style="margin-top:22px">
+      <h3>Difficulty</h3>
+      <div class="row" id="levelRow">
+        <button class="btn lvl" type="button" data-l="easy">Easy</button>
+        <button class="btn lvl" type="button" data-l="medium">Medium</button>
+        <button class="btn lvl" type="button" data-l="hard">Hard</button>
+        <button class="btn lvl" type="button" data-l="expert">Expert</button>
+      </div>
+      <p class="hint" id="levelHint"></p>
+    </div>
     <div class="songs" id="songs"></div>
     <p class="hint" id="songsNote">Loading the song list…</p>
     <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
@@ -212,6 +286,11 @@
 
   <div class="stage" id="stage" hidden>
     <canvas id="c"></canvas>
+    <div class="hype" id="hype" aria-hidden="true">
+      <img id="hypeA" alt=""><img id="hypeB" alt="">
+      <div class="flash" id="hypeFlash"></div>
+      <div class="shout" id="hypeShout"></div>
+    </div>
     <!-- Streamed, not decoded. decodeAudioData turns a four megabyte MP3 into
          sixty-odd megabytes of PCM before a single note plays, which on a
          phone is a long wait and often a tab the OS kills outright. An audio
@@ -228,6 +307,7 @@
           <div>
             <div class="score" id="score">0</div>
             <div style="font-size:11.5px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase">Score</div>
+            <span class="fever-tag">Fever ×2</span>
           </div>
           <div class="meta">
             <span id="nowPlaying"></span><br>
@@ -270,20 +350,6 @@
        the songs play through, because the output latency being measured is
        the one the songs will have. -->
   <audio id="cal" preload="auto" playsinline></audio>
-
-  <div class="settings">
-    <h3>How many notes</h3>
-    <div class="row" id="densityRow">
-      <button class="btn dens" type="button" data-w="1">Beats</button>
-      <button class="btn dens" type="button" data-w="2">Eighths</button>
-      <button class="btn dens" type="button" data-w="3">Sixteenths</button>
-      <button class="btn dens" type="button" data-w="4">Everything</button>
-    </div>
-    <p class="hint">The chart holds every hit the detector found in the recording, and this
-       decides how much of it you play. <b>Everything</b> is the full drum part — dense, and
-       the honest answer to "what did he actually play". The others drop the finer
-       subdivisions and leave the same groove underneath. Takes effect on the next song.</p>
-  </div>
 
   <div class="settings">
     <h3>Timing</h3>
@@ -538,8 +604,8 @@
 })();
 </script>
 <script type="module">
-import { LANES, WINDOWS, MISS_AFTER, judge, nearestNote, hitScore,
-         accuracy, rank, slugify } from '/js/drum-game.js';
+import { LANES, WINDOWS, MISS_AFTER, LEVELS, judge, nearestNote, hitScore,
+         accuracy, rank, slugify, simplifyChart, hypeMoments, beatLength } from '/js/drum-game.js';
 
 /* drum-scene.js is NOT imported here, because importing it pulls in 1.3 MB of
  * Three.js and nothing on this page runs until that arrives. On a phone on a
@@ -556,7 +622,7 @@ window.__drumGameRan = true;
 
 const $ = (id) => document.getElementById(id);
 const OFFSET_KEY = 'drumGame:offset';
-const DENSITY_KEY = 'drumGame:density';
+const LEVEL_KEY = 'drumGame:level';
 
 let view, chart = null, current = null;
 let library = [], index = -1;        // every charted song, and where we are in it
@@ -572,19 +638,138 @@ let counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
 let live = [];                       // notes currently on screen
 let offset = Number(localStorage.getItem(OFFSET_KEY) || 0);
 
-/* How much of the chart to play: the highest metrical weight kept.
- * 1 beats, 2 eighths, 3 sixteenths, 4 everything. */
-let density = Number(localStorage.getItem(DENSITY_KEY) || 3);
-function setDensity(w) {
-  density = Math.max(1, Math.min(4, Number(w) || 3));
-  [...document.querySelectorAll('.dens')].forEach(
-    b => b.classList.toggle('on', Number(b.dataset.w) === density));
-  try { localStorage.setItem(DENSITY_KEY, String(density)); } catch (e) {}
+/* How much of the chart to play. Easy is the default: one pad at a time, on
+ * the beat, with forgiving timing -- the version somebody who has never held
+ * a stick can play along to on the first go. The rules are in drum-game.js. */
+const LEVEL_HINTS = {
+  easy: 'One pad at a time, right on the beat, with forgiving timing. Start here.',
+  medium: 'Twice the notes, still one pad at a time.',
+  hard: 'The groove as played, with hits on two pads at once.',
+  expert: 'Every hit the detector found in the recording. Good luck.'
+};
+let level = 'easy';
+try { level = localStorage.getItem(LEVEL_KEY) || 'easy'; } catch (e) {}
+let judgeScale = 1, missAfter = MISS_AFTER;
+function setLevel(l) {
+  level = LEVELS[l] ? l : 'easy';
+  judgeScale = LEVELS[level].scale;
+  missAfter = MISS_AFTER * judgeScale;
+  [...document.querySelectorAll('.lvl')].forEach(
+    b => b.classList.toggle('on', b.dataset.l === level));
+  const h = $('levelHint'); if (h) h.textContent = LEVEL_HINTS[level];
+  try { localStorage.setItem(LEVEL_KEY, level); } catch (e) {}
 }
-setDensity(density);
-[...document.querySelectorAll('.dens')].forEach((b) => {
-  b.addEventListener('click', () => setDensity(b.dataset.w));
+setLevel(level);
+document.addEventListener('click', (e) => {
+  const b = e.target.closest && e.target.closest('.lvl');
+  if (!b) return;
+  setLevel(b.dataset.l);
+  // Picked on the Ready screen: rebuild this song's chart at the new level.
+  if (b.closest('#panel') && current) start(index);
 });
+
+/* ---- hype: the band, when the song goes off -------------------------- */
+
+const HYPE_DIR = '/images/drum-game/hype/';
+const HYPE_PHOTOS = {
+  'granite': 8, 'lift-the-anchor': 11, 'bound-by-none': 2,
+  'dead-fast': 1, 'diera': 2, 'miki': 1
+};
+const SHOUTS = ['Go off', 'Louder', 'Pit open', 'Full send', 'Here it comes',
+                'Hit it', 'Faster', 'No mercy', 'Let\'s go'];
+let hype = [], hypeAt = 0, feverEnd = -1, photos = [], photoAt = 0, flip = false;
+
+function bandKey(band) { return slugify(band || ''); }
+
+/* This band's pictures, and Miki behind the kit for every band -- he is the
+ * drummer on all twelve. Shuffled once per song and preloaded, so the first
+ * slam is not a picture arriving half a second after the beat it was for. */
+function photosFor(band) {
+  const list = [];
+  const k = bandKey(band);
+  for (let i = 1; i <= (HYPE_PHOTOS[k] || 0); i++) list.push(`${HYPE_DIR}${k}-${i}.jpg`);
+  list.push(`${HYPE_DIR}miki-1.jpg`);
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  for (const src of list) { const im = new Image(); im.src = src; }
+  return list;
+}
+
+/* The moments, worked out once per song from the full chart: the start of
+ * every loud section, and in a long one another picture every ten seconds or
+ * so, each snapped to a tracked beat so it lands with the music. */
+function planHype(map) {
+  const sections = hypeMoments(map.notes, map.duration, map.beats);
+  const beats = map.beats || [];
+  const onBeat = (t) => {
+    let best = t, bd = Infinity;
+    for (const b of beats) { const d = Math.abs(b - t); if (d < bd) { bd = d; best = b; } }
+    return bd < 0.6 ? best : t;
+  };
+  const out = [];
+  for (const s of sections) {
+    out.push({ t: s.start, end: s.end, big: true });
+    for (let t = s.start + 10; t < s.end - 3; t += 10) out.push({ t: onBeat(t), end: s.end, big: false });
+  }
+  return out;
+}
+
+function restart(el, cls) {
+  el.classList.remove(cls);
+  void el.offsetWidth;                // so the animation runs again
+  el.classList.add(cls);
+}
+
+function fireHype(m) {
+  if (photos.length) {
+    const img = flip ? $('hypeB') : $('hypeA');
+    flip = !flip;
+    img.src = photos[photoAt++ % photos.length];
+    img.classList.toggle('r', Math.random() < 0.5);
+    restart(img, 'slam');
+  }
+  restart($('hypeFlash'), 'on');
+  if (m.big) {
+    const sh = $('hypeShout');
+    sh.textContent = SHOUTS[Math.floor(Math.random() * SHOUTS.length)];
+    const sm = document.createElement('small');
+    sm.textContent = (current && current.band ? current.band + ' · ' : '') + 'Fever ×2';
+    sh.appendChild(sm);
+    restart(sh, 'on');
+    restart($('stage'), 'shake');
+    feverEnd = Math.max(feverEnd, m.end);
+    $('stage').classList.add('fever');
+    hitSound('kick', 0.5);
+    buzz([40, 30, 60]);
+    if (window.Track && hypeAt === 0) Track.ev('game_hype', { song: current && current.slug });
+  }
+}
+
+/* Called from the frame loop with the song clock. */
+function tickHype(now) {
+  while (hypeAt < hype.length && hype[hypeAt].t <= now) {
+    const m = hype[hypeAt++];
+    // A seek or a stalled tab can skip past several; only fire one that is
+    // actually happening now.
+    if (now - m.t < 0.5) fireHype(m);
+    else if (m.big) feverEnd = Math.max(feverEnd, m.end);
+  }
+  if (feverEnd >= 0 && now > feverEnd) {
+    feverEnd = -1;
+    $('stage').classList.remove('fever');
+  }
+}
+
+function resetHype() {
+  hypeAt = 0; feverEnd = -1; photoAt = 0;
+  $('stage').classList.remove('fever', 'shake');
+  for (const id of ['hypeA', 'hypeB', 'hypeFlash', 'hypeShout']) {
+    $(id).classList.remove('slam', 'on');
+  }
+}
+const fever = () => feverEnd >= 0;
 
 function setOffset(ms) {
   offset = Number(ms) || 0;
@@ -838,7 +1023,8 @@ async function loadSongs() {
     const right = document.createElement('div');
     right.className = 'n';
     const mins = Math.floor(s.info.duration / 60), secs = Math.round(s.info.duration % 60);
-    right.textContent = `${s.info.notes} notes · ${mins}:${String(secs).padStart(2, '0')}`;
+    // Length only: the note count depends on the difficulty you pick.
+    right.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
     b.append(left, right);
     b.addEventListener('click', () => start(i));
     box.appendChild(b);
@@ -884,6 +1070,7 @@ function padKeys() {
 function backToSelect() {
   running = false;
   clearLive();
+  resetHype();
   document.body.classList.remove('playing', 'ingame');
   try { $('track').pause(); } catch (e) {}
   $('overlay').hidden = true;
@@ -1038,18 +1225,23 @@ async function start(i, autoplay) {
   // carries the metrical position it sits on -- downbeat, beat, eighth,
   // sixteenth, thirty-second -- so dropping the finest ones leaves a simpler
   // version of the same part rather than a random subset of it.
-  chart = song.map.notes
-    .filter(n => (n.w == null ? 0 : n.w) <= density)
+  chart = simplifyChart(song.map.notes, level, song.map.beats, song.map.bpm)
     .map(n => ({ ...n, done: false, mesh: null }));
   beatTimes = song.map.beats || [];
   beatAt = 0;
+  hype = planHype(song.map);
+  photos = photosFor(song.band);
+  resetHype();
+  // The fever glow pulses at the song's own tempo.
+  $('stage').style.setProperty('--beat',
+    beatLength(song.map.beats, song.map.bpm).toFixed(3) + 's');
   clearLive();
   score = 0; combo = 0; best = 0; cursor = 0; judgeFrom = 0;
   counts = { Perfect: 0, Good: 0, OK: 0, Miss: 0 };
   $('score').textContent = '0';
   $('combo').style.opacity = '0';
 
-  if (window.Track) Track.ev('game_start', { song: song.slug });
+  if (window.Track) Track.ev('game_start', { song: song.slug, level });
 
   // Skipping to the next song came from a tap, and the audio element has
   // already been unlocked by whatever started the last one, so it can just
@@ -1061,7 +1253,17 @@ async function start(i, autoplay) {
 function showReady() {
   $('overlay').hidden = false;
   $('panel').innerHTML =
-    '<h2>Ready</h2><p>Hi-hat <b>A</b> · Snare <b>S</b> · Kick <b>space</b>, or tap the pads.</p>';
+    '<h2>Ready</h2><p>Tap the pad as each note hits the white line.<br>' +
+    'Keys: <b>A</b> · <b>S</b> · <b>space</b></p>';
+  const pick = document.createElement('div');
+  pick.className = 'lvlPick';
+  for (const [k, L] of Object.entries(LEVELS)) {
+    const b = document.createElement('button');
+    b.className = 'btn lvl' + (k === level ? ' on' : ''); b.type = 'button';
+    b.dataset.l = k; b.textContent = L.label;
+    pick.appendChild(b);
+  }
+  $('panel').appendChild(pick);
   const go = document.createElement('button');
   go.className = 'btn go'; go.textContent = 'Start';
   go.addEventListener('click', () => { $('overlay').hidden = true; play(); });
@@ -1341,25 +1543,25 @@ function strike(laneId) {
   // have not appeared yet, and every note you can actually hit sits behind
   // it. That was worth zero points and a screen full of Miss.
   while (judgeFrom < chart.length &&
-         (chart[judgeFrom].done || chart[judgeFrom].t < now - MISS_AFTER)) {
+         (chart[judgeFrom].done || chart[judgeFrom].t < now - missAfter)) {
     judgeFrom++;
   }
-  const found = nearestNote(chart, laneId, now, judgeFrom);
+  const found = nearestNote(chart, laneId, now, judgeFrom, judgeScale);
   // A swing at nothing, or one too far out to count. It still makes its
   // sound -- a pad you hit that stays silent feels like the game stopped
   // listening -- but quietly, and the ring goes red instead of lane-coloured.
-  if (!found || !judge(found.delta)) {
+  if (!found || !judge(found.delta, judgeScale)) {
     hitSound(laneId, 0.10);
     if (lane) lane.miss = 1;
     return;
   }
-  const w = judge(found.delta);
+  const w = judge(found.delta, judgeScale);
 
   found.note.done = true;
   combo += 1;
   best = Math.max(best, combo);
   counts[w.name] += 1;
-  score += hitScore(w.score, combo);
+  score += hitScore(w.score, combo) * (fever() ? 2 : 1);
   $('score').textContent = score.toLocaleString();
 
   // Louder the better you played it.
@@ -1374,6 +1576,7 @@ function strike(laneId) {
   const step = COMBO_STEPS.indexOf(combo);
   if (step >= 0) {
     comboSound(step);
+    if (combo >= 50) fireHype({ big: false });
     buzz([14, 20]);
     c.classList.remove('pop');
     void c.offsetWidth;                  // restart the animation
@@ -1531,7 +1734,7 @@ function loop() {
       n.mesh.position.z = view.HIT_Z - dt * view.SPEED;
       view.styleNote(n.mesh, dt, n.v);
     }
-    if (dt < -MISS_AFTER) {
+    if (dt < -missAfter) {
       // Gone past. A miss breaks the combo whether or not anything was pressed.
       if (!n.done) {
         n.done = true;
@@ -1555,6 +1758,8 @@ function loop() {
   // every display -- a 200 ms flash on a 60 Hz laptop and a 100 ms one on a
   // 120 Hz phone. The renderer has the real elapsed time.)
 
+  tickHype(now);
+
   const secs = Math.max(0, now);
   $('progress').textContent =
     `${Math.floor(secs / 60)}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
@@ -1567,6 +1772,7 @@ function loop() {
 
 function finish() {
   running = false;
+  resetHype();
   document.body.classList.remove('playing');
   try { $('track').pause(); } catch (e) {}
   clearLive();
