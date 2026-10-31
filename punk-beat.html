@@ -4,13 +4,27 @@
 <meta charset="UTF-8">
 <script src="/js/track.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Punk Beat Ladder — Punk Drum Practice 70 to 200 BPM | Miki Drummer</title>
-<meta name="description" content="A free punk drum practice track that climbs from 70 to 200 BPM. Rock beat, skank beat, D-beat, punk 8ths and Oi! stomp, played live in your browser.">
+<title>Punk Drum Beat Practice Track, 70 to 200 BPM | Free</title>
+<meta name="description" content="Free punk drum practice track that speeds up from 70 to 200 BPM. Learn the skank beat, D-beat, punk 8ths and Oi! stomp in your browser, phone included.">
+<meta name="keywords" content="punk drum beat, punk drum practice, punk drum beats for beginners, skank beat, d-beat drum, how to play fast punk drums, punk beat bpm, drum speed practice, punk drum backing track">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Miki Drummer">
 <link rel="canonical" href="https://www.mikidrummer.ca/punk-beat.html">
 <link rel="icon" href="favicon.ico">
 <meta name="theme-color" content="#e4e4de">
-<meta property="og:title" content="Punk Beat Ladder">
-<meta property="og:description" content="Punk drum practice from 70 to 200 BPM, in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Miki Drummer">
+<meta property="og:locale" content="en_CA">
+<meta property="og:title" content="Punk Beat Ladder — punk drum practice from 70 to 200 BPM">
+<meta property="og:description" content="A free practice track that climbs from 70 to 200 BPM. Skank beat, D-beat, punk 8ths and Oi! stomp, played live in your browser.">
+<meta property="og:image" content="https://www.mikidrummer.ca/images/punk-beat-ladder-drum-practice.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Punk Beat Ladder: a big BPM readout, a beat grid for kick, snare and hi-hat, and a ladder of tempos from 70 to 200.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Punk Beat Ladder — punk drum practice, 70 to 200 BPM">
+<meta name="twitter:description" content="Skank beat, D-beat, punk 8ths and Oi! stomp, climbing in tempo until you hit 200. Free, in the browser.">
+<meta name="twitter:image" content="https://www.mikidrummer.ca/images/punk-beat-ladder-drum-practice.png">
 <meta property="og:url" content="https://www.mikidrummer.ca/punk-beat.html">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -170,6 +184,14 @@
   .full { grid-column: 1 / -1; }
   .total { font-family: var(--mono); font-size: 13px; grid-column: 1 / -1; margin: 0; }
 
+  /* ---------- The written guide under the tool ---------- */
+  .guide p, .guide li { font-size: 15px; line-height: 1.6; max-width: 70ch; margin: 0 0 10px; }
+  .guide ul { padding-left: 20px; margin: 0 0 10px; }
+  .guide h3 { font-family: var(--display); font-weight: 400; font-size: 20px; text-transform: uppercase; margin: 18px 0 4px; }
+  .guide a { color: var(--pink-ink); }
+  .site-foot { margin-top: 34px; padding-top: 16px; border-top: 2px solid var(--ink); font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
+  .site-foot a { color: var(--ink); }
+
   @media (prefers-reduced-motion: reduce) {
     .go, .cell { transition: none; }
     h1 .cut, section h2 { transform: none; }
@@ -183,8 +205,8 @@
   <header>
     <a class="back" href="/tools.html">← Free tools</a>
     <div class="eyebrow">Drum practice · synth kit · no samples</div>
-    <h1><span class="cut">Punk beat</span> practise <span class="pink">70–200</span> BPM</h1>
-    <p class="lede">A punk take on the <a href="https://youtu.be/XZpGzpHcfdw" target="_blank" rel="noopener">rock beat practise track</a>. Pick a beat, hit play, and the tempo climbs a rung every few bars until you hit 200. Click any rung to jump straight to it. New to drums? Follow the <a href="/blog/beginner-drum-practice-plan.html">12-week beginner plan</a>.</p>
+    <h1><span class="cut">Punk drum beat</span> practice <span class="pink">70–200</span> BPM</h1>
+    <p class="lede">A free punk drum practice track, and a punk take on the <a href="https://youtu.be/XZpGzpHcfdw" target="_blank" rel="noopener">rock beat practice track</a>. Pick a beat, hit play, and the tempo climbs a rung every few bars until you hit 200. Click any rung to jump straight to it. New to drums? Follow the <a href="/blog/beginner-drum-practice-plan.html">12-week beginner plan</a>.</p>
   </header>
 
   <div class="stage">
@@ -229,7 +251,128 @@
       </div>
     </div>
   </section>
+
+  <!-- The beats are described in the script, which Google renders but does
+       not weigh like text it can read straight off the page. These are the
+       same five, in HTML, because the beat names are what drummers search for. -->
+  <section class="guide" id="beats">
+    <h2>The five punk drum beats</h2>
+    <p>Every one of these is two bars of eighth notes on the hi-hat with the kick and snare
+       moving underneath. Learn them in this order — each one adds a single new idea to the one
+       before it. Click a name to open the ladder on that beat.</p>
+    <h3><a href="/punk-beat.html?beat=rock">Rock beat</a></h3>
+    <p>Kick on 1 and 3, snare on 2 and 4, hats on every eighth. It is where every drummer starts,
+       and every other beat on this page is this one with something moved.</p>
+    <h3><a href="/punk-beat.html?beat=skank">Skank beat</a></h3>
+    <p>Kick on every beat, snare on every “and” in between — the hardcore two-step and the
+       fastest-feeling beat in punk. The trick is to keep it loose: tense up and it runs away from
+       you somewhere past 180 BPM.</p>
+    <h3><a href="/punk-beat.html?beat=dbeat">D-beat</a></h3>
+    <p>Kick on 1, the “and” of 2 and on 3, with the snare on 2 and 4. That gallop is named after
+       Discharge and it is the whole of crust punk and a good half of hardcore.</p>
+    <h3><a href="/punk-beat.html?beat=eights">Punk 8ths</a></h3>
+    <p>The Ramones pocket: straight eighths on the hats, kick on 1, 3 and the “and” of 3, snare on
+       2 and 4. Simple on paper, and the one that shows whether your right hand can keep time at
+       speed.</p>
+    <h3><a href="/punk-beat.html?beat=stomp">Oi! stomp</a></h3>
+    <p>Four on the floor with a fat backbeat. Easy on the hands and brutal on the right foot once
+       the tempo gets up high.</p>
+  </section>
+
+  <section class="guide" id="how">
+    <h2>How to get faster at punk drumming</h2>
+    <p>Speed comes from playing relaxed at a tempo you can already hold, then nudging it up — not
+       from forcing a tempo you cannot play yet. That is what the ladder does: it starts slow, stays
+       on each tempo for a few bars and climbs by 10 BPM at a time, so you find the exact rung
+       where it starts to fall apart.</p>
+    <ul>
+      <li><b>Start well under your limit.</b> If 160 is where it gets messy, start at 100.</li>
+      <li><b>Stop at the first rung you cannot play cleanly</b>, click the rung below it and stay
+          there. Tomorrow, start one rung higher.</li>
+      <li><b>Turn on the count-in</b> if you lose your place between tempos.</li>
+      <li><b>Ten or fifteen minutes a day</b> beats an hour on Sunday. A week of that and the top
+          rung moves.</li>
+    </ul>
+    <p>New to the kit altogether? The <a href="/blog/beginner-drum-practice-plan.html">12-week
+       beginner drum practice plan</a> builds a whole routine around this ladder. Want to play
+       along with real songs instead? Try the <a href="/drum-game/">free drum game</a>, which
+       charts twelve punk and metal tracks from the recordings.</p>
+  </section>
+
+  <section class="guide" id="faq">
+    <h2>Questions</h2>
+    <h3>Is it free?</h3>
+    <p>Yes. No account, no download, no ads. It is a web page.</p>
+    <h3>How fast is punk drumming?</h3>
+    <p>Most punk sits between about 150 and 200 BPM, which is why the ladder tops out at 200.
+       Hardcore and thrash go faster still. Classic rock is usually 100 to 130.</p>
+    <h3>What is the difference between a skank beat and a D-beat?</h3>
+    <p>A skank beat alternates kick and snare on every eighth note, so it bounces. A D-beat keeps the
+       snare on 2 and 4 and adds an extra kick on the “and” of 2, so it gallops.</p>
+    <h3>Does it work on a phone?</h3>
+    <p>Yes. The drums are synthesised live in the browser rather than loaded as samples, so it
+       starts straight away on a phone or a laptop. Put headphones on and set it on a music stand.</p>
+    <h3>Can I change the tempos?</h3>
+    <p>Yes — set the start and top BPM, how much it climbs each time, and how many bars it stays
+       on each rung. Tick “keep going at the top tempo” to hold the last rung for as long as you
+       like.</p>
+  </section>
+
+  <footer class="site-foot">
+    Built and kept by <a href="/">Miki Drummer</a>, a punk drummer in Vancouver, BC.
+    One of the <a href="/tools.html">free tools for bands and drummers</a>, alongside the
+    <a href="/drum-game/">drum game</a>, the <a href="/click-track.html">click track maker</a>
+    and the <a href="/cymbal-designer.html">cymbal designer</a>.
+  </footer>
 </div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.mikidrummer.ca/punk-beat.html#app",
+      "name": "Punk Beat Ladder",
+      "url": "https://www.mikidrummer.ca/punk-beat.html",
+      "description": "A free punk drum practice track that climbs from 70 to 200 BPM. Rock beat, skank beat, D-beat, punk 8ths and Oi! stomp, synthesised live in the browser.",
+      "image": "https://www.mikidrummer.ca/images/punk-beat-ladder-drum-practice.png",
+      "applicationCategory": "MusicApplication",
+      "operatingSystem": "Any modern web browser",
+      "browserRequirements": "Requires JavaScript and Web Audio",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" },
+      "author": { "@type": "Person", "name": "Miki Drummer", "url": "https://www.mikidrummer.ca/" },
+      "keywords": "punk drum beat, skank beat, d-beat, punk drum practice, drum speed practice"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.mikidrummer.ca/punk-beat.html#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is it free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. No account, no download, no ads. It is a web page." } },
+        { "@type": "Question", "name": "How fast is punk drumming?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Most punk sits between about 150 and 200 BPM, which is why the ladder tops out at 200. Hardcore and thrash go faster still. Classic rock is usually 100 to 130." } },
+        { "@type": "Question", "name": "What is the difference between a skank beat and a D-beat?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A skank beat alternates kick and snare on every eighth note, so it bounces. A D-beat keeps the snare on 2 and 4 and adds an extra kick on the “and” of 2, so it gallops." } },
+        { "@type": "Question", "name": "Does it work on a phone?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. The drums are synthesised live in the browser rather than loaded as samples, so it starts straight away on a phone or a laptop. Put headphones on and set it on a music stand." } },
+        { "@type": "Question", "name": "Can I change the tempos?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes — set the start and top BPM, how much it climbs each time, and how many bars it stays on each rung. Tick “keep going at the top tempo” to hold the last rung for as long as you like." } }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Miki Drummer", "item": "https://www.mikidrummer.ca/" },
+        { "@type": "ListItem", "position": 2, "name": "Free tools", "item": "https://www.mikidrummer.ca/tools.html" },
+        { "@type": "ListItem", "position": 3, "name": "Punk Beat Ladder", "item": "https://www.mikidrummer.ca/punk-beat.html" }
+      ]
+    }
+  ]
+}
+</script>
 
 <script>
 (() => {

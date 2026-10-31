@@ -4,17 +4,26 @@
 <meta charset="utf-8">
 <script src="/js/track.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cymbal Designer — Engrave &amp; Paint Your Own Cymbal | Miki Drummer</title>
-<meta name="description" content="A free cymbal designer: engrave or paint artwork onto a virtual cymbal, with quarter symmetry that repeats every stroke around the bell. Pick the size and finish, then download your design as a PNG.">
-<meta name="keywords" content="cymbal designer, design a cymbal, custom cymbal art, cymbal engraving, cymbal paint, drum art tool, custom crash cymbal, cymbal artwork generator, drummer design tool">
-<meta name="robots" content="index, follow">
+<title>Cymbal Designer — Design Your Own Custom Cymbal Free</title>
+<meta name="description" content="Free online cymbal designer. Engrave or paint your own art onto a virtual cymbal with mirror symmetry, then download it as a PNG or SVG. No sign-up.">
+<meta name="keywords" content="cymbal designer, design your own cymbal, custom cymbal, custom cymbal design, custom cymbal art, cymbal engraving, cymbal laser engraving design, painted cymbal, custom crash cymbal, drum art tool">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Miki Drummer">
 <link rel="canonical" href="https://www.mikidrummer.ca/cymbal-designer.html">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.mikidrummer.ca/cymbal-designer.html">
 <meta property="og:title" content="Cymbal Designer — engrave &amp; paint your own cymbal">
-<meta property="og:description" content="Engrave or paint onto a virtual cymbal with quarter symmetry. Pick size and finish, download the result.">
+<meta property="og:description" content="Design your own custom cymbal: engrave or paint onto a virtual crash, ride, hi-hat or splash with mirror symmetry, then download it as PNG or SVG. Free.">
 <meta property="og:locale" content="en_CA">
 <meta property="og:site_name" content="Miki Drummer">
+<meta property="og:image" content="https://www.mikidrummer.ca/images/cymbal-designer-custom-cymbal.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Cymbal Designer: a bronze cymbal with engraved symmetrical artwork, next to the drawing tools.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cymbal Designer — design your own custom cymbal">
+<meta name="twitter:description" content="Engrave or paint onto a virtual cymbal with mirror symmetry. Free, in the browser, download as PNG or SVG.">
+<meta name="twitter:image" content="https://www.mikidrummer.ca/images/cymbal-designer-custom-cymbal.png">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
 <link rel="icon" type="image/png" sizes="48x48" href="/images/icon-48.png">
@@ -116,6 +125,14 @@
              padding:1px 5px;font-size:11.5px}
   .status{font-size:12.5px;color:var(--stone-400);margin-top:9px;min-height:17px}
   .status.ok{color:var(--green)}
+  .guide{margin-top:34px;display:grid;gap:14px}
+  @media(min-width:980px){ .guide{grid-template-columns:1fr 1fr} }
+  .guide h2{font-family:"Arial Black","Helvetica Neue",system-ui,sans-serif;font-size:20px;
+            letter-spacing:-.01em;text-transform:none;color:var(--stone-100);margin-bottom:8px}
+  .guide h3{font-size:15px;margin:14px 0 4px;color:var(--stone-100)}
+  .guide p,.guide li{color:var(--stone-300);font-size:14.5px;line-height:1.65}
+  .guide ol{padding-left:20px}
+  .guide a{color:var(--molten)}
 </style>
 </head>
 <body>
@@ -123,9 +140,9 @@
 
   <div class="top">
     <span class="eyebrow">Miki Drummer · Tools</span>
-    <a class="back" href="/bands.html#tools">← Tools</a>
+    <a class="back" href="/tools.html">← Free tools</a>
   </div>
-  <h1>Cymbal Designer</h1>
+  <h1>Cymbal Designer: design your own custom cymbal</h1>
   <p class="lead">
     Draw straight onto the cymbal — <b>engrave</b> to cut into the metal, or <b>paint</b> to lay colour on top.
     <b>Quarter symmetry</b> repeats every stroke at 90°, 180° and 270°, so a single gesture becomes a
@@ -1047,11 +1064,107 @@
   renderLibrary();
 })();
 </script>
+<!-- What the tool is for, in words a search engine can read. The tool itself
+     is a canvas and a column of controls, which says almost nothing to
+     anybody who has not already found the page. -->
+<div class="wrap guide" id="guide">
+  <section class="card">
+    <h2>How to design a custom cymbal</h2>
+    <ol>
+      <li><b>Pick the cymbal.</b> A 10" splash, 14" hi-hat, 16" or 18" crash or a 20" ride, in
+          traditional brass, dark bronze, brilliant or black nickel, so the mock-up looks like the
+          cymbal you own or want to order.</li>
+      <li><b>Choose engrave or paint.</b> Engraving cuts into the metal and catches the light like
+          a real laser or hand engraving. Paint sits on top in any colour.</li>
+      <li><b>Draw with symmetry on.</b> Quarter symmetry copies every stroke to 90°, 180° and 270°,
+          so a single line becomes a pattern that wraps the whole cymbal around the bell.</li>
+      <li><b>Add a logo or picture.</b> Stamp your band logo or any image onto its own layer, and
+          move, hide or reorder layers as you go.</li>
+      <li><b>Download it.</b> Save the full mock-up as a PNG to share, or just the artwork as a PNG
+          or a vector SVG to hand to someone who engraves, prints or paints cymbals.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>Questions</h2>
+    <h3>Is the cymbal designer free?</h3>
+    <p>Yes. No account, no watermark and nothing to install. It runs in your browser and nothing
+       you draw is uploaded anywhere.</p>
+    <h3>Can I get my design put on a real cymbal?</h3>
+    <p>Download the <b>Artwork SVG</b>: it is real vector paths, which is what laser engravers and
+       vinyl or print shops work from. Take it to a local engraver, or to a cymbal maker that
+       offers custom work.</p>
+    <h3>Does it work on a phone or tablet?</h3>
+    <p>Yes — draw with a finger or a stylus. A tablet with a pen is the nicest way to use it.</p>
+    <h3>Will my design be saved?</h3>
+    <p>Your current design stays on this device, so you can close the tab and come back to it, and
+       you can save named designs to the list on the right.</p>
+  </section>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.mikidrummer.ca/cymbal-designer.html#app",
+      "name": "Cymbal Designer",
+      "url": "https://www.mikidrummer.ca/cymbal-designer.html",
+      "description": "A free online cymbal designer. Engrave or paint your own artwork onto a virtual cymbal with quarter symmetry, then download it as a PNG mock-up or as PNG and SVG artwork for engraving.",
+      "image": "https://www.mikidrummer.ca/images/cymbal-designer-custom-cymbal.png",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "Any modern web browser",
+      "browserRequirements": "Requires JavaScript",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" },
+      "author": { "@type": "Person", "name": "Miki Drummer", "url": "https://www.mikidrummer.ca/" },
+      "featureList": ["Engrave or paint", "Quarter symmetry", "Layers", "Stamp a logo or image", "Download PNG or SVG"]
+    },
+    {
+      "@type": "HowTo",
+      "name": "How to design a custom cymbal",
+      "step": [
+        { "@type": "HowToStep", "name": "Pick the cymbal", "text": "Choose a splash, hi-hat, crash or ride and a finish — traditional brass, dark bronze, brilliant or black nickel — so the mock-up looks like the cymbal you own or want to order." },
+        { "@type": "HowToStep", "name": "Choose engrave or paint", "text": "Engraving cuts into the metal and catches the light like a real laser or hand engraving. Paint sits on top in any colour." },
+        { "@type": "HowToStep", "name": "Draw with symmetry on", "text": "Quarter symmetry copies every stroke to 90°, 180° and 270°, so a single line becomes a pattern that wraps the whole cymbal around the bell." },
+        { "@type": "HowToStep", "name": "Add a logo or picture", "text": "Stamp your band logo or any image onto its own layer, and move, hide or reorder layers as you go." },
+        { "@type": "HowToStep", "name": "Download it", "text": "Save the full mock-up as a PNG to share, or just the artwork as a PNG or a vector SVG to hand to someone who engraves, prints or paints cymbals." }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.mikidrummer.ca/cymbal-designer.html#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is the cymbal designer free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. No account, no watermark and nothing to install. It runs in your browser and nothing you draw is uploaded anywhere." } },
+        { "@type": "Question", "name": "Can I get my design put on a real cymbal?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Download the Artwork SVG: it is real vector paths, which is what laser engravers and vinyl or print shops work from. Take it to a local engraver, or to a cymbal maker that offers custom work." } },
+        { "@type": "Question", "name": "Does it work on a phone or tablet?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes — draw with a finger or a stylus. A tablet with a pen is the nicest way to use it." } },
+        { "@type": "Question", "name": "Will my design be saved?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Your current design stays on this device, so you can close the tab and come back to it, and you can save named designs to the list on the right." } }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Miki Drummer", "item": "https://www.mikidrummer.ca/" },
+        { "@type": "ListItem", "position": 2, "name": "Free tools", "item": "https://www.mikidrummer.ca/tools.html" },
+        { "@type": "ListItem", "position": 3, "name": "Cymbal Designer", "item": "https://www.mikidrummer.ca/cymbal-designer.html" }
+      ]
+    }
+  ]
+}
+</script>
 <footer style="max-width:1180px;margin:34px auto 0;padding-top:18px;
                border-top:1px solid rgba(255,255,255,.08);
                color:#7d848d;font-size:13px;line-height:1.6">
   Built and kept by <a href="/" style="color:#e8672a;text-decoration:none">Miki Drummer</a>, Vancouver BC.
-  One of <a href="/tools.html" style="color:#e8672a;text-decoration:none">nine free tools</a> for bands and drummers.
+  One of <a href="/tools.html" style="color:#e8672a;text-decoration:none">nine free tools</a> for bands and drummers,
+  alongside the <a href="/punk-beat.html" style="color:#e8672a;text-decoration:none">punk drum beat practice track</a>
+  and the <a href="/drum-game/" style="color:#e8672a;text-decoration:none">drum game</a>.
 </footer>
 </body>
 </html>
