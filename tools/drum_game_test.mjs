@@ -9,6 +9,7 @@
  * counts, which is the part players will notice being wrong.
  */
 import { judge, nearestNote, hitScore, accuracy, rank, slugify,
+         simplifyChart, hypeMoments, beatLength, LEVELS,
          WINDOWS, MISS_AFTER } from '../js/drum-game.js';
 
 let fails = 0;
@@ -116,6 +117,72 @@ const SLUGS = {
 for (const [name, want] of Object.entries(SLUGS)) {
   eq(slugify(name), want, `slug for ${name}`);
   ok(/^[a-z0-9-]+$/.test(slugify(name)), `slug for ${name} is url-safe ascii`);
+}
+
+// --- difficulty --------------------------------------------------------
+// A two-bar rock beat at 120 BPM: kick on 1 and 3, snare on 2 and 4, hats on
+// every eighth, all hit at once on the beats.
+{
+  const notes = [];
+  for (let i = 0; i < 64; i++) {
+    const t = 1 + i * 0.25, onBeat = i % 2 === 0;
+    notes.push({ t, lane: 'hat', w: onBeat ? (i % 8 === 0 ? 0 : 1) : 2, v: 0.4 });
+    if (onBeat) notes.push({ t, lane: (i / 2) % 2 ? 'snare' : 'kick', w: i % 8 === 0 ? 0 : 1, v: 0.8 });
+  }
+  const beats = notes.filter(n => n.lane !== 'hat').map(n => n.t);
+  eq(beatLength(beats, 0), 0.5, 'beat length from the tracked beats');
+  eq(beatLength([], 120), 0.5, 'beat length from the tempo when there are no beats');
+
+  const easy = simplifyChart(notes, 'easy', beats, 120);
+  const times = easy.map(n => n.t);
+  ok(new Set(times).size === times.length, 'easy never asks for two pads at once');
+  for (let i = 1; i < easy.length; i++) {
+    ok(easy[i].t - easy[i - 1].t >= 0.4 - 1e-9, `easy keeps a gap at ${easy[i].t}`);
+  }
+  ok(easy.every(n => n.lane !== 'hat'), 'easy plays the kick and snare you hear, not the hat under them');
+  ok(easy.every(n => n.w <= 1), 'easy stays on the beat');
+  eq(easy.length, 32, 'easy at 120 BPM keeps every beat');
+
+  const med = simplifyChart(notes, 'medium', beats, 120);
+  ok(med.length > easy.length, 'medium has more than easy');
+  ok(new Set(med.map(n => n.t)).size === med.length, 'medium is one pad at a time too');
+  eq(simplifyChart(notes, 'expert', beats, 120).length, notes.length, 'expert is the whole chart');
+  ok(simplifyChart(notes, 'hard', beats, 120).length >= med.length, 'hard is at least medium');
+  eq(simplifyChart(notes, 'nonsense', beats, 120).length, easy.length, 'an unknown level is easy');
+  ok(notes.length === 96, 'the chart it was given is left alone');
+  for (const k of Object.keys(LEVELS)) ok(LEVELS[k].scale >= 1, `${k} never narrows the windows`);
+
+  // Faster than the floor allows: at 240 BPM easy goes half time.
+  const fast = notes.map(n => ({ ...n, t: 1 + (n.t - 1) / 2 }));
+  const fe = simplifyChart(fast, 'easy', fast.filter(n => n.lane !== 'hat').map(n => n.t), 240);
+  for (let i = 1; i < fe.length; i++) ok(fe[i].t - fe[i - 1].t >= 0.4 - 1e-9, 'fast easy keeps its floor');
+}
+
+// Wider windows on the easier levels, and the default is unchanged.
+eq(judge(0.06, 1.45)?.name, 'Perfect', 'easy timing is more forgiving');
+eq(judge(0.06)?.name, 'Good', 'normal timing is unchanged');
+ok(nearestNote([{ t: 1, lane: 'kick', done: false }], 'kick', 1.2, 0, 1.45) !== null,
+   'easy reaches a little further for a note');
+
+// --- hype moments ------------------------------------------------------
+// Sixty seconds: quiet verse, a loud chorus from 20 to 32, quiet, loud again
+// from 44 to 52.
+{
+  const notes = [], beats = [];
+  for (let t = 0.5; t < 60; t += 0.5) beats.push(t);
+  for (let t = 0.5; t < 60; t += 0.125) {
+    const loud = (t >= 20 && t < 32) || (t >= 44 && t < 52);
+    if (loud) notes.push({ t, lane: 'snare', v: 0.9 }, { t, lane: 'kick', v: 0.9 });
+    else if (Math.abs(t * 2 - Math.round(t * 2)) < 1e-9) notes.push({ t, lane: 'hat', v: 0.3 });
+  }
+  const h = hypeMoments(notes, 60, beats);
+  eq(h.length, 2, 'finds both loud sections');
+  ok(h[0] && Math.abs(h[0].start - 20) < 2, `first starts at the chorus (${h[0] && h[0].start})`);
+  ok(h[1] && Math.abs(h[1].start - 44) < 2, `second starts at the second chorus (${h[1] && h[1].start})`);
+  ok(h.every(m => beats.includes(m.start)), 'every moment lands on a tracked beat');
+  ok(h.every(m => m.end > m.start), 'every section has a length');
+  eq(hypeMoments([], 60, beats), [], 'no notes, no moments');
+  eq(hypeMoments(notes, 1, beats), [], 'a one-second clip is too short to have a chorus');
 }
 
 console.log(fails ? `${fails} check(s) FAILED` : 'drum game rules: all checks passed');
