@@ -101,6 +101,8 @@
   .clip .dl:hover{color:var(--hot)}
   .clip .dl[aria-disabled=true]{pointer-events:none;opacity:.4}
   .saveHelp{font-size:12.5px;color:var(--mid);margin-top:8px}
+  #dlAll{text-decoration:none}
+  #dlAll[aria-disabled=true]{opacity:.45;pointer-events:none}
   /* Instagram, TikTok and Facebook open links in their own browser, and
      that browser cannot save a file. Most people arrive here from a link
      in bio, so this has to be the first thing they see. */
@@ -180,7 +182,13 @@
   <div id="results" hidden>
     <div class="resHead">
       <h2 id="resTitle">Your clips</h2>
-      <button class="btn go" id="saveAll" type="button" disabled>⬇ Save all</button>
+      <div class="row" style="gap:8px">
+        <button class="btn" id="saveAll" type="button" disabled hidden>Save all to phone</button>
+        <!-- A real link, not a button that builds the file when tapped: the
+             ZIP is made as soon as the clips are, so the tap is a plain
+             download that no browser can decide was not a tap. -->
+        <a class="btn go" id="dlAll" role="button" aria-disabled="true">⬇ Download all</a>
+      </div>
     </div>
     <p class="saveHelp" id="saveHelp"></p>
     <div class="clips" id="clips"></div>
@@ -289,10 +297,14 @@
       <p>Each clip is recorded as it plays, so five 15 second clips take a little over a minute.
          Keep this tab open while it works.</p>
       <h3>What format are the clips?</h3>
-      <p>MP4, in the same shape as your video (up to 1920 pixels on the long side), or
-         1080×1920 if you pick a 9:16 option. That’s on iPhone, Android and current Chrome,
-         Edge and Safari. A few desktop
-         browsers can only save WebM; if yours does, open the page on your phone instead.</p>
+      <p>A standard MP4 — H.264 video and AAC sound, the same kind of file a phone camera
+         makes — in the same shape as your video (up to 1920 pixels on the long side), or
+         1080×1920 if you pick a 9:16 option. YouTube, Instagram and TikTok all take it.
+         A few desktop browsers can only save WebM; if yours does, open the page on your
+         phone instead.</p>
+      <h3>Can I download all the clips at once?</h3>
+      <p>Yes — “Download all” saves every clip in one ZIP file. Open it and the clips are
+         inside, ready to upload.</p>
       <h3>How do I post them?</h3>
       <p>On a phone, tap “Save” and pick “Save Video” to put the clip in your Photos, or pick
          Instagram to post it straight away. “Download the file” under each clip saves it to
@@ -335,7 +347,9 @@
         { "@type": "Question", "name": "Why does it take a minute?",
           "acceptedAnswer": { "@type": "Answer", "text": "Each clip is recorded as it plays, so five 15 second clips take a little over a minute. Keep this tab open while it works." } },
         { "@type": "Question", "name": "What format are the clips?",
-          "acceptedAnswer": { "@type": "Answer", "text": "MP4, in the same shape as your video (up to 1920 pixels on the long side), or 1080×1920 if you pick a 9:16 option. That’s on iPhone, Android and current Chrome, Edge and Safari. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "A standard MP4 — H.264 video and AAC sound, the same kind of file a phone camera makes — in the same shape as your video (up to 1920 pixels on the long side), or 1080×1920 if you pick a 9:16 option. YouTube, Instagram and TikTok all take it. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
+        { "@type": "Question", "name": "Can I download all the clips at once?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes — “Download all” saves every clip in one ZIP file. Open it and the clips are inside, ready to upload." } },
         { "@type": "Question", "name": "How do I post them?",
           "acceptedAnswer": { "@type": "Answer", "text": "On a phone, tap “Save” and pick “Save Video” to put the clip in your Photos, or pick Instagram to post it straight away. “Download the file” under each clip saves it to your Files or Downloads instead. On a computer, “Save” downloads it." } },
         { "@type": "Question", "name": "Why won’t it save from Instagram?",
@@ -356,7 +370,7 @@
 
 <script type="module">
 import { STORY_W, STORY_H, HOP, loudness, pickHighlights, evenly, fillRect, fitRect,
-         clock, clipName, autoLength, keepSize } from '/js/story-cutter.js';
+         clock, clipName, autoLength, keepSize, crc32, zipParts } from '/js/story-cutter.js';
 
 /* One job: a video goes in, finished clips come out, with nothing to decide
  * in between. Everything adjustable lives under Options and defaults to
@@ -540,6 +554,7 @@ async function load(file) {
   stopPreview();
   for (const c of S.clips) if (c.url) URL.revokeObjectURL(c.url);
   S.file = file; S.name = file.name; S.rms = null; S.clips = [];
+  S.pcm = null; S.sound = null;
   $('clips').textContent = '';
   $('results').hidden = true;
   $('resume').hidden = true;
@@ -598,6 +613,7 @@ async function realDuration() {
 async function listen() {
   if (S.file.size > MAX_ANALYSE_BYTES || S.duration > MAX_ANALYSE_SECONDS) {
     S.rms = null;
+    S.sound = 'unread';          // there may well be sound; it just was not read
     return;
   }
   say('Finding the best moments…');
@@ -618,9 +634,14 @@ async function listen() {
     const chans = [];
     for (let i = 0; i < Math.min(2, decoded.numberOfChannels); i++) chans.push(decoded.getChannelData(i));
     S.rms = loudness(chans, decoded.sampleRate, HOP);
+    // Keep the decoded soundtrack: the clips' audio is cut straight from it
+    // and encoded as AAC, rather than recorded off the speakers in real time.
+    S.pcm = decoded;
+    S.sound = 'decoded';
     try { ac.close(); } catch (e) {}
   } catch (e) {
     S.rms = null;              // no sound, or a codec this browser won't decode
+    S.sound = 'none';
   }
 }
 
@@ -679,6 +700,7 @@ async function makeAll() {
       if (job !== S.job) return;
       if (blob) {
         c.blob = blob;
+        c.via = blob.via || ('recorder/' + blob.type);
         c.url = URL.createObjectURL(blob);
         c.state = 'done';
       } else {
@@ -716,6 +738,7 @@ function finished() {
              : (S.rms ? 'Best moments first. Tap one to watch it.' : 'Spread across the video. Tap one to watch it.'));
   }
   $('saveAll').disabled = !n;
+  prepareZip();
   // The stage ends a recording on its faded-out last frame; put a picture
   // back in the Options preview.
   const first = S.clips[0];
@@ -726,6 +749,7 @@ function finished() {
 
 function setBusyUi(on) {
   $('saveAll').disabled = on || !S.clips.some(c => c.blob);
+  if (on) zipLink(null);
   $('remake').disabled = on || !S.duration;
   $('addBtn').disabled = on;
   $('playBtn').disabled = on;
@@ -777,7 +801,7 @@ function renderClips() {
       if (c.url) URL.revokeObjectURL(c.url);
       S.clips.splice(S.clips.indexOf(c), 1);
       el.remove();
-      if (!S.busy) finished();
+      if (!S.busy) finished();             // the ZIP is rebuilt without it
     });
     row.append(save, rm);
     el.append(screen, t, row);
@@ -916,7 +940,244 @@ function clipLength(blob) {
   });
 }
 
+/* ---- a proper MP4 -------------------------------------------------------
+ *
+ * What MediaRecorder hands back in Chrome is a fragmented MP4 -- the video
+ * cut into a run of small pieces -- with Opus audio. Browsers play that
+ * fine. YouTube's uploader called it "unsupported media", and it is not
+ * what a phone camera or an editing app makes.
+ *
+ * So where the browser has the encoders (WebCodecs: Chrome and Edge, on
+ * Android, Windows, Mac and ChromeOS), the clip is built the standard way:
+ * H.264 video, AAC audio, one continuous file with its index at the front.
+ * The picture is still drawn in real time as the clip plays; the sound is
+ * cut straight from the decoded soundtrack, which is exact and needs no
+ * recording at all. Anywhere without the encoders falls back to the
+ * MediaRecorder path below, which is what Safari uses -- and Safari's
+ * recorder already writes AAC. */
+let muxLib = null;
+const planCache = new Map();
+
+async function wcPlan(W, H) {
+  if (badTypes.has('webcodecs')) return null;
+  if (!window.VideoEncoder || !window.VideoFrame) return null;
+  const key = W + 'x' + H + ':' + (S.pcm ? S.pcm.sampleRate + '/' + S.pcm.numberOfChannels : S.sound);
+  if (planCache.has(key)) return planCache.get(key);
+  let plan = null;
+  try {
+    // The sound must come from the decoded soundtrack. If it was too big to
+    // read, or unreadable, and there may be sound, this path would make a
+    // silent clip -- so leave it to MediaRecorder, which records what plays.
+    const needAudio = S.sound === 'decoded';
+    if (S.sound === 'unread') { planCache.set(key, null); return null; }
+    let video = null;
+    // High, Main, then Baseline -- all level 4.0, which covers 1080p.
+    for (const codec of ['avc1.640028', 'avc1.4d0028', 'avc1.42e028']) {
+      const cfg = { codec, width: W, height: H, bitrate: 8e6, framerate: 30, avc: { format: 'avc' } };
+      const r = await VideoEncoder.isConfigSupported(cfg).catch(() => null);
+      if (r && r.supported) { video = cfg; break; }
+    }
+    if (video) {
+      let audio = null;
+      if (needAudio) {
+        if (window.AudioEncoder && window.AudioData) {
+          const ch = Math.min(2, S.pcm.numberOfChannels), sr = S.pcm.sampleRate;
+          // AAC first: what YouTube, Instagram and every phone expect. Opus
+          // only where the browser has no AAC encoder (Chrome on Linux).
+          for (const [codec, mux] of [['mp4a.40.2', 'aac'], ['opus', 'opus']]) {
+            const cfg = { codec, sampleRate: sr, numberOfChannels: ch, bitrate: 192000 };
+            const r = await AudioEncoder.isConfigSupported(cfg).catch(() => null);
+            if (r && r.supported) { audio = { cfg, mux }; break; }
+          }
+        }
+        if (!audio) video = null;          // no way to encode the sound here
+      }
+      if (video) plan = { video, audio };
+    }
+  } catch (e) { plan = null; }
+  planCache.set(key, plan);
+  return plan;
+}
+
+async function recordWC(c, onProgress, plan) {
+  if (!muxLib) muxLib = await import('/vendor/mp4-muxer/mp4-muxer.js');
+  const { Muxer, ArrayBufferTarget } = muxLib;
+  const W = stage.width, H = stage.height;
+  const len = c.end - c.start, FADE = S.fade ? 0.35 : 0;
+  let failed = null;
+
+  const muxer = new Muxer({
+    target: new ArrayBufferTarget(),
+    video: { codec: 'avc', width: W, height: H, frameRate: 30 },
+    audio: plan.audio ? { codec: plan.audio.mux, numberOfChannels: plan.audio.cfg.numberOfChannels,
+                          sampleRate: plan.audio.cfg.sampleRate } : undefined,
+    fastStart: 'in-memory',                 // the index at the front of the file
+    firstTimestampBehavior: 'offset'
+  });
+  const venc = new VideoEncoder({
+    output: (chunk, meta) => { try { muxer.addVideoChunk(chunk, meta); } catch (e) { failed = e; } },
+    error: (e) => { failed = e; }
+  });
+  venc.configure(plan.video);
+
+  // ---- the sound: cut, faded, encoded -- before the picture, it is quick
+  if (plan.audio) {
+    const aenc = new AudioEncoder({
+      output: (chunk, meta) => { try { muxer.addAudioChunk(chunk, meta); } catch (e) { failed = e; } },
+      error: (e) => { failed = e; }
+    });
+    aenc.configure(plan.audio.cfg);
+    const pcm = S.pcm, sr = pcm.sampleRate, ch = plan.audio.cfg.numberOfChannels;
+    const from = Math.max(0, Math.round(c.start * sr));
+    const to = Math.min(pcm.length, Math.round(c.end * sr));
+    const fadeN = Math.round(FADE * sr), total = to - from;
+    const src = [];
+    for (let k = 0; k < ch; k++) src.push(pcm.getChannelData(k));
+    const BLOCK = 4096;
+    for (let at = 0; at < total && !failed; at += BLOCK) {
+      const n = Math.min(BLOCK, total - at);
+      const planar = new Float32Array(n * ch);
+      for (let k = 0; k < ch; k++) {
+        const s = src[k], off = k * n;
+        for (let i = 0; i < n; i++) {
+          const j = at + i;
+          let g = 1;
+          if (fadeN) g = Math.min(1, j / fadeN, (total - j) / fadeN);
+          planar[off + i] = s[from + j] * g;
+        }
+      }
+      const ad = new AudioData({ format: 'f32-planar', sampleRate: sr, numberOfFrames: n,
+                                 numberOfChannels: ch, timestamp: Math.round(at / sr * 1e6), data: planar });
+      aenc.encode(ad);
+      ad.close();
+    }
+    await aenc.flush();
+    aenc.close();
+  }
+  if (failed) throw recorderFault('the audio encoder failed (' + (failed.message || failed) + ')', 'webcodecs');
+
+  // ---- the picture: played in real time, one frame every 1/30 s
+  await seek(c.start);
+  drawStory(ctx, W, H, FADE ? 0 : 1);
+  stageToCard(c);
+  if (audio.monitor) audio.monitor.gain.value = 0;
+  try {
+    await vid.play();
+  } catch (e) {
+    if (audio.monitor) audio.monitor.gain.value = 1;
+    stageHomeAgain();
+    try { venc.close(); } catch (x) {}
+    throw e;
+  }
+  const onHide = () => {
+    if (document.hidden) vid.pause();
+    else { lastMove = performance.now(); vid.play().catch(() => {}); }
+  };
+  document.addEventListener('visibilitychange', onHide);
+
+  // Frames sit on an exact 30 fps grid: frame k is at k/30 s. Uploaders
+  // like YouTube's expect a steady frame rate, and a frame stamped "whenever
+  // the screen refreshed" put two frames on the same tick now and then.
+  let lastT = -1, lastMove = performance.now(), why = null, lastK = -1, frames = 0;
+  const FPS = 30, STEP = 1e6 / FPS, lastFrame = Math.max(0, Math.ceil(len * FPS) - 1);
+  await new Promise((done) => {
+    (function tick() {
+      const t = vid.currentTime, into = t - c.start, left = c.end - t;
+      if (failed) { why = 'encoder'; return done(); }
+      if (t !== lastT || document.hidden || vid.seeking) { lastT = t; lastMove = performance.now(); }
+      else if (performance.now() - lastMove > STALL_MS) { why = 'the video stopped playing part way'; return done(); }
+      let a = 1;
+      if (FADE) a = Math.min(1, Math.max(0, into / FADE), Math.max(0, left / FADE));
+      try { drawStory(ctx, W, H, a); } catch (e) { why = 'drawing the frame failed'; return done(); }
+      // Stamp each frame with where it is in the clip, by the video's own
+      // clock, so the picture lines up with the sound cut from the same
+      // times. A frame every 1/30 s; a display that runs faster is skipped.
+      const k = Math.min(lastFrame, Math.max(0, Math.round(into * FPS)));
+      if (into >= -0.02 && k > lastK && venc.encodeQueueSize < 8) {
+        // The first frame is always frame 0, so the clip starts at 0:00.
+        const kk = lastK < 0 ? 0 : k;
+        // An encoder can throw right here (a phone's hardware encoder taken
+        // away). Inside an animation frame that would end the loop without a
+        // word and leave the clip waiting for ever; catch it and say so.
+        let vf = null;
+        try {
+          vf = new VideoFrame(stage, { timestamp: Math.round(kk * STEP), duration: Math.round(STEP) });
+          venc.encode(vf, { keyFrame: frames % 60 === 0 });
+        } catch (e) {
+          failed = e; why = 'encoder';
+          if (vf) vf.close();
+          return done();
+        }
+        vf.close();
+        lastK = kk; frames++;
+      }
+      if (onProgress) onProgress(Math.min(1, Math.max(0, into / len)));
+      if (t >= c.end || vid.ended || (vid.paused && !document.hidden)) return done();
+      requestAnimationFrame(tick);
+    })();
+  });
+  document.removeEventListener('visibilitychange', onHide);
+  vid.pause();
+  const got = vid.currentTime - c.start;
+  if (audio.monitor) audio.monitor.gain.value = 1;
+  stageHomeAgain();
+
+  if (!why && !failed) {
+    // A black last frame to finish on, at the clip's full length, so the
+    // picture runs exactly as long as the sound.
+    if (lastK >= 0 && lastK < lastFrame) {
+      drawStory(ctx, W, H, FADE ? 0 : 1);
+      const vf = new VideoFrame(stage, { timestamp: Math.round(lastFrame * STEP), duration: Math.round(STEP) });
+      venc.encode(vf, { keyFrame: false });
+      vf.close();
+    }
+    try { await venc.flush(); } catch (e) { failed = e; }
+  }
+  try { venc.close(); } catch (e) {}
+  if (why === 'encoder' || failed) throw recorderFault('the video encoder failed (' + ((failed && failed.message) || failed) + ')', 'webcodecs');
+  if (why) throw new Error(why);
+  if (got < len * 0.8 && !vid.ended) throw new Error('it stopped early');
+  if (!frames) throw recorderFault('no frames were made', 'webcodecs');
+
+  muxer.finalize();
+  const blob = new Blob([muxer.target.buffer], { type: 'video/mp4' });
+  const d = await clipLength(blob);
+  if (d === -1) throw recorderFault('the saved clip wouldn’t open', 'webcodecs');
+  if (isFinite(d) && d < len * 0.8) {
+    throw recorderFault(`the saved clip came out ${d.toFixed(1)} s instead of ${len.toFixed(0)} s`, 'webcodecs');
+  }
+  blob.via = plan.audio ? 'mp4/' + plan.audio.mux : 'mp4/no-sound';
+  return blob;
+}
+
 async function record(c, onProgress, attempt) {
+  // The standard-MP4 path first, wherever it is possible.
+  {
+    wakeAudio();
+    await seek(c.start);
+    if (!c.thumb) {
+      const th = document.createElement('canvas');
+      const o = outSize(), k = 320 / Math.max(o.w, o.h);
+      th.width = Math.round(o.w * k); th.height = Math.round(o.h * k);
+      drawStory(th.getContext('2d'), th.width, th.height);
+      c.thumb = th;
+      updateCard(c);
+    }
+    applyShape();
+    const plan = await wcPlan(stage.width, stage.height);
+    if (plan) {
+      try {
+        return await recordWC(c, onProgress, plan);
+      } catch (e) {
+        // A tap needed, a stall, a clip cut short: the same on any path,
+        // so let the normal retry handle it. Anything else -- the library
+        // not loading, an encoder this browser only half supports -- means
+        // this path is no good here: fall back to the recorder.
+        if (e && (e.recorder || e.name === 'NotAllowedError' || /stopped/.test(e.message || ''))) throw e;
+        throw recorderFault('the MP4 writer failed (' + ((e && e.message) || e) + ')', 'webcodecs');
+      }
+    }
+  }
   const type = pickType();
   if (type === null || !stage.captureStream) throw new Error('this browser can’t record video');
   wakeAudio();
@@ -992,7 +1253,7 @@ async function record(c, onProgress, attempt) {
       else if (performance.now() - lastMove > STALL_MS) { why = 'the video stopped playing part way'; return done(); }
       let a = 1;
       if (FADE) a = Math.min(1, Math.max(0, into / FADE), Math.max(0, left / FADE));
-      drawStory(ctx, W, H, a);
+      try { drawStory(ctx, W, H, a); } catch (e) { why = 'drawing the frame failed'; return done(); }
       if (FADE && !fadingOut && left <= FADE && audio.gain) {
         fadingOut = true;
         const now = audio.ctx.currentTime;
@@ -1072,12 +1333,61 @@ if (inApp) {
     'then pick your video there.';
 }
 
+$('saveAll').hidden = !canShareFiles;
 $('saveHelp').textContent = canShareFiles
-  ? (isIOS ? 'Tap Save, then “Save Video” to put a clip in Photos — or pick Instagram to post it.'
-           : 'Tap Save to save a clip to your phone or send it straight to Instagram.')
-  : 'Clips save to your Downloads folder.';
+  ? (isIOS ? 'Tap Save, then “Save Video” to put a clip in Photos — or pick Instagram to post it. '
+             + '“Download all” saves every clip as one ZIP in Files.'
+           : 'Tap Save to save a clip to your phone or send it straight to Instagram. '
+             + '“Download all” saves every clip as one ZIP.')
+  : '“Download all” saves every clip in one ZIP file to your Downloads folder.';
+$('dlAll').addEventListener('click', (e) => {
+  if (!zipUrl) { e.preventDefault(); return; }
+  if (window.Track) Track.ev('story_save', { clips: S.clips.filter(c => c.blob).length, via: 'zip' });
+});
 
 function track(n, via) { if (window.Track) Track.ev('story_save', { clips: n, via }); }
+
+/* ---- Download all: every finished clip in one ZIP ------------------- */
+
+let zipUrl = null, zipJob = 0;
+function zipLink(url, name, count) {
+  const a = $('dlAll');
+  if (zipUrl && zipUrl !== url) URL.revokeObjectURL(zipUrl);
+  zipUrl = url;
+  if (url) {
+    a.href = url; a.download = name;
+    a.removeAttribute('aria-disabled');
+    a.textContent = `⬇ Download all (${count})`;
+  } else {
+    a.removeAttribute('href');
+    a.setAttribute('aria-disabled', 'true');
+    a.textContent = '⬇ Download all';
+  }
+}
+
+async function prepareZip() {
+  const job = ++zipJob;
+  const ready = S.clips.filter(c => c.blob).sort((a, b) => a.start - b.start);
+  if (!ready.length) return zipLink(null);
+  $('dlAll').textContent = '⬇ Preparing…';
+  try {
+    const files = [];
+    for (const c of ready) {
+      if (c.crcOf !== c.blob) {               // once per clip, not per ZIP
+        c.crc = crc32(new Uint8Array(await c.blob.arrayBuffer()));
+        c.crcOf = c.blob;
+        if (job !== zipJob) return;
+      }
+      files.push({ name: fileFor(c).name, body: c.blob, size: c.blob.size, crc: c.crc });
+    }
+    const zip = new Blob(zipParts(files), { type: 'application/zip' });
+    const name = clipName(S.name, 0, 0, 'zip').replace(/-story-01-0m00s\.zip$/, '-story-clips.zip');
+    if (job === zipJob) zipLink(URL.createObjectURL(zip), name, ready.length);
+  } catch (e) {
+    console.warn('[story cutter] zip failed', e);
+    if (job === zipJob) zipLink(null);
+  }
+}
 
 function fileFor(c) {
   const ext = /mp4/.test(c.blob.type) ? 'mp4' : 'webm';
@@ -1251,7 +1561,7 @@ $('more').addEventListener('toggle', () => { if ($('more').open && S.duration &&
 // So the automated check can see what happened without a person.
 window.__storyCutter = () => ({ duration: S.duration, heard: !!S.rms, busy: S.busy,
   clips: S.clips.map(c => ({ start: c.start, end: c.end, rank: c.rank, state: c.state,
-                             bytes: c.blob ? c.blob.size : 0, type: c.blob ? c.blob.type : '' })) });
+                             bytes: c.blob ? c.blob.size : 0, type: c.blob ? c.blob.type : '', via: c.via || '' })) });
 </script>
 </body>
 </html>
