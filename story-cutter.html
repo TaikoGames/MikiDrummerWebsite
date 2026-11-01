@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="/js/track.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Story Cutter — Turn One Video Into Story Clips, Free</title>
+<meta name="description" content="Pick one video and get story clips of the best bits, made for you: vertical 9:16 for Instagram, TikTok and YouTube Shorts. Free, nothing uploads.">
+<meta name="keywords" content="video to instagram story, cut video into story clips, 9:16 video converter, make reels from a video, split video for instagram stories, vertical video cropper, band video clips, concert video to stories">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Miki Drummer">
+<link rel="canonical" href="https://www.mikidrummer.ca/story-cutter.html">
+<meta name="theme-color" content="#0b0c0e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Miki Drummer">
+<meta property="og:locale" content="en_CA">
+<meta property="og:url" content="https://www.mikidrummer.ca/story-cutter.html">
+<meta property="og:title" content="Story Cutter — one video in, story clips out">
+<meta property="og:description" content="Pick a gig video, get vertical clips of the best moments made for you, ready for Instagram and TikTok stories. Free, runs in your browser.">
+<meta property="og:image" content="https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
+
+
+<style>
+  :root{ --bg:#0b0c0e; --card:#131518; --card2:#1b1e22; --edge:#2b2f34; --edge2:#3a4046;
+         --dim:#7d848d; --mid:#a6adb6; --fg:#e9ebee; --hot:#e8672a; --ok:#3fbf6a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);line-height:1.55;
+       font-family:'Helvetica Neue',system-ui,Arial,sans-serif;
+       padding:0 16px 60px;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1100px;margin:0 auto}
+  a{color:var(--hot);text-decoration:none} a:hover{text-decoration:underline}
+  header{padding:30px 0 18px}
+  .top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--hot);font-weight:700}
+  .back{color:var(--dim);font-size:13px}
+  h1{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(28px,6vw,46px);letter-spacing:-.02em;margin:8px 0 8px;line-height:1.05}
+  .lead{color:var(--mid);font-size:16px;max-width:60ch}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--card2);
+       border:1px solid var(--edge2);color:var(--fg);border-radius:999px;padding:10px 16px;
+       font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
+  .btn:hover{border-color:var(--hot);color:var(--hot)}
+  .btn.go{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .btn.go:hover{color:#160802;filter:brightness(1.08)}
+  .btn.big{padding:15px 26px;font-size:16px}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+  /* ---- the one thing on the page: the button ---- */
+  .drop{display:block;margin-top:8px;border:2px dashed var(--edge2);border-radius:18px;background:var(--card);
+        padding:46px 20px;text-align:center;cursor:pointer;position:relative;
+        transition:border-color .15s,background .15s}
+  .drop:hover,.drop.over{border-color:var(--hot);background:#17130f}
+  .drop .pill{display:inline-block;background:var(--hot);color:#160802;font-weight:900;font-size:18px;
+              border-radius:999px;padding:15px 30px;margin-bottom:10px}
+  .drop span{display:block;color:var(--dim);font-size:13px}
+  .drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+  .drop.small{padding:12px 16px;text-align:left;border-style:solid;border-width:1px}
+  .drop.small .pill{font-size:13px;padding:8px 14px;margin:0 10px 0 0}
+  .drop.small span{display:inline;font-size:12.5px}
+
+  .status{margin-top:16px;font-size:15px;color:var(--fg);font-weight:600;min-height:22px}
+  .status.err{color:#ff8f8f}
+  .status small{display:block;font-weight:400;font-size:12.5px;color:var(--dim);margin-top:2px}
+  .bar{height:5px;background:var(--edge);border-radius:4px;overflow:hidden;margin-top:8px}
+  .bar i{display:block;height:100%;width:0;background:var(--hot);transition:width .25s}
+
+  /* ---- the clips ---- */
+  .resHead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .resHead h2{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+  .clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:12px}
+  @media(max-width:420px){ .clips{grid-template-columns:1fr 1fr;gap:10px} }
+  .clip{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:8px;display:flex;
+        flex-direction:column;gap:8px}
+  .clip .screen{position:relative;aspect-ratio:9/16;border-radius:9px;overflow:hidden;background:#000}
+  .clip video,.clip canvas{width:100%;height:100%;display:block;object-fit:cover}
+  .clip .wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+              flex-direction:column;gap:8px;color:var(--mid);font-size:12.5px;background:rgba(11,12,14,.55)}
+  .clip .ring{width:34px;height:34px;border-radius:50%;border:3px solid var(--edge2);border-top-color:var(--hot);
+              animation:spin 1s linear infinite}
+  .clip.queued .ring{animation:none;border-top-color:var(--edge2)}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(prefers-reduced-motion:reduce){ .clip .ring{animation:none} }
+  .clip .t{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:6px;padding:0 2px}
+  .clip .t em{font-style:normal;color:var(--hot);font-size:11px;letter-spacing:.06em}
+  .clip .row{display:flex;gap:6px}
+  .clip .row .btn{padding:8px 6px;font-size:12.5px}
+  .clip .row .save{flex:1}
+
+  /* ---- everything optional ---- */
+  details.more{margin-top:28px;background:var(--card);border:1px solid var(--edge);border-radius:14px}
+  details.more>summary{cursor:pointer;padding:14px 16px;font-weight:700;font-size:14px;list-style:none;
+                       display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}
+  details.more>summary::-webkit-details-marker{display:none}
+  details.more>summary::after{content:'+';color:var(--hot);font-size:20px;line-height:1;margin-left:auto}
+  details.more[open]>summary::after{content:'–'}
+  details.more>summary small{font-weight:400;color:var(--dim);margin-left:8px;font-size:12.5px}
+  @media(max-width:600px){ details.more>summary small{display:none} }
+  .moreBody{padding:4px 16px 18px;display:grid;gap:18px}
+  @media(min-width:860px){ .moreBody{grid-template-columns:300px minmax(0,1fr);align-items:start} }
+  .viewer{display:flex;flex-direction:column;align-items:center;gap:10px}
+  #stage{width:min(100%,280px);aspect-ratio:9/16;height:auto;border-radius:12px;background:#000;border:1px solid var(--edge2);display:block}
+  .scrub{width:100%;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid);font-variant-numeric:tabular-nums}
+  .scrub input{flex:1;accent-color:var(--hot)}
+  .opts{display:grid;gap:14px}
+  .f>label,.f>.lbl{display:block;font-size:12px;color:var(--mid);margin-bottom:5px}
+  .f select,.f input[type=text]{width:100%;background:var(--card2);color:var(--fg);border:1px solid var(--edge);
+       border-radius:9px;padding:9px 11px;font:inherit;font-size:14px}
+  .f input[type=range]{width:100%;accent-color:var(--hot)}
+  .seg{display:flex;gap:6px;flex-wrap:wrap}
+  .seg .btn{flex:1;min-width:52px;padding:8px 6px}
+  .seg .btn.on{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mid)}
+  .chk input{accent-color:var(--hot);width:16px;height:16px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .hint{font-size:12px;color:var(--dim);max-width:72ch}
+
+  .guide{margin-top:34px;display:grid;gap:14px}
+  @media(min-width:900px){ .guide{grid-template-columns:1fr 1fr} }
+  .guide section{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:16px}
+  .guide h2{font-family:'Arial Black',system-ui,sans-serif;font-size:19px;letter-spacing:-.01em;margin-bottom:8px}
+  .guide h3{font-size:14.5px;margin:12px 0 3px}
+  .guide p,.guide li{color:var(--mid);font-size:14px;line-height:1.65}
+  .guide ol{padding-left:20px}
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="top">
+      <span class="eyebrow">Free · Nothing uploads · Works on a phone</span>
+      <a class="back" href="/tools.html">← Free tools</a>
+    </div>
+    <h1>Story Cutter</h1>
+    <p class="lead">Pick a video. Get story clips of the best bits. That's it.</p>
+  </header>
+
+  <label class="drop" id="drop">
+    <input type="file" id="file" accept="video/*">
+    <b class="pill" id="dropTitle">Choose a video</b>
+    <span id="dropSub">A gig, a rehearsal, a drum cam — straight off your phone is fine.</span>
+  </label>
+
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+  <div class="bar" id="bar" hidden><i></i></div>
+  <div id="resume" hidden style="margin-top:14px">
+    <button class="btn go big" id="resumeBtn" type="button">Make my clips</button>
+  </div>
+
+  <div id="results" hidden>
+    <div class="resHead">
+      <h2 id="resTitle">Your clips</h2>
+      <button class="btn go" id="saveAll" type="button" disabled>⬇ Save all</button>
+    </div>
+    <div class="clips" id="clips"></div>
+  </div>
+
+  <video id="vid" playsinline preload="auto" hidden></video>
+
+  <details class="more" id="more">
+    <summary>Options <small>length, how many, framing, caption, pick your own moments</small></summary>
+    <div class="moreBody">
+      <div class="viewer">
+        <canvas id="stage" width="1080" height="1920"></canvas>
+        <div class="scrub">
+          <span id="tNow">0:00</span>
+          <input type="range" id="scrub" min="0" max="1" step="0.01" value="0" aria-label="Position in the video">
+          <span id="tEnd">0:00</span>
+        </div>
+        <div class="row" style="justify-content:center">
+          <button class="btn" id="playBtn" type="button">▶ Play</button>
+          <button class="btn" id="addBtn" type="button">+ Clip from here</button>
+        </div>
+      </div>
+
+      <div class="opts">
+        <div class="two">
+          <div class="f">
+            <span class="lbl">Clip length</span>
+            <div class="seg" id="lenSeg">
+              <button class="btn on" data-v="auto" type="button">Auto</button>
+              <button class="btn" data-v="7" type="button">7s</button>
+              <button class="btn" data-v="15" type="button">15s</button>
+              <button class="btn" data-v="30" type="button">30s</button>
+              <button class="btn" data-v="60" type="button">60s</button>
+            </div>
+          </div>
+          <div class="f">
+            <label for="count">How many</label>
+            <select id="count">
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option selected>5</option><option>6</option><option>8</option><option>10</option>
+            </select>
+          </div>
+        </div>
+        <div class="f">
+          <span class="lbl">Framing</span>
+          <div class="seg" id="fitSeg">
+            <button class="btn on" data-v="fill" type="button">Fill the screen</button>
+            <button class="btn" data-v="fit" type="button">Whole frame + blur</button>
+          </div>
+        </div>
+        <div class="f" id="panBox">
+          <label for="pan">Position <span id="panOut" style="color:var(--dim)">centre</span></label>
+          <input type="range" id="pan" min="-1" max="1" step="0.01" value="0">
+        </div>
+        <div class="f">
+          <label for="caption">Caption</label>
+          <input type="text" id="caption" maxlength="80" placeholder="e.g. LIVE @ Bully's · Oct 30">
+        </div>
+        <div class="two">
+          <div class="f">
+            <span class="lbl">Caption position</span>
+            <div class="seg" id="capSeg">
+              <button class="btn on" data-v="top" type="button">Top</button>
+              <button class="btn" data-v="bottom" type="button">Bottom</button>
+            </div>
+          </div>
+          <div class="f" style="align-self:end">
+            <label class="chk"><input type="checkbox" id="fade" checked> Fade in and out</label>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn go" id="remake" type="button" disabled>Remake clips with these settings</button>
+        </div>
+        <p class="hint">The preview shows how a clip will look. “+ Clip from here” makes one extra
+           clip starting wherever the player is.</p>
+      </div>
+    </div>
+  </details>
+
+  <div class="guide">
+    <section>
+      <h2>How to turn a video into story clips</h2>
+      <ol>
+        <li><b>Choose a video.</b> Anything your phone or camera records — landscape or upright.</li>
+        <li><b>Wait a moment.</b> It listens for the parts where the song goes off and makes a
+            vertical 9:16 clip of each one, starting on the hit.</li>
+        <li><b>Save.</b> Save one, or save them all. On a phone that opens the share sheet, so
+            they can go straight to Instagram or into Photos.</li>
+      </ol>
+      <p style="margin-top:10px">Want more control? Open <b>Options</b> to change the clip
+         length and how many, crop or fit the frame, add a caption, or pick your own moments.</p>
+    </section>
+    <section>
+      <h2>Questions</h2>
+      <h3>Is my video uploaded anywhere?</h3>
+      <p>No. Everything happens in your browser. The video never leaves your phone or computer.</p>
+      <h3>Why does it take a minute?</h3>
+      <p>Each clip is recorded as it plays, so five 15 second clips take a little over a minute.
+         Keep this tab open while it works.</p>
+      <h3>What format are the clips?</h3>
+      <p>1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop
+         browsers can only save WebM; if yours does, open the page on your phone instead.</p>
+      <h3>How do I post them?</h3>
+      <p>On a phone, “Save” opens the share sheet, so you can send a clip straight to Instagram
+         or save it to Photos. On a computer it downloads.</p>
+    </section>
+  </div>
+
+  <footer>
+    Built and kept by <a href="/">Miki Drummer</a>, Vancouver BC. One of the
+    <a href="/tools.html">free tools for bands and drummers</a>, alongside
+    <a href="/razor-cut-tool.html">Razor Cut</a> for audio and the
+    <a href="/poster.html">gig poster maker</a>.
+  </footer>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Story Cutter",
+      "url": "https://www.mikidrummer.ca/story-cutter.html",
+      "description": "Pick one video and get vertical 9:16 story clips of its best moments for Instagram and TikTok, made automatically. Optional framing, caption and clip length. Runs in the browser; nothing uploads.",
+      "image": "https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Any modern web browser",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" },
+      "author": { "@type": "Person", "name": "Miki Drummer", "url": "https://www.mikidrummer.ca/" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is my video uploaded anywhere?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Everything happens in your browser. The video never leaves your phone or computer." } },
+        { "@type": "Question", "name": "Why does it take a minute?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Each clip is recorded as it plays, so five 15 second clips take a little over a minute. Keep this tab open while it works." } },
+        { "@type": "Question", "name": "What format are the clips?",
+          "acceptedAnswer": { "@type": "Answer", "text": "1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
+        { "@type": "Question", "name": "How do I post them?",
+          "acceptedAnswer": { "@type": "Answer", "text": "On a phone, “Save” opens the share sheet, so you can send a clip straight to Instagram or save it to Photos. On a computer it downloads." } }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Miki Drummer", "item": "https://www.mikidrummer.ca/" },
+        { "@type": "ListItem", "position": 2, "name": "Free tools", "item": "https://www.mikidrummer.ca/tools.html" },
+        { "@type": "ListItem", "position": 3, "name": "Story Cutter", "item": "https://www.mikidrummer.ca/story-cutter.html" }
+      ]
+    }
+  ]
+}
+</script>
+
+<script type="module">
+import { STORY_W, STORY_H, HOP, loudness, pickHighlights, evenly, fillRect, fitRect,
+         clock, clipName, autoLength } from '/js/story-cutter.js';
+
+/* One job: a video goes in, finished clips come out, with nothing to decide
+ * in between. Everything adjustable lives under Options and defaults to
+ * something sensible -- 15 second clips (shorter for a short video), up to
+ * five of them, filling the screen. */
+
+const $ = (id) => document.getElementById(id);
+const vid = $('vid'), stage = $('stage'), ctx = stage.getContext('2d');
+
+// Decoding the whole soundtrack holds it in memory as raw samples. Past
+// these, skip the listening and space the clips out -- a phone that runs out
+// of memory just kills the tab.
+const MAX_ANALYSE_BYTES = 400 * 1024 * 1024;
+const MAX_ANALYSE_SECONDS = 20 * 60;
+
+const S = {
+  file: null, name: 'video', duration: 0, rms: null,
+  len: 'auto', fit: 'fill', pan: 0, caption: '', capPos: 'top', fade: true,
+  clips: [], busy: false, job: 0, dirty: false
+};
+
+function say(msg, sub, err) {
+  const s = $('status');
+  s.textContent = msg || '';
+  if (sub) { const sm = document.createElement('small'); sm.textContent = sub; s.appendChild(sm); }
+  s.classList.toggle('err', !!err);
+}
+function progress(f) {
+  $('bar').hidden = f == null;
+  $('bar').firstElementChild.style.width = f == null ? '0' : Math.round(f * 100) + '%';
+}
+
+/* ---- drawing one story frame ------------------------------------------
+ * The preview and the saved clips both come through here, so what Options
+ * shows is exactly what gets saved. */
+const blurCan = document.createElement('canvas');
+blurCan.width = 36; blurCan.height = 64;
+const blurCtx = blurCan.getContext('2d');
+
+function drawStory(c, W, H, alpha) {
+  const vw = vid.videoWidth, vh = vid.videoHeight;
+  c.fillStyle = '#000';
+  c.fillRect(0, 0, W, H);
+  if (!vw || !vh) return;
+  if (S.fit === 'fill') {
+    const r = fillRect(vw, vh, W, H, S.pan);
+    c.drawImage(vid, r.sx, r.sy, r.sw, r.sh, 0, 0, W, H);
+  } else {
+    // A blur that works in every browser: shrink to a few pixels and stretch
+    // back up with smoothing on.
+    const r = fillRect(vw, vh, 36, 64, 0);
+    blurCtx.drawImage(vid, r.sx, r.sy, r.sw, r.sh, 0, 0, 36, 64);
+    c.imageSmoothingEnabled = true;
+    c.imageSmoothingQuality = 'high';
+    c.drawImage(blurCan, 0, 0, W, H);
+    c.fillStyle = 'rgba(0,0,0,.45)';
+    c.fillRect(0, 0, W, H);
+    const f = fitRect(vw, vh, W, H);
+    c.drawImage(vid, f.dx, f.dy, f.dw, f.dh);
+  }
+  if (S.caption) drawCaption(c, W, H);
+  if (alpha != null && alpha < 1) {
+    c.fillStyle = `rgba(0,0,0,${1 - alpha})`;
+    c.fillRect(0, 0, W, H);
+  }
+}
+
+/* Big, bold, outlined, wrapped -- and kept out of the top 13% and bottom 18%,
+ * where the story apps draw their own name, progress bar and reply box. */
+function drawCaption(c, W, H) {
+  const size = Math.round(W * 0.068);
+  c.font = `900 ${size}px "Arial Black", "Helvetica Neue", Arial, sans-serif`;
+  c.textAlign = 'center';
+  c.textBaseline = 'middle';
+  const words = S.caption.toUpperCase().split(/\s+/).filter(Boolean);
+  const lines = [], maxW = W * 0.84;
+  let line = '';
+  for (const w of words) {
+    const tryL = line ? line + ' ' + w : w;
+    if (c.measureText(tryL).width > maxW && line) { lines.push(line); line = w; } else line = tryL;
+  }
+  if (line) lines.push(line);
+  const lh = size * 1.12, block = lh * lines.length;
+  const top = S.capPos === 'top' ? H * 0.14 : H * 0.80 - block;
+  c.lineJoin = 'round';
+  c.lineWidth = size * 0.22;
+  c.strokeStyle = 'rgba(0,0,0,.85)';
+  c.fillStyle = '#fff';
+  lines.forEach((l, i) => {
+    const y = top + lh * (i + 0.5);
+    c.strokeText(l, W / 2, y);
+    c.fillText(l, W / 2, y);
+  });
+}
+
+function paintStage() { drawStory(ctx, STORY_W, STORY_H); }
+
+/* ---- helpers --------------------------------------------------------- */
+
+function once(el, ev, timeout) {
+  return new Promise((res, rej) => {
+    const t = setTimeout(() => { el.removeEventListener(ev, h); rej(new Error(ev + ' timed out')); }, timeout || 15000);
+    function h() { clearTimeout(t); el.removeEventListener(ev, h); res(); }
+    el.addEventListener(ev, h);
+  });
+}
+
+async function seek(t) {
+  if (Math.abs(vid.currentTime - t) < 0.01 && vid.readyState >= 2) return;
+  const p = once(vid, 'seeked');
+  vid.currentTime = t;
+  await p;
+}
+
+/* ---- sound -----------------------------------------------------------
+ * The video's sound goes through WebAudio so it can be recorded with the
+ * picture -- Safari has no video.captureStream(). Once routed like this the
+ * graph owns the sound, so it must also reach the speakers or the preview
+ * plays silent. Started on the tap that opens the file picker, because no
+ * browser starts an AudioContext without one. */
+const audio = { ctx: null, gain: null, monitor: null, dest: null, failed: false };
+function ensureAudio() {
+  if (audio.ctx || audio.failed) return;
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    audio.ctx = new Ctx();
+    const src = audio.ctx.createMediaElementSource(vid);
+    audio.gain = audio.ctx.createGain();
+    audio.monitor = audio.ctx.createGain();
+    audio.dest = audio.ctx.createMediaStreamDestination();
+    src.connect(audio.gain);
+    audio.gain.connect(audio.dest);
+    audio.gain.connect(audio.monitor);
+    audio.monitor.connect(audio.ctx.destination);
+  } catch (e) {
+    audio.failed = true; audio.ctx = null;
+  }
+}
+function wakeAudio() {
+  ensureAudio();
+  if (audio.ctx && audio.ctx.state === 'suspended') { try { audio.ctx.resume(); } catch (e) {} }
+}
+
+/* ---- 1. load, listen, pick ------------------------------------------- */
+
+async function load(file) {
+  if (!file) return;
+  if (!/^video\//.test(file.type) && !/\.(mp4|mov|m4v|webm|mkv)$/i.test(file.name)) {
+    return say('That doesn’t look like a video file.', 'Try an MP4 or MOV.', true);
+  }
+  cancelJob();
+  stopPreview();
+  for (const c of S.clips) if (c.url) URL.revokeObjectURL(c.url);
+  S.file = file; S.name = file.name; S.rms = null; S.clips = [];
+  $('clips').textContent = '';
+  $('results').hidden = true;
+  $('resume').hidden = true;
+  if (vid.src) URL.revokeObjectURL(vid.src);
+  vid.src = URL.createObjectURL(file);
+  say('Opening your video…');
+  progress(0.05);
+  try {
+    await once(vid, 'loadeddata', 30000);
+  } catch (e) {
+    progress(null);
+    return say('This browser can’t open that video.', 'Try an MP4, or open the page in Chrome or Safari.', true);
+  }
+  S.duration = vid.duration;
+  $('drop').classList.add('small');
+  $('dropTitle').textContent = 'Choose another video';
+  $('dropSub').textContent = file.name + ' · ' + clock(S.duration);
+  $('scrub').max = String(S.duration);
+  $('tEnd').textContent = clock(S.duration);
+  $('remake').disabled = false;
+  if (window.Track) Track.ev('story_load', { secs: Math.round(S.duration) });
+  await listen();
+  pick();
+  makeAll();
+}
+
+async function listen() {
+  if (S.file.size > MAX_ANALYSE_BYTES || S.duration > MAX_ANALYSE_SECONDS) {
+    S.rms = null;
+    return;
+  }
+  say('Finding the best moments…');
+  progress(0.15);
+  try {
+    const buf = await S.file.arrayBuffer();
+    progress(0.35);
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    const ac = new Ctx();
+    const decoded = await new Promise((res, rej) => {
+      const p = ac.decodeAudioData(buf, res, rej);
+      if (p && p.then) p.then(res, rej);
+    });
+    const chans = [];
+    for (let i = 0; i < Math.min(2, decoded.numberOfChannels); i++) chans.push(decoded.getChannelData(i));
+    S.rms = loudness(chans, decoded.sampleRate, HOP);
+    try { ac.close(); } catch (e) {}
+  } catch (e) {
+    S.rms = null;              // no sound, or a codec this browser won't decode
+  }
+}
+
+const clipLen = () => S.len === 'auto' ? autoLength(S.duration) : S.len;
+
+function pick() {
+  const count = Number($('count').value);
+  const found = S.rms ? pickHighlights(S.rms, S.duration, clipLen(), count)
+                      : evenly(S.duration, clipLen(), count);
+  S.clips = found.map(c => ({ ...c, blob: null, url: null, state: 'queued' }));
+}
+
+/* ---- 2. make every clip, one after another --------------------------- */
+
+function cancelJob() { S.job++; }
+
+async function makeAll() {
+  const job = ++S.job;
+  renderClips();
+  $('results').hidden = false;
+  $('resume').hidden = true;
+  const todo = S.clips.filter(c => !c.blob);
+  if (!todo.length) { finished(); return; }
+  S.busy = true;
+  setBusyUi(true);
+  try {
+    for (let i = 0; i < todo.length; i++) {
+      if (job !== S.job) return;
+      const c = todo[i];
+      c.state = 'making';
+      updateCard(c);
+      say(`Making clip ${i + 1} of ${todo.length}…`, 'Keep this tab open — each clip records as it plays.');
+      const blob = await record(c, (f) => progress((i + f) / todo.length));
+      if (job !== S.job) return;
+      c.blob = blob;
+      c.url = URL.createObjectURL(blob);
+      c.state = 'done';
+      updateCard(c);
+    }
+    finished();
+  } catch (e) {
+    if (job !== S.job) return;
+    S.clips.forEach(c => { if (c.state === 'making') { c.state = 'queued'; updateCard(c); } });
+    if (e && e.name === 'NotAllowedError') {
+      // The browser wants a tap before it will play the video with sound --
+      // phones, mostly. One button, and it carries on where it stopped.
+      say('One tap and it’ll make your clips.', null);
+      $('resume').hidden = false;
+    } else {
+      say('Making the clips stopped.', (e && e.message ? e.message : String(e)), true);
+    }
+  } finally {
+    if (job === S.job) { S.busy = false; setBusyUi(false); progress(null); }
+  }
+}
+
+function finished() {
+  const n = S.clips.filter(c => c.blob).length;
+  const webm = S.clips.some(c => c.blob && !c.blob.type.includes('mp4'));
+  say(n ? `Done — ${n} clip${n === 1 ? '' : 's'} ready.` : 'No clips.',
+      webm ? 'This browser can only make WebM. For MP4, open this page on your phone.'
+           : (S.rms ? 'Best moments first. Tap one to watch it.' : 'Spread across the video. Tap one to watch it.'));
+  $('saveAll').disabled = !n;
+  $('resTitle').textContent = n === 1 ? 'Your clip' : 'Your clips';
+  if (window.Track) Track.ev('story_made', { clips: n, fmt: webm ? 'webm' : 'mp4' });
+}
+
+function setBusyUi(on) {
+  $('saveAll').disabled = on || !S.clips.some(c => c.blob);
+  $('remake').disabled = on || !S.duration;
+  $('addBtn').disabled = on;
+  $('playBtn').disabled = on;
+}
+
+/* ---- the clip cards ---------------------------------------------------
+ * Best first: on a phone the top-left card is the one people save. */
+function renderClips() {
+  const box = $('clips');
+  box.textContent = '';
+  const order = S.clips.slice().sort((a, b) => (a.rank || 99) - (b.rank || 99) || a.start - b.start);
+  for (const c of order) {
+    const el = document.createElement('div');
+    el.className = 'clip';
+    const screen = document.createElement('div');
+    screen.className = 'screen';
+    const t = document.createElement('div');
+    t.className = 't';
+    t.innerHTML = '<span></span><em></em>';
+    t.firstChild.textContent = clock(c.start) + '–' + clock(c.end);
+    t.lastChild.textContent = c.rank === 1 && S.rms ? 'BEST' : c.rank ? '#' + c.rank : 'yours';
+    const row = document.createElement('div');
+    row.className = 'row';
+    const save = document.createElement('button');
+    save.className = 'btn go save'; save.type = 'button'; save.textContent = '⬇ Save';
+    save.addEventListener('click', () => saveClips([c]));
+    const rm = document.createElement('button');
+    rm.className = 'btn'; rm.type = 'button'; rm.textContent = '✕'; rm.title = 'Remove';
+    rm.addEventListener('click', () => {
+      if (S.busy && c.state !== 'done') return;
+      if (c.url) URL.revokeObjectURL(c.url);
+      S.clips.splice(S.clips.indexOf(c), 1);
+      el.remove();
+      if (!S.busy) finished();
+    });
+    row.append(save, rm);
+    el.append(screen, t, row);
+    c.card = { el, screen, save };
+    box.appendChild(el);
+    updateCard(c);
+  }
+}
+
+function updateCard(c) {
+  if (!c.card) return;
+  const { screen, save } = c.card;
+  save.disabled = !c.blob;
+  if (c.state === 'done' && c.blob) {
+    if (screen.querySelector('video')) return;
+    screen.textContent = '';
+    const v = document.createElement('video');
+    v.src = c.url; v.playsInline = true; v.controls = true; v.preload = 'metadata';
+    v.setAttribute('playsinline', '');
+    // The first frame, not black, while it sits there.
+    v.addEventListener('loadedmetadata', () => { try { v.currentTime = 0.5; } catch (e) {} }, { once: true });
+    screen.appendChild(v);
+    return;
+  }
+  screen.textContent = '';
+  if (c.thumb) screen.appendChild(c.thumb);
+  const w = document.createElement('div');
+  w.className = 'wait';
+  w.innerHTML = '<div class="ring"></div><span></span>';
+  w.lastChild.textContent = c.state === 'making' ? 'Making…' : 'Waiting…';
+  c.card.el.classList.toggle('queued', c.state !== 'making');
+  screen.appendChild(w);
+}
+
+/* ---- recording --------------------------------------------------------- */
+
+function pickType() {
+  if (!window.MediaRecorder) return null;
+  // H.264 in MP4 first: it is what Instagram, TikTok and an iPhone all play.
+  // A bare 'video/mp4' is last on purpose -- in a browser with no H.264
+  // encoder it means VP9 in an MP4 box, which an iPhone will not open, and
+  // an honest WebM is better than that.
+  const want = ['video/mp4;codecs=avc1.42E01F,mp4a.40.2', 'video/mp4;codecs=avc1.42E01F',
+                'video/mp4;codecs=avc1,mp4a', 'video/mp4;codecs=avc1',
+                'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'];
+  for (const t of want) { try { if (MediaRecorder.isTypeSupported(t)) return t; } catch (e) {} }
+  return '';
+}
+
+/* Play the clip in real time, draw every frame onto the stage canvas, and
+ * record the canvas with the soundtrack. If the tab goes into the background
+ * the browser stops drawing frames, so the recording pauses with it and
+ * carries on when the tab comes back, rather than saving a frozen picture. */
+async function record(c, onProgress) {
+  const type = pickType();
+  if (type === null || !stage.captureStream) throw new Error('this browser can’t record video');
+  wakeAudio();
+
+  await seek(c.start);
+  if (!c.thumb) {
+    // A still for the card while it waits its turn.
+    const th = document.createElement('canvas');
+    th.width = 180; th.height = 320;
+    drawStory(th.getContext('2d'), 180, 320);
+    c.thumb = th;
+    updateCard(c);
+  }
+  const stream = stage.captureStream(30);
+  if (audio.dest) for (const tr of audio.dest.stream.getAudioTracks()) stream.addTrack(tr);
+  const rec = new MediaRecorder(stream, type ? { mimeType: type, videoBitsPerSecond: 8e6,
+                                                audioBitsPerSecond: 192000 } : undefined);
+  const chunks = [];
+  rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+  const stopped = new Promise((r) => { rec.onstop = r; });
+
+  const len = c.end - c.start, FADE = S.fade ? 0.35 : 0;
+  if (audio.monitor) audio.monitor.gain.value = 0;     // quiet while it works
+  if (audio.gain) {
+    const now = audio.ctx.currentTime;
+    audio.gain.gain.cancelScheduledValues(now);
+    audio.gain.gain.setValueAtTime(FADE ? 0 : 1, now);
+    if (FADE) audio.gain.gain.linearRampToValueAtTime(1, now + FADE);
+  }
+  drawStory(ctx, STORY_W, STORY_H, FADE ? 0 : 1);
+
+  try {
+    await vid.play();
+  } catch (e) {
+    for (const tr of stream.getVideoTracks()) tr.stop();
+    if (audio.monitor) audio.monitor.gain.value = 1;
+    throw e;
+  }
+  rec.start(250);
+
+  const onHide = () => {
+    if (document.hidden) { vid.pause(); if (rec.state === 'recording') rec.pause(); }
+    else { if (rec.state === 'paused') rec.resume(); vid.play().catch(() => {}); }
+  };
+  document.addEventListener('visibilitychange', onHide);
+
+  await new Promise((done) => {
+    let fadingOut = false;
+    (function tick() {
+      const t = vid.currentTime, into = t - c.start, left = c.end - t;
+      let a = 1;
+      if (FADE) a = Math.min(1, Math.max(0, into / FADE), Math.max(0, left / FADE));
+      drawStory(ctx, STORY_W, STORY_H, a);
+      if (FADE && !fadingOut && left <= FADE && audio.gain) {
+        fadingOut = true;
+        const now = audio.ctx.currentTime;
+        audio.gain.gain.setValueAtTime(audio.gain.gain.value, now);
+        audio.gain.gain.linearRampToValueAtTime(0, now + Math.max(0.05, left));
+      }
+      if (onProgress) onProgress(Math.min(1, Math.max(0, into / len)));
+      if (t >= c.end || vid.ended || (vid.paused && !document.hidden)) return done();
+      requestAnimationFrame(tick);
+    })();
+  });
+
+  document.removeEventListener('visibilitychange', onHide);
+  vid.pause();
+  rec.stop();
+  await stopped;
+  for (const tr of stream.getVideoTracks()) tr.stop();
+  if (audio.gain) { audio.gain.gain.cancelScheduledValues(0); audio.gain.gain.value = 1; }
+  if (audio.monitor) audio.monitor.gain.value = 1;
+  const mime = (rec.mimeType || type || 'video/webm').split(';')[0];
+  return new Blob(chunks, { type: mime });
+}
+
+/* ---- saving -------------------------------------------------------------
+ * On a phone, the share sheet: Instagram is in it, and so is Save Video, and
+ * it takes every clip at once. On a computer, plain downloads. */
+const isPhone = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+                (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ''));
+
+function fileFor(c) {
+  const ext = c.blob.type.includes('mp4') ? 'mp4' : 'webm';
+  const order = S.clips.slice().sort((a, b) => a.start - b.start);
+  return new File([c.blob], clipName(S.name, order.indexOf(c), c.start, ext), { type: c.blob.type });
+}
+
+async function saveClips(list) {
+  const ready = list.filter(c => c.blob);
+  if (!ready.length) return;
+  const files = ready.map(fileFor);
+  if (isPhone && navigator.canShare) {
+    try {
+      if (navigator.canShare({ files })) {
+        await navigator.share({ files });
+        if (window.Track) Track.ev('story_save', { clips: files.length, via: 'share' });
+        return;
+      }
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;      // they closed the sheet
+    }
+  }
+  for (const f of files) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(f);
+    a.download = f.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    if (files.length > 1) await new Promise(r => setTimeout(r, 400));
+  }
+  if (window.Track) Track.ev('story_save', { clips: files.length, via: 'download' });
+}
+
+/* ---- options: preview, settings, your own moments ------------------- */
+
+let raf = 0;
+function frameLoop() {
+  paintStage();
+  $('scrub').value = String(vid.currentTime);
+  $('tNow').textContent = clock(vid.currentTime);
+  raf = requestAnimationFrame(frameLoop);
+}
+function stopPreview() {
+  cancelAnimationFrame(raf);
+  if (!S.busy && !vid.paused) vid.pause();
+  $('playBtn').textContent = '▶ Play';
+}
+
+function markDirty() {
+  if (!S.clips.length) return;
+  S.dirty = true;
+  $('remake').textContent = 'Remake clips with these settings';
+}
+
+$('playBtn').addEventListener('click', () => {
+  if (S.busy || !S.duration) return;
+  if (!vid.paused) { stopPreview(); paintStage(); return; }
+  wakeAudio();
+  if (audio.monitor) audio.monitor.gain.value = 1;
+  if (vid.currentTime >= S.duration - 0.1) vid.currentTime = 0;
+  vid.play().catch(() => {});
+  $('playBtn').textContent = '❚❚ Pause';
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(frameLoop);
+});
+vid.addEventListener('ended', () => { if (!S.busy) stopPreview(); });
+$('scrub').addEventListener('input', (e) => {
+  if (S.busy) return;
+  const t = Number(e.target.value);
+  $('tNow').textContent = clock(t);
+  vid.currentTime = t;
+});
+vid.addEventListener('seeked', () => { if (vid.paused && !S.busy) paintStage(); });
+
+$('addBtn').addEventListener('click', () => {
+  if (S.busy || !S.duration) return;
+  stopPreview();
+  const len = Math.min(clipLen(), S.duration);
+  const start = Math.max(0, Math.min(S.duration - len, vid.currentTime));
+  S.clips.push({ start, end: start + len, score: null, rank: null, blob: null, url: null, state: 'queued' });
+  makeAll();
+});
+
+$('remake').addEventListener('click', () => {
+  if (S.busy || !S.duration) return;
+  stopPreview();
+  for (const c of S.clips) if (c.url) URL.revokeObjectURL(c.url);
+  pick();
+  S.dirty = false;
+  makeAll();
+});
+
+function segment(id, fn) {
+  const box = $(id);
+  box.addEventListener('click', (e) => {
+    const b = e.target.closest('.btn');
+    if (!b) return;
+    [...box.children].forEach(x => x.classList.toggle('on', x === b));
+    fn(b.dataset.v);
+  });
+}
+segment('lenSeg', (v) => { S.len = v === 'auto' ? 'auto' : Number(v); markDirty(); });
+segment('fitSeg', (v) => { S.fit = v; $('panBox').hidden = v !== 'fill'; restyle(); });
+segment('capSeg', (v) => { S.capPos = v; restyle(); });
+$('count').addEventListener('change', markDirty);
+$('fade').addEventListener('change', (e) => { S.fade = e.target.checked; markDirty(); });
+$('pan').addEventListener('input', (e) => {
+  S.pan = Number(e.target.value);
+  $('panOut').textContent = Math.abs(S.pan) < 0.03 ? 'centre' : S.pan < 0 ? 'left / top' : 'right / bottom';
+  restyle();
+});
+$('caption').addEventListener('input', (e) => { S.caption = e.target.value.trim(); restyle(); });
+function restyle() { if (!S.busy) paintStage(); markDirty(); }
+
+/* ---- wiring ---------------------------------------------------------- */
+
+const fileIn = $('file');
+// The tap that opens the picker is the gesture that lets sound start later.
+fileIn.addEventListener('click', wakeAudio);
+fileIn.addEventListener('change', (e) => { load(e.target.files[0]); e.target.value = ''; });
+const drop = $('drop');
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, () => drop.classList.remove('over')));
+drop.addEventListener('drop', (e) => { e.preventDefault(); wakeAudio(); load(e.dataTransfer.files[0]); });
+$('resumeBtn').addEventListener('click', () => { wakeAudio(); makeAll(); });
+$('saveAll').addEventListener('click', () => saveClips(S.clips.slice().sort((a, b) => a.start - b.start)));
+$('more').addEventListener('toggle', () => { if ($('more').open && S.duration && !S.busy) paintStage(); });
+
+// So the automated check can see what happened without a person.
+window.__storyCutter = () => ({ duration: S.duration, heard: !!S.rms, busy: S.busy,
+  clips: S.clips.map(c => ({ start: c.start, end: c.end, rank: c.rank, state: c.state,
+                             bytes: c.blob ? c.blob.size : 0, type: c.blob ? c.blob.type : '' })) });
+</script>
+</body>
+</html>

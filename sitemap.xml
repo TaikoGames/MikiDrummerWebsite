@@ -198,6 +198,16 @@
     </image:image>
   </url>
   <url>
+    <loc>https://www.mikidrummer.ca/story-cutter.html</loc>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+    <image:image>
+      <image:loc>https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png</image:loc>
+      <image:title>Story Cutter — turn one video into story clips</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://www.mikidrummer.ca/razor-cut-tool.html</loc>
     <lastmod>2026-08-02</lastmod>
     <priority>0.6</priority>
