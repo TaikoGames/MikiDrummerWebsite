@@ -104,6 +104,19 @@ export function pickHighlights(rms, duration, clipLen, count, opts = {}) {
       bestPlan.starts.sort((a, b) => scores[b] - scores[a])
         .forEach(st => picked.push({ s: st, score: scores[st] / peak }));
     }
+    // Still short of what fits -- the best moment sits in the middle of a
+    // short video and leaves no room either side. Plan the whole timeline
+    // freely, and take that if its best clip is still nearly as good as the
+    // best moment: a second clip is worth a small shift, not a lost chorus.
+    if (picked.length < fits) {
+      const free = planAll(scores, fits, block);
+      const top = free.starts.reduce((m, st) => Math.max(m, scores[st]), 0);
+      if (free.starts.length > picked.length && top >= 0.9 * peak) {
+        picked.length = 0;
+        free.starts.sort((a, b) => scores[b] - scores[a])
+          .forEach(st => picked.push({ s: st, score: scores[st] / peak }));
+      }
+    }
   }
 
   const maxStart = duration - clipLen;
@@ -156,11 +169,14 @@ export function snapToHit(rms, t, hop = HOP) {
 }
 
 /* The clip length when nobody has picked one: 15 seconds, the classic story
- * length, unless the video is too short for a few of those -- then shorter,
- * down to 5, so a 40 second video still gives three clips rather than one. */
+ * length. A video of 15 seconds or less is one clip of the whole thing. In
+ * between, short enough for two clips -- but never under 7 seconds. It used
+ * to aim for three clips and go down to 5 seconds, and a 15 second video came
+ * back as a handful of snippets too short to be worth posting. */
 export function autoLength(duration) {
   if (!(duration > 0)) return 15;
-  return Math.max(5, Math.min(15, Math.floor((duration + 1) / 3 - 1)));
+  if (duration <= 15) return duration;
+  return Math.max(7, Math.min(15, Math.floor((duration + 1) / 2 - 1)));
 }
 
 /* No audio to listen to: spread the clips out across the video. */

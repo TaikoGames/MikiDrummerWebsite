@@ -119,8 +119,10 @@ function song() {
 
 // --- auto length -------------------------------------------------------
 ok(autoLength(600) === 15, 'a long video gets 15 s clips');
-ok(autoLength(40) === 12, `a 40 s video gets shorter clips (${autoLength(40)})`);
-ok(autoLength(8) === 5, 'never shorter than 5 s');
+ok(autoLength(40) === 15, `a 40 s video gets full 15 s clips (${autoLength(40)})`);
+ok(autoLength(12) === 12, 'a video of 15 s or less is one clip of the whole thing');
+ok(autoLength(20) >= 7 && autoLength(20) <= 10, `a 20 s video gets two clips' worth (${autoLength(20)})`);
+for (let d = 15.5; d < 400; d += 0.5) ok(autoLength(d) >= 7, `never under 7 s (${d})`);
 for (const d of [20, 40, 50]) {
   const n = Math.round(d / HOP), r = new Float32Array(n);
   for (let i = 0; i < n; i++) r[i] = 0.1 + 0.05 * Math.sin(i * 0.3);
