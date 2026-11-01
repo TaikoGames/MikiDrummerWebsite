@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Story Cutter — Turn One Video Into Story Clips, Free</title>
 <meta name="description" content="Pick one video and get clips of the best bits, made for you, for Instagram and TikTok stories. Keeps your video's shape, or makes it 9:16. Free.">
-<meta name="keywords" content="video to instagram story, cut video into story clips, 9:16 video converter, make reels from a video, split video for instagram stories, vertical video cropper, band video clips, concert video to stories">
+<meta name="keywords" content="youtube shorts maker, landscape video to shorts, add black bars to video, video to instagram story, cut video into story clips, 9:16 video converter, make reels from a video, split video for instagram stories, vertical video cropper, band video clips, concert video to stories">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Miki Drummer">
 <link rel="canonical" href="https://www.mikidrummer.ca/story-cutter.html">
@@ -65,6 +65,13 @@
   .drop.small .pill{font-size:13px;padding:8px 14px;margin:0 10px 0 0}
   .drop.small span{display:inline;font-size:12.5px}
 
+  .madeFor{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+  .madeFor .mfLabel{font-size:12.5px;color:var(--dim);margin-right:2px}
+  .chip{background:var(--card2);border:1px solid var(--edge2);color:var(--mid);border-radius:999px;
+        padding:8px 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
+  .chip:hover{border-color:var(--hot);color:var(--fg)}
+  .chip.on{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .chip[disabled]{opacity:.45;cursor:not-allowed}
   .status{margin-top:16px;font-size:15px;color:var(--fg);font-weight:600;min-height:22px}
   .status.err{color:#ff8f8f}
   .status small{display:block;font-weight:400;font-size:12.5px;color:var(--dim);margin-top:2px}
@@ -173,6 +180,14 @@
     <span id="dropSub">A gig, a rehearsal, a drum cam — straight off your phone is fine.</span>
   </label>
 
+  <!-- The one choice worth making up front, because clips record in real
+       time and changing the shape afterwards means making them again. -->
+  <div class="madeFor" id="madeFor" role="radiogroup" aria-label="Make clips for">
+    <span class="mfLabel">Make clips for</span>
+    <button class="chip on" type="button" role="radio" aria-checked="true" data-v="orig">Any app — keep the shape</button>
+    <button class="chip" type="button" role="radio" aria-checked="false" data-v="bars">YouTube Shorts — portrait with bars</button>
+  </div>
+
   <div class="status" id="status" role="status" aria-live="polite"></div>
   <div class="bar" id="bar" hidden><i></i></div>
   <div id="resume" hidden style="margin-top:14px">
@@ -240,12 +255,16 @@
           <span class="lbl">Framing</span>
           <div class="seg" id="fitSeg">
             <button class="btn on" data-v="orig" type="button">Original shape</button>
+            <button class="btn" data-v="bars" type="button">9:16 — black bars</button>
             <button class="btn" data-v="fill" type="button">9:16 — fill</button>
             <button class="btn" data-v="fit" type="button">9:16 — fit + blur</button>
           </div>
         </div>
         <p class="hint" id="shapeHint" style="margin-top:-6px">Clips keep the shape of your video.
            Pick a 9:16 option to make them fill a phone screen.</p>
+        <p class="hint" id="barsHint" style="margin-top:-6px" hidden>The whole picture, upright,
+           with black bars above and below — what YouTube Shorts wants. Put a caption at the top
+           and it sits in the bar.</p>
         <div class="f" id="panBox" hidden>
           <label for="pan">Position <span id="panOut" style="color:var(--dim)">centre</span></label>
           <input type="range" id="pan" min="-1" max="1" step="0.01" value="0">
@@ -302,6 +321,11 @@
          1080×1920 if you pick a 9:16 option. YouTube, Instagram and TikTok all take it.
          A few desktop browsers can only save WebM; if yours does, open the page on your
          phone instead.</p>
+      <h3>Can I make YouTube Shorts?</h3>
+      <p>Yes — before you choose your video, tap “YouTube Shorts — portrait with bars”. The
+         clips come out upright at 1080×1920 with the whole picture in the middle and black bars
+         above and below, which is what Shorts expects. Already made your clips? Tap it anyway
+         and they are made again in the Shorts shape.</p>
       <h3>Can I download all the clips at once?</h3>
       <p>Yes — “Download all” saves every clip in one ZIP file. Open it and the clips are
          inside, ready to upload.</p>
@@ -348,6 +372,8 @@
           "acceptedAnswer": { "@type": "Answer", "text": "Each clip is recorded as it plays, so five 15 second clips take a little over a minute. Keep this tab open while it works." } },
         { "@type": "Question", "name": "What format are the clips?",
           "acceptedAnswer": { "@type": "Answer", "text": "A standard MP4 — H.264 video and AAC sound, the same kind of file a phone camera makes — in the same shape as your video (up to 1920 pixels on the long side), or 1080×1920 if you pick a 9:16 option. YouTube, Instagram and TikTok all take it. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
+        { "@type": "Question", "name": "Can I make YouTube Shorts?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes — before you choose your video, tap “YouTube Shorts — portrait with bars”. The clips come out upright at 1080×1920 with the whole picture in the middle and black bars above and below, which is what Shorts expects. Already made your clips? Tap it anyway and they are made again in the Shorts shape." } },
         { "@type": "Question", "name": "Can I download all the clips at once?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes — “Download all” saves every clip in one ZIP file. Open it and the clips are inside, ready to upload." } },
         { "@type": "Question", "name": "How do I post them?",
@@ -442,6 +468,11 @@ function drawStory(c, W, H, alpha) {
   if (!vw || !vh) return;
   if (S.fit === 'orig') {
     c.drawImage(vid, 0, 0, W, H);
+  } else if (S.fit === 'bars') {
+    // The whole frame, nothing cropped, on black: a landscape video becomes
+    // a band across the middle of an upright 9:16 clip.
+    const f = fitRect(vw, vh, W, H);
+    c.drawImage(vid, f.dx, f.dy, f.dw, f.dh);
   } else if (S.fit === 'fill') {
     const r = fillRect(vw, vh, W, H, S.pan);
     c.drawImage(vid, r.sx, r.sy, r.sw, r.sh, 0, 0, W, H);
@@ -752,6 +783,7 @@ function setBusyUi(on) {
   if (on) zipLink(null);
   $('remake').disabled = on || !S.duration;
   $('addBtn').disabled = on;
+  for (const b of $('madeFor').querySelectorAll('.chip')) b.disabled = on;
   $('playBtn').disabled = on;
 }
 
@@ -1381,7 +1413,8 @@ async function prepareZip() {
       files.push({ name: fileFor(c).name, body: c.blob, size: c.blob.size, crc: c.crc });
     }
     const zip = new Blob(zipParts(files), { type: 'application/zip' });
-    const name = clipName(S.name, 0, 0, 'zip').replace(/-story-01-0m00s\.zip$/, '-story-clips.zip');
+    const kind = S.fit === 'bars' ? 'short' : 'story';
+    const name = clipName(S.name, 0, 0, 'zip', kind).replace(/-(story|short)-01-0m00s\.zip$/, '-$1-clips.zip');
     if (job === zipJob) zipLink(URL.createObjectURL(zip), name, ready.length);
   } catch (e) {
     console.warn('[story cutter] zip failed', e);
@@ -1392,7 +1425,8 @@ async function prepareZip() {
 function fileFor(c) {
   const ext = /mp4/.test(c.blob.type) ? 'mp4' : 'webm';
   const order = S.clips.slice().sort((a, b) => a.start - b.start);
-  return new File([c.blob], clipName(S.name, order.indexOf(c), c.start, ext), { type: c.blob.type });
+  return new File([c.blob], clipName(S.name, order.indexOf(c), c.start, ext, S.fit === 'bars' ? 'short' : 'story'),
+                  { type: c.blob.type });
 }
 
 async function saveClips(list) {
@@ -1506,11 +1540,38 @@ function segment(id, fn) {
   });
 }
 segment('lenSeg', (v) => { S.len = v === 'auto' ? 'auto' : Number(v); markDirty(); });
-segment('fitSeg', (v) => {
+/* Framing, set from either the main-page choice or Options -- one setting,
+ * shown in both places. */
+function setFit(v) {
   S.fit = v;
+  for (const b of $('fitSeg').children) b.classList.toggle('on', b.dataset.v === v);
+  for (const b of $('madeFor').querySelectorAll('.chip')) {
+    const on = b.dataset.v === v;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-checked', String(on));
+  }
   $('panBox').hidden = v !== 'fill';
   $('shapeHint').hidden = v !== 'orig';
+  $('barsHint').hidden = v !== 'bars';
   restyle();
+}
+segment('fitSeg', setFit);
+$('madeFor').addEventListener('click', (e) => {
+  const b = e.target.closest('.chip');
+  if (!b || b.disabled || S.busy || b.dataset.v === S.fit) return;
+  setFit(b.dataset.v);
+  if (window.Track) Track.ev('story_made_for', { fit: b.dataset.v });
+  // Clips already made in the other shape: make the same clips again in
+  // this one, without being asked -- that is what picking it means.
+  if (S.clips.some(c => c.blob)) {
+    stopPreview();
+    for (const c of S.clips) {
+      if (c.url) URL.revokeObjectURL(c.url);
+      c.blob = null; c.url = null; c.thumb = null; c.state = 'queued';
+    }
+    S.dirty = false;
+    unlockVideo().then(makeAll);
+  }
 });
 segment('capSeg', (v) => { S.capPos = v; restyle(); });
 $('count').addEventListener('change', markDirty);

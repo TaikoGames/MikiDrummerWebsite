@@ -230,12 +230,12 @@ export function clock(t) {
 }
 
 /* A filename that sorts and says where in the video it came from. */
-export function clipName(base, i, start, ext) {
+export function clipName(base, i, start, ext, kind = 'story') {
   const stem = String(base || 'video').replace(/\.[^.]+$/, '')
     .normalize('NFKD').replace(/[̀-ͯ]/g, '')
     .replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'video';
   const m = Math.floor(start / 60), s = Math.floor(start % 60);
-  return `${stem}-story-${String(i + 1).padStart(2, '0')}-${m}m${String(s).padStart(2, '0')}s.${ext}`;
+  return `${stem}-${kind}-${String(i + 1).padStart(2, '0')}-${m}m${String(s).padStart(2, '0')}s.${ext}`;
 }
 
 const round2 = (x) => Math.round(x * 100) / 100;
