@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="/js/track.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Story Cutter — Turn One Video Into Story Clips, Free</title>
+<meta name="description" content="Drop in one video and get vertical 9:16 clips for Instagram, TikTok and YouTube Shorts. It finds the loudest moments for you. Free, nothing uploads.">
+<meta name="keywords" content="video to instagram story, cut video into story clips, 9:16 video converter, make reels from a video, split video for instagram stories, vertical video cropper, band video clips, concert video to stories">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Miki Drummer">
+<link rel="canonical" href="https://www.mikidrummer.ca/story-cutter.html">
+<meta name="theme-color" content="#0b0c0e">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Miki Drummer">
+<meta property="og:locale" content="en_CA">
+<meta property="og:url" content="https://www.mikidrummer.ca/story-cutter.html">
+<meta property="og:title" content="Story Cutter — one video in, story clips out">
+<meta property="og:description" content="Drop in a gig video and get vertical clips of the best moments, ready for Instagram and TikTok stories. Free, runs in your browser.">
+<meta property="og:image" content="https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
+
+<style>
+  :root{ --bg:#0b0c0e; --card:#131518; --card2:#1b1e22; --edge:#2b2f34; --edge2:#3a4046;
+         --dim:#7d848d; --mid:#a6adb6; --fg:#e9ebee; --hot:#e8672a; --ok:#3fbf6a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);line-height:1.55;
+       font-family:'Helvetica Neue',system-ui,Arial,sans-serif;
+       padding:0 16px 60px;-webkit-tap-highlight-color:transparent}
+  .wrap{max-width:1100px;margin:0 auto}
+  a{color:var(--hot);text-decoration:none} a:hover{text-decoration:underline}
+  header{padding:30px 0 18px;border-bottom:1px solid var(--edge)}
+  .top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--hot);font-weight:700}
+  .back{color:var(--dim);font-size:13px}
+  h1{font-family:'Arial Black',system-ui,sans-serif;font-size:clamp(26px,5.5vw,42px);letter-spacing:-.02em;margin:8px 0 10px;line-height:1.05}
+  .lead{color:var(--mid);font-size:15px;max-width:68ch}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--card2);
+       border:1px solid var(--edge2);color:var(--fg);border-radius:999px;padding:10px 16px;
+       font:inherit;font-size:13px;font-weight:600;cursor:pointer;touch-action:manipulation}
+  .btn:hover{border-color:var(--hot);color:var(--hot)}
+  .btn.go{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .btn.go:hover{color:#160802;filter:brightness(1.08)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.sm{padding:7px 11px;font-size:12px}
+
+  /* ---- step 1: the drop zone ---- */
+  .drop{display:block;margin-top:22px;border:2px dashed var(--edge2);border-radius:16px;background:var(--card);
+        padding:38px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;
+        position:relative}
+  .drop:hover,.drop.over{border-color:var(--hot);background:#17130f}
+  .drop b{display:block;font-size:18px;margin-bottom:4px}
+  .drop span{color:var(--dim);font-size:13px}
+  .drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+  /* Once a video is in, the drop zone shrinks to a one-line "change it". */
+  .drop.small{padding:12px 16px;text-align:left;border-style:solid;border-width:1px}
+  .drop.small b{display:inline;font-size:14px;margin:0 8px 0 0}
+  .drop.small span{font-size:12.5px}
+  .status{margin-top:12px;font-size:13px;color:var(--mid);min-height:20px}
+  .status.err{color:#ff8f8f}
+  .bar{height:4px;background:var(--edge);border-radius:4px;overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;width:0;background:var(--hot);transition:width .2s}
+
+  /* ---- step 2: the workbench ---- */
+  .bench{display:grid;gap:20px;margin-top:22px}
+  @media(min-width:900px){ .bench{grid-template-columns:360px minmax(0,1fr);align-items:start} }
+  .card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:16px}
+  .card h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:10px}
+  .viewer{display:flex;flex-direction:column;align-items:center;gap:10px}
+  @media(min-width:900px){ .viewer{position:sticky;top:12px} }
+  #stage{width:min(100%,320px);aspect-ratio:9/16;height:auto;border-radius:12px;background:#000;
+         border:1px solid var(--edge2);display:block}
+  .scrub{width:100%;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid);
+         font-variant-numeric:tabular-nums}
+  .scrub input{flex:1;accent-color:var(--hot)}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .row.c{justify-content:center}
+
+  .opts{display:grid;gap:12px}
+  .f label{display:block;font-size:12px;color:var(--mid);margin-bottom:5px}
+  .f select,.f input[type=text]{width:100%;background:var(--card2);color:var(--fg);border:1px solid var(--edge);
+       border-radius:9px;padding:9px 11px;font:inherit;font-size:14px}
+  .f input[type=range]{width:100%;accent-color:var(--hot)}
+  .seg{display:flex;gap:6px;flex-wrap:wrap}
+  .seg .btn{flex:1;min-width:52px;padding:8px 6px}
+  .seg .btn.on{background:var(--hot);border-color:var(--hot);color:#160802;font-weight:800}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mid)}
+  .chk input{accent-color:var(--hot);width:16px;height:16px}
+
+  .clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:4px}
+  .clip{background:var(--card2);border:1px solid var(--edge);border-radius:12px;padding:8px;display:flex;
+        flex-direction:column;gap:7px}
+  .clip.on{border-color:var(--hot)}
+  .clip canvas{width:100%;aspect-ratio:9/16;height:auto;border-radius:8px;background:#000;cursor:pointer;display:block}
+  .clip .t{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:6px}
+  .clip .t em{font-style:normal;color:var(--hot);font-size:11px;letter-spacing:.06em}
+  .clip .row{gap:5px}
+  .clip .row .btn{flex:1;padding:6px 4px;font-size:11.5px}
+  .clip .done{font-size:11.5px;color:var(--ok);min-height:16px}
+  .hint{font-size:12px;color:var(--dim);margin-top:8px;max-width:72ch}
+
+  .guide{margin-top:34px;display:grid;gap:14px}
+  @media(min-width:900px){ .guide{grid-template-columns:1fr 1fr} }
+  .guide h2{font-family:'Arial Black',system-ui,sans-serif;font-size:19px;color:var(--fg);
+            letter-spacing:-.01em;text-transform:none;margin-bottom:8px}
+  .guide h3{font-size:14.5px;margin:12px 0 3px}
+  .guide p,.guide li{color:var(--mid);font-size:14px;line-height:1.65}
+  .guide ol{padding-left:20px}
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="top">
+      <span class="eyebrow">Free · Nothing uploads · Works on a phone</span>
+      <a class="back" href="/tools.html">← Free tools</a>
+    </div>
+    <h1>Story Cutter</h1>
+    <p class="lead">Drop in one video — a gig, a rehearsal, a drum cam — and get vertical 9:16 clips
+       ready for Instagram and TikTok stories. It listens to the audio, finds the moments where it
+       goes off, and starts each clip on the hit. Adjust the framing, add a caption, save.</p>
+  </header>
+
+  <label class="drop" id="drop">
+    <input type="file" id="file" accept="video/*">
+    <b id="dropTitle">Choose a video</b>
+    <span id="dropSub">or drag one in. MP4 or MOV, straight off your phone is fine.</span>
+  </label>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+  <div class="bar" id="bar" hidden><i></i></div>
+
+  <video id="vid" playsinline preload="auto" hidden></video>
+
+  <div class="bench" id="bench" hidden>
+    <div class="card viewer">
+      <canvas id="stage" width="1080" height="1920"></canvas>
+      <div class="scrub">
+        <span id="tNow">0:00</span>
+        <input type="range" id="scrub" min="0" max="1" step="0.01" value="0" aria-label="Position in the video">
+        <span id="tEnd">0:00</span>
+      </div>
+      <div class="row c">
+        <button class="btn" id="playBtn" type="button">▶ Play</button>
+        <button class="btn" id="addBtn" type="button">+ Clip from here</button>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:20px">
+      <div class="card">
+        <h2>Clips</h2>
+        <div class="opts">
+          <div class="two">
+            <div class="f">
+              <label>Length</label>
+              <div class="seg" id="lenSeg">
+                <button class="btn" data-v="7" type="button">7s</button>
+                <button class="btn on" data-v="15" type="button">15s</button>
+                <button class="btn" data-v="30" type="button">30s</button>
+                <button class="btn" data-v="60" type="button">60s</button>
+              </div>
+            </div>
+            <div class="f">
+              <label for="count">How many</label>
+              <select id="count">
+                <option>1</option><option>2</option><option>3</option><option>4</option>
+                <option selected>5</option><option>6</option><option>8</option><option>10</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn go" id="findBtn" type="button">Find the best moments</button>
+            <button class="btn" id="saveAll" type="button" disabled>⬇ Save all</button>
+          </div>
+        </div>
+        <p class="hint" id="clipsHint"></p>
+        <div class="clips" id="clips"></div>
+      </div>
+
+      <div class="card">
+        <h2>Look</h2>
+        <div class="opts">
+          <div class="f">
+            <label>Framing</label>
+            <div class="seg" id="fitSeg">
+              <button class="btn on" data-v="fill" type="button">Fill the screen</button>
+              <button class="btn" data-v="fit" type="button">Whole frame + blur</button>
+            </div>
+          </div>
+          <div class="f" id="panBox">
+            <label for="pan">Position <span id="panOut" style="color:var(--dim)">centre</span></label>
+            <input type="range" id="pan" min="-1" max="1" step="0.01" value="0">
+          </div>
+          <div class="f">
+            <label for="caption">Caption (optional)</label>
+            <input type="text" id="caption" maxlength="80" placeholder="e.g. LIVE @ Bully's · Oct 30">
+          </div>
+          <div class="two">
+            <div class="f">
+              <label>Caption position</label>
+              <div class="seg" id="capSeg">
+                <button class="btn on" data-v="top" type="button">Top</button>
+                <button class="btn" data-v="bottom" type="button">Bottom</button>
+              </div>
+            </div>
+            <div class="f" style="align-self:end">
+              <label class="chk"><input type="checkbox" id="fade" checked> Fade in and out</label>
+            </div>
+          </div>
+        </div>
+        <p class="hint">Captions stay clear of the bands Instagram and TikTok cover with their own
+           buttons, top and bottom.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide">
+    <section class="card">
+      <h2>How to turn a video into story clips</h2>
+      <ol>
+        <li><b>Choose the video.</b> Anything your phone or camera records — landscape or upright.</li>
+        <li><b>Find the best moments.</b> Pick a length and how many clips you want. It scores every
+            stretch of the video on how loud it is and how much it moves, takes the best ones that
+            don't overlap, and starts each one on the nearest hit.</li>
+        <li><b>Frame it.</b> “Fill the screen” crops to 9:16 — slide the position to keep the
+            singer or the kit in shot. “Whole frame + blur” keeps everything and fills the rest with
+            a blurred copy.</li>
+        <li><b>Adjust and save.</b> Nudge any clip a second either way, add one from wherever the
+            player is, then save them one at a time or all at once.</li>
+      </ol>
+    </section>
+    <section class="card">
+      <h2>Questions</h2>
+      <h3>Is my video uploaded anywhere?</h3>
+      <p>No. Everything happens in your browser. The video never leaves your phone or computer.</p>
+      <h3>Why does saving take as long as the clip?</h3>
+      <p>Each clip is recorded as it plays, so a 15 second clip takes about 15 seconds. Keep this
+         tab in front while it works.</p>
+      <h3>What format are the clips?</h3>
+      <p>1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop
+         browsers can only save WebM; if yours does, open the page on your phone instead.</p>
+      <h3>How do I post them?</h3>
+      <p>On a phone, “Save” opens the share sheet, so you can send a clip straight to Instagram
+         or save it to Photos. On a computer it downloads.</p>
+    </section>
+  </div>
+
+  <footer>
+    Built and kept by <a href="/">Miki Drummer</a>, Vancouver BC. One of the
+    <a href="/tools.html">free tools for bands and drummers</a>, alongside
+    <a href="/razor-cut-tool.html">Razor Cut</a> for audio and the
+    <a href="/poster.html">gig poster maker</a>.
+  </footer>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Story Cutter",
+      "url": "https://www.mikidrummer.ca/story-cutter.html",
+      "description": "Turn one video into vertical 9:16 clips for Instagram and TikTok stories. Finds the loudest moments automatically, crops or fits the frame, adds a caption and saves MP4s. Runs in the browser; nothing uploads.",
+      "image": "https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Any modern web browser",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" },
+      "author": { "@type": "Person", "name": "Miki Drummer", "url": "https://www.mikidrummer.ca/" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is my video uploaded anywhere?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Everything happens in your browser. The video never leaves your phone or computer." } },
+        { "@type": "Question", "name": "Why does saving take as long as the clip?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Each clip is recorded as it plays, so a 15 second clip takes about 15 seconds. Keep this tab in front while it works." } },
+        { "@type": "Question", "name": "What format are the clips?",
+          "acceptedAnswer": { "@type": "Answer", "text": "1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
+        { "@type": "Question", "name": "How do I post them?",
+          "acceptedAnswer": { "@type": "Answer", "text": "On a phone, “Save” opens the share sheet, so you can send a clip straight to Instagram or save it to Photos. On a computer it downloads." } }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Miki Drummer", "item": "https://www.mikidrummer.ca/" },
+        { "@type": "ListItem", "position": 2, "name": "Free tools", "item": "https://www.mikidrummer.ca/tools.html" },
+        { "@type": "ListItem", "position": 3, "name": "Story Cutter", "item": "https://www.mikidrummer.ca/story-cutter.html" }
+      ]
+    }
+  ]
+}
+</script>
+
+<script type="module">
+import { STORY_W, STORY_H, HOP, loudness, pickHighlights, evenly, fillRect, fitRect,
+         clock, clipName } from '/js/story-cutter.js';
+
+const $ = (id) => document.getElementById(id);
+const vid = $('vid'), stage = $('stage'), ctx = stage.getContext('2d');
+
+// Decoding the whole soundtrack to find the loud parts holds it all in
+// memory as raw samples. Past this, skip the listening and space the clips
+// out instead -- a phone that runs out of memory kills the tab.
+const MAX_ANALYSE_BYTES = 400 * 1024 * 1024;
+const MAX_ANALYSE_SECONDS = 20 * 60;
+
+const S = {
+  file: null, name: 'video', duration: 0, rms: null,
+  len: 15, fit: 'fill', pan: 0, caption: '', capPos: 'top', fade: true,
+  clips: [], busy: false, playingClip: null
+};
+
+function say(msg, err) { const s = $('status'); s.textContent = msg; s.classList.toggle('err', !!err); }
+function progress(f) {
+  $('bar').hidden = f == null;
+  $('bar').firstElementChild.style.width = f == null ? '0' : Math.round(f * 100) + '%';
+}
+
+/* ---- drawing one story frame ------------------------------------------
+ * The preview, the thumbnails and the saved clip all come through here, so
+ * what you see is exactly what gets saved. */
+const blurCan = document.createElement('canvas');
+blurCan.width = 36; blurCan.height = 64;
+const blurCtx = blurCan.getContext('2d');
+
+function drawStory(c, W, H, t, alpha) {
+  const vw = vid.videoWidth, vh = vid.videoHeight;
+  c.fillStyle = '#000';
+  c.fillRect(0, 0, W, H);
+  if (!vw || !vh) return;
+  if (S.fit === 'fill') {
+    const r = fillRect(vw, vh, W, H, S.pan);
+    c.drawImage(vid, r.sx, r.sy, r.sw, r.sh, 0, 0, W, H);
+  } else {
+    // A blur that works in every browser: shrink to a few pixels, stretch
+    // back up with smoothing on. ctx.filter would be nicer and Safari only
+    // recently learnt it.
+    const r = fillRect(vw, vh, 36, 64, 0);
+    blurCtx.drawImage(vid, r.sx, r.sy, r.sw, r.sh, 0, 0, 36, 64);
+    c.imageSmoothingEnabled = true;
+    c.imageSmoothingQuality = 'high';
+    c.drawImage(blurCan, 0, 0, W, H);
+    c.fillStyle = 'rgba(0,0,0,.45)';
+    c.fillRect(0, 0, W, H);
+    const f = fitRect(vw, vh, W, H);
+    c.drawImage(vid, f.dx, f.dy, f.dw, f.dh);
+  }
+  if (S.caption) drawCaption(c, W, H);
+  if (alpha != null && alpha < 1) {
+    c.fillStyle = `rgba(0,0,0,${1 - alpha})`;
+    c.fillRect(0, 0, W, H);
+  }
+}
+
+/* Big, bold, outlined, wrapped -- and kept out of the top 13% and bottom 18%
+ * of the frame, which is where the story apps draw their own name, progress
+ * bar and reply box over whatever is there. */
+function drawCaption(c, W, H) {
+  const size = Math.round(W * 0.068);
+  c.font = `900 ${size}px "Arial Black", "Helvetica Neue", Arial, sans-serif`;
+  c.textAlign = 'center';
+  c.textBaseline = 'middle';
+  const words = S.caption.toUpperCase().split(/\s+/).filter(Boolean);
+  const lines = [], maxW = W * 0.84;
+  let line = '';
+  for (const w of words) {
+    const tryL = line ? line + ' ' + w : w;
+    if (c.measureText(tryL).width > maxW && line) { lines.push(line); line = w; } else line = tryL;
+  }
+  if (line) lines.push(line);
+  const lh = size * 1.12, block = lh * lines.length;
+  const top = S.capPos === 'top' ? H * 0.14 : H * 0.80 - block;
+  c.lineJoin = 'round';
+  c.lineWidth = size * 0.22;
+  c.strokeStyle = 'rgba(0,0,0,.85)';
+  c.fillStyle = '#fff';
+  lines.forEach((l, i) => {
+    const y = top + lh * (i + 0.5);
+    c.strokeText(l, W / 2, y);
+    c.fillText(l, W / 2, y);
+  });
+}
+
+function paintStage() { drawStory(ctx, STORY_W, STORY_H, vid.currentTime); }
+
+/* ---- loading -------------------------------------------------------- */
+
+function once(el, ev, timeout) {
+  return new Promise((res, rej) => {
+    const t = setTimeout(() => { el.removeEventListener(ev, h); rej(new Error(ev + ' timed out')); }, timeout || 15000);
+    function h() { clearTimeout(t); el.removeEventListener(ev, h); res(); }
+    el.addEventListener(ev, h);
+  });
+}
+
+async function seek(t) {
+  if (Math.abs(vid.currentTime - t) < 0.01 && vid.readyState >= 2) return;
+  const p = once(vid, 'seeked');
+  vid.currentTime = t;
+  await p;
+}
+
+async function load(file) {
+  if (!file) return;
+  if (S.busy) return say('Hang on — still saving a clip.', true);
+  if (!/^video\//.test(file.type) && !/\.(mp4|mov|m4v|webm|mkv)$/i.test(file.name)) {
+    return say('That doesn’t look like a video file.', true);
+  }
+  stopPreview();
+  S.file = file; S.name = file.name; S.rms = null; S.clips = [];
+  $('clips').textContent = '';
+  $('saveAll').disabled = true;
+  if (vid.src) URL.revokeObjectURL(vid.src);
+  vid.src = URL.createObjectURL(file);
+  say('Opening the video…');
+  try {
+    await once(vid, 'loadeddata', 30000);
+  } catch (e) {
+    return say('This browser can’t open that video. Try an MP4, or open the page in Chrome or Safari.', true);
+  }
+  S.duration = vid.duration;
+  $('bench').hidden = false;
+  $('drop').classList.add('small');
+  $('dropTitle').textContent = 'Choose another video';
+  $('dropSub').textContent = file.name + ' · ' + clock(S.duration);
+  $('scrub').max = String(S.duration);
+  $('tEnd').textContent = clock(S.duration);
+  await seek(Math.min(1, S.duration / 3));
+  paintStage();
+  if (window.Track) Track.ev('story_load', { secs: Math.round(S.duration) });
+  await listen();
+  find();
+}
+
+/* Decode the soundtrack and measure how loud it is over time. */
+async function listen() {
+  if (S.file.size > MAX_ANALYSE_BYTES || S.duration > MAX_ANALYSE_SECONDS) {
+    say('That’s a big one, so the clips are spaced out rather than picked by ear. Move them where you want.');
+    return;
+  }
+  say('Listening for the loud parts…');
+  progress(0.15);
+  try {
+    const buf = await S.file.arrayBuffer();
+    progress(0.4);
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    const ac = new Ctx();
+    const audio = await new Promise((res, rej) => {
+      const p = ac.decodeAudioData(buf, res, rej);
+      if (p && p.then) p.then(res, rej);
+    });
+    progress(0.8);
+    const chans = [];
+    for (let i = 0; i < Math.min(2, audio.numberOfChannels); i++) chans.push(audio.getChannelData(i));
+    S.rms = loudness(chans, audio.sampleRate, HOP);
+    try { ac.close(); } catch (e) {}
+    say('');
+  } catch (e) {
+    S.rms = null;
+    say('Couldn’t read the sound in this one (or it has none), so the clips are spaced out evenly.');
+  }
+  progress(null);
+}
+
+/* ---- the clips ------------------------------------------------------ */
+
+function find() {
+  const count = Number($('count').value);
+  S.clips = (S.rms ? pickHighlights(S.rms, S.duration, S.len, count)
+                   : evenly(S.duration, S.len, count))
+    .map(c => ({ ...c, saved: false }));
+  renderClips();
+  $('clipsHint').textContent = S.clips.length
+    ? (S.rms ? 'Ranked by how hard they go — #1 is the best. Tap a clip to preview it.'
+             : 'Spaced out across the video. Tap a clip to preview it, nudge it with ‹ ›.')
+    : '';
+}
+
+function addClip(t) {
+  const len = Math.min(S.len, S.duration);
+  const start = Math.max(0, Math.min(S.duration - len, t));
+  S.clips.push({ start, end: start + len, score: null, rank: null, saved: false });
+  S.clips.sort((a, b) => a.start - b.start);
+  renderClips();
+}
+
+function renderClips() {
+  const box = $('clips');
+  box.textContent = '';
+  S.clips.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'clip' + (S.playingClip === c ? ' on' : '');
+    const thumb = document.createElement('canvas');
+    thumb.width = 180; thumb.height = 320;
+    thumb.title = 'Preview';
+    thumb.addEventListener('click', () => previewClip(c));
+    const t = document.createElement('div');
+    t.className = 't';
+    t.innerHTML = '<span></span><em></em>';
+    t.firstChild.textContent = clock(c.start) + '–' + clock(c.end);
+    t.lastChild.textContent = c.rank ? '#' + c.rank : 'yours';
+    const row = document.createElement('div');
+    row.className = 'row';
+    const mk = (label, title, fn) => {
+      const b = document.createElement('button');
+      b.className = 'btn'; b.type = 'button'; b.textContent = label; b.title = title;
+      b.addEventListener('click', fn);
+      row.appendChild(b);
+      return b;
+    };
+    mk('‹', 'One second earlier', () => nudge(c, -1));
+    mk('›', 'One second later', () => nudge(c, 1));
+    mk('✕', 'Remove', () => { S.clips.splice(S.clips.indexOf(c), 1); renderClips(); });
+    const save = document.createElement('button');
+    save.className = 'btn go sm'; save.type = 'button'; save.textContent = '⬇ Save';
+    save.addEventListener('click', () => saveClips([c]));
+    const done = document.createElement('div');
+    done.className = 'done';
+    done.textContent = c.saved ? '✓ Saved' : '';
+    c.ui = { el, thumb, done, save };
+    el.append(thumb, t, row, save, done);
+    box.appendChild(el);
+  });
+  $('saveAll').disabled = !S.clips.length || S.busy;
+  drawThumbs();
+}
+
+/* Thumbnails need the video moved to each clip, one at a time. Queued so a
+ * second render half way through does not leave the player in a strange
+ * place. */
+let thumbJob = 0;
+async function drawThumbs() {
+  const job = ++thumbJob;
+  if (S.busy) return;
+  const back = vid.currentTime, wasPlaying = !vid.paused;
+  if (wasPlaying) return;              // do not yank a playing preview around
+  for (const c of S.clips) {
+    if (job !== thumbJob || S.busy || !vid.paused) return;
+    try { await seek(Math.min(S.duration - 0.05, c.start + 0.4)); } catch (e) { return; }
+    const tc = c.ui.thumb.getContext('2d');
+    drawStory(tc, 180, 320, c.start);
+  }
+  if (job === thumbJob && vid.paused && !S.busy) { await seek(back).catch(() => {}); paintStage(); }
+}
+
+function nudge(c, d) {
+  const len = c.end - c.start;
+  c.start = Math.max(0, Math.min(S.duration - len, c.start + d));
+  c.end = c.start + len;
+  c.saved = false;
+  if (S.playingClip === c) previewClip(c);
+  else renderClips();
+}
+
+/* ---- preview -------------------------------------------------------- */
+
+let raf = 0;
+function frameLoop() {
+  const t = vid.currentTime;
+  const c = S.playingClip;
+  if (c && t >= c.end) { stopPreview(); return; }
+  paintStage();
+  $('scrub').value = String(t);
+  $('tNow').textContent = clock(t);
+  raf = requestAnimationFrame(frameLoop);
+}
+
+async function previewClip(c) {
+  if (S.busy) return;
+  stopPreview();
+  S.playingClip = c;
+  renderClips();
+  await seek(c.start);
+  startPlay();
+}
+
+function startPlay() {
+  ensureAudio();
+  if (audio.ctx && audio.ctx.state === 'suspended') audio.ctx.resume();
+  if (audio.monitor) audio.monitor.gain.value = 1;
+  const p = vid.play();
+  if (p && p.catch) p.catch(() => {});
+  $('playBtn').textContent = '❚❚ Pause';
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(frameLoop);
+}
+
+function stopPreview() {
+  cancelAnimationFrame(raf);
+  if (!vid.paused) vid.pause();
+  $('playBtn').textContent = '▶ Play';
+  if (S.playingClip) {
+    const was = S.playingClip;
+    S.playingClip = null;
+    if (was.ui) was.ui.el.classList.remove('on');
+  }
+  paintStage();
+}
+
+/* ---- sound routing --------------------------------------------------
+ * The video's sound goes through WebAudio so it can be recorded with the
+ * picture -- Safari has no video.captureStream(). Once an element is routed
+ * like this the graph owns its sound, so it MUST reach the speakers too, or
+ * the preview plays silent. It is built on the first tap, because no browser
+ * will start an AudioContext without one. */
+const audio = { ctx: null, src: null, gain: null, monitor: null, dest: null, failed: false };
+function ensureAudio() {
+  if (audio.ctx || audio.failed) return;
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    audio.ctx = new Ctx();
+    audio.src = audio.ctx.createMediaElementSource(vid);
+    audio.gain = audio.ctx.createGain();
+    audio.monitor = audio.ctx.createGain();
+    audio.dest = audio.ctx.createMediaStreamDestination();
+    audio.src.connect(audio.gain);
+    audio.gain.connect(audio.dest);
+    audio.gain.connect(audio.monitor);
+    audio.monitor.connect(audio.ctx.destination);
+  } catch (e) {
+    audio.failed = true; audio.ctx = null;
+  }
+}
+
+/* ---- saving ---------------------------------------------------------- */
+
+function pickType() {
+  if (!window.MediaRecorder) return null;
+  // H.264 in MP4 first: it is what Instagram, TikTok and an iPhone all play.
+  // A bare 'video/mp4' is last on purpose -- in a browser with no H.264
+  // encoder it means VP9 in an MP4 box, which an iPhone will not open, and
+  // an honest WebM is better than that.
+  const want = ['video/mp4;codecs=avc1.42E01F,mp4a.40.2', 'video/mp4;codecs=avc1.42E01F',
+                'video/mp4;codecs=avc1,mp4a', 'video/mp4;codecs=avc1',
+                'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'];
+  for (const t of want) { try { if (MediaRecorder.isTypeSupported(t)) return t; } catch (e) {} }
+  return '';
+}
+
+/* Record one clip: play it in real time, draw every frame onto the stage
+ * canvas, and record the canvas with the soundtrack. Real time is the cost
+ * of doing it in a browser with nothing to install. */
+async function record(c) {
+  const type = pickType();
+  if (type === null || !stage.captureStream) throw new Error('this browser can’t record video');
+  ensureAudio();
+  if (audio.ctx && audio.ctx.state === 'suspended') await audio.ctx.resume();
+
+  await seek(c.start);
+  const stream = stage.captureStream(30);
+  if (audio.dest) for (const tr of audio.dest.stream.getAudioTracks()) stream.addTrack(tr);
+  const rec = new MediaRecorder(stream, type ? { mimeType: type, videoBitsPerSecond: 8e6,
+                                                audioBitsPerSecond: 192000 } : undefined);
+  const chunks = [];
+  rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+  const stopped = new Promise((r) => { rec.onstop = r; });
+
+  const len = c.end - c.start, FADE = S.fade ? 0.35 : 0;
+  if (audio.monitor) audio.monitor.gain.value = 0;     // quiet while it records
+  if (audio.gain) {
+    const now = audio.ctx.currentTime;
+    audio.gain.gain.cancelScheduledValues(now);
+    audio.gain.gain.setValueAtTime(FADE ? 0 : 1, now);
+    if (FADE) audio.gain.gain.linearRampToValueAtTime(1, now + FADE);
+  }
+  paintStage();
+  rec.start(250);
+  await vid.play();
+
+  await new Promise((done) => {
+    let fadingOut = false;
+    (function tick() {
+      const t = vid.currentTime, into = t - c.start, left = c.end - t;
+      let a = 1;
+      if (FADE) a = Math.min(1, Math.max(0, into / FADE), Math.max(0, left / FADE));
+      drawStory(ctx, STORY_W, STORY_H, t, a);
+      if (FADE && !fadingOut && left <= FADE && audio.gain) {
+        fadingOut = true;
+        const now = audio.ctx.currentTime;
+        audio.gain.gain.setValueAtTime(audio.gain.gain.value, now);
+        audio.gain.gain.linearRampToValueAtTime(0, now + Math.max(0.05, left));
+      }
+      progress(Math.min(1, into / len));
+      if (t >= c.end || vid.ended || vid.paused) return done();
+      requestAnimationFrame(tick);
+    })();
+  });
+
+  vid.pause();
+  rec.stop();
+  await stopped;
+  for (const tr of stream.getVideoTracks()) tr.stop();
+  if (audio.gain) { audio.gain.gain.cancelScheduledValues(0); audio.gain.gain.value = 1; }
+  if (audio.monitor) audio.monitor.gain.value = 1;
+  const mime = (rec.mimeType || type || 'video/webm').split(';')[0];
+  return new Blob(chunks, { type: mime });
+}
+
+async function deliver(blob, name, many) {
+  const file = new File([blob], name, { type: blob.type });
+  // A phone's share sheet is the shortest way to a story: Instagram is in
+  // it, and so is Save Video. Only when it is one clip -- a share sheet is a
+  // modal, and five of them in a row is a trap.
+  if (!many && navigator.canShare && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    try {
+      if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+}
+
+async function saveClips(list) {
+  if (S.busy || !list.length) return;
+  stopPreview();
+  S.busy = true;
+  $('saveAll').disabled = true;
+  $('findBtn').disabled = true;
+  const files = [];
+  try {
+    for (let i = 0; i < list.length; i++) {
+      const c = list[i];
+      if (c.ui) { c.ui.save.disabled = true; c.ui.done.textContent = 'Recording…'; }
+      say(`Saving clip ${i + 1} of ${list.length} — it records in real time, keep this tab open.`);
+      const blob = await record(c);
+      const ext = blob.type.includes('mp4') ? 'mp4' : 'webm';
+      const name = clipName(S.name, S.clips.indexOf(c), c.start, ext);
+      files.push({ blob, name });
+      c.saved = true;
+      if (c.ui) { c.ui.done.textContent = '✓ Saved'; c.ui.save.disabled = false; }
+      if (list.length > 1) await deliver(blob, name, true);
+    }
+    if (list.length === 1) await deliver(files[0].blob, files[0].name, false);
+    const webm = files.some(f => f.name.endsWith('.webm'));
+    say(`Saved ${files.length} clip${files.length === 1 ? '' : 's'}.` +
+        (webm ? ' This browser only makes WebM — for MP4, open this page on your phone.' : ''));
+    if (window.Track) Track.ev('story_save', { clips: files.length, fmt: webm ? 'webm' : 'mp4' });
+  } catch (e) {
+    say('Saving stopped: ' + (e && e.message ? e.message : e) + '.', true);
+  } finally {
+    S.busy = false;
+    progress(null);
+    $('findBtn').disabled = false;
+    renderClips();
+  }
+}
+
+/* ---- wiring --------------------------------------------------------- */
+
+$('file').addEventListener('change', (e) => load(e.target.files[0]));
+const drop = $('drop');
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, () => drop.classList.remove('over')));
+drop.addEventListener('drop', (e) => { e.preventDefault(); load(e.dataTransfer.files[0]); });
+
+function segment(id, fn) {
+  const box = $(id);
+  box.addEventListener('click', (e) => {
+    const b = e.target.closest('.btn');
+    if (!b) return;
+    [...box.children].forEach(x => x.classList.toggle('on', x === b));
+    fn(b.dataset.v);
+  });
+}
+segment('lenSeg', (v) => { S.len = Number(v); if (S.duration) find(); });
+segment('fitSeg', (v) => { S.fit = v; $('panBox').hidden = v !== 'fill'; restyle(); });
+segment('capSeg', (v) => { S.capPos = v; restyle(); });
+$('count').addEventListener('change', () => { if (S.duration) find(); });
+$('findBtn').addEventListener('click', () => { if (S.duration) find(); });
+$('saveAll').addEventListener('click', () => saveClips(S.clips.slice()));
+$('fade').addEventListener('change', (e) => { S.fade = e.target.checked; });
+
+let restyleT = 0;
+function restyle() {
+  paintStage();
+  clearTimeout(restyleT);
+  restyleT = setTimeout(drawThumbs, 250);
+}
+$('pan').addEventListener('input', (e) => {
+  S.pan = Number(e.target.value);
+  $('panOut').textContent = Math.abs(S.pan) < 0.03 ? 'centre' : S.pan < 0 ? 'left / top' : 'right / bottom';
+  restyle();
+});
+$('caption').addEventListener('input', (e) => { S.caption = e.target.value.trim(); restyle(); });
+
+$('scrub').addEventListener('input', async (e) => {
+  if (S.busy) return;
+  if (S.playingClip) stopPreview();
+  const t = Number(e.target.value);
+  $('tNow').textContent = clock(t);
+  vid.currentTime = t;
+});
+vid.addEventListener('seeked', () => { if (vid.paused && !S.busy) paintStage(); });
+
+$('playBtn').addEventListener('click', () => {
+  if (S.busy) return;
+  if (!vid.paused) { stopPreview(); return; }
+  if (vid.currentTime >= S.duration - 0.1) vid.currentTime = 0;
+  startPlay();
+});
+$('addBtn').addEventListener('click', () => { if (!S.busy && S.duration) addClip(vid.currentTime); });
+vid.addEventListener('ended', () => { if (!S.busy) stopPreview(); });
+
+// So the automated check can ask what was picked without a person.
+window.__storyCutter = () => ({ duration: S.duration, heard: !!S.rms,
+  clips: S.clips.map(c => ({ start: c.start, end: c.end, rank: c.rank })) });
+window.__storyCutterRecord = async (i) => {
+  const b = await record(S.clips[i]);
+  return { size: b.size, type: b.type };
+};
+</script>
+</body>
+</html>
