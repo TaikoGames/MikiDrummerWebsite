@@ -5,7 +5,7 @@
 <script src="/js/track.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Story Cutter — Turn One Video Into Story Clips, Free</title>
-<meta name="description" content="Pick one video and get story clips of the best bits, made for you: vertical 9:16 for Instagram, TikTok and YouTube Shorts. Free, nothing uploads.">
+<meta name="description" content="Pick one video and get clips of the best bits, made for you, for Instagram and TikTok stories. Keeps your video's shape, or makes it 9:16. Free.">
 <meta name="keywords" content="video to instagram story, cut video into story clips, 9:16 video converter, make reels from a video, split video for instagram stories, vertical video cropper, band video clips, concert video to stories">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Miki Drummer">
@@ -16,7 +16,7 @@
 <meta property="og:locale" content="en_CA">
 <meta property="og:url" content="https://www.mikidrummer.ca/story-cutter.html">
 <meta property="og:title" content="Story Cutter — one video in, story clips out">
-<meta property="og:description" content="Pick a gig video, get vertical clips of the best moments made for you, ready for Instagram and TikTok stories. Free, runs in your browser.">
+<meta property="og:description" content="Pick a gig video, get clips of the best moments made for you, ready for Instagram and TikTok stories. Free, runs in your browser.">
 <meta property="og:image" content="https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -76,10 +76,15 @@
   .resHead h2{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
   .clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:12px}
   @media(max-width:420px){ .clips{grid-template-columns:1fr 1fr;gap:10px} }
+  .clips.wide{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  @media(max-width:420px){ .clips.wide{grid-template-columns:1fr} }
   .clip{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:8px;display:flex;
         flex-direction:column;gap:8px}
-  .clip .screen{position:relative;aspect-ratio:9/16;border-radius:9px;overflow:hidden;background:#000}
-  .clip video,.clip canvas{width:100%;height:100%;display:block;object-fit:cover}
+  .clip .screen{position:relative;aspect-ratio:var(--clipRatio, 9 / 16);border-radius:9px;overflow:hidden;background:#000}
+  .clip video,.clip canvas{width:100%;height:100%;display:block;object-fit:contain}
+  .clip .screen #stage{width:100%!important;height:100%;border:0;border-radius:0;aspect-ratio:auto}
+  .clip .live{position:absolute;left:8px;top:8px;background:var(--hot);color:#160802;font-size:10.5px;
+              font-weight:900;letter-spacing:.12em;border-radius:4px;padding:2px 6px}
   .clip .wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
               flex-direction:column;gap:8px;color:var(--mid);font-size:12.5px;background:rgba(11,12,14,.55)}
   .clip .ring{width:34px;height:34px;border-radius:50%;border:3px solid var(--edge2);border-top-color:var(--hot);
@@ -91,7 +96,17 @@
   .clip .t em{font-style:normal;color:var(--hot);font-size:11px;letter-spacing:.06em}
   .clip .row{display:flex;gap:6px}
   .clip .row .btn{padding:8px 6px;font-size:12.5px}
-  .clip .row .save{flex:1}
+  .clip .row .save{flex:1;text-decoration:none}
+  .clip .dl{font-size:11.5px;color:var(--dim);text-align:center;text-decoration:underline;padding:2px 0 0}
+  .clip .dl:hover{color:var(--hot)}
+  .clip .dl[aria-disabled=true]{pointer-events:none;opacity:.4}
+  .saveHelp{font-size:12.5px;color:var(--mid);margin-top:8px}
+  /* Instagram, TikTok and Facebook open links in their own browser, and
+     that browser cannot save a file. Most people arrive here from a link
+     in bio, so this has to be the first thing they see. */
+  .inapp{margin-top:6px;background:#2a1608;border:1px solid var(--hot);border-radius:12px;padding:12px 14px;
+         font-size:14px;line-height:1.5}
+  .inapp b{color:var(--hot)}
 
   /* ---- everything optional ---- */
   details.more{margin-top:28px;background:var(--card);border:1px solid var(--edge);border-radius:14px}
@@ -105,7 +120,7 @@
   .moreBody{padding:4px 16px 18px;display:grid;gap:18px}
   @media(min-width:860px){ .moreBody{grid-template-columns:300px minmax(0,1fr);align-items:start} }
   .viewer{display:flex;flex-direction:column;align-items:center;gap:10px}
-  #stage{width:min(100%,280px);aspect-ratio:9/16;height:auto;border-radius:12px;background:#000;border:1px solid var(--edge2);display:block}
+  #stage{width:min(100%,280px);aspect-ratio:var(--clipRatio, 9 / 16);height:auto;border-radius:12px;background:#000;border:1px solid var(--edge2);display:block}
   .scrub{width:100%;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid);font-variant-numeric:tabular-nums}
   .scrub input{flex:1;accent-color:var(--hot)}
   .opts{display:grid;gap:14px}
@@ -144,6 +159,12 @@
     <p class="lead">Pick a video. Get story clips of the best bits. That's it.</p>
   </header>
 
+  <div class="inapp" id="inapp" hidden>
+    <b>Open this page in <span id="inappBrowser">your browser</span> to save your clips.</b><br>
+    <span id="inappHow">This app’s built-in browser can’t save videos to your phone. Tap the ⋯ menu
+    and choose “Open in browser”.</span>
+  </div>
+
   <label class="drop" id="drop">
     <input type="file" id="file" accept="video/*">
     <b class="pill" id="dropTitle">Choose a video</b>
@@ -161,10 +182,15 @@
       <h2 id="resTitle">Your clips</h2>
       <button class="btn go" id="saveAll" type="button" disabled>⬇ Save all</button>
     </div>
+    <p class="saveHelp" id="saveHelp"></p>
     <div class="clips" id="clips"></div>
   </div>
 
-  <video id="vid" playsinline preload="auto" hidden></video>
+  <!-- Not display:none. Safari can stop decoding frames for a video that is
+       not being rendered, and drawing it to the canvas then gives a stale
+       or black picture. Kept on the page at a pixel, out of the way. -->
+  <video id="vid" playsinline preload="auto"
+         style="position:fixed;left:0;bottom:0;width:2px;height:2px;opacity:.01;pointer-events:none;z-index:-1"></video>
 
   <details class="more" id="more">
     <summary>Options <small>length, how many, framing, caption, pick your own moments</small></summary>
@@ -205,11 +231,14 @@
         <div class="f">
           <span class="lbl">Framing</span>
           <div class="seg" id="fitSeg">
-            <button class="btn on" data-v="fill" type="button">Fill the screen</button>
-            <button class="btn" data-v="fit" type="button">Whole frame + blur</button>
+            <button class="btn on" data-v="orig" type="button">Original shape</button>
+            <button class="btn" data-v="fill" type="button">9:16 — fill</button>
+            <button class="btn" data-v="fit" type="button">9:16 — fit + blur</button>
           </div>
         </div>
-        <div class="f" id="panBox">
+        <p class="hint" id="shapeHint" style="margin-top:-6px">Clips keep the shape of your video.
+           Pick a 9:16 option to make them fill a phone screen.</p>
+        <div class="f" id="panBox" hidden>
           <label for="pan">Position <span id="panOut" style="color:var(--dim)">centre</span></label>
           <input type="range" id="pan" min="-1" max="1" step="0.01" value="0">
         </div>
@@ -244,12 +273,13 @@
       <ol>
         <li><b>Choose a video.</b> Anything your phone or camera records — landscape or upright.</li>
         <li><b>Wait a moment.</b> It listens for the parts where the song goes off and makes a
-            vertical 9:16 clip of each one, starting on the hit.</li>
+            clip of each one, starting on the hit, in the same shape as your video.</li>
         <li><b>Save.</b> Save one, or save them all. On a phone that opens the share sheet, so
             they can go straight to Instagram or into Photos.</li>
       </ol>
       <p style="margin-top:10px">Want more control? Open <b>Options</b> to change the clip
-         length and how many, crop or fit the frame, add a caption, or pick your own moments.</p>
+         length and how many, make them 9:16 to fill a phone screen, add a caption, or pick
+         your own moments.</p>
     </section>
     <section>
       <h2>Questions</h2>
@@ -259,11 +289,17 @@
       <p>Each clip is recorded as it plays, so five 15 second clips take a little over a minute.
          Keep this tab open while it works.</p>
       <h3>What format are the clips?</h3>
-      <p>1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop
+      <p>MP4, in the same shape as your video (up to 1920 pixels on the long side), or
+         1080×1920 if you pick a 9:16 option. That’s on iPhone, Android and current Chrome,
+         Edge and Safari. A few desktop
          browsers can only save WebM; if yours does, open the page on your phone instead.</p>
       <h3>How do I post them?</h3>
-      <p>On a phone, “Save” opens the share sheet, so you can send a clip straight to Instagram
-         or save it to Photos. On a computer it downloads.</p>
+      <p>On a phone, tap “Save” and pick “Save Video” to put the clip in your Photos, or pick
+         Instagram to post it straight away. “Download the file” under each clip saves it to
+         your Files or Downloads instead. On a computer, “Save” downloads it.</p>
+      <h3>Why won’t it save from Instagram?</h3>
+      <p>Instagram, TikTok and Facebook open links in their own built-in browser, which can’t
+         save files. Tap the ⋯ menu, open the page in Safari or Chrome, and it works.</p>
     </section>
   </div>
 
@@ -283,7 +319,7 @@
       "@type": "WebApplication",
       "name": "Story Cutter",
       "url": "https://www.mikidrummer.ca/story-cutter.html",
-      "description": "Pick one video and get vertical 9:16 story clips of its best moments for Instagram and TikTok, made automatically. Optional framing, caption and clip length. Runs in the browser; nothing uploads.",
+      "description": "Pick one video and get clips of its best moments for Instagram and TikTok stories, made automatically. Keeps the video's shape by default, with optional 9:16 crop or fit, caption and clip length. Runs in the browser; nothing uploads.",
       "image": "https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png",
       "applicationCategory": "MultimediaApplication",
       "operatingSystem": "Any modern web browser",
@@ -299,9 +335,11 @@
         { "@type": "Question", "name": "Why does it take a minute?",
           "acceptedAnswer": { "@type": "Answer", "text": "Each clip is recorded as it plays, so five 15 second clips take a little over a minute. Keep this tab open while it works." } },
         { "@type": "Question", "name": "What format are the clips?",
-          "acceptedAnswer": { "@type": "Answer", "text": "1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "MP4, in the same shape as your video (up to 1920 pixels on the long side), or 1080×1920 if you pick a 9:16 option. That’s on iPhone, Android and current Chrome, Edge and Safari. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
         { "@type": "Question", "name": "How do I post them?",
-          "acceptedAnswer": { "@type": "Answer", "text": "On a phone, “Save” opens the share sheet, so you can send a clip straight to Instagram or save it to Photos. On a computer it downloads." } }
+          "acceptedAnswer": { "@type": "Answer", "text": "On a phone, tap “Save” and pick “Save Video” to put the clip in your Photos, or pick Instagram to post it straight away. “Download the file” under each clip saves it to your Files or Downloads instead. On a computer, “Save” downloads it." } },
+        { "@type": "Question", "name": "Why won’t it save from Instagram?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Instagram, TikTok and Facebook open links in their own built-in browser, which can’t save files. Tap the ⋯ menu, open the page in Safari or Chrome, and it works." } }
       ]
     },
     {
@@ -318,7 +356,7 @@
 
 <script type="module">
 import { STORY_W, STORY_H, HOP, loudness, pickHighlights, evenly, fillRect, fitRect,
-         clock, clipName, autoLength } from '/js/story-cutter.js';
+         clock, clipName, autoLength, keepSize } from '/js/story-cutter.js';
 
 /* One job: a video goes in, finished clips come out, with nothing to decide
  * in between. Everything adjustable lives under Options and defaults to
@@ -331,12 +369,19 @@ const vid = $('vid'), stage = $('stage'), ctx = stage.getContext('2d');
 // Decoding the whole soundtrack holds it in memory as raw samples. Past
 // these, skip the listening and space the clips out -- a phone that runs out
 // of memory just kills the tab.
-const MAX_ANALYSE_BYTES = 400 * 1024 * 1024;
+//
+// A phone gets much less room than a computer. Reading a 4K iPhone video
+// (about 400 MB a minute) whole into memory was enough to make Safari reload
+// the tab -- the video just vanished, mid-way, with no error at all.
+const PHONE = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+              (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ''));
+const MAX_ANALYSE_BYTES = (PHONE ? 160 : 700) * 1024 * 1024;
 const MAX_ANALYSE_SECONDS = 20 * 60;
+const STALL_MS = 8000;          // the video has not moved for this long: give up on it
 
 const S = {
   file: null, name: 'video', duration: 0, rms: null,
-  len: 'auto', fit: 'fill', pan: 0, caption: '', capPos: 'top', fade: true,
+  len: 'auto', fit: 'orig', pan: 0, caption: '', capPos: 'top', fade: true,
   clips: [], busy: false, job: 0, dirty: false
 };
 
@@ -358,12 +403,32 @@ const blurCan = document.createElement('canvas');
 blurCan.width = 36; blurCan.height = 64;
 const blurCtx = blurCan.getContext('2d');
 
+/* The size of a finished clip. By default the video's own shape -- nothing
+ * cropped, nothing letterboxed -- and 1080×1920 only when a 9:16 option is
+ * picked in Options. */
+function outSize() {
+  if (S.fit === 'orig') return keepSize(vid.videoWidth, vid.videoHeight);
+  return { w: STORY_W, h: STORY_H };
+}
+
+/* Size the stage, the preview and the card shapes to match. */
+function applyShape() {
+  const { w, h } = outSize();
+  if (stage.width !== w || stage.height !== h) { stage.width = w; stage.height = h; }
+  document.documentElement.style.setProperty('--clipRatio', `${w} / ${h}`);
+  $('clips').classList.toggle('wide', w > h);
+  // A landscape preview at 280 px wide is a postage stamp; give it the width.
+  stage.style.width = w > h ? 'min(100%, 420px)' : '';
+}
+
 function drawStory(c, W, H, alpha) {
   const vw = vid.videoWidth, vh = vid.videoHeight;
   c.fillStyle = '#000';
   c.fillRect(0, 0, W, H);
   if (!vw || !vh) return;
-  if (S.fit === 'fill') {
+  if (S.fit === 'orig') {
+    c.drawImage(vid, 0, 0, W, H);
+  } else if (S.fit === 'fill') {
     const r = fillRect(vw, vh, W, H, S.pan);
     c.drawImage(vid, r.sx, r.sy, r.sw, r.sh, 0, 0, W, H);
   } else {
@@ -389,7 +454,9 @@ function drawStory(c, W, H, alpha) {
 /* Big, bold, outlined, wrapped -- and kept out of the top 13% and bottom 18%,
  * where the story apps draw their own name, progress bar and reply box. */
 function drawCaption(c, W, H) {
-  const size = Math.round(W * 0.068);
+  // Sized off the short side, so a caption on a landscape clip is the same
+  // size it would be on a portrait one rather than half again as big.
+  const size = Math.round(Math.min(W, H) * 0.068);
   c.font = `900 ${size}px "Arial Black", "Helvetica Neue", Arial, sans-serif`;
   c.textAlign = 'center';
   c.textBaseline = 'middle';
@@ -414,7 +481,7 @@ function drawCaption(c, W, H) {
   });
 }
 
-function paintStage() { drawStory(ctx, STORY_W, STORY_H); }
+function paintStage() { applyShape(); drawStory(ctx, stage.width, stage.height); }
 
 /* ---- helpers --------------------------------------------------------- */
 
@@ -480,13 +547,24 @@ async function load(file) {
   vid.src = URL.createObjectURL(file);
   say('Opening your video…');
   progress(0.05);
+  // loadedmetadata, not loadeddata: an iPhone does not load any picture
+  // until something asks for it, so waiting for data could wait for ever.
   try {
-    await once(vid, 'loadeddata', 30000);
+    if (vid.readyState < 1) await once(vid, 'loadedmetadata', 30000);
   } catch (e) {
     progress(null);
-    return say('This browser can’t open that video.', 'Try an MP4, or open the page in Chrome or Safari.', true);
+    return say('This browser can’t open that video.',
+               'iPhone videos in HEVC only open in Safari. Try Safari, or an MP4.', true);
   }
-  S.duration = vid.duration;
+  if (!vid.videoWidth) {
+    progress(null);
+    return say('That file has sound but no picture.', 'Choose a video file.', true);
+  }
+  S.duration = await realDuration();
+  if (!(S.duration > 0)) {
+    progress(null);
+    return say('Couldn’t work out how long that video is.', 'Try saving it again as an MP4.', true);
+  }
   $('drop').classList.add('small');
   $('dropTitle').textContent = 'Choose another video';
   $('dropSub').textContent = file.name + ' · ' + clock(S.duration);
@@ -497,6 +575,24 @@ async function load(file) {
   await listen();
   pick();
   makeAll();
+}
+
+/* Files saved by a browser, WhatsApp Web or a screen recorder often don't
+ * say how long they are -- the length reads as Infinity until something has
+ * read to the end. Every clip time came out as Infinity and the first seek
+ * threw. Jumping to the far end makes the browser find out. */
+async function realDuration() {
+  if (isFinite(vid.duration) && vid.duration > 0) return vid.duration;
+  await new Promise((res) => {
+    const t = setTimeout(done, 20000);
+    function done() { clearTimeout(t); vid.removeEventListener('durationchange', check); vid.removeEventListener('timeupdate', check); res(); }
+    function check() { if (isFinite(vid.duration) && vid.duration > 0) done(); }
+    vid.addEventListener('durationchange', check);
+    vid.addEventListener('timeupdate', check);
+    try { vid.currentTime = 1e7; } catch (e) { done(); }
+  });
+  try { await seek(0); } catch (e) {}
+  return isFinite(vid.duration) ? vid.duration : NaN;
 }
 
 async function listen() {
@@ -511,9 +607,13 @@ async function listen() {
     progress(0.35);
     const Ctx = window.AudioContext || window.webkitAudioContext;
     const ac = new Ctx();
+    // Some files make decodeAudioData neither finish nor fail. Do not let
+    // that hold the whole page up -- space the clips out instead.
     const decoded = await new Promise((res, rej) => {
-      const p = ac.decodeAudioData(buf, res, rej);
-      if (p && p.then) p.then(res, rej);
+      const t = setTimeout(() => rej(new Error('decode timed out')), 45000);
+      const ok = (x) => { clearTimeout(t); res(x); }, no = (x) => { clearTimeout(t); rej(x); };
+      const p = ac.decodeAudioData(buf, ok, no);
+      if (p && p.then) p.then(ok, no);
     });
     const chans = [];
     for (let i = 0; i < Math.min(2, decoded.numberOfChannels); i++) chans.push(decoded.getChannelData(i));
@@ -539,9 +639,11 @@ function cancelJob() { S.job++; }
 
 async function makeAll() {
   const job = ++S.job;
+  applyShape();
   renderClips();
   $('results').hidden = false;
   $('resume').hidden = true;
+  for (const c of S.clips) if (c.state === 'failed') { c.state = 'queued'; c.error = null; }
   const todo = S.clips.filter(c => !c.blob);
   if (!todo.length) { finished(); return; }
   S.busy = true;
@@ -553,25 +655,40 @@ async function makeAll() {
       c.state = 'making';
       updateCard(c);
       say(`Making clip ${i + 1} of ${todo.length}…`, 'Keep this tab open — each clip records as it plays.');
-      const blob = await record(c, (f) => progress((i + f) / todo.length));
+      // One clip going wrong -- a stall, a hiccup in the recorder -- used to
+      // stop every clip after it. Now it gets a second go, and if that fails
+      // too it is marked and the rest carry on.
+      let blob = null, err = null;
+      for (let attempt = 0; attempt < 2 && !blob; attempt++) {
+        try {
+          blob = await record(c, (f) => progress((i + f) / todo.length), attempt);
+        } catch (e) {
+          if (e && e.name === 'NotAllowedError') throw e;   // needs a tap: handled below
+          err = e;
+          if (job !== S.job) return;
+        }
+      }
       if (job !== S.job) return;
-      c.blob = blob;
-      c.url = URL.createObjectURL(blob);
-      c.state = 'done';
+      if (blob) {
+        c.blob = blob;
+        c.url = URL.createObjectURL(blob);
+        c.state = 'done';
+      } else {
+        c.state = 'failed';
+        c.error = err && err.message ? err.message : String(err);
+        console.warn('[story cutter] clip failed', c.start, err);
+        if (window.Track) Track.ev('story_clip_failed', { reason: String(c.error).slice(0, 80) });
+      }
       updateCard(c);
     }
     finished();
   } catch (e) {
     if (job !== S.job) return;
     S.clips.forEach(c => { if (c.state === 'making') { c.state = 'queued'; updateCard(c); } });
-    if (e && e.name === 'NotAllowedError') {
-      // The browser wants a tap before it will play the video with sound --
-      // phones, mostly. One button, and it carries on where it stopped.
-      say('One tap and it’ll make your clips.', null);
-      $('resume').hidden = false;
-    } else {
-      say('Making the clips stopped.', (e && e.message ? e.message : String(e)), true);
-    }
+    // The browser wants a tap before it will play the video with sound --
+    // phones, mostly. One button, and it carries on where it stopped.
+    say('One tap and it’ll make your clips.', null);
+    $('resume').hidden = false;
   } finally {
     if (job === S.job) { S.busy = false; setBusyUi(false); progress(null); }
   }
@@ -579,11 +696,22 @@ async function makeAll() {
 
 function finished() {
   const n = S.clips.filter(c => c.blob).length;
+  const failed = S.clips.filter(c => c.state === 'failed');
   const webm = S.clips.some(c => c.blob && !c.blob.type.includes('mp4'));
-  say(n ? `Done — ${n} clip${n === 1 ? '' : 's'} ready.` : 'No clips.',
-      webm ? 'This browser can only make WebM. For MP4, open this page on your phone.'
-           : (S.rms ? 'Best moments first. Tap one to watch it.' : 'Spread across the video. Tap one to watch it.'));
+  if (failed.length) {
+    say(n ? `${n} clip${n === 1 ? '' : 's'} ready, ${failed.length} didn’t work.`
+          : 'The clips didn’t work.',
+        'Tap “Try again” on the ones that failed. (' + failed[0].error + ')', !n);
+  } else {
+    say(n ? `Done — ${n} clip${n === 1 ? '' : 's'} ready.` : 'No clips.',
+        webm ? 'This browser can only make WebM. For MP4, open this page on your phone.'
+             : (S.rms ? 'Best moments first. Tap one to watch it.' : 'Spread across the video. Tap one to watch it.'));
+  }
   $('saveAll').disabled = !n;
+  // The stage ends a recording on its faded-out last frame; put a picture
+  // back in the Options preview.
+  const first = S.clips[0];
+  if (first) seek(Math.min(S.duration - 0.05, first.start + 0.5)).then(paintStage, () => {});
   $('resTitle').textContent = n === 1 ? 'Your clip' : 'Your clips';
   if (window.Track) Track.ev('story_made', { clips: n, fmt: webm ? 'webm' : 'mp4' });
 }
@@ -613,9 +741,27 @@ function renderClips() {
     t.lastChild.textContent = c.rank === 1 && S.rms ? 'BEST' : c.rank ? '#' + c.rank : 'yours';
     const row = document.createElement('div');
     row.className = 'row';
-    const save = document.createElement('button');
-    save.className = 'btn go save'; save.type = 'button'; save.textContent = '⬇ Save';
-    save.addEventListener('click', () => saveClips([c]));
+    // On a computer the Save button is a real download link -- the most
+    // dependable way there is to put a file on a machine, with no script in
+    // the way. On a phone it opens the share sheet, which is where "Save
+    // Video" (Photos) and Instagram are, and a plain download link sits under
+    // it for when the sheet is not what you want.
+    let save;
+    if (canShareFiles) {
+      save = document.createElement('button');
+      save.type = 'button';
+      save.addEventListener('click', () => saveClips([c]));
+    } else {
+      save = document.createElement('a');
+      save.setAttribute('role', 'button');
+      save.addEventListener('click', (e) => { if (!c.blob) e.preventDefault(); else track(1, 'download'); });
+    }
+    save.className = 'btn go save';
+    save.textContent = '⬇ Save';
+    const dl = document.createElement('a');
+    dl.className = 'dl';
+    dl.textContent = 'Download the file';
+    dl.addEventListener('click', (e) => { if (!c.blob) e.preventDefault(); else track(1, 'download'); });
     const rm = document.createElement('button');
     rm.className = 'btn'; rm.type = 'button'; rm.textContent = '✕'; rm.title = 'Remove';
     rm.addEventListener('click', () => {
@@ -627,7 +773,8 @@ function renderClips() {
     });
     row.append(save, rm);
     el.append(screen, t, row);
-    c.card = { el, screen, save };
+    if (canShareFiles) el.append(dl);
+    c.card = { el, screen, save, dl };
     box.appendChild(el);
     updateCard(c);
   }
@@ -635,8 +782,14 @@ function renderClips() {
 
 function updateCard(c) {
   if (!c.card) return;
-  const { screen, save } = c.card;
-  save.disabled = !c.blob;
+  const { screen, save, dl } = c.card;
+  // Never wipe the stage canvas along with a card's contents.
+  if (stage.parentNode === screen) stageHomeAgain();
+  for (const a of [save, dl]) {
+    if (a.tagName !== 'A') { a.disabled = !c.blob; continue; }
+    if (c.blob) { const f = fileFor(c); a.href = c.url; a.download = f.name; a.removeAttribute('aria-disabled'); }
+    else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); }
+  }
   if (c.state === 'done' && c.blob) {
     if (screen.querySelector('video')) return;
     screen.textContent = '';
@@ -652,6 +805,21 @@ function updateCard(c) {
   if (c.thumb) screen.appendChild(c.thumb);
   const w = document.createElement('div');
   w.className = 'wait';
+  if (c.state === 'failed') {
+    w.innerHTML = '<span>Didn’t work</span>';
+    const again = document.createElement('button');
+    again.className = 'btn go'; again.type = 'button'; again.textContent = 'Try again';
+    again.addEventListener('click', () => {
+      if (S.busy) return;
+      // Show it has been heard straight away; the unlock takes a moment.
+      for (const x of S.clips) if (x.state === 'failed') { x.state = 'queued'; x.error = null; updateCard(x); }
+      unlockVideo().then(makeAll);
+    });
+    w.appendChild(again);
+    c.card.el.classList.add('queued');
+    screen.appendChild(w);
+    return;
+  }
   w.innerHTML = '<div class="ring"></div><span></span>';
   w.lastChild.textContent = c.state === 'making' ? 'Making…' : 'Waiting…';
   c.card.el.classList.toggle('queued', c.state !== 'making');
@@ -677,7 +845,46 @@ function pickType() {
  * record the canvas with the soundtrack. If the tab goes into the background
  * the browser stops drawing frames, so the recording pauses with it and
  * carries on when the tab comes back, rather than saving a frozen picture. */
-async function record(c, onProgress) {
+/* Where the stage canvas lives when it is not recording, so it can go back. */
+let stageHome = null;
+function stageToCard(c) {
+  if (!stageHome) stageHome = { parent: stage.parentNode, next: stage.nextSibling };
+  if (!c.card) return;
+  c.card.screen.textContent = '';
+  c.card.screen.appendChild(stage);
+  const tag = document.createElement('span');
+  tag.className = 'live'; tag.textContent = 'MAKING';
+  c.card.screen.appendChild(tag);
+}
+function stageHomeAgain() {
+  if (stageHome && stage.parentNode !== stageHome.parent) {
+    stageHome.parent.insertBefore(stage, stageHome.next);
+  }
+}
+
+/* How long a finished clip really is, read back the way a phone would. A
+ * recorder that misbehaves can hand over a file that says it is three
+ * seconds long however long the recording ran, and nothing noticed. */
+function clipLength(blob) {
+  return new Promise((res) => {
+    const v = document.createElement('video');
+    v.muted = true; v.preload = 'metadata'; v.playsInline = true;
+    const url = URL.createObjectURL(blob);
+    let settled = false;
+    const finish = (d) => { if (settled) return; settled = true; clearTimeout(t); v.removeAttribute('src'); v.load(); URL.revokeObjectURL(url); res(d); };
+    const t = setTimeout(() => finish(NaN), 10000);       // unknown: do not block on it
+    v.onerror = () => finish(-1);                             // will not open at all
+    v.onloadedmetadata = () => {
+      if (isFinite(v.duration)) return finish(v.duration);
+      // A recorder's file often leaves the length out; reading to the end finds it.
+      v.ondurationchange = () => { if (isFinite(v.duration)) finish(v.duration); };
+      try { v.currentTime = 1e7; } catch (e) { finish(NaN); }
+    };
+    v.src = url;
+  });
+}
+
+async function record(c, onProgress, attempt) {
   const type = pickType();
   if (type === null || !stage.captureStream) throw new Error('this browser can’t record video');
   wakeAudio();
@@ -686,8 +893,9 @@ async function record(c, onProgress) {
   if (!c.thumb) {
     // A still for the card while it waits its turn.
     const th = document.createElement('canvas');
-    th.width = 180; th.height = 320;
-    drawStory(th.getContext('2d'), 180, 320);
+    const o = outSize(), k = 320 / Math.max(o.w, o.h);
+    th.width = Math.round(o.w * k); th.height = Math.round(o.h * k);
+    drawStory(th.getContext('2d'), th.width, th.height);
     c.thumb = th;
     updateCard(c);
   }
@@ -707,30 +915,46 @@ async function record(c, onProgress) {
     audio.gain.gain.setValueAtTime(FADE ? 0 : 1, now);
     if (FADE) audio.gain.gain.linearRampToValueAtTime(1, now + FADE);
   }
-  drawStory(ctx, STORY_W, STORY_H, FADE ? 0 : 1);
+  applyShape();                       // the size is fixed before recording starts
+  const W = stage.width, H = stage.height;
+  drawStory(ctx, W, H, FADE ? 0 : 1);
+  // Record a canvas that is on screen. Tucked inside the closed Options
+  // panel it was display:none, and Safari can stop producing frames from a
+  // canvas nobody can see. In the card it doubles as a live preview.
+  stageToCard(c);
 
   try {
     await vid.play();
   } catch (e) {
     for (const tr of stream.getVideoTracks()) tr.stop();
     if (audio.monitor) audio.monitor.gain.value = 1;
+    stageHomeAgain();
     throw e;
   }
-  rec.start(250);
+  // One piece on the first try. Recording in quarter-second slices made a
+  // fragmented file, and some phones read only the first fragments' length.
+  // The second try uses one-second slices, in case a browser needs them.
+  if (attempt) rec.start(1000); else rec.start();
 
   const onHide = () => {
     if (document.hidden) { vid.pause(); if (rec.state === 'recording') rec.pause(); }
-    else { if (rec.state === 'paused') rec.resume(); vid.play().catch(() => {}); }
+    else { if (rec.state === 'paused') rec.resume(); lastMove = performance.now(); vid.play().catch(() => {}); }
   };
   document.addEventListener('visibilitychange', onHide);
 
+  // Watch the video's own clock. If it stops moving with the tab in front --
+  // a phone that can't keep up with the file, a stalled read -- the old loop
+  // waited for ever and every clip after it sat on "Waiting…".
+  let lastT = -1, lastMove = performance.now(), why = null;
   await new Promise((done) => {
     let fadingOut = false;
     (function tick() {
       const t = vid.currentTime, into = t - c.start, left = c.end - t;
+      if (t !== lastT || document.hidden || vid.seeking) { lastT = t; lastMove = performance.now(); }
+      else if (performance.now() - lastMove > STALL_MS) { why = 'the video stopped playing part way'; return done(); }
       let a = 1;
       if (FADE) a = Math.min(1, Math.max(0, into / FADE), Math.max(0, left / FADE));
-      drawStory(ctx, STORY_W, STORY_H, a);
+      drawStory(ctx, W, H, a);
       if (FADE && !fadingOut && left <= FADE && audio.gain) {
         fadingOut = true;
         const now = audio.ctx.currentTime;
@@ -745,23 +969,78 @@ async function record(c, onProgress) {
 
   document.removeEventListener('visibilitychange', onHide);
   vid.pause();
-  rec.stop();
-  await stopped;
+  const got = vid.currentTime - c.start;
+  if (rec.state !== 'inactive') rec.stop();
+  await Promise.race([stopped, new Promise(r => setTimeout(r, 5000))]);
   for (const tr of stream.getVideoTracks()) tr.stop();
   if (audio.gain) { audio.gain.gain.cancelScheduledValues(0); audio.gain.gain.value = 1; }
   if (audio.monitor) audio.monitor.gain.value = 1;
-  const mime = (rec.mimeType || type || 'video/webm').split(';')[0];
-  return new Blob(chunks, { type: mime });
+  stageHomeAgain();
+  // Something paused it -- a phone call, the audio being taken by another
+  // app -- and it stopped well short. A clip half the length asked for is
+  // not the clip, so try again rather than hand it over.
+  if (!why && got < len * 0.8 && !vid.ended) why = 'it stopped early';
+  if (!why && !chunks.length) why = 'the recorder gave back nothing';
+  if (why) throw new Error(why);
+  const mime = ((rec.mimeType || type || 'video/webm').split(';')[0]) || 'video/webm';
+  const blob = new Blob(chunks, { type: mime });
+
+  // Check the file, not just the recording: open it and read its length.
+  const d = await clipLength(blob);
+  if (d === -1) throw new Error('the saved clip wouldn’t open');
+  if (isFinite(d) && d < len * 0.8) {
+    throw new Error(`the saved clip came out ${d.toFixed(1)} s instead of ${len.toFixed(0)} s`);
+  }
+  return blob;
 }
 
 /* ---- saving -------------------------------------------------------------
- * On a phone, the share sheet: Instagram is in it, and so is Save Video, and
- * it takes every clip at once. On a computer, plain downloads. */
-const isPhone = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+ * Three ways a file reaches a device, in order of how well they work:
+ *
+ *   phone       the share sheet -- "Save Video" puts it in Photos, and
+ *               Instagram and TikTok are right there too. Takes every clip
+ *               in one go.
+ *   any         a real <a download> link the person taps. Always on the
+ *               card, so there is a way to save that does not depend on
+ *               anything else having worked.
+ *   computer    for Save all, one download after another.
+ *
+ * What does NOT work is starting a download from script after the share
+ * sheet failed: the tap that allowed the sheet has been used up, and an
+ * iPhone quietly ignores the download. So when the sheet fails, the page
+ * says so and points at the link under each clip instead of pretending. */
+const UA = navigator.userAgent || '';
+const isPhone = /Mobi|Android|iPhone|iPad/i.test(UA) ||
                 (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ''));
+const isIOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ''));
+const canShareFiles = isPhone && !!navigator.canShare && (() => {
+  try { return navigator.canShare({ files: [new File([''], 'x.mp4', { type: 'video/mp4' })] }); }
+  catch (e) { return false; }
+})();
+
+/* The in-app browsers people land in from a link in bio. They can play the
+ * video and even make the clips, then fail at the very last step. */
+const IN_APP = [[/Instagram/i, 'Instagram'], [/FBAN|FBAV|FB_IAB/i, 'Facebook'],
+                [/musical_ly|TikTok|BytedanceWebview/i, 'TikTok'], [/Snapchat/i, 'Snapchat'],
+                [/Twitter/i, 'X'], [/Line\//i, 'LINE']];
+const inApp = (IN_APP.find(([re]) => re.test(UA)) || [])[1] || null;
+if (inApp) {
+  $('inapp').hidden = false;
+  $('inappBrowser').textContent = isIOS ? 'Safari' : 'Chrome';
+  $('inappHow').textContent = `${inApp}’s built-in browser can’t save videos to your phone. ` +
+    `Tap the ⋯ menu at the top and choose “Open in ${isIOS ? 'external browser' : 'Chrome'}”, ` +
+    'then pick your video there.';
+}
+
+$('saveHelp').textContent = canShareFiles
+  ? (isIOS ? 'Tap Save, then “Save Video” to put a clip in Photos — or pick Instagram to post it.'
+           : 'Tap Save to save a clip to your phone or send it straight to Instagram.')
+  : 'Clips save to your Downloads folder.';
+
+function track(n, via) { if (window.Track) Track.ev('story_save', { clips: n, via }); }
 
 function fileFor(c) {
-  const ext = c.blob.type.includes('mp4') ? 'mp4' : 'webm';
+  const ext = /mp4/.test(c.blob.type) ? 'mp4' : 'webm';
   const order = S.clips.slice().sort((a, b) => a.start - b.start);
   return new File([c.blob], clipName(S.name, order.indexOf(c), c.start, ext), { type: c.blob.type });
 }
@@ -770,17 +1049,30 @@ async function saveClips(list) {
   const ready = list.filter(c => c.blob);
   if (!ready.length) return;
   const files = ready.map(fileFor);
-  if (isPhone && navigator.canShare) {
-    try {
-      if (navigator.canShare({ files })) {
+
+  if (canShareFiles) {
+    let ok = false;
+    try { ok = navigator.canShare({ files }); } catch (e) {}
+    if (ok) {
+      try {
         await navigator.share({ files });
-        if (window.Track) Track.ev('story_save', { clips: files.length, via: 'share' });
+        track(files.length, 'share');
         return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;     // they closed the sheet
       }
-    } catch (e) {
-      if (e && e.name === 'AbortError') return;      // they closed the sheet
     }
+    say(files.length > 1 ? 'Your phone wouldn’t take them all at once.'
+                         : 'Your phone wouldn’t open the share sheet.',
+        'Tap “Download the file” under each clip instead.', true);
+    return;
   }
+
+  // A computer: downloads, spaced out so the browser does not see a burst
+  // of them and block the lot. Chrome may still ask once whether this page
+  // is allowed to download several files -- say so before it does.
+  if (files.length > 1) say(`Saving ${files.length} clips…`,
+    'If your browser asks whether this page can download several files, choose Allow.');
   for (const f of files) {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(f);
@@ -789,9 +1081,10 @@ async function saveClips(list) {
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 60000);
-    if (files.length > 1) await new Promise(r => setTimeout(r, 400));
+    if (files.length > 1) await new Promise(r => setTimeout(r, 700));
   }
-  if (window.Track) Track.ev('story_save', { clips: files.length, via: 'download' });
+  if (files.length > 1) say(`Saved ${files.length} clips to your Downloads folder.`);
+  track(files.length, 'download');
 }
 
 /* ---- options: preview, settings, your own moments ------------------- */
@@ -841,7 +1134,7 @@ $('addBtn').addEventListener('click', () => {
   const len = Math.min(clipLen(), S.duration);
   const start = Math.max(0, Math.min(S.duration - len, vid.currentTime));
   S.clips.push({ start, end: start + len, score: null, rank: null, blob: null, url: null, state: 'queued' });
-  makeAll();
+  unlockVideo().then(makeAll);
 });
 
 $('remake').addEventListener('click', () => {
@@ -850,7 +1143,7 @@ $('remake').addEventListener('click', () => {
   for (const c of S.clips) if (c.url) URL.revokeObjectURL(c.url);
   pick();
   S.dirty = false;
-  makeAll();
+  unlockVideo().then(makeAll);
 });
 
 function segment(id, fn) {
@@ -863,7 +1156,12 @@ function segment(id, fn) {
   });
 }
 segment('lenSeg', (v) => { S.len = v === 'auto' ? 'auto' : Number(v); markDirty(); });
-segment('fitSeg', (v) => { S.fit = v; $('panBox').hidden = v !== 'fill'; restyle(); });
+segment('fitSeg', (v) => {
+  S.fit = v;
+  $('panBox').hidden = v !== 'fill';
+  $('shapeHint').hidden = v !== 'orig';
+  restyle();
+});
 segment('capSeg', (v) => { S.capPos = v; restyle(); });
 $('count').addEventListener('change', markDirty);
 $('fade').addEventListener('change', (e) => { S.fade = e.target.checked; markDirty(); });
@@ -885,7 +1183,28 @@ const drop = $('drop');
 ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
 ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, () => drop.classList.remove('over')));
 drop.addEventListener('drop', (e) => { e.preventDefault(); wakeAudio(); load(e.dataTransfer.files[0]); });
-$('resumeBtn').addEventListener('click', () => { wakeAudio(); makeAll(); });
+/* An iPhone only lets a video play with sound if play() is called inside the
+ * tap itself. makeAll seeks first and plays after, by which time the tap has
+ * been used up -- so the button could ask for a tap, get one, and ask again.
+ * Starting and stopping the video right here, inside the tap, unlocks it for
+ * every play() after. */
+function unlockVideo() {
+  wakeAudio();
+  if (audio.monitor) audio.monitor.gain.value = 0;     // no blip of sound
+  return new Promise((res) => {
+    const end = () => { try { vid.pause(); } catch (e) {} if (audio.monitor) audio.monitor.gain.value = 1; res(); };
+    let fired = false;
+    const go = () => { if (!fired) { fired = true; end(); } };
+    setTimeout(go, 3000);                    // never hang the button on it
+    try {
+      const p = vid.play();
+      if (p && p.then) p.then(go, go); else go();
+    } catch (e) { go(); }
+  });
+}
+// Each of these waits for the unlock to finish, so its pause() can never
+// land on a clip that has just started recording.
+$('resumeBtn').addEventListener('click', () => { unlockVideo().then(makeAll); });
 $('saveAll').addEventListener('click', () => saveClips(S.clips.slice().sort((a, b) => a.start - b.start)));
 $('more').addEventListener('toggle', () => { if ($('more').open && S.duration && !S.busy) paintStage(); });
 

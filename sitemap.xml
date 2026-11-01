@@ -125,7 +125,7 @@
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/tools.html</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-11-01</lastmod>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
@@ -153,9 +153,13 @@
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/poster.html</loc>
-    <lastmod>2026-09-18</lastmod>
-    <priority>0.6</priority>
+    <lastmod>2026-11-01</lastmod>
+    <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <image:image>
+      <image:loc>https://www.mikidrummer.ca/images/gig-poster-maker-free.png</image:loc>
+      <image:title>Gig Poster Maker — free band and show posters</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/qr.html</loc>

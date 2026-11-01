@@ -190,6 +190,16 @@ export function fillRect(vw, vh, outW = STORY_W, outH = STORY_H, pan = 0) {
   return { sx: 0, sy: (vh - sh) / 2 * (1 + p), sw: vw, sh };
 }
 
+/* The output size that keeps the video's own shape: the same aspect ratio,
+ * the long side at most `maxLong` (never scaled up past the source), and
+ * both sides even, because H.264 will not encode an odd width or height. */
+export function keepSize(vw, vh, maxLong = 1920) {
+  if (!(vw > 0) || !(vh > 0)) return { w: STORY_W, h: STORY_H };
+  const s = Math.min(1, maxLong / Math.max(vw, vh));
+  const even = (x) => Math.max(2, Math.round(x / 2) * 2);
+  return { w: even(vw * s), h: even(vh * s) };
+}
+
 /* Where the whole frame sits inside the story when it is fitted, not cropped. */
 export function fitRect(vw, vh, outW = STORY_W, outH = STORY_H) {
   const s = Math.min(outW / vw, outH / vh);

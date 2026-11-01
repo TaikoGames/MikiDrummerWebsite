@@ -14,14 +14,25 @@
 </script>
 
 <script src="/js/track.js" defer></script>
-<title>Gig Poster Maker — free, in your browser | Punk BC</title>
-<meta name="description" content="Make a gig poster in your browser: set the bill, date and venue, pick a public-domain background, and save it sized for Instagram or A4. Free, nothing to install, nothing uploaded.">
-<meta name="robots" content="index, follow">
+<title>Gig Poster Maker — Free Band &amp; Show Poster Generator</title>
+<meta name="description" content="Free gig poster maker: type the bands, date and venue and get a show poster sized for Instagram, a story or print. No sign-up, nothing uploads.">
+<meta name="keywords" content="gig poster maker, band poster maker, show poster generator, concert poster maker, free gig poster template, punk show flyer maker, instagram gig poster, gig flyer maker">
+<meta name="author" content="Miki Drummer">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.mikidrummer.ca/poster.html">
 <meta property="og:title" content="Gig Poster Maker — free, in your browser">
 <meta property="og:description" content="Set the bill, date and venue, pick a background, save it sized for Instagram or print. Runs entirely in your browser.">
 <meta property="og:site_name" content="Punk BC">
+<meta property="og:locale" content="en_CA">
+<meta property="og:image" content="https://www.mikidrummer.ca/images/gig-poster-maker-free.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A gig poster for Granite, Lift the Anchor, Seconds Flat and Pen Pal Aloha at Bully's Studios, made with the free Gig Poster Maker.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gig Poster Maker — free band &amp; show posters">
+<meta name="twitter:description" content="Type the bill, date and venue; get a poster sized for Instagram or print. Free, in your browser.">
+<meta name="twitter:image" content="https://www.mikidrummer.ca/images/gig-poster-maker-free.png">
 <link rel="canonical" href="https://www.mikidrummer.ca/poster.html">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
@@ -129,6 +140,14 @@
   canvas{width:100%;height:auto;display:block;border-radius:8px;background:#000}
   .meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:11px;
         font-size:12px;color:var(--dim);flex-wrap:wrap}
+  .guide{margin-top:34px;display:grid;gap:14px}
+  @media(min-width:900px){ .guide{grid-template-columns:1fr 1fr} }
+  .guide section{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:18px}
+  .guide h2{font-family:'Arial Black',system-ui,sans-serif;font-size:19px;letter-spacing:-.01em;
+            text-transform:none;color:var(--fg);margin-bottom:8px}
+  .guide h3{font-size:14.5px;margin:12px 0 3px;color:var(--fg)}
+  .guide p,.guide li{color:var(--mid);font-size:14px;line-height:1.65}
+  .guide ol{padding-left:20px}
   footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}
   .warn{color:#ffb38a;font-size:12px;margin-top:8px}
   /* Right-click menu. Fixed, because it is positioned from pointer
@@ -151,7 +170,7 @@
 <div class="wrap">
   <header>
     <span class="eyebrow">Punk BC · Tools</span>
-    <h1>Poster maker</h1>
+    <h1>Gig poster maker</h1>
     <p class="lead">Pick a night off the <a href="/punkbc.html">shows board</a> or type one in, choose a
        background, and get a poster sized for Instagram. Nothing uploads anywhere — it is all drawn
        in this browser and saved straight to your device.</p>
@@ -398,12 +417,47 @@
     </div>
   </div>
 
+  <!-- The tool is a column of controls and a canvas, which tells a search
+       engine almost nothing. This is what it does, in words. -->
+  <div class="guide">
+    <section>
+      <h2>How to make a gig poster</h2>
+      <ol>
+        <li><b>Type the bill.</b> List the bands, one per line, add the date and the venue, and
+            press <b>Build the poster</b>. Or pick a night straight off the
+            <a href="/punkbc.html">Punk BC shows board</a> and it fills itself in.</li>
+        <li><b>Pick a background.</b> Choose a public-domain photo, or use one of your own — it
+            stays on your device. Posterise it, filter it, or leave it as it is.</li>
+        <li><b>Make it yours.</b> Change the typeface, add band and venue logos, move them where
+            you want, and add a frame or some grit.</li>
+        <li><b>Pick the size and save.</b> Instagram feed (4:5), square, story (9:16), A4, or a
+            full 11×17 print at 300 dpi. Save it as a PNG, or share it straight from your phone.</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Questions</h2>
+      <h3>Is the gig poster maker free?</h3>
+      <p>Yes. No account, no watermark, nothing to install. It runs in your browser.</p>
+      <h3>Can I print it?</h3>
+      <p>Yes. Choose <b>Print 11×17 · 300dpi</b> for a full-size gig poster or <b>Print A4</b>
+         for a flyer, then save the PNG and take it to any print shop.</p>
+      <h3>Can I use my own photo and band logos?</h3>
+      <p>Yes. Add your own photos under <b>My photos</b> and your logos under <b>Logos</b>. They
+         are drawn in your browser and never uploaded anywhere.</p>
+      <h3>What size is an Instagram gig poster?</h3>
+      <p>1080×1350 (4:5) fills the most of the feed, so that is the default. Use 1080×1920 for a
+         story. Got a video from the show too? <a href="/story-cutter.html">Story Cutter</a> turns
+         it into story clips.</p>
+    </section>
+  </div>
+
   <footer>
     <div style="margin-bottom:18px">
       <button class="btn go" id="shareTool" role="status" aria-live="polite">⤴ <span id="shareToolLabel">Share this tool</span></button>
       <span class="hint" id="shareToolHint" style="display:block"></span>
     </div>
-    A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>. One of <a href="/tools.html">nine free tools</a> for bands and drummers.
+    A <a href="/punkbc.html">Punk BC</a> tool, kept by <a href="/">Miki Drummer</a>. One of the <a href="/tools.html">free tools for bands and drummers</a>, alongside
+    <a href="/story-cutter.html">Story Cutter</a> for show videos and the <a href="/qr.html">QR code maker</a>.
     Backgrounds marked <em>public domain</em> are CC0 or PD and free to use — the credit is on
     <a href="/photo-credits.html">the credits page</a>. Your own photos and uploads never leave this browser.
   </footer>
@@ -2207,6 +2261,59 @@
     document.fonts.ready.then(function () { fontsReady = true; draw(); });
   }
 })();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.mikidrummer.ca/poster.html#app",
+      "name": "Gig Poster Maker",
+      "url": "https://www.mikidrummer.ca/poster.html",
+      "description": "A free gig poster maker for bands and promoters. Type the bands, date and venue and get a show poster sized for an Instagram post, a story, A4 or an 11×17 print. Runs in the browser; nothing uploads.",
+      "image": "https://www.mikidrummer.ca/images/gig-poster-maker-free.png",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "Any modern web browser",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" },
+      "author": { "@type": "Person", "name": "Miki Drummer", "url": "https://www.mikidrummer.ca/" },
+      "featureList": ["Build a poster from a list of bands", "Fill in from the Punk BC shows board", "Public-domain or your own background photos", "Band and venue logos", "Instagram, story, A4 and 11×17 print sizes"]
+    },
+    {
+      "@type": "HowTo",
+      "name": "How to make a gig poster",
+      "step": [
+        { "@type": "HowToStep", "name": "Type the bill", "text": "List the bands, one per line, add the date and the venue, and press Build the poster. Or pick a night straight off the Punk BC shows board and it fills itself in." },
+        { "@type": "HowToStep", "name": "Pick a background", "text": "Choose a public-domain photo, or use one of your own — it stays on your device. Posterise it, filter it, or leave it as it is." },
+        { "@type": "HowToStep", "name": "Make it yours", "text": "Change the typeface, add band and venue logos, move them where you want, and add a frame or some grit." },
+        { "@type": "HowToStep", "name": "Pick the size and save", "text": "Instagram feed (4:5), square, story (9:16), A4, or a full 11×17 print at 300 dpi. Save it as a PNG, or share it straight from your phone." }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.mikidrummer.ca/poster.html#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is the gig poster maker free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. No account, no watermark, nothing to install. It runs in your browser." } },
+        { "@type": "Question", "name": "Can I print it?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Choose Print 11×17 · 300dpi for a full-size gig poster or Print A4 for a flyer, then save the PNG and take it to any print shop." } },
+        { "@type": "Question", "name": "Can I use my own photo and band logos?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Add your own photos under My photos and your logos under Logos. They are drawn in your browser and never uploaded anywhere." } },
+        { "@type": "Question", "name": "What size is an Instagram gig poster?",
+          "acceptedAnswer": { "@type": "Answer", "text": "1080×1350 (4:5) fills the most of the feed, so that is the default. Use 1080×1920 for a story. Got a video from the show too? Story Cutter turns it into story clips." } }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Miki Drummer", "item": "https://www.mikidrummer.ca/" },
+        { "@type": "ListItem", "position": 2, "name": "Free tools", "item": "https://www.mikidrummer.ca/tools.html" },
+        { "@type": "ListItem", "position": 3, "name": "Gig Poster Maker", "item": "https://www.mikidrummer.ca/poster.html" }
+      ]
+    }
+  ]
+}
 </script>
 </body>
 </html>
