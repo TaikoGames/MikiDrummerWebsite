@@ -3,7 +3,7 @@
  *     node tools/story_cutter_test.mjs
  */
 import { loudness, pickHighlights, snapToHit, evenly, fillRect, fitRect,
-         clock, clipName, HOP } from '../js/story-cutter.js';
+         clock, clipName, autoLength, HOP } from '../js/story-cutter.js';
 
 let fails = 0;
 const ok = (cond, what) => { if (!cond) { console.log('FAIL ' + what); fails++; } };
@@ -98,6 +98,16 @@ function song() {
   ok(tall.sw === 1080 && Math.abs(tall.sh - 1920) < 1e-9, 'a taller-than-story video crops top and bottom');
   const f = fitRect(1920, 1080);
   ok(f.dw === 1080 && Math.abs(f.dy - (1920 - f.dh) / 2) < 1e-9, 'fit is full width and centred');
+}
+
+// --- auto length -------------------------------------------------------
+ok(autoLength(600) === 15, 'a long video gets 15 s clips');
+ok(autoLength(40) === 12, `a 40 s video gets shorter clips (${autoLength(40)})`);
+ok(autoLength(8) === 5, 'never shorter than 5 s');
+for (const d of [20, 40, 50]) {
+  const n = Math.round(d / HOP), r = new Float32Array(n);
+  for (let i = 0; i < n; i++) r[i] = 0.1 + 0.05 * Math.sin(i * 0.3);
+  ok(pickHighlights(r, d, autoLength(d), 5).length >= 2, `a ${d} s video gives more than one clip`);
 }
 
 // --- names -------------------------------------------------------------

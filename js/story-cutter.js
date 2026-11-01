@@ -155,6 +155,14 @@ export function snapToHit(rms, t, hop = HOP) {
   return Math.max(0, (best - 2) * hop);
 }
 
+/* The clip length when nobody has picked one: 15 seconds, the classic story
+ * length, unless the video is too short for a few of those -- then shorter,
+ * down to 5, so a 40 second video still gives three clips rather than one. */
+export function autoLength(duration) {
+  if (!(duration > 0)) return 15;
+  return Math.max(5, Math.min(15, Math.floor((duration + 1) / 3 - 1)));
+}
+
 /* No audio to listen to: spread the clips out across the video. */
 export function evenly(duration, clipLen, count) {
   if (!(duration > 0) || !(clipLen > 0) || !(count > 0)) return [];
