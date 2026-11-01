@@ -2,56 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Gilla Band",
-      "date": "2026-10-31",
-      "time": "18:00",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://thepearlvancouver.com/tm-event/gilla-band-with-special-guests/",
-      "genre": "Post-Punk/Noise Rock",
-      "notes": "With Piss. Halloween. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Gilla_Band-Paard_%282%29_%28cropped%29.jpg?width=600",
-      "curated": ""
-    },
-    {
-      "band": "Pain of Truth",
-      "date": "2026-10-31",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://thecobalt.ca",
-      "genre": "Metallic Hardcore",
-      "notes": "With Missing Link, Fatal Realm, Locked Shut. Touring on new self-titled album",
-      "image": "https://static.wixstatic.com/media/3f3fbe_116731a3dc6b42e3b7280a858ff728c5~mv2.png/v1/fill/w_400,h_246,al_c,q_85,usm_0.66_1.00_0.01/Pain%20of%20Truth.png",
-      "curated": ""
-    },
-    {
-      "band": "Sabbat",
-      "date": "2026-10-31",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$50",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Black Thrash",
-      "notes": "Japan — Western Canadian debut. With Ares Kingdom, Witches Hammer, Powermonger, Decadence. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sabbat_live.jpg?width=600"
-    },
-    {
-      "band": "Antifa Dance Party",
-      "date": "2026-10-31",
-      "time": "20:00",
-      "venue": "The Astoria",
-      "city": "Vancouver",
-      "price": "$10",
-      "ticket": "Column 1",
-      "genre": "Punk",
-      "notes": "Halloween show",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
-    },
-    {
       "band": "Sunn O)))",
       "date": "2026-11-01",
       "time": "20:00",
