@@ -23,8 +23,9 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 0,
-    "status": "http 429"
+    "pages": 4,
+    "status": "ok",
+    "final": "https://woodiesdrumsticks.com/"
   },
   {
     "name": "Rickshaw Theatre",
@@ -50,7 +51,7 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 1,
+    "pages": 4,
     "status": "ok",
     "final": "https://astoria.pub/"
   },
@@ -64,7 +65,7 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 3,
+    "pages": 4,
     "status": "ok",
     "final": "https://www.thecobalt.ca/"
   },
@@ -91,7 +92,7 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 5,
+    "pages": 3,
     "status": "ok",
     "final": "https://thepearlvancouver.com/"
   },
@@ -147,7 +148,7 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 5,
+    "pages": 4,
     "status": "ok",
     "final": "https://www.kindacoolrecords.com/"
   },
@@ -388,6 +389,20 @@
     "final": "https://deadpioneers.band/"
   },
   {
+    "name": "Death from Above 1979",
+    "url": "http://DeathFromAbove1979.com",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 2,
+    "status": "ok",
+    "final": "https://deathfromabove1979.com/"
+  },
+  {
     "name": "Dusty Pines",
     "url": "http://dustypinesmusic.com",
     "kind": "band",
@@ -410,8 +425,9 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 0,
-    "status": "http 429"
+    "pages": 2,
+    "status": "ok",
+    "final": "http://gorefuckingmetal.blogspot.com/"
   },
   {
     "name": "Fotocrime",
@@ -442,6 +458,20 @@
     "final": "https://www.mediafire.com/contact"
   },
   {
+    "name": "Larry and His Flask",
+    "url": "http://www.larryandhisflask.com",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 2,
+    "status": "ok",
+    "final": "https://www.larryandhisflask.com/"
+  },
+  {
     "name": "Nervosa",
     "url": "https://nervosaband.co.uk",
     "kind": "band",
@@ -451,9 +481,8 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 1,
-    "status": "ok",
-    "final": "https://nervosaband.co.uk"
+    "pages": 0,
+    "status": "http 303"
   },
   {
     "name": "Plini",
@@ -465,8 +494,9 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 0,
-    "status": "http 429"
+    "pages": 3,
+    "status": "ok",
+    "final": "https://www.plini.co/"
   },
   {
     "name": "Protest the Hero",
@@ -533,9 +563,8 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 1,
-    "status": "ok",
-    "final": "https://music.aggroreggae.com/album/super-atomic"
+    "pages": 0,
+    "status": "http 303"
   },
   {
     "name": "The Menzingers",
@@ -547,8 +576,23 @@
     "links": [],
     "follow": [],
     "mention_only": false,
-    "pages": 0,
-    "status": "http 429"
+    "pages": 3,
+    "status": "ok",
+    "final": "https://themenzingers.com/"
+  },
+  {
+    "name": "The Meteors",
+    "url": "http://www.myspace.com",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 6,
+    "status": "ok",
+    "final": "https://myspace.com/"
   },
   {
     "name": "WAAX",
@@ -563,5 +607,19 @@
     "pages": 2,
     "status": "ok",
     "final": "https://www.waaxband.com/"
+  },
+  {
+    "name": "Wolves in the Throne Room",
+    "url": "http://www.wittr.com",
+    "kind": "band",
+    "weight": 5,
+    "email": "",
+    "why": "Listed on the Punk BC board",
+    "links": [],
+    "follow": [],
+    "mention_only": false,
+    "pages": 1,
+    "status": "ok",
+    "final": "https://wittr.com/"
   }
 ]

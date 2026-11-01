@@ -1,6 +1,6 @@
 # Backlinks
 
-41 sites checked (80 pages): **0 link back** (0 of them followed), 0 name the site without linking, 32 say nothing, 9 unreachable.
+45 sites checked (102 pages): **0 link back** (0 of them followed), 0 name the site without linking, 38 say nothing, 7 unreachable.
 
 
 _Each site is read homepage-first, then up to 5 inner pages whose URL or link text suggests a roster, links, friends, partners or credits page -- which is where a credit lives, and almost never the homepage. It is still a sample: a link buried somewhere unguessable will read here as no link._
@@ -25,6 +25,7 @@ _None._
 _In weight order. A venue whose listings the board republishes is a far better use of an email than a touring act who played here once._
 
 - **Soultone Cymbals** (gear, weight 10) — https://www.soultonecymbals.com/  ·  _no address on file_
+- **Woodies Drumsticks** (gear, weight 10) — https://woodiesdrumsticks.com/  ·  _no address on file_
 - **Rickshaw Theatre** (venue, weight 9) — https://rickshawtheatre.com/  ·  _no address on file_
 - **The Astoria** (venue, weight 9) — https://astoria.pub/  ·  _no address on file_
 - **The Cobalt** (venue, weight 9) — https://thecobalt.ca/  ·  _no address on file_
@@ -48,25 +49,28 @@ _In weight order. A venue whose listings the board republishes is a far better u
 - **Author & Punisher** (band, weight 5) — http://www.authorandpunisher.com  ·  _no address on file_
 - **BRASS** (band, weight 5) — http://vk.com  ·  _no address on file_
 - **Dead Pioneers** (band, weight 5) — https://deadpioneers.band/  ·  _no address on file_
+- **Death from Above 1979** (band, weight 5) — http://DeathFromAbove1979.com  ·  _no address on file_
+- **Exhumed** (band, weight 5) — http://www.gorefuckingmetal.blogspot.com  ·  _no address on file_
 - **Fotocrime** (band, weight 5) — http://fotocrime.com  ·  _no address on file_
 - **Guilt Trip** (band, weight 5) — http://www.mediafire.com/contact  ·  _no address on file_
-- **Nervosa** (band, weight 5) — https://nervosaband.co.uk  ·  _no address on file_
+- **Larry and His Flask** (band, weight 5) — http://www.larryandhisflask.com  ·  _no address on file_
+- **Plini** (band, weight 5) — http://plini.co  ·  _no address on file_
 - **Protest the Hero** (band, weight 5) — http://www.protestthehero.ca  ·  _no address on file_
 - **Royal Tusk** (band, weight 5) — http://www.royaltuskband.com  ·  _no address on file_
 - **SiM** (band, weight 5) — https://bsky.app  ·  _no address on file_
-- **The Aggrolites** (band, weight 5) — https://music.aggroreggae.com  ·  _no address on file_
+- **The Menzingers** (band, weight 5) — http://themenzingers.com  ·  _no address on file_
+- **The Meteors** (band, weight 5) — http://www.myspace.com  ·  _no address on file_
 - **WAAX** (band, weight 5) — http://www.waaxband.com  ·  _no address on file_
+- **Wolves in the Throne Room** (band, weight 5) — http://www.wittr.com  ·  _no address on file_
 
 ## Unreachable
 
 _Dead or blocking. A dead band site is also a dead link on our own board, so these are worth fixing in both directions._
 
-- Woodies Drumsticks — https://woodiesdrumsticks.com/ (http 429)
 - The Astoria — https://theastoria.ca (URLError)
 - Aemia — http://www.aemia.se (URLError)
 - Blackwater Holylight — https://www.normanrecords.com (http 403)
 - Dusty Pines — http://dustypinesmusic.com (URLError)
-- Exhumed — http://www.gorefuckingmetal.blogspot.com (http 429)
-- Plini — http://plini.co (http 429)
+- Nervosa — https://nervosaband.co.uk (http 303)
 - sundress — http://www.sundressnation.com (URLError)
-- The Menzingers — http://themenzingers.com (http 429)
+- The Aggrolites — https://music.aggroreggae.com (http 303)
