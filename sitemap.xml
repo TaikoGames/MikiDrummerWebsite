@@ -143,9 +143,13 @@
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/cymbal-designer.html</loc>
-    <lastmod>2026-08-13</lastmod>
-    <priority>0.7</priority>
+    <lastmod>2026-10-31</lastmod>
+    <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <image:image>
+      <image:loc>https://www.mikidrummer.ca/images/cymbal-designer-custom-cymbal.png</image:loc>
+      <image:title>Cymbal Designer — design your own custom cymbal</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/poster.html</loc>
@@ -185,9 +189,13 @@
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/punk-beat.html</loc>
-    <lastmod>2026-09-26</lastmod>
-    <priority>0.7</priority>
+    <lastmod>2026-10-31</lastmod>
+    <priority>0.8</priority>
     <changefreq>monthly</changefreq>
+    <image:image>
+      <image:loc>https://www.mikidrummer.ca/images/punk-beat-ladder-drum-practice.png</image:loc>
+      <image:title>Punk Beat Ladder — punk drum practice from 70 to 200 BPM</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/razor-cut-tool.html</loc>
