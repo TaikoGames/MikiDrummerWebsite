@@ -354,8 +354,15 @@ const vid = $('vid'), stage = $('stage'), ctx = stage.getContext('2d');
 // Decoding the whole soundtrack holds it in memory as raw samples. Past
 // these, skip the listening and space the clips out -- a phone that runs out
 // of memory just kills the tab.
-const MAX_ANALYSE_BYTES = 400 * 1024 * 1024;
+//
+// A phone gets much less room than a computer. Reading a 4K iPhone video
+// (about 400 MB a minute) whole into memory was enough to make Safari reload
+// the tab -- the video just vanished, mid-way, with no error at all.
+const PHONE = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+              (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ''));
+const MAX_ANALYSE_BYTES = (PHONE ? 160 : 700) * 1024 * 1024;
 const MAX_ANALYSE_SECONDS = 20 * 60;
+const STALL_MS = 8000;          // the video has not moved for this long: give up on it
 
 const S = {
   file: null, name: 'video', duration: 0, rms: null,
@@ -503,13 +510,24 @@ async function load(file) {
   vid.src = URL.createObjectURL(file);
   say('Opening your video…');
   progress(0.05);
+  // loadedmetadata, not loadeddata: an iPhone does not load any picture
+  // until something asks for it, so waiting for data could wait for ever.
   try {
-    await once(vid, 'loadeddata', 30000);
+    if (vid.readyState < 1) await once(vid, 'loadedmetadata', 30000);
   } catch (e) {
     progress(null);
-    return say('This browser can’t open that video.', 'Try an MP4, or open the page in Chrome or Safari.', true);
+    return say('This browser can’t open that video.',
+               'iPhone videos in HEVC only open in Safari. Try Safari, or an MP4.', true);
   }
-  S.duration = vid.duration;
+  if (!vid.videoWidth) {
+    progress(null);
+    return say('That file has sound but no picture.', 'Choose a video file.', true);
+  }
+  S.duration = await realDuration();
+  if (!(S.duration > 0)) {
+    progress(null);
+    return say('Couldn’t work out how long that video is.', 'Try saving it again as an MP4.', true);
+  }
   $('drop').classList.add('small');
   $('dropTitle').textContent = 'Choose another video';
   $('dropSub').textContent = file.name + ' · ' + clock(S.duration);
@@ -520,6 +538,24 @@ async function load(file) {
   await listen();
   pick();
   makeAll();
+}
+
+/* Files saved by a browser, WhatsApp Web or a screen recorder often don't
+ * say how long they are -- the length reads as Infinity until something has
+ * read to the end. Every clip time came out as Infinity and the first seek
+ * threw. Jumping to the far end makes the browser find out. */
+async function realDuration() {
+  if (isFinite(vid.duration) && vid.duration > 0) return vid.duration;
+  await new Promise((res) => {
+    const t = setTimeout(done, 20000);
+    function done() { clearTimeout(t); vid.removeEventListener('durationchange', check); vid.removeEventListener('timeupdate', check); res(); }
+    function check() { if (isFinite(vid.duration) && vid.duration > 0) done(); }
+    vid.addEventListener('durationchange', check);
+    vid.addEventListener('timeupdate', check);
+    try { vid.currentTime = 1e7; } catch (e) { done(); }
+  });
+  try { await seek(0); } catch (e) {}
+  return isFinite(vid.duration) ? vid.duration : NaN;
 }
 
 async function listen() {
@@ -534,9 +570,13 @@ async function listen() {
     progress(0.35);
     const Ctx = window.AudioContext || window.webkitAudioContext;
     const ac = new Ctx();
+    // Some files make decodeAudioData neither finish nor fail. Do not let
+    // that hold the whole page up -- space the clips out instead.
     const decoded = await new Promise((res, rej) => {
-      const p = ac.decodeAudioData(buf, res, rej);
-      if (p && p.then) p.then(res, rej);
+      const t = setTimeout(() => rej(new Error('decode timed out')), 45000);
+      const ok = (x) => { clearTimeout(t); res(x); }, no = (x) => { clearTimeout(t); rej(x); };
+      const p = ac.decodeAudioData(buf, ok, no);
+      if (p && p.then) p.then(ok, no);
     });
     const chans = [];
     for (let i = 0; i < Math.min(2, decoded.numberOfChannels); i++) chans.push(decoded.getChannelData(i));
@@ -565,6 +605,7 @@ async function makeAll() {
   renderClips();
   $('results').hidden = false;
   $('resume').hidden = true;
+  for (const c of S.clips) if (c.state === 'failed') { c.state = 'queued'; c.error = null; }
   const todo = S.clips.filter(c => !c.blob);
   if (!todo.length) { finished(); return; }
   S.busy = true;
@@ -576,25 +617,40 @@ async function makeAll() {
       c.state = 'making';
       updateCard(c);
       say(`Making clip ${i + 1} of ${todo.length}…`, 'Keep this tab open — each clip records as it plays.');
-      const blob = await record(c, (f) => progress((i + f) / todo.length));
+      // One clip going wrong -- a stall, a hiccup in the recorder -- used to
+      // stop every clip after it. Now it gets a second go, and if that fails
+      // too it is marked and the rest carry on.
+      let blob = null, err = null;
+      for (let attempt = 0; attempt < 2 && !blob; attempt++) {
+        try {
+          blob = await record(c, (f) => progress((i + f) / todo.length));
+        } catch (e) {
+          if (e && e.name === 'NotAllowedError') throw e;   // needs a tap: handled below
+          err = e;
+          if (job !== S.job) return;
+        }
+      }
       if (job !== S.job) return;
-      c.blob = blob;
-      c.url = URL.createObjectURL(blob);
-      c.state = 'done';
+      if (blob) {
+        c.blob = blob;
+        c.url = URL.createObjectURL(blob);
+        c.state = 'done';
+      } else {
+        c.state = 'failed';
+        c.error = err && err.message ? err.message : String(err);
+        console.warn('[story cutter] clip failed', c.start, err);
+        if (window.Track) Track.ev('story_clip_failed', { reason: String(c.error).slice(0, 80) });
+      }
       updateCard(c);
     }
     finished();
   } catch (e) {
     if (job !== S.job) return;
     S.clips.forEach(c => { if (c.state === 'making') { c.state = 'queued'; updateCard(c); } });
-    if (e && e.name === 'NotAllowedError') {
-      // The browser wants a tap before it will play the video with sound --
-      // phones, mostly. One button, and it carries on where it stopped.
-      say('One tap and it’ll make your clips.', null);
-      $('resume').hidden = false;
-    } else {
-      say('Making the clips stopped.', (e && e.message ? e.message : String(e)), true);
-    }
+    // The browser wants a tap before it will play the video with sound --
+    // phones, mostly. One button, and it carries on where it stopped.
+    say('One tap and it’ll make your clips.', null);
+    $('resume').hidden = false;
   } finally {
     if (job === S.job) { S.busy = false; setBusyUi(false); progress(null); }
   }
@@ -602,10 +658,17 @@ async function makeAll() {
 
 function finished() {
   const n = S.clips.filter(c => c.blob).length;
+  const failed = S.clips.filter(c => c.state === 'failed');
   const webm = S.clips.some(c => c.blob && !c.blob.type.includes('mp4'));
-  say(n ? `Done — ${n} clip${n === 1 ? '' : 's'} ready.` : 'No clips.',
-      webm ? 'This browser can only make WebM. For MP4, open this page on your phone.'
-           : (S.rms ? 'Best moments first. Tap one to watch it.' : 'Spread across the video. Tap one to watch it.'));
+  if (failed.length) {
+    say(n ? `${n} clip${n === 1 ? '' : 's'} ready, ${failed.length} didn’t work.`
+          : 'The clips didn’t work.',
+        'Tap “Try again” on the ones that failed. (' + failed[0].error + ')', !n);
+  } else {
+    say(n ? `Done — ${n} clip${n === 1 ? '' : 's'} ready.` : 'No clips.',
+        webm ? 'This browser can only make WebM. For MP4, open this page on your phone.'
+             : (S.rms ? 'Best moments first. Tap one to watch it.' : 'Spread across the video. Tap one to watch it.'));
+  }
   $('saveAll').disabled = !n;
   $('resTitle').textContent = n === 1 ? 'Your clip' : 'Your clips';
   if (window.Track) Track.ev('story_made', { clips: n, fmt: webm ? 'webm' : 'mp4' });
@@ -698,6 +761,16 @@ function updateCard(c) {
   if (c.thumb) screen.appendChild(c.thumb);
   const w = document.createElement('div');
   w.className = 'wait';
+  if (c.state === 'failed') {
+    w.innerHTML = '<span>Didn’t work</span>';
+    const again = document.createElement('button');
+    again.className = 'btn go'; again.type = 'button'; again.textContent = 'Try again';
+    again.addEventListener('click', () => { if (!S.busy) unlockVideo().then(makeAll); });
+    w.appendChild(again);
+    c.card.el.classList.add('queued');
+    screen.appendChild(w);
+    return;
+  }
   w.innerHTML = '<div class="ring"></div><span></span>';
   w.lastChild.textContent = c.state === 'making' ? 'Making…' : 'Waiting…';
   c.card.el.classList.toggle('queued', c.state !== 'making');
@@ -766,14 +839,20 @@ async function record(c, onProgress) {
 
   const onHide = () => {
     if (document.hidden) { vid.pause(); if (rec.state === 'recording') rec.pause(); }
-    else { if (rec.state === 'paused') rec.resume(); vid.play().catch(() => {}); }
+    else { if (rec.state === 'paused') rec.resume(); lastMove = performance.now(); vid.play().catch(() => {}); }
   };
   document.addEventListener('visibilitychange', onHide);
 
+  // Watch the video's own clock. If it stops moving with the tab in front --
+  // a phone that can't keep up with the file, a stalled read -- the old loop
+  // waited for ever and every clip after it sat on "Waiting…".
+  let lastT = -1, lastMove = performance.now(), why = null;
   await new Promise((done) => {
     let fadingOut = false;
     (function tick() {
       const t = vid.currentTime, into = t - c.start, left = c.end - t;
+      if (t !== lastT || document.hidden || vid.seeking) { lastT = t; lastMove = performance.now(); }
+      else if (performance.now() - lastMove > STALL_MS) { why = 'the video stopped playing part way'; return done(); }
       let a = 1;
       if (FADE) a = Math.min(1, Math.max(0, into / FADE), Math.max(0, left / FADE));
       drawStory(ctx, STORY_W, STORY_H, a);
@@ -791,11 +870,18 @@ async function record(c, onProgress) {
 
   document.removeEventListener('visibilitychange', onHide);
   vid.pause();
-  rec.stop();
-  await stopped;
+  const got = vid.currentTime - c.start;
+  if (rec.state !== 'inactive') rec.stop();
+  await Promise.race([stopped, new Promise(r => setTimeout(r, 5000))]);
   for (const tr of stream.getVideoTracks()) tr.stop();
   if (audio.gain) { audio.gain.gain.cancelScheduledValues(0); audio.gain.gain.value = 1; }
   if (audio.monitor) audio.monitor.gain.value = 1;
+  // Something paused it -- a phone call, the audio being taken by another
+  // app -- and it stopped well short. A clip half the length asked for is
+  // not the clip, so try again rather than hand it over.
+  if (!why && got < len * 0.8 && !vid.ended) why = 'it stopped early';
+  if (!why && !chunks.length) why = 'the recorder gave back nothing';
+  if (why) throw new Error(why);
   const mime = ((rec.mimeType || type || 'video/webm').split(';')[0]) || 'video/webm';
   return new Blob(chunks, { type: mime });
 }
@@ -940,7 +1026,7 @@ $('addBtn').addEventListener('click', () => {
   const len = Math.min(clipLen(), S.duration);
   const start = Math.max(0, Math.min(S.duration - len, vid.currentTime));
   S.clips.push({ start, end: start + len, score: null, rank: null, blob: null, url: null, state: 'queued' });
-  makeAll();
+  unlockVideo().then(makeAll);
 });
 
 $('remake').addEventListener('click', () => {
@@ -949,7 +1035,7 @@ $('remake').addEventListener('click', () => {
   for (const c of S.clips) if (c.url) URL.revokeObjectURL(c.url);
   pick();
   S.dirty = false;
-  makeAll();
+  unlockVideo().then(makeAll);
 });
 
 function segment(id, fn) {
@@ -984,7 +1070,28 @@ const drop = $('drop');
 ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
 ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, () => drop.classList.remove('over')));
 drop.addEventListener('drop', (e) => { e.preventDefault(); wakeAudio(); load(e.dataTransfer.files[0]); });
-$('resumeBtn').addEventListener('click', () => { wakeAudio(); makeAll(); });
+/* An iPhone only lets a video play with sound if play() is called inside the
+ * tap itself. makeAll seeks first and plays after, by which time the tap has
+ * been used up -- so the button could ask for a tap, get one, and ask again.
+ * Starting and stopping the video right here, inside the tap, unlocks it for
+ * every play() after. */
+function unlockVideo() {
+  wakeAudio();
+  if (audio.monitor) audio.monitor.gain.value = 0;     // no blip of sound
+  return new Promise((res) => {
+    const end = () => { try { vid.pause(); } catch (e) {} if (audio.monitor) audio.monitor.gain.value = 1; res(); };
+    let fired = false;
+    const go = () => { if (!fired) { fired = true; end(); } };
+    setTimeout(go, 3000);                    // never hang the button on it
+    try {
+      const p = vid.play();
+      if (p && p.then) p.then(go, go); else go();
+    } catch (e) { go(); }
+  });
+}
+// Each of these waits for the unlock to finish, so its pause() can never
+// land on a clip that has just started recording.
+$('resumeBtn').addEventListener('click', () => { unlockVideo().then(makeAll); });
 $('saveAll').addEventListener('click', () => saveClips(S.clips.slice().sort((a, b) => a.start - b.start)));
 $('more').addEventListener('toggle', () => { if ($('more').open && S.duration && !S.busy) paintStage(); });
 
