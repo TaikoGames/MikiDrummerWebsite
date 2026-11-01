@@ -659,12 +659,20 @@ async function makeAll() {
       // stop every clip after it. Now it gets a second go, and if that fails
       // too it is marked and the rest carry on.
       let blob = null, err = null;
-      for (let attempt = 0; attempt < 2 && !blob; attempt++) {
+      // Three goes: when the recorder is at fault, each one moves on to the
+      // next format this browser offers, so a bad encoder costs one retry
+      // and not the clip.
+      for (let attempt = 0; attempt < 3 && !blob; attempt++) {
         try {
           blob = await record(c, (f) => progress((i + f) / todo.length), attempt);
         } catch (e) {
           if (e && e.name === 'NotAllowedError') throw e;   // needs a tap: handled below
           err = e;
+          if (e && e.recorder && e.type) {
+            badTypes.add(e.type);
+            console.warn('[story cutter] recorder failed with', e.type, '-', e.message);
+            if (window.Track) Track.ev('story_recorder_failed', { type: e.type, reason: String(e.message).slice(0, 60) });
+          }
           if (job !== S.job) return;
         }
       }
@@ -828,17 +836,41 @@ function updateCard(c) {
 
 /* ---- recording --------------------------------------------------------- */
 
+/* Formats this browser's recorder has already failed with. A format that
+ * errors part way, or hands back a short file, is skipped from then on --
+ * for the retry of that clip and every clip after it. */
+const badTypes = new Set();
+
 function pickType() {
   if (!window.MediaRecorder) return null;
   // H.264 in MP4 first: it is what Instagram, TikTok and an iPhone all play.
+  //
+  // The level matters. This used to ask for avc1.42E01F -- Baseline level
+  // 3.1, which is rated to 1280×720 -- and then record 1920 pixels. Chrome
+  // is the browser that actually takes that string at its word, and an
+  // encoder pushed past its level can give up part way through: a clip
+  // that stops after a few seconds. Level 4.0 (…28) covers 1080p.
+  //
   // A bare 'video/mp4' is last on purpose -- in a browser with no H.264
   // encoder it means VP9 in an MP4 box, which an iPhone will not open, and
   // an honest WebM is better than that.
-  const want = ['video/mp4;codecs=avc1.42E01F,mp4a.40.2', 'video/mp4;codecs=avc1.42E01F',
-                'video/mp4;codecs=avc1,mp4a', 'video/mp4;codecs=avc1',
-                'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'];
-  for (const t of want) { try { if (MediaRecorder.isTypeSupported(t)) return t; } catch (e) {} }
+  const want = ['video/mp4;codecs=avc1.640028,mp4a.40.2', 'video/mp4;codecs=avc1.4D0028,mp4a.40.2',
+                'video/mp4;codecs=avc1.42E028,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a.40.2',
+                'video/mp4;codecs=avc1', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus',
+                'video/webm', 'video/mp4'];
+  for (const t of want) {
+    if (badTypes.has(t)) continue;
+    try { if (MediaRecorder.isTypeSupported(t)) return t; } catch (e) {}
+  }
   return '';
+}
+
+/* A failure that was the recorder's fault, so the next try should use a
+ * different format rather than the same one again. */
+function recorderFault(msg, type) {
+  const e = new Error(msg);
+  e.recorder = true; e.type = type;
+  return e;
 }
 
 /* Play the clip in real time, draw every frame onto the stage canvas, and
@@ -905,6 +937,11 @@ async function record(c, onProgress, attempt) {
                                                 audioBitsPerSecond: 192000 } : undefined);
   const chunks = [];
   rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+  // The recorder can fail on its own -- an encoder that gives up part way.
+  // Nothing listened for that before: the loop ran on, the recorder had
+  // already stopped, and whatever it had was saved as the clip.
+  let recFailed = null, weStopped = false;
+  rec.onerror = (e) => { recFailed = (e && (e.error && (e.error.message || e.error.name))) || 'error'; };
   const stopped = new Promise((r) => { rec.onstop = r; });
 
   const len = c.end - c.start, FADE = S.fade ? 0.35 : 0;
@@ -950,6 +987,7 @@ async function record(c, onProgress, attempt) {
     let fadingOut = false;
     (function tick() {
       const t = vid.currentTime, into = t - c.start, left = c.end - t;
+      if (recFailed || (rec.state === 'inactive' && !weStopped)) { why = 'recorder'; return done(); }
       if (t !== lastT || document.hidden || vid.seeking) { lastT = t; lastMove = performance.now(); }
       else if (performance.now() - lastMove > STALL_MS) { why = 'the video stopped playing part way'; return done(); }
       let a = 1;
@@ -970,6 +1008,7 @@ async function record(c, onProgress, attempt) {
   document.removeEventListener('visibilitychange', onHide);
   vid.pause();
   const got = vid.currentTime - c.start;
+  weStopped = true;
   if (rec.state !== 'inactive') rec.stop();
   await Promise.race([stopped, new Promise(r => setTimeout(r, 5000))]);
   for (const tr of stream.getVideoTracks()) tr.stop();
@@ -979,17 +1018,18 @@ async function record(c, onProgress, attempt) {
   // Something paused it -- a phone call, the audio being taken by another
   // app -- and it stopped well short. A clip half the length asked for is
   // not the clip, so try again rather than hand it over.
+  if (why === 'recorder') throw recorderFault('the recorder stopped part way' + (recFailed && recFailed !== 'error' ? ' (' + recFailed + ')' : ''), type);
   if (!why && got < len * 0.8 && !vid.ended) why = 'it stopped early';
-  if (!why && !chunks.length) why = 'the recorder gave back nothing';
+  if (!why && !chunks.length) throw recorderFault('the recorder gave back nothing', type);
   if (why) throw new Error(why);
   const mime = ((rec.mimeType || type || 'video/webm').split(';')[0]) || 'video/webm';
   const blob = new Blob(chunks, { type: mime });
 
   // Check the file, not just the recording: open it and read its length.
   const d = await clipLength(blob);
-  if (d === -1) throw new Error('the saved clip wouldn’t open');
+  if (d === -1) throw recorderFault('the saved clip wouldn’t open', type);
   if (isFinite(d) && d < len * 0.8) {
-    throw new Error(`the saved clip came out ${d.toFixed(1)} s instead of ${len.toFixed(0)} s`);
+    throw recorderFault(`the saved clip came out ${d.toFixed(1)} s instead of ${len.toFixed(0)} s`, type);
   }
   return blob;
 }
