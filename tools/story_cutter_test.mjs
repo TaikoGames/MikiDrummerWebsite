@@ -135,6 +135,7 @@ for (const d of [20, 40, 50]) {
 
 // --- names -------------------------------------------------------------
 ok(clock(75.4) === '1:15', 'clock');
+ok(clipName('gig.mov', 2, 61, 'mp4', 'short') === 'gig-short-03-1m01s.mp4', 'Shorts are named as shorts');
 ok(clipName('Live at Bully’s (2026).MOV', 0, 92.3, 'mp4') === 'Live-at-Bully-s-2026-story-01-1m32s.mp4', 'clip names are safe and sortable: ' + clipName('Live at Bully’s (2026).MOV', 0, 92.3, 'mp4'));
 
 // --- the ZIP ---------------------------------------------------------------
