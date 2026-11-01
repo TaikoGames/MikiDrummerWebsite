@@ -239,3 +239,99 @@ export function clipName(base, i, start, ext) {
 }
 
 const round2 = (x) => Math.round(x * 100) / 100;
+
+/* ---- one ZIP for every clip -----------------------------------------
+ *
+ * "Download all" used to mean one download per clip, which browsers treat
+ * as a page spraying files: Chrome asks permission or quietly keeps only
+ * the first, and a phone has no good answer at all. One ZIP is one
+ * download everywhere.
+ *
+ * Stored, not compressed: the clips are already H.264 or VP9, so deflate
+ * would spend seconds on a phone to save a few bytes. This is the plain
+ * ZIP layout -- a local header and the data for each file, then a central
+ * directory, then the end record -- which every unzipper reads, including
+ * the Files app on an iPhone. Returns the pieces in order, ready for
+ * new Blob(parts), so the clips are never copied into one big buffer. */
+
+let CRC_TABLE = null;
+export function crc32(bytes, crc = 0) {
+  if (!CRC_TABLE) {
+    CRC_TABLE = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+      CRC_TABLE[n] = c >>> 0;
+    }
+  }
+  crc = ~crc >>> 0;
+  for (let i = 0; i < bytes.length; i++) crc = CRC_TABLE[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+  return ~crc >>> 0;
+}
+
+function dosTime(d) {
+  return {
+    time: (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1),
+    date: ((Math.max(1980, d.getFullYear()) - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()
+  };
+}
+
+/* files: [{ name, data: Uint8Array }], or [{ name, body, size, crc }] where
+ * body is a Blob -- the page passes the clips themselves that way, with the
+ * CRC worked out once, so a ZIP of five clips is not five clips' worth of
+ * extra memory on a phone. */
+export function zipParts(files, when = new Date()) {
+  const enc = new TextEncoder();
+  const { time, date } = dosTime(when);
+  const parts = [], central = [];
+  let offset = 0;
+  const used = new Set();
+  for (const f of files) {
+    // Two clips must never share a name, or one silently replaces the other.
+    let name = f.name, n = 2;
+    while (used.has(name)) name = f.name.replace(/(\.[^.]+)?$/, `-${n++}$1`);
+    used.add(name);
+    const nameBytes = enc.encode(name);
+    const crc = f.crc != null ? f.crc : crc32(f.data);
+    const size = f.size != null ? f.size : f.data.length;
+
+    const local = new DataView(new ArrayBuffer(30));
+    local.setUint32(0, 0x04034b50, true);
+    local.setUint16(4, 20, true);              // version needed
+    local.setUint16(6, 0x0800, true);          // names are UTF-8
+    local.setUint16(8, 0, true);               // stored
+    local.setUint16(10, time, true);
+    local.setUint16(12, date, true);
+    local.setUint32(14, crc, true);
+    local.setUint32(18, size, true);
+    local.setUint32(22, size, true);
+    local.setUint16(26, nameBytes.length, true);
+    local.setUint16(28, 0, true);
+    parts.push(new Uint8Array(local.buffer), nameBytes, f.body || f.data);
+
+    const cd = new DataView(new ArrayBuffer(46));
+    cd.setUint32(0, 0x02014b50, true);
+    cd.setUint16(4, 20, true);                 // made by
+    cd.setUint16(6, 20, true);                 // needed
+    cd.setUint16(8, 0x0800, true);
+    cd.setUint16(10, 0, true);
+    cd.setUint16(12, time, true);
+    cd.setUint16(14, date, true);
+    cd.setUint32(16, crc, true);
+    cd.setUint32(20, size, true);
+    cd.setUint32(24, size, true);
+    cd.setUint16(28, nameBytes.length, true);
+    cd.setUint32(42, offset, true);            // where its local header starts
+    central.push(new Uint8Array(cd.buffer), nameBytes);
+
+    offset += 30 + nameBytes.length + size;
+  }
+  const cdSize = central.reduce((n, p) => n + p.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true);
+  end.setUint16(8, files.length, true);
+  end.setUint16(10, files.length, true);
+  end.setUint32(12, cdSize, true);
+  end.setUint32(16, offset, true);
+  return parts.concat(central, [new Uint8Array(end.buffer)]);
+}

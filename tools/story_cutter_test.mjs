@@ -3,7 +3,11 @@
  *     node tools/story_cutter_test.mjs
  */
 import { loudness, pickHighlights, snapToHit, evenly, fillRect, fitRect,
-         clock, clipName, autoLength, keepSize, HOP } from '../js/story-cutter.js';
+         clock, clipName, autoLength, keepSize, crc32, zipParts, HOP } from '../js/story-cutter.js';
+import { writeFileSync, mkdtempSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 let fails = 0;
 const ok = (cond, what) => { if (!cond) { console.log('FAIL ' + what); fails++; } };
@@ -132,6 +136,35 @@ for (const d of [20, 40, 50]) {
 // --- names -------------------------------------------------------------
 ok(clock(75.4) === '1:15', 'clock');
 ok(clipName('Live at Bully’s (2026).MOV', 0, 92.3, 'mp4') === 'Live-at-Bully-s-2026-story-01-1m32s.mp4', 'clip names are safe and sortable: ' + clipName('Live at Bully’s (2026).MOV', 0, 92.3, 'mp4'));
+
+// --- the ZIP ---------------------------------------------------------------
+ok(crc32(new TextEncoder().encode('123456789')) === 0xCBF43926, 'crc32 matches the standard check value');
+{
+  const a = new Uint8Array(5000).map((_, i) => (i * 7) & 255);
+  const b = new TextEncoder().encode('second clip');
+  const parts = zipParts([{ name: 'clip-01.mp4', data: a }, { name: 'clip-01.mp4', data: b },
+                          { name: 'Café-story.mp4', data: new Uint8Array(0) }]);
+  const total = parts.reduce((n, p) => n + p.length, 0);
+  const buf = new Uint8Array(total);
+  let o = 0; for (const p of parts) { buf.set(p, o); o += p.length; }
+  const dir = mkdtempSync(join(tmpdir(), 'zip-'));
+  const file = join(dir, 'clips.zip');
+  writeFileSync(file, buf);
+  // Read it back with Python's zipfile, which checks every CRC.
+  const out = execFileSync('python3', ['-I', '-c', `
+import zipfile, sys, json
+z = zipfile.ZipFile(sys.argv[1])
+bad = z.testzip()
+print(json.dumps({"bad": bad, "names": z.namelist(), "sizes": [i.file_size for i in z.infolist()],
+                  "second": z.read(z.namelist()[1]).decode()}))
+`, file]).toString();
+  const r = JSON.parse(out);
+  ok(r.bad === null, 'every file in the zip passes its CRC');
+  ok(JSON.stringify(r.names) === JSON.stringify(['clip-01.mp4', 'clip-01-2.mp4', 'Café-story.mp4']),
+     'names kept, a clash renamed rather than overwritten, accents survive: ' + JSON.stringify(r.names));
+  ok(JSON.stringify(r.sizes) === JSON.stringify([5000, 11, 0]), 'sizes are right');
+  ok(r.second === 'second clip', 'contents are right');
+}
 
 console.log(fails ? `${fails} check(s) FAILED` : 'story cutter rules: all checks passed');
 process.exit(fails ? 1 : 0);
