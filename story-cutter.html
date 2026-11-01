@@ -5,7 +5,7 @@
 <script src="/js/track.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Story Cutter — Turn One Video Into Story Clips, Free</title>
-<meta name="description" content="Pick one video and get story clips of the best bits, made for you: vertical 9:16 for Instagram, TikTok and YouTube Shorts. Free, nothing uploads.">
+<meta name="description" content="Pick one video and get clips of the best bits, made for you, for Instagram and TikTok stories. Keeps your video's shape, or makes it 9:16. Free.">
 <meta name="keywords" content="video to instagram story, cut video into story clips, 9:16 video converter, make reels from a video, split video for instagram stories, vertical video cropper, band video clips, concert video to stories">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Miki Drummer">
@@ -16,7 +16,7 @@
 <meta property="og:locale" content="en_CA">
 <meta property="og:url" content="https://www.mikidrummer.ca/story-cutter.html">
 <meta property="og:title" content="Story Cutter — one video in, story clips out">
-<meta property="og:description" content="Pick a gig video, get vertical clips of the best moments made for you, ready for Instagram and TikTok stories. Free, runs in your browser.">
+<meta property="og:description" content="Pick a gig video, get clips of the best moments made for you, ready for Instagram and TikTok stories. Free, runs in your browser.">
 <meta property="og:image" content="https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -76,10 +76,12 @@
   .resHead h2{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
   .clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:12px}
   @media(max-width:420px){ .clips{grid-template-columns:1fr 1fr;gap:10px} }
+  .clips.wide{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  @media(max-width:420px){ .clips.wide{grid-template-columns:1fr} }
   .clip{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:8px;display:flex;
         flex-direction:column;gap:8px}
-  .clip .screen{position:relative;aspect-ratio:9/16;border-radius:9px;overflow:hidden;background:#000}
-  .clip video,.clip canvas{width:100%;height:100%;display:block;object-fit:cover}
+  .clip .screen{position:relative;aspect-ratio:var(--clipRatio, 9 / 16);border-radius:9px;overflow:hidden;background:#000}
+  .clip video,.clip canvas{width:100%;height:100%;display:block;object-fit:contain}
   .clip .wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
               flex-direction:column;gap:8px;color:var(--mid);font-size:12.5px;background:rgba(11,12,14,.55)}
   .clip .ring{width:34px;height:34px;border-radius:50%;border:3px solid var(--edge2);border-top-color:var(--hot);
@@ -115,7 +117,7 @@
   .moreBody{padding:4px 16px 18px;display:grid;gap:18px}
   @media(min-width:860px){ .moreBody{grid-template-columns:300px minmax(0,1fr);align-items:start} }
   .viewer{display:flex;flex-direction:column;align-items:center;gap:10px}
-  #stage{width:min(100%,280px);aspect-ratio:9/16;height:auto;border-radius:12px;background:#000;border:1px solid var(--edge2);display:block}
+  #stage{width:min(100%,280px);aspect-ratio:var(--clipRatio, 9 / 16);height:auto;border-radius:12px;background:#000;border:1px solid var(--edge2);display:block}
   .scrub{width:100%;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid);font-variant-numeric:tabular-nums}
   .scrub input{flex:1;accent-color:var(--hot)}
   .opts{display:grid;gap:14px}
@@ -222,11 +224,14 @@
         <div class="f">
           <span class="lbl">Framing</span>
           <div class="seg" id="fitSeg">
-            <button class="btn on" data-v="fill" type="button">Fill the screen</button>
-            <button class="btn" data-v="fit" type="button">Whole frame + blur</button>
+            <button class="btn on" data-v="orig" type="button">Original shape</button>
+            <button class="btn" data-v="fill" type="button">9:16 — fill</button>
+            <button class="btn" data-v="fit" type="button">9:16 — fit + blur</button>
           </div>
         </div>
-        <div class="f" id="panBox">
+        <p class="hint" id="shapeHint" style="margin-top:-6px">Clips keep the shape of your video.
+           Pick a 9:16 option to make them fill a phone screen.</p>
+        <div class="f" id="panBox" hidden>
           <label for="pan">Position <span id="panOut" style="color:var(--dim)">centre</span></label>
           <input type="range" id="pan" min="-1" max="1" step="0.01" value="0">
         </div>
@@ -261,12 +266,13 @@
       <ol>
         <li><b>Choose a video.</b> Anything your phone or camera records — landscape or upright.</li>
         <li><b>Wait a moment.</b> It listens for the parts where the song goes off and makes a
-            vertical 9:16 clip of each one, starting on the hit.</li>
+            clip of each one, starting on the hit, in the same shape as your video.</li>
         <li><b>Save.</b> Save one, or save them all. On a phone that opens the share sheet, so
             they can go straight to Instagram or into Photos.</li>
       </ol>
       <p style="margin-top:10px">Want more control? Open <b>Options</b> to change the clip
-         length and how many, crop or fit the frame, add a caption, or pick your own moments.</p>
+         length and how many, make them 9:16 to fill a phone screen, add a caption, or pick
+         your own moments.</p>
     </section>
     <section>
       <h2>Questions</h2>
@@ -276,7 +282,9 @@
       <p>Each clip is recorded as it plays, so five 15 second clips take a little over a minute.
          Keep this tab open while it works.</p>
       <h3>What format are the clips?</h3>
-      <p>1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop
+      <p>MP4, in the same shape as your video (up to 1920 pixels on the long side), or
+         1080×1920 if you pick a 9:16 option. That’s on iPhone, Android and current Chrome,
+         Edge and Safari. A few desktop
          browsers can only save WebM; if yours does, open the page on your phone instead.</p>
       <h3>How do I post them?</h3>
       <p>On a phone, tap “Save” and pick “Save Video” to put the clip in your Photos, or pick
@@ -304,7 +312,7 @@
       "@type": "WebApplication",
       "name": "Story Cutter",
       "url": "https://www.mikidrummer.ca/story-cutter.html",
-      "description": "Pick one video and get vertical 9:16 story clips of its best moments for Instagram and TikTok, made automatically. Optional framing, caption and clip length. Runs in the browser; nothing uploads.",
+      "description": "Pick one video and get clips of its best moments for Instagram and TikTok stories, made automatically. Keeps the video's shape by default, with optional 9:16 crop or fit, caption and clip length. Runs in the browser; nothing uploads.",
       "image": "https://www.mikidrummer.ca/images/story-cutter-video-to-stories.png",
       "applicationCategory": "MultimediaApplication",
       "operatingSystem": "Any modern web browser",
@@ -320,7 +328,7 @@
         { "@type": "Question", "name": "Why does it take a minute?",
           "acceptedAnswer": { "@type": "Answer", "text": "Each clip is recorded as it plays, so five 15 second clips take a little over a minute. Keep this tab open while it works." } },
         { "@type": "Question", "name": "What format are the clips?",
-          "acceptedAnswer": { "@type": "Answer", "text": "1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "MP4, in the same shape as your video (up to 1920 pixels on the long side), or 1080×1920 if you pick a 9:16 option. That’s on iPhone, Android and current Chrome, Edge and Safari. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
         { "@type": "Question", "name": "How do I post them?",
           "acceptedAnswer": { "@type": "Answer", "text": "On a phone, tap “Save” and pick “Save Video” to put the clip in your Photos, or pick Instagram to post it straight away. “Download the file” under each clip saves it to your Files or Downloads instead. On a computer, “Save” downloads it." } },
         { "@type": "Question", "name": "Why won’t it save from Instagram?",
@@ -341,7 +349,7 @@
 
 <script type="module">
 import { STORY_W, STORY_H, HOP, loudness, pickHighlights, evenly, fillRect, fitRect,
-         clock, clipName, autoLength } from '/js/story-cutter.js';
+         clock, clipName, autoLength, keepSize } from '/js/story-cutter.js';
 
 /* One job: a video goes in, finished clips come out, with nothing to decide
  * in between. Everything adjustable lives under Options and defaults to
@@ -366,7 +374,7 @@ const STALL_MS = 8000;          // the video has not moved for this long: give u
 
 const S = {
   file: null, name: 'video', duration: 0, rms: null,
-  len: 'auto', fit: 'fill', pan: 0, caption: '', capPos: 'top', fade: true,
+  len: 'auto', fit: 'orig', pan: 0, caption: '', capPos: 'top', fade: true,
   clips: [], busy: false, job: 0, dirty: false
 };
 
@@ -388,12 +396,32 @@ const blurCan = document.createElement('canvas');
 blurCan.width = 36; blurCan.height = 64;
 const blurCtx = blurCan.getContext('2d');
 
+/* The size of a finished clip. By default the video's own shape -- nothing
+ * cropped, nothing letterboxed -- and 1080×1920 only when a 9:16 option is
+ * picked in Options. */
+function outSize() {
+  if (S.fit === 'orig') return keepSize(vid.videoWidth, vid.videoHeight);
+  return { w: STORY_W, h: STORY_H };
+}
+
+/* Size the stage, the preview and the card shapes to match. */
+function applyShape() {
+  const { w, h } = outSize();
+  if (stage.width !== w || stage.height !== h) { stage.width = w; stage.height = h; }
+  document.documentElement.style.setProperty('--clipRatio', `${w} / ${h}`);
+  $('clips').classList.toggle('wide', w > h);
+  // A landscape preview at 280 px wide is a postage stamp; give it the width.
+  stage.style.width = w > h ? 'min(100%, 420px)' : '';
+}
+
 function drawStory(c, W, H, alpha) {
   const vw = vid.videoWidth, vh = vid.videoHeight;
   c.fillStyle = '#000';
   c.fillRect(0, 0, W, H);
   if (!vw || !vh) return;
-  if (S.fit === 'fill') {
+  if (S.fit === 'orig') {
+    c.drawImage(vid, 0, 0, W, H);
+  } else if (S.fit === 'fill') {
     const r = fillRect(vw, vh, W, H, S.pan);
     c.drawImage(vid, r.sx, r.sy, r.sw, r.sh, 0, 0, W, H);
   } else {
@@ -419,7 +447,9 @@ function drawStory(c, W, H, alpha) {
 /* Big, bold, outlined, wrapped -- and kept out of the top 13% and bottom 18%,
  * where the story apps draw their own name, progress bar and reply box. */
 function drawCaption(c, W, H) {
-  const size = Math.round(W * 0.068);
+  // Sized off the short side, so a caption on a landscape clip is the same
+  // size it would be on a portrait one rather than half again as big.
+  const size = Math.round(Math.min(W, H) * 0.068);
   c.font = `900 ${size}px "Arial Black", "Helvetica Neue", Arial, sans-serif`;
   c.textAlign = 'center';
   c.textBaseline = 'middle';
@@ -444,7 +474,7 @@ function drawCaption(c, W, H) {
   });
 }
 
-function paintStage() { drawStory(ctx, STORY_W, STORY_H); }
+function paintStage() { applyShape(); drawStory(ctx, stage.width, stage.height); }
 
 /* ---- helpers --------------------------------------------------------- */
 
@@ -602,6 +632,7 @@ function cancelJob() { S.job++; }
 
 async function makeAll() {
   const job = ++S.job;
+  applyShape();
   renderClips();
   $('results').hidden = false;
   $('resume').hidden = true;
@@ -670,6 +701,10 @@ function finished() {
              : (S.rms ? 'Best moments first. Tap one to watch it.' : 'Spread across the video. Tap one to watch it.'));
   }
   $('saveAll').disabled = !n;
+  // The stage ends a recording on its faded-out last frame; put a picture
+  // back in the Options preview.
+  const first = S.clips[0];
+  if (first) seek(Math.min(S.duration - 0.05, first.start + 0.5)).then(paintStage, () => {});
   $('resTitle').textContent = n === 1 ? 'Your clip' : 'Your clips';
   if (window.Track) Track.ev('story_made', { clips: n, fmt: webm ? 'webm' : 'mp4' });
 }
@@ -805,8 +840,9 @@ async function record(c, onProgress) {
   if (!c.thumb) {
     // A still for the card while it waits its turn.
     const th = document.createElement('canvas');
-    th.width = 180; th.height = 320;
-    drawStory(th.getContext('2d'), 180, 320);
+    const o = outSize(), k = 320 / Math.max(o.w, o.h);
+    th.width = Math.round(o.w * k); th.height = Math.round(o.h * k);
+    drawStory(th.getContext('2d'), th.width, th.height);
     c.thumb = th;
     updateCard(c);
   }
@@ -826,7 +862,9 @@ async function record(c, onProgress) {
     audio.gain.gain.setValueAtTime(FADE ? 0 : 1, now);
     if (FADE) audio.gain.gain.linearRampToValueAtTime(1, now + FADE);
   }
-  drawStory(ctx, STORY_W, STORY_H, FADE ? 0 : 1);
+  applyShape();                       // the size is fixed before recording starts
+  const W = stage.width, H = stage.height;
+  drawStory(ctx, W, H, FADE ? 0 : 1);
 
   try {
     await vid.play();
@@ -855,7 +893,7 @@ async function record(c, onProgress) {
       else if (performance.now() - lastMove > STALL_MS) { why = 'the video stopped playing part way'; return done(); }
       let a = 1;
       if (FADE) a = Math.min(1, Math.max(0, into / FADE), Math.max(0, left / FADE));
-      drawStory(ctx, STORY_W, STORY_H, a);
+      drawStory(ctx, W, H, a);
       if (FADE && !fadingOut && left <= FADE && audio.gain) {
         fadingOut = true;
         const now = audio.ctx.currentTime;
@@ -1048,7 +1086,12 @@ function segment(id, fn) {
   });
 }
 segment('lenSeg', (v) => { S.len = v === 'auto' ? 'auto' : Number(v); markDirty(); });
-segment('fitSeg', (v) => { S.fit = v; $('panBox').hidden = v !== 'fill'; restyle(); });
+segment('fitSeg', (v) => {
+  S.fit = v;
+  $('panBox').hidden = v !== 'fill';
+  $('shapeHint').hidden = v !== 'orig';
+  restyle();
+});
 segment('capSeg', (v) => { S.capPos = v; restyle(); });
 $('count').addEventListener('change', markDirty);
 $('fade').addEventListener('change', (e) => { S.fade = e.target.checked; markDirty(); });

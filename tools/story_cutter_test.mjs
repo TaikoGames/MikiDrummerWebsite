@@ -3,7 +3,7 @@
  *     node tools/story_cutter_test.mjs
  */
 import { loudness, pickHighlights, snapToHit, evenly, fillRect, fitRect,
-         clock, clipName, autoLength, HOP } from '../js/story-cutter.js';
+         clock, clipName, autoLength, keepSize, HOP } from '../js/story-cutter.js';
 
 let fails = 0;
 const ok = (cond, what) => { if (!cond) { console.log('FAIL ' + what); fails++; } };
@@ -98,6 +98,23 @@ function song() {
   ok(tall.sw === 1080 && Math.abs(tall.sh - 1920) < 1e-9, 'a taller-than-story video crops top and bottom');
   const f = fitRect(1920, 1080);
   ok(f.dw === 1080 && Math.abs(f.dy - (1920 - f.dh) / 2) < 1e-9, 'fit is full width and centred');
+}
+
+// --- keeping the shape -------------------------------------------------
+{
+  const a = keepSize(1920, 1080);
+  ok(a.w === 1920 && a.h === 1080, 'a 1080p landscape video stays 1920×1080');
+  const b = keepSize(3840, 2160);
+  ok(b.w === 1920 && b.h === 1080, '4K comes down to 1920×1080, same shape');
+  const c = keepSize(1080, 1920);
+  ok(c.w === 1080 && c.h === 1920, 'portrait stays portrait');
+  const d = keepSize(640, 360);
+  ok(d.w === 640 && d.h === 360, 'a small video is not blown up');
+  const e = keepSize(1441, 1081);
+  ok(e.w % 2 === 0 && e.h % 2 === 0, 'both sides even for H.264');
+  ok(Math.abs(e.w / e.h - 1441 / 1081) < 0.005, 'and the shape is kept');
+  const f = keepSize(1440, 1440);
+  ok(f.w === 1440 && f.h === 1440, 'square stays square');
 }
 
 // --- auto length -------------------------------------------------------
