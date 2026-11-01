@@ -82,6 +82,9 @@
         flex-direction:column;gap:8px}
   .clip .screen{position:relative;aspect-ratio:var(--clipRatio, 9 / 16);border-radius:9px;overflow:hidden;background:#000}
   .clip video,.clip canvas{width:100%;height:100%;display:block;object-fit:contain}
+  .clip .screen #stage{width:100%!important;height:100%;border:0;border-radius:0;aspect-ratio:auto}
+  .clip .live{position:absolute;left:8px;top:8px;background:var(--hot);color:#160802;font-size:10.5px;
+              font-weight:900;letter-spacing:.12em;border-radius:4px;padding:2px 6px}
   .clip .wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
               flex-direction:column;gap:8px;color:var(--mid);font-size:12.5px;background:rgba(11,12,14,.55)}
   .clip .ring{width:34px;height:34px;border-radius:50%;border:3px solid var(--edge2);border-top-color:var(--hot);
@@ -183,7 +186,11 @@
     <div class="clips" id="clips"></div>
   </div>
 
-  <video id="vid" playsinline preload="auto" hidden></video>
+  <!-- Not display:none. Safari can stop decoding frames for a video that is
+       not being rendered, and drawing it to the canvas then gives a stale
+       or black picture. Kept on the page at a pixel, out of the way. -->
+  <video id="vid" playsinline preload="auto"
+         style="position:fixed;left:0;bottom:0;width:2px;height:2px;opacity:.01;pointer-events:none;z-index:-1"></video>
 
   <details class="more" id="more">
     <summary>Options <small>length, how many, framing, caption, pick your own moments</small></summary>
@@ -654,7 +661,7 @@ async function makeAll() {
       let blob = null, err = null;
       for (let attempt = 0; attempt < 2 && !blob; attempt++) {
         try {
-          blob = await record(c, (f) => progress((i + f) / todo.length));
+          blob = await record(c, (f) => progress((i + f) / todo.length), attempt);
         } catch (e) {
           if (e && e.name === 'NotAllowedError') throw e;   // needs a tap: handled below
           err = e;
@@ -776,6 +783,8 @@ function renderClips() {
 function updateCard(c) {
   if (!c.card) return;
   const { screen, save, dl } = c.card;
+  // Never wipe the stage canvas along with a card's contents.
+  if (stage.parentNode === screen) stageHomeAgain();
   for (const a of [save, dl]) {
     if (a.tagName !== 'A') { a.disabled = !c.blob; continue; }
     if (c.blob) { const f = fileFor(c); a.href = c.url; a.download = f.name; a.removeAttribute('aria-disabled'); }
@@ -831,7 +840,46 @@ function pickType() {
  * record the canvas with the soundtrack. If the tab goes into the background
  * the browser stops drawing frames, so the recording pauses with it and
  * carries on when the tab comes back, rather than saving a frozen picture. */
-async function record(c, onProgress) {
+/* Where the stage canvas lives when it is not recording, so it can go back. */
+let stageHome = null;
+function stageToCard(c) {
+  if (!stageHome) stageHome = { parent: stage.parentNode, next: stage.nextSibling };
+  if (!c.card) return;
+  c.card.screen.textContent = '';
+  c.card.screen.appendChild(stage);
+  const tag = document.createElement('span');
+  tag.className = 'live'; tag.textContent = 'MAKING';
+  c.card.screen.appendChild(tag);
+}
+function stageHomeAgain() {
+  if (stageHome && stage.parentNode !== stageHome.parent) {
+    stageHome.parent.insertBefore(stage, stageHome.next);
+  }
+}
+
+/* How long a finished clip really is, read back the way a phone would. A
+ * recorder that misbehaves can hand over a file that says it is three
+ * seconds long however long the recording ran, and nothing noticed. */
+function clipLength(blob) {
+  return new Promise((res) => {
+    const v = document.createElement('video');
+    v.muted = true; v.preload = 'metadata'; v.playsInline = true;
+    const url = URL.createObjectURL(blob);
+    let settled = false;
+    const finish = (d) => { if (settled) return; settled = true; clearTimeout(t); v.removeAttribute('src'); v.load(); URL.revokeObjectURL(url); res(d); };
+    const t = setTimeout(() => finish(NaN), 10000);       // unknown: do not block on it
+    v.onerror = () => finish(-1);                             // will not open at all
+    v.onloadedmetadata = () => {
+      if (isFinite(v.duration)) return finish(v.duration);
+      // A recorder's file often leaves the length out; reading to the end finds it.
+      v.ondurationchange = () => { if (isFinite(v.duration)) finish(v.duration); };
+      try { v.currentTime = 1e7; } catch (e) { finish(NaN); }
+    };
+    v.src = url;
+  });
+}
+
+async function record(c, onProgress, attempt) {
   const type = pickType();
   if (type === null || !stage.captureStream) throw new Error('this browser can’t record video');
   wakeAudio();
@@ -865,15 +913,23 @@ async function record(c, onProgress) {
   applyShape();                       // the size is fixed before recording starts
   const W = stage.width, H = stage.height;
   drawStory(ctx, W, H, FADE ? 0 : 1);
+  // Record a canvas that is on screen. Tucked inside the closed Options
+  // panel it was display:none, and Safari can stop producing frames from a
+  // canvas nobody can see. In the card it doubles as a live preview.
+  stageToCard(c);
 
   try {
     await vid.play();
   } catch (e) {
     for (const tr of stream.getVideoTracks()) tr.stop();
     if (audio.monitor) audio.monitor.gain.value = 1;
+    stageHomeAgain();
     throw e;
   }
-  rec.start(250);
+  // One piece on the first try. Recording in quarter-second slices made a
+  // fragmented file, and some phones read only the first fragments' length.
+  // The second try uses one-second slices, in case a browser needs them.
+  if (attempt) rec.start(1000); else rec.start();
 
   const onHide = () => {
     if (document.hidden) { vid.pause(); if (rec.state === 'recording') rec.pause(); }
@@ -914,6 +970,7 @@ async function record(c, onProgress) {
   for (const tr of stream.getVideoTracks()) tr.stop();
   if (audio.gain) { audio.gain.gain.cancelScheduledValues(0); audio.gain.gain.value = 1; }
   if (audio.monitor) audio.monitor.gain.value = 1;
+  stageHomeAgain();
   // Something paused it -- a phone call, the audio being taken by another
   // app -- and it stopped well short. A clip half the length asked for is
   // not the clip, so try again rather than hand it over.
@@ -921,7 +978,15 @@ async function record(c, onProgress) {
   if (!why && !chunks.length) why = 'the recorder gave back nothing';
   if (why) throw new Error(why);
   const mime = ((rec.mimeType || type || 'video/webm').split(';')[0]) || 'video/webm';
-  return new Blob(chunks, { type: mime });
+  const blob = new Blob(chunks, { type: mime });
+
+  // Check the file, not just the recording: open it and read its length.
+  const d = await clipLength(blob);
+  if (d === -1) throw new Error('the saved clip wouldn’t open');
+  if (isFinite(d) && d < len * 0.8) {
+    throw new Error(`the saved clip came out ${d.toFixed(1)} s instead of ${len.toFixed(0)} s`);
+  }
+  return blob;
 }
 
 /* ---- saving -------------------------------------------------------------
