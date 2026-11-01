@@ -809,7 +809,12 @@ function updateCard(c) {
     w.innerHTML = '<span>Didn’t work</span>';
     const again = document.createElement('button');
     again.className = 'btn go'; again.type = 'button'; again.textContent = 'Try again';
-    again.addEventListener('click', () => { if (!S.busy) unlockVideo().then(makeAll); });
+    again.addEventListener('click', () => {
+      if (S.busy) return;
+      // Show it has been heard straight away; the unlock takes a moment.
+      for (const x of S.clips) if (x.state === 'failed') { x.state = 'queued'; x.error = null; updateCard(x); }
+      unlockVideo().then(makeAll);
+    });
     w.appendChild(again);
     c.card.el.classList.add('queued');
     screen.appendChild(w);
