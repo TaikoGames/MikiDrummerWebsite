@@ -91,7 +91,17 @@
   .clip .t em{font-style:normal;color:var(--hot);font-size:11px;letter-spacing:.06em}
   .clip .row{display:flex;gap:6px}
   .clip .row .btn{padding:8px 6px;font-size:12.5px}
-  .clip .row .save{flex:1}
+  .clip .row .save{flex:1;text-decoration:none}
+  .clip .dl{font-size:11.5px;color:var(--dim);text-align:center;text-decoration:underline;padding:2px 0 0}
+  .clip .dl:hover{color:var(--hot)}
+  .clip .dl[aria-disabled=true]{pointer-events:none;opacity:.4}
+  .saveHelp{font-size:12.5px;color:var(--mid);margin-top:8px}
+  /* Instagram, TikTok and Facebook open links in their own browser, and
+     that browser cannot save a file. Most people arrive here from a link
+     in bio, so this has to be the first thing they see. */
+  .inapp{margin-top:6px;background:#2a1608;border:1px solid var(--hot);border-radius:12px;padding:12px 14px;
+         font-size:14px;line-height:1.5}
+  .inapp b{color:var(--hot)}
 
   /* ---- everything optional ---- */
   details.more{margin-top:28px;background:var(--card);border:1px solid var(--edge);border-radius:14px}
@@ -144,6 +154,12 @@
     <p class="lead">Pick a video. Get story clips of the best bits. That's it.</p>
   </header>
 
+  <div class="inapp" id="inapp" hidden>
+    <b>Open this page in <span id="inappBrowser">your browser</span> to save your clips.</b><br>
+    <span id="inappHow">This app’s built-in browser can’t save videos to your phone. Tap the ⋯ menu
+    and choose “Open in browser”.</span>
+  </div>
+
   <label class="drop" id="drop">
     <input type="file" id="file" accept="video/*">
     <b class="pill" id="dropTitle">Choose a video</b>
@@ -161,6 +177,7 @@
       <h2 id="resTitle">Your clips</h2>
       <button class="btn go" id="saveAll" type="button" disabled>⬇ Save all</button>
     </div>
+    <p class="saveHelp" id="saveHelp"></p>
     <div class="clips" id="clips"></div>
   </div>
 
@@ -262,8 +279,12 @@
       <p>1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop
          browsers can only save WebM; if yours does, open the page on your phone instead.</p>
       <h3>How do I post them?</h3>
-      <p>On a phone, “Save” opens the share sheet, so you can send a clip straight to Instagram
-         or save it to Photos. On a computer it downloads.</p>
+      <p>On a phone, tap “Save” and pick “Save Video” to put the clip in your Photos, or pick
+         Instagram to post it straight away. “Download the file” under each clip saves it to
+         your Files or Downloads instead. On a computer, “Save” downloads it.</p>
+      <h3>Why won’t it save from Instagram?</h3>
+      <p>Instagram, TikTok and Facebook open links in their own built-in browser, which can’t
+         save files. Tap the ⋯ menu, open the page in Safari or Chrome, and it works.</p>
     </section>
   </div>
 
@@ -301,7 +322,9 @@
         { "@type": "Question", "name": "What format are the clips?",
           "acceptedAnswer": { "@type": "Answer", "text": "1080×1920 MP4 on iPhone, Android and current Chrome, Edge and Safari. A few desktop browsers can only save WebM; if yours does, open the page on your phone instead." } },
         { "@type": "Question", "name": "How do I post them?",
-          "acceptedAnswer": { "@type": "Answer", "text": "On a phone, “Save” opens the share sheet, so you can send a clip straight to Instagram or save it to Photos. On a computer it downloads." } }
+          "acceptedAnswer": { "@type": "Answer", "text": "On a phone, tap “Save” and pick “Save Video” to put the clip in your Photos, or pick Instagram to post it straight away. “Download the file” under each clip saves it to your Files or Downloads instead. On a computer, “Save” downloads it." } },
+        { "@type": "Question", "name": "Why won’t it save from Instagram?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Instagram, TikTok and Facebook open links in their own built-in browser, which can’t save files. Tap the ⋯ menu, open the page in Safari or Chrome, and it works." } }
       ]
     },
     {
@@ -613,9 +636,27 @@ function renderClips() {
     t.lastChild.textContent = c.rank === 1 && S.rms ? 'BEST' : c.rank ? '#' + c.rank : 'yours';
     const row = document.createElement('div');
     row.className = 'row';
-    const save = document.createElement('button');
-    save.className = 'btn go save'; save.type = 'button'; save.textContent = '⬇ Save';
-    save.addEventListener('click', () => saveClips([c]));
+    // On a computer the Save button is a real download link -- the most
+    // dependable way there is to put a file on a machine, with no script in
+    // the way. On a phone it opens the share sheet, which is where "Save
+    // Video" (Photos) and Instagram are, and a plain download link sits under
+    // it for when the sheet is not what you want.
+    let save;
+    if (canShareFiles) {
+      save = document.createElement('button');
+      save.type = 'button';
+      save.addEventListener('click', () => saveClips([c]));
+    } else {
+      save = document.createElement('a');
+      save.setAttribute('role', 'button');
+      save.addEventListener('click', (e) => { if (!c.blob) e.preventDefault(); else track(1, 'download'); });
+    }
+    save.className = 'btn go save';
+    save.textContent = '⬇ Save';
+    const dl = document.createElement('a');
+    dl.className = 'dl';
+    dl.textContent = 'Download the file';
+    dl.addEventListener('click', (e) => { if (!c.blob) e.preventDefault(); else track(1, 'download'); });
     const rm = document.createElement('button');
     rm.className = 'btn'; rm.type = 'button'; rm.textContent = '✕'; rm.title = 'Remove';
     rm.addEventListener('click', () => {
@@ -627,7 +668,8 @@ function renderClips() {
     });
     row.append(save, rm);
     el.append(screen, t, row);
-    c.card = { el, screen, save };
+    if (canShareFiles) el.append(dl);
+    c.card = { el, screen, save, dl };
     box.appendChild(el);
     updateCard(c);
   }
@@ -635,8 +677,12 @@ function renderClips() {
 
 function updateCard(c) {
   if (!c.card) return;
-  const { screen, save } = c.card;
-  save.disabled = !c.blob;
+  const { screen, save, dl } = c.card;
+  for (const a of [save, dl]) {
+    if (a.tagName !== 'A') { a.disabled = !c.blob; continue; }
+    if (c.blob) { const f = fileFor(c); a.href = c.url; a.download = f.name; a.removeAttribute('aria-disabled'); }
+    else { a.removeAttribute('href'); a.setAttribute('aria-disabled', 'true'); }
+  }
   if (c.state === 'done' && c.blob) {
     if (screen.querySelector('video')) return;
     screen.textContent = '';
@@ -750,18 +796,57 @@ async function record(c, onProgress) {
   for (const tr of stream.getVideoTracks()) tr.stop();
   if (audio.gain) { audio.gain.gain.cancelScheduledValues(0); audio.gain.gain.value = 1; }
   if (audio.monitor) audio.monitor.gain.value = 1;
-  const mime = (rec.mimeType || type || 'video/webm').split(';')[0];
+  const mime = ((rec.mimeType || type || 'video/webm').split(';')[0]) || 'video/webm';
   return new Blob(chunks, { type: mime });
 }
 
 /* ---- saving -------------------------------------------------------------
- * On a phone, the share sheet: Instagram is in it, and so is Save Video, and
- * it takes every clip at once. On a computer, plain downloads. */
-const isPhone = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+ * Three ways a file reaches a device, in order of how well they work:
+ *
+ *   phone       the share sheet -- "Save Video" puts it in Photos, and
+ *               Instagram and TikTok are right there too. Takes every clip
+ *               in one go.
+ *   any         a real <a download> link the person taps. Always on the
+ *               card, so there is a way to save that does not depend on
+ *               anything else having worked.
+ *   computer    for Save all, one download after another.
+ *
+ * What does NOT work is starting a download from script after the share
+ * sheet failed: the tap that allowed the sheet has been used up, and an
+ * iPhone quietly ignores the download. So when the sheet fails, the page
+ * says so and points at the link under each clip instead of pretending. */
+const UA = navigator.userAgent || '';
+const isPhone = /Mobi|Android|iPhone|iPad/i.test(UA) ||
                 (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ''));
+const isIOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ''));
+const canShareFiles = isPhone && !!navigator.canShare && (() => {
+  try { return navigator.canShare({ files: [new File([''], 'x.mp4', { type: 'video/mp4' })] }); }
+  catch (e) { return false; }
+})();
+
+/* The in-app browsers people land in from a link in bio. They can play the
+ * video and even make the clips, then fail at the very last step. */
+const IN_APP = [[/Instagram/i, 'Instagram'], [/FBAN|FBAV|FB_IAB/i, 'Facebook'],
+                [/musical_ly|TikTok|BytedanceWebview/i, 'TikTok'], [/Snapchat/i, 'Snapchat'],
+                [/Twitter/i, 'X'], [/Line\//i, 'LINE']];
+const inApp = (IN_APP.find(([re]) => re.test(UA)) || [])[1] || null;
+if (inApp) {
+  $('inapp').hidden = false;
+  $('inappBrowser').textContent = isIOS ? 'Safari' : 'Chrome';
+  $('inappHow').textContent = `${inApp}’s built-in browser can’t save videos to your phone. ` +
+    `Tap the ⋯ menu at the top and choose “Open in ${isIOS ? 'external browser' : 'Chrome'}”, ` +
+    'then pick your video there.';
+}
+
+$('saveHelp').textContent = canShareFiles
+  ? (isIOS ? 'Tap Save, then “Save Video” to put a clip in Photos — or pick Instagram to post it.'
+           : 'Tap Save to save a clip to your phone or send it straight to Instagram.')
+  : 'Clips save to your Downloads folder.';
+
+function track(n, via) { if (window.Track) Track.ev('story_save', { clips: n, via }); }
 
 function fileFor(c) {
-  const ext = c.blob.type.includes('mp4') ? 'mp4' : 'webm';
+  const ext = /mp4/.test(c.blob.type) ? 'mp4' : 'webm';
   const order = S.clips.slice().sort((a, b) => a.start - b.start);
   return new File([c.blob], clipName(S.name, order.indexOf(c), c.start, ext), { type: c.blob.type });
 }
@@ -770,17 +855,30 @@ async function saveClips(list) {
   const ready = list.filter(c => c.blob);
   if (!ready.length) return;
   const files = ready.map(fileFor);
-  if (isPhone && navigator.canShare) {
-    try {
-      if (navigator.canShare({ files })) {
+
+  if (canShareFiles) {
+    let ok = false;
+    try { ok = navigator.canShare({ files }); } catch (e) {}
+    if (ok) {
+      try {
         await navigator.share({ files });
-        if (window.Track) Track.ev('story_save', { clips: files.length, via: 'share' });
+        track(files.length, 'share');
         return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;     // they closed the sheet
       }
-    } catch (e) {
-      if (e && e.name === 'AbortError') return;      // they closed the sheet
     }
+    say(files.length > 1 ? 'Your phone wouldn’t take them all at once.'
+                         : 'Your phone wouldn’t open the share sheet.',
+        'Tap “Download the file” under each clip instead.', true);
+    return;
   }
+
+  // A computer: downloads, spaced out so the browser does not see a burst
+  // of them and block the lot. Chrome may still ask once whether this page
+  // is allowed to download several files -- say so before it does.
+  if (files.length > 1) say(`Saving ${files.length} clips…`,
+    'If your browser asks whether this page can download several files, choose Allow.');
   for (const f of files) {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(f);
@@ -789,9 +887,10 @@ async function saveClips(list) {
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 60000);
-    if (files.length > 1) await new Promise(r => setTimeout(r, 400));
+    if (files.length > 1) await new Promise(r => setTimeout(r, 700));
   }
-  if (window.Track) Track.ev('story_save', { clips: files.length, via: 'download' });
+  if (files.length > 1) say(`Saved ${files.length} clips to your Downloads folder.`);
+  track(files.length, 'download');
 }
 
 /* ---- options: preview, settings, your own moments ------------------- */
