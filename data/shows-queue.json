@@ -492,6 +492,20 @@
       "first_seen": "2026-10-12"
     },
     {
+      "band": "Josh & The Dirty Rags, Legion of Flying Monkeys, and The Ghost of Ken Sim @ Lanalou's",
+      "date": "2026-11-05",
+      "time": "",
+      "venue": "LANALOU'S Rock n' Roll Eatery 362 Powell St",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/josh-the-dirty-rags-x-legion-o/28918742457761061/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-02"
+    },
+    {
       "band": "Brasser / Big Time / The Fomites / Mooshy Face",
       "date": "2026-11-06",
       "time": "",
@@ -588,6 +602,20 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "vancouver-punk-calendar",
       "first_seen": "2026-10-08"
+    },
+    {
+      "band": "Lethbridge Invasion Night 1 Golers, Squidz, Brutalize, Zero Index",
+      "date": "2026-11-13",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion/1653147899703601/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-02"
     },
     {
       "band": "Lethbridge Invasion night 2 @ Bullys",
@@ -916,5 +944,5 @@
   "last_good": {
     "vancouver-punk-calendar": 1139
   },
-  "updated": "2026-11-01"
+  "updated": "2026-11-02"
 }
