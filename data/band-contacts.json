@@ -442,7 +442,7 @@
     },
     {
       "band": "Blasphamagoatachrist",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -458,7 +458,7 @@
     },
     {
       "band": "Blasphemy",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -1497,29 +1497,14 @@
     },
     {
       "band": "Exhumed",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
-      "instagram": "exhumed_official",
+      "instagram": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://exhumed.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Instagram",
-          "url": "https://www.instagram.com/exhumed_official/",
-          "found": "profile"
-        },
-        {
-          "name": "twitter.com",
-          "url": "http://www.twitter.com/exhumedofficial",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://www.gorefuckingmetal.blogspot.com",
           "found": "form"
         }
       ],
@@ -1884,7 +1869,7 @@
     },
     {
       "band": "Hellwitch",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -1898,11 +1883,6 @@
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43206710-ride-for-revenge-at-rickshaw-theatre?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Rickshaw",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2088,7 +2068,7 @@
     },
     {
       "band": "Jarhead Fertilizer",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2689,7 +2669,7 @@
     },
     {
       "band": "Molder",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2697,11 +2677,6 @@
         {
           "name": "Bandcamp",
           "url": "https://molder.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
         }
       ],
@@ -3223,7 +3198,7 @@
     },
     {
       "band": "Ride For Revenge",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -3237,11 +3212,6 @@
           "name": "songkick.com",
           "url": "https://www.songkick.com/concerts/43206710-ride-for-revenge-at-rickshaw-theatre?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Rickshaw",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3353,7 +3323,7 @@
     },
     {
       "band": "Savage Master",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -3658,7 +3628,7 @@
     },
     {
       "band": "Sunn O)))",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
       "instagram": "sunnobleue",
@@ -3677,11 +3647,6 @@
           "name": "soundcloud.com",
           "url": "https://soundcloud.com/soundofsunno",
           "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -4085,7 +4050,7 @@
     },
     {
       "band": "Tsalal",
-      "checked": "2026-09-18",
+      "checked": "2026-11-02",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -4093,16 +4058,6 @@
         {
           "name": "Bandcamp",
           "url": "https://tsalal.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "songkick.com",
-          "url": "https://www.songkick.com/concerts/43206710-ride-for-revenge-at-rickshaw-theatre?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Rickshaw",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
           "found": "form"
         }
       ],
