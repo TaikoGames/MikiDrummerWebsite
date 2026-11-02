@@ -3,7 +3,7 @@
  *     node tools/story_cutter_test.mjs
  */
 import { loudness, pickHighlights, snapToHit, evenly, fillRect, fitRect,
-         clock, clipName, autoLength, keepSize, crc32, zipParts, HOP } from '../js/story-cutter.js';
+         clock, clipName, autoLength, keepSize, crc32, zipParts, shareBatches, bitrateFor, SHARE_MAX_BYTES, HOP } from '../js/story-cutter.js';
 import { writeFileSync, mkdtempSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
@@ -137,6 +137,20 @@ for (const d of [20, 40, 50]) {
 ok(clock(75.4) === '1:15', 'clock');
 ok(clipName('gig.mov', 2, 61, 'mp4', 'short') === 'gig-short-03-1m01s.mp4', 'Shorts are named as shorts');
 ok(clipName('Live at Bully’s (2026).MOV', 0, 92.3, 'mp4') === 'Live-at-Bully-s-2026-story-01-1m32s.mp4', 'clip names are safe and sortable: ' + clipName('Live at Bully’s (2026).MOV', 0, 92.3, 'mp4'));
+
+// --- share-sheet batches -----------------------------------------------------
+{
+  const MB = 1024 * 1024;
+  const b = shareBatches([12 * MB, 12 * MB, 12 * MB, 12 * MB, 12 * MB]);
+  ok(JSON.stringify(b) === '[[0,1,2],[3,4]]', 'five 12 MB clips go in two sheets under 45 MB: ' + JSON.stringify(b));
+  for (const g of b) ok(g.length * 12 * MB <= SHARE_MAX_BYTES, 'no batch is over the limit');
+  ok(JSON.stringify(shareBatches([60 * MB, 5 * MB])) === '[[0],[1]]', 'a clip over the limit gets a sheet to itself');
+  ok(shareBatches(new Array(25).fill(1)).length === 3, 'never more than ten files to a sheet');
+  ok(JSON.stringify(shareBatches([])) === '[]', 'nothing to share, no sheets');
+  const flat = shareBatches([3, 50 * MB, 4, 5, 40 * MB, 1].map(x => x)).flat();
+  ok(JSON.stringify(flat) === '[0,1,2,3,4,5]', 'every clip once, in order');
+  ok(bitrateFor(1080, 1920) === 6e6 && bitrateFor(640, 360) === 2e6, 'bitrate between 2 and 6 Mbps');
+}
 
 // --- the ZIP ---------------------------------------------------------------
 ok(crc32(new TextEncoder().encode('123456789')) === 0xCBF43926, 'crc32 matches the standard check value');
