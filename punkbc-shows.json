@@ -3,19 +3,6 @@
   "shows": [
     {
       "band": "Sunn O)))",
-      "date": "2026-11-01",
-      "time": "20:00",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "From $107 USD",
-      "ticket": "https://www.livenation.com",
-      "genre": "Drone Metal",
-      "notes": "19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sunn_O%29%29%29_%40_Roskilde_%2705_%28327956477%29.jpg?width=600",
-      "curated": ""
-    },
-    {
-      "band": "Sunn O)))",
       "date": "2026-11-02",
       "time": "19:00",
       "venue": "The Pearl",
