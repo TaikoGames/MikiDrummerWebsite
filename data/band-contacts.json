@@ -210,7 +210,7 @@
     },
     {
       "band": "Arch Enemy",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -226,7 +226,7 @@
     },
     {
       "band": "Armored Saint",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -235,11 +235,6 @@
           "name": "Bandcamp",
           "url": "https://armoredsaint.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "twitter.com",
-          "url": "https://twitter.com/thearmoredsaint",
-          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -1023,7 +1018,7 @@
     },
     {
       "band": "Dead Bars",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -1035,7 +1030,7 @@
         },
         {
           "name": "songkick.com",
-          "url": "https://www.songkick.com/festivals/12711-fest/id/43163657-fest-2026?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Fest&quot;,&quot;utc_date&quot;:1792713600,&quot;event_date&quot;:&quot;23",
+          "url": "https://www.songkick.com/concerts/43449573-dead-bars-at-sunset-tavern?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Sunset",
           "found": "profile"
         }
       ],
@@ -2397,7 +2392,7 @@
     },
     {
       "band": "Livekill",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
       "instagram": "livekillofficial",
@@ -2413,8 +2408,8 @@
           "found": "profile"
         },
         {
-          "name": "twitter.com",
-          "url": "https://twitter.com/LiveKillBand",
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43239842-armored-saint-at-glass-house?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;The",
           "found": "profile"
         }
       ],
@@ -2584,7 +2579,7 @@
     },
     {
       "band": "Metal Church",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2722,30 +2717,15 @@
     },
     {
       "band": "Nervosa",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
-      "instagram": "nervosaofficial",
+      "instagram": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://nervosa.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Instagram",
-          "url": "http://instagram.com/nervosaofficial",
-          "found": "profile"
-        },
-        {
-          "name": "twitter.com",
-          "url": "http://twitter.com/nervosaband",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "https://nervosaband.co.uk",
-          "found": "form"
+          "found": "none"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3581,7 +3561,7 @@
     },
     {
       "band": "Suicide Machines",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -3706,7 +3686,7 @@
     },
     {
       "band": "The Aggrolites",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -3714,27 +3694,7 @@
         {
           "name": "Bandcamp",
           "url": "https://theaggrolites.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "songkick.com",
-          "url": "https://www.songkick.com/concerts/43212614-thee-sinseers-at-wiltern?utm_source=1471&utm_medium=partner",
-          "found": "profile"
-        },
-        {
-          "name": "twitter.com",
-          "url": "http://twitter.com/theaggrolites",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "https://music.aggroreggae.com",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "http://aggroreggae.com",
-          "found": "form"
+          "found": "none"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3742,7 +3702,7 @@
     },
     {
       "band": "The Bouncing Souls",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -3966,7 +3926,7 @@
     },
     {
       "band": "The Restarts",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
       "instagram": "the_restarts_official",
@@ -4024,25 +3984,15 @@
     },
     {
       "band": "Truck Violence",
-      "checked": "2026-09-19",
+      "checked": "2026-11-03",
       "email": "",
       "email_source": "",
-      "instagram": "truckviolence",
+      "instagram": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://truckviolence.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Instagram",
-          "url": "https://www.instagram.com/truckviolence",
-          "found": "profile"
-        },
-        {
-          "name": "youtube.com",
-          "url": "https://www.youtube.com/@truckviolence",
-          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
