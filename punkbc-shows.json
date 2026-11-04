@@ -2,32 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Plini",
-      "date": "2026-11-03",
-      "time": "18:00",
-      "venue": "Commodore Ballroom",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.commodoreballroom.com/shows",
-      "genre": "Progressive Metal",
-      "notes": "An Unnameable Desire North American Tour. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Plini248_300x_RG_%28cropped%29.jpg?width=500",
-      "curated": ""
-    },
-    {
-      "band": "King Buffalo",
-      "date": "2026-11-03",
-      "time": "19:00",
-      "venue": "The Pearl",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://thepearlvancouver.com/tm-event/king-buffalo-with-l-a-witch/",
-      "genre": "Stoner/Psych Rock",
-      "notes": "With L.A. Witch. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/King_Buffalo_op_het_Valkhof_Festival_2022.jpg?width=600",
-      "curated": ""
-    },
-    {
       "band": "Jon Spencer",
       "date": "2026-11-08",
       "time": "19:00",
