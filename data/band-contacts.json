@@ -137,34 +137,14 @@
     },
     {
       "band": "Anger Within",
-      "checked": "2026-09-20",
+      "checked": "2026-11-04",
       "email": "",
       "email_source": "",
-      "instagram": "officialangerwithin",
+      "instagram": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://angerwithin.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Instagram",
-          "url": "http://www.instagram.com/officialangerwithin",
-          "found": "profile"
-        },
-        {
-          "name": "twitter.com",
-          "url": "http://twitter.com/angerwithin",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://www.reverbnation.com",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "http://www.myspace.com",
           "found": "form"
         }
       ],
@@ -686,7 +666,7 @@
     },
     {
       "band": "Castrator",
-      "checked": "2026-09-20",
+      "checked": "2026-11-04",
       "email": "",
       "email_source": "",
       "instagram": "",
