@@ -31,6 +31,36 @@
       "source": "vancouver-punk-calendar",
       "first_seen": "2026-10-25",
       "reason": "Not a show: acoustic duo for the pool room."
+    },
+    {
+      "band": "Frank Turner and The Sleeping Souls",
+      "date": "2027-02-10",
+      "time": "",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "",
+      "image": "",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-06",
+      "reason": "Wrong date on the calendar: the show is March 10, 2027 (Live Nation, Exclaim) and is on the board."
+    },
+    {
+      "band": "Punk Market @ Vines Den",
+      "date": "2026-11-13",
+      "time": "",
+      "venue": "825 E Hastings St",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "",
+      "image": "",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-06",
+      "reason": "Not a show: a market."
     }
   ],
   "last_good": {
