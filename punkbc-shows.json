@@ -16,6 +16,20 @@
       "image_source": "https://f4.bcbits.com/img/a1070296930_5.jpg"
     },
     {
+      "band": "Fleabane",
+      "date": "2026-11-07",
+      "time": "19:30",
+      "venue": "The Open Studios",
+      "city": "Victoria",
+      "price": "$15",
+      "ticket": "https://victoriabuzz.com/2026/11/16-concerts-worth-checking-out-in-and-around-victoria-this-november/",
+      "genre": "Psych-Punk",
+      "notes": "Whitehorse psych-punk trio. With Boss Saint B, Exit 14.",
+      "image": "",
+      "curated": "",
+      "image_source": ""
+    },
+    {
       "band": "Jon Spencer",
       "date": "2026-11-08",
       "time": "19:00",
@@ -57,19 +71,6 @@
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Bad_Waitress_%2852062784998%29.jpg?width=600"
     },
     {
-      "band": "Ride For Revenge",
-      "date": "2026-11-11",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$70 adv",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Black Metal",
-      "notes": "With Hellwitch, Tsalal, Devouring Void. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/ride-for-revenge-2026-11-11.jpg",
-      "image_source": "https://f4.bcbits.com/img/a0073228294_5.jpg"
-    },
-    {
       "band": "L7",
       "date": "2026-11-11",
       "time": "20:00",
@@ -82,6 +83,19 @@
       "image": "https://www.mikidrummer.ca/images/shows/l7-2026-11-11.jpg",
       "curated": "",
       "image_source": "https://assets.nuwebgroup.com/public/media/production/4893064/conversions/dddnaDENwIDi77Y2-page_header_conversion.jpeg"
+    },
+    {
+      "band": "Ride For Revenge",
+      "date": "2026-11-11",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$70 adv",
+      "ticket": "https://rickshawtheatre.com",
+      "genre": "Black Metal",
+      "notes": "With Hellwitch, Tsalal, Devouring Void. 19+",
+      "image": "https://www.mikidrummer.ca/images/shows/ride-for-revenge-2026-11-11.jpg",
+      "image_source": "https://f4.bcbits.com/img/a0073228294_5.jpg"
     },
     {
       "band": "Blasphamagoatachrist",
@@ -124,19 +138,6 @@
       "image_source": "https://astoria.pub/wp-content/uploads/2026/10/20261113_Deathtape_IG45_updated.webp"
     },
     {
-      "band": "Truck Violence",
-      "date": "2026-11-13",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "$20",
-      "ticket": "https://www.eventbrite.ca/e/truck-violence-tickets-1992091123175",
-      "genre": "Punk",
-      "notes": "With Tall Mary, Emma Goldman.",
-      "image": "https://www.mikidrummer.ca/images/shows/truck-violence-2026-11-13.jpg",
-      "image_source": "https://www.eventbrite.ca/_next/image?url=https%3A%2F%2Fimg.evbuc.com%2Fhttps%253A%252F%252Fcdn.evbuc.com%252Fimages%252F1187151549%252F278048894574%252F1%252Foriginal.20260617-224549%3Fcrop%3Dfocalpoint%26fit%3Dcrop%26w%3D940%26auto%3Dformat%252Ccompress%26q%3D75%26sharp%3D10%26fp-x%3D0.507%26fp-y%3D0.342%26s%3Dc8f8772261cd5c5ccd477e53db46f554&w=940&q=75"
-    },
-    {
       "band": "Lethbridge Invasion — Night 1",
       "date": "2026-11-13",
       "time": "20:00",
@@ -149,6 +150,19 @@
       "image": "https://www.mikidrummer.ca/images/shows/lethbridge-invasion-night-1-2026-11-13.jpg",
       "curated": "",
       "image_source": "https://f4.bcbits.com/img/a3805293918_5.jpg"
+    },
+    {
+      "band": "Truck Violence",
+      "date": "2026-11-13",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "$20",
+      "ticket": "https://www.eventbrite.ca/e/truck-violence-tickets-1992091123175",
+      "genre": "Punk",
+      "notes": "With Tall Mary, Emma Goldman.",
+      "image": "https://www.mikidrummer.ca/images/shows/truck-violence-2026-11-13.jpg",
+      "image_source": "https://www.eventbrite.ca/_next/image?url=https%3A%2F%2Fimg.evbuc.com%2Fhttps%253A%252F%252Fcdn.evbuc.com%252Fimages%252F1187151549%252F278048894574%252F1%252Foriginal.20260617-224549%3Fcrop%3Dfocalpoint%26fit%3Dcrop%26w%3D940%26auto%3Dformat%252Ccompress%26q%3D75%26sharp%3D10%26fp-x%3D0.507%26fp-y%3D0.342%26s%3Dc8f8772261cd5c5ccd477e53db46f554&w=940&q=75"
     },
     {
       "band": "Arch Enemy",
@@ -164,18 +178,18 @@
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Arch_Enemy_since_2026_collage.jpg?width=500"
     },
     {
-      "band": "Lethbridge Invasion — Night 2",
+      "band": "Bad Waitress / Mean Bikini / Dirtnap",
       "date": "2026-11-14",
-      "time": "19:00",
-      "venue": "Bully's Studios",
-      "city": "New Westminster",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/lethbridge-invasion-night-2/2907068749648249/",
-      "genre": "Punk / Hardcore",
-      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood.",
-      "image": "https://www.mikidrummer.ca/images/shows/lethbridge-invasion-night-2-2026-11-14.jpg",
+      "time": "19:30",
+      "venue": "Lucky Bar",
+      "city": "Victoria",
+      "price": "$20–25",
+      "ticket": "https://do250.com/venues/lucky-bar",
+      "genre": "Punk",
+      "notes": "Triple punk party from east to west. Doors 7pm. 19+",
+      "image": "",
       "curated": "",
-      "image_source": "https://f4.bcbits.com/img/a3288970953_5.jpg"
+      "image_source": ""
     },
     {
       "band": "Black Death Cult",
@@ -190,6 +204,20 @@
       "image": "https://www.mikidrummer.ca/images/shows/black-death-cult-2026-11-14.jpg",
       "curated": "",
       "image_source": "https://astoria.pub/wp-content/uploads/2026/10/old-event-845.webp"
+    },
+    {
+      "band": "Lethbridge Invasion — Night 2",
+      "date": "2026-11-14",
+      "time": "19:00",
+      "venue": "Bully's Studios",
+      "city": "New Westminster",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion-night-2/2907068749648249/",
+      "genre": "Punk / Hardcore",
+      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood.",
+      "image": "https://www.mikidrummer.ca/images/shows/lethbridge-invasion-night-2-2026-11-14.jpg",
+      "curated": "",
+      "image_source": "https://f4.bcbits.com/img/a3288970953_5.jpg"
     },
     {
       "band": "Metal Church",
@@ -216,6 +244,48 @@
       "notes": "",
       "image": "https://www.mikidrummer.ca/images/shows/metal-church-armored-saint-2026-11-15.jpg",
       "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Armored_Saint_-_Wacken_Open_Air_2024_06.jpg/1280px-Armored_Saint_-_Wacken_Open_Air_2024_06.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
+    },
+    {
+      "band": "The Restarts / Alien Boys",
+      "date": "2026-11-15",
+      "time": "20:00",
+      "venue": "Unleashed Brewing",
+      "city": "Kelowna",
+      "price": "",
+      "ticket": "https://exclaim.ca/concertcentral/concerts/the-restarts-kelowna-2026-11-15",
+      "genre": "Punk / Ska-Punk",
+      "notes": "East London punk veterans' first Canadian tour in 15 years.",
+      "image": "",
+      "curated": "",
+      "image_source": ""
+    },
+    {
+      "band": "The Restarts / Alien Boys / Pepper Spray",
+      "date": "2026-11-16",
+      "time": "21:00",
+      "venue": "The Coda",
+      "city": "Victoria",
+      "price": "$20 adv / $25 door",
+      "ticket": "https://exclaim.ca/concertcentral/concerts/the-restarts-victoria-2026-11-16",
+      "genre": "Punk / Ska-Punk",
+      "notes": "First Canadian tour in 15 years. Doors 9pm. 19+",
+      "image": "",
+      "curated": "",
+      "image_source": ""
+    },
+    {
+      "band": "The Restarts",
+      "date": "2026-11-17",
+      "time": "",
+      "venue": "The Globe",
+      "city": "Nanaimo",
+      "price": "",
+      "ticket": "https://www.theglobelivestudio.com/",
+      "genre": "Punk / Ska-Punk",
+      "notes": "Kanata Tour 2026.",
+      "image": "",
+      "curated": "",
+      "image_source": ""
     },
     {
       "band": "Underoath / August Burns Red",
@@ -286,20 +356,6 @@
       "image_source": "http://static1.squarespace.com/static/5e18e652d375b8296da6709b/t/67f4aa6065ed532f93e4754c/1744087648669/OBGMs-Logo-Gif-2025.gif?format=1500w"
     },
     {
-      "band": "WAAX",
-      "date": "2026-11-21",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "$22 adv",
-      "ticket": "https://rickshawtheatre.com/show_listings/waax-angels-mess-tour/",
-      "genre": "Punk/Alt Rock",
-      "notes": "Angel's Mess Tour. Rickshaw and Cobalt present. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/waax-2026-11-21.jpg",
-      "curated": "",
-      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/SXSW_2019_-_WAAX_%2833555039998%29.jpg?width=600"
-    },
-    {
       "band": "Vic Bondi and His Issues",
       "date": "2026-11-21",
       "time": "20:00",
@@ -312,6 +368,20 @@
       "image": "https://www.mikidrummer.ca/images/shows/vic-bondi-and-his-issues-2026-11-21.jpg",
       "curated": "",
       "image_source": "https://f4.bcbits.com/img/a3909317052_5.jpg"
+    },
+    {
+      "band": "WAAX",
+      "date": "2026-11-21",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "$22 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/waax-angels-mess-tour/",
+      "genre": "Punk/Alt Rock",
+      "notes": "Angel's Mess Tour. Rickshaw and Cobalt present. 19+",
+      "image": "https://www.mikidrummer.ca/images/shows/waax-2026-11-21.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/SXSW_2019_-_WAAX_%2833555039998%29.jpg?width=600"
     },
     {
       "band": "Babe Haven",
@@ -342,20 +412,6 @@
       "image_source": "https://f4.bcbits.com/img/a1558359627_5.jpg"
     },
     {
-      "band": "The Oldest Man I Know",
-      "date": "2026-11-28",
-      "time": "",
-      "venue": "Green Auto",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://gigpit.ca/shows/event:1vnttTAwF3c",
-      "genre": "Punk",
-      "notes": "With Beastie, Staggers and Jags, Call Before You Dig, Shorefox.",
-      "image": "https://www.mikidrummer.ca/images/shows/the-oldest-man-i-know-2026-11-28.jpg",
-      "curated": "",
-      "image_source": "https://api.gigpit.ca/services/images/OrhGmGNhdhk?height=1200"
-    },
-    {
       "band": "Pointed Sticks",
       "date": "2026-11-28",
       "time": "19:30",
@@ -368,6 +424,20 @@
       "image": "https://www.mikidrummer.ca/images/shows/pointed-sticks-2026-11-28.jpg",
       "curated": "",
       "image_source": "Made for Punk BC: no picture of this show or band could be found."
+    },
+    {
+      "band": "The Oldest Man I Know",
+      "date": "2026-11-28",
+      "time": "",
+      "venue": "Green Auto",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://gigpit.ca/shows/event:1vnttTAwF3c",
+      "genre": "Punk",
+      "notes": "With Beastie, Staggers and Jags, Call Before You Dig, Shorefox.",
+      "image": "https://www.mikidrummer.ca/images/shows/the-oldest-man-i-know-2026-11-28.jpg",
+      "curated": "",
+      "image_source": "https://api.gigpit.ca/services/images/OrhGmGNhdhk?height=1200"
     },
     {
       "band": "Insomnium & Amorphis",
@@ -384,20 +454,6 @@
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Insomnium_Party.San_Metal_Open_Air_2017_46.jpg?width=600"
     },
     {
-      "band": "The Meteors",
-      "date": "2026-12-03",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$28 adv",
-      "ticket": "https://rickshawtheatre.com/show_listings/the-meteors/",
-      "genre": "Psychobilly",
-      "notes": "With Billy and The Parole Models, Cryptyds. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/the-meteors-2026-12-03.jpg",
-      "curated": "",
-      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Meteors_live_in_Pordenone%2C_Italy%2C_2006.jpg?width=600"
-    },
-    {
       "band": "Protest the Hero",
       "date": "2026-12-03",
       "time": "20:00",
@@ -410,6 +466,20 @@
       "image": "https://www.mikidrummer.ca/images/shows/protest-the-hero-2026-12-03.jpg",
       "curated": "",
       "image_source": "https://en.wikipedia.org/wiki/Special:FilePath/ProtestAtSOMF.jpg?width=600"
+    },
+    {
+      "band": "The Meteors",
+      "date": "2026-12-03",
+      "time": "19:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$28 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/the-meteors/",
+      "genre": "Psychobilly",
+      "notes": "With Billy and The Parole Models, Cryptyds. 19+",
+      "image": "https://www.mikidrummer.ca/images/shows/the-meteors-2026-12-03.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Meteors_live_in_Pordenone%2C_Italy%2C_2006.jpg?width=600"
     },
     {
       "band": "1876",
