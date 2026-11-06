@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0d0b0c">
 <title>Site Admin — Miki Drummer</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="96x96" href="/images/icon-96.png">
@@ -13,810 +14,1066 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-192.png">
 <link rel="apple-touch-icon" href="/images/icon-180.png">
 <style>
+  /* Built for a phone first: one column, big targets, the tabs under your
+     thumb. On a laptop the same page just gets a little wider. */
   :root{
-    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2c2023;
-    --accent:#e8372a; --gold:#e7b53c; --ink:#f4efe6; --muted:#a2938c; --ok:#7ee787;
+    --bg:#0d0b0c; --panel:#171113; --panel2:#1f1618; --line:#2e2124;
+    --accent:#e8372a; --accent-ink:#1a0403; --gold:#e7b53c; --ink:#f4efe6;
+    --muted:#a99a92; --ok:#7ee787; --err:#ff8a7a;
+    --tabh:64px; --r:16px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
+  [hidden]{display:none!important}   /* .row and .btn set display; hidden must still win */
+  html{-webkit-text-size-adjust:100%}
   body{
-    background:
-      radial-gradient(1100px 620px at 50% -10%, #3a0a0a 0%, transparent 60%),
-      linear-gradient(#0d0b0c,#140d0d 70%,#170c0c);
-    color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
-    min-height:100vh;padding:24px 16px 120px;
+    background:radial-gradient(900px 520px at 50% -12%, #3a0a0a 0%, transparent 62%), var(--bg);
+    color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    min-height:100vh;
+    padding:calc(env(safe-area-inset-top) + 14px) 16px calc(var(--tabh) + env(safe-area-inset-bottom) + 28px);
   }
-  .wrap{max-width:900px;margin:0 auto;position:relative;z-index:1}
-  /* The pumpkin canvas lives at z-index 0 behind all of this. The save bar is
-     fixed and already above it. */
-  .pump{background:transparent;border:1px solid var(--line);color:var(--muted);
-        border-radius:20px;padding:6px 12px;font-size:11px;font-family:ui-monospace,Menlo,monospace;
-        cursor:pointer;letter-spacing:.04em}
-  .pump:hover{border-color:var(--accent);color:var(--ink)}
-  .pump.on{color:#ff9d3c;border-color:rgba(255,157,60,.5)}
-  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-  h1{font-size:24px;letter-spacing:-.01em}
-  .sub{color:var(--muted);font-size:13.5px;margin-bottom:22px}
-  .status{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:6px 12px}
-  .status .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:middle}
+  a{color:inherit}
+  button,input,select,textarea{font:inherit;color:inherit}
+  .wrap{max-width:640px;margin:0 auto}
 
-  h2.sec{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  /* ---------- header ---------- */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .top h1{font-size:22px;letter-spacing:-.01em}
+  .top h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0}
+  .pill{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 13px;border-radius:999px;
+        border:1px solid var(--line);background:var(--panel);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .pill .dot{width:9px;height:9px;border-radius:50%;background:#6b7280}
+  .pill.on .dot{background:var(--ok)}
 
-  .card{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);border-radius:16px;padding:18px}
-  .card.wide{grid-column:1/-1}
-  .card .hd{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .card .ttl{font-size:16px;font-weight:800;display:flex;align-items:center;gap:9px}
-  .card .desc{color:var(--muted);font-size:13px;margin-top:8px;line-height:1.5}
-  .tag{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}
-  .tag.live{color:var(--ok);border-color:rgba(126,231,135,.4)}
-  .tag.idea{color:var(--gold);border-color:rgba(231,181,60,.4)}
+  /* ---------- tabs ---------- */
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;
+        background:rgba(14,10,11,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);
+        padding-bottom:env(safe-area-inset-bottom)}
+  .tabs .in{display:grid;grid-template-columns:repeat(4,1fr);width:100%;max-width:640px}
+  .tab{height:var(--tabh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+       background:none;border:0;color:var(--muted);font-size:11.5px;font-weight:700;letter-spacing:.02em;cursor:pointer;position:relative}
+  .tab .ic{font-size:21px;line-height:1}
+  .tab[aria-selected="true"]{color:var(--ink)}
+  .tab[aria-selected="true"]::before{content:"";position:absolute;top:0;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+  .tab .badge{position:absolute;top:8px;left:calc(50% + 8px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+              background:var(--accent);color:#fff;font-size:11px;line-height:18px;text-align:center}
+  .view{display:none}
+  .view.on{display:block}
+
+  /* ---------- building blocks ---------- */
+  h2.sec{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:24px 2px 10px}
+  h2.sec:first-child{margin-top:4px}
+  .card{background:linear-gradient(180deg,var(--panel),#140d0f);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+  .card.hot{border-color:rgba(232,55,42,.55)}
+  .hd{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .ttl{font-size:17px;font-weight:800;display:flex;align-items:center;gap:9px;min-width:0}
+  .desc{color:var(--muted);font-size:13.5px;margin-top:6px}
+  .tag{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .tag.ok{color:var(--ok);border-color:rgba(126,231,135,.4)}
+  .tag.warn{color:var(--gold);border-color:rgba(231,181,60,.45)}
+  .tag.hot{color:#ffb4ab;border-color:rgba(232,55,42,.5)}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;
+       border-radius:12px;border:1px solid transparent;background:var(--accent);color:var(--accent-ink);
+       font-weight:800;font-size:15px;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent}
+  .btn:active{transform:scale(.98)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+  .btn.ghost{background:var(--panel2);color:var(--ink);border-color:var(--line)}
+  .btn.big{width:100%;min-height:58px;font-size:17px;border-radius:14px}
+  .btn.sm{min-height:38px;padding:0 13px;font-size:13.5px;border-radius:10px}
+  .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .row > .btn{flex:1 1 auto}
+  .msg{font-size:13px;color:var(--muted);min-height:18px;margin-top:8px}
+  .msg.ok{color:var(--ok)} .msg.err{color:var(--err)}
+
+  label.fld{display:block;font-size:12.5px;color:var(--muted);margin:12px 0 6px}
+  input[type=text],input[type=url],input[type=date],input[type=number],input[type=password],select,textarea{
+    width:100%;min-height:46px;background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--ink);
+    border-radius:11px;padding:10px 12px;font-size:16px /* 16px stops iOS zooming in */}
+  textarea{font-family:ui-monospace,Menlo,monospace;font-size:14px;min-height:170px;resize:vertical;line-height:1.5}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+  /* chips (segmented choices) */
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .chip{min-height:40px;padding:0 15px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);
+        font-weight:700;font-size:14px;cursor:pointer}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .note{font-size:12.5px;color:var(--muted);margin-top:10px}
 
   /* switch */
-  .switch{position:relative;display:inline-block;width:52px;height:30px;flex-shrink:0}
-  .switch input{opacity:0;width:0;height:0}
-  .track{position:absolute;inset:0;background:#3a2c2c;border-radius:30px;transition:.2s;border:1px solid var(--line)}
-  .track::before{content:"";position:absolute;height:22px;width:22px;left:4px;top:3px;background:#cabfb8;border-radius:50%;transition:.2s}
+  .switch{position:relative;display:inline-block;width:58px;height:34px;flex-shrink:0}
+  .switch input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+  .track{position:absolute;inset:0;background:#3a2c2c;border-radius:34px;transition:.2s;border:1px solid var(--line);pointer-events:none}
+  .track::before{content:"";position:absolute;height:26px;width:26px;left:4px;top:3px;background:#cabfb8;border-radius:50%;transition:.2s}
   .switch input:checked + .track{background:var(--accent);border-color:var(--accent)}
-  .switch input:checked + .track::before{transform:translateX(21px);background:#fff}
-  .switch input:disabled + .track{opacity:.5}
-  .autooff{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px}
-  .ao-label{font-size:12.5px;color:var(--muted)}
-  .chip,.pchip{background:#1f1618;border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:7px 13px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
-  .chip:hover,.pchip:hover{border-color:var(--accent);color:var(--accent)}
-  .chip.active,.pchip.active{background:var(--accent);border-color:var(--accent);color:#180203}
-  .ao-status{font-size:12.5px;color:var(--gold);font-family:ui-monospace,Menlo,monospace;margin-left:2px}
-  .gfxchip{background:#1f1618;border:1px solid var(--line);color:var(--ink);border-radius:20px;padding:7px 13px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit}
-  .gfxchip:hover{border-color:var(--accent);color:var(--accent)}
-  .gfxchip.active{background:var(--accent);border-color:var(--accent);color:#180203}
-  .gfx-thumb{width:170px;height:106px;border-radius:9px;object-fit:cover;background:#000;flex-shrink:0;border:1px solid var(--line);transition:filter .2s ease}
+  .switch input:checked + .track::before{transform:translateX(23px);background:#fff}
+  .switch input:focus-visible + .track{outline:2px solid var(--gold);outline-offset:2px}
 
-  label.fld{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
-  input[type=text],input[type=url],select,textarea{
-    width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--ink);
-    border-radius:9px;padding:11px 12px;font-family:inherit;font-size:13.5px
-  }
-  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
-  .fv-row{display:flex;gap:14px;align-items:flex-end;margin-top:8px}
-  .fv-thumb{width:132px;height:74px;border-radius:9px;object-fit:cover;background:#000;flex-shrink:0;border:1px solid var(--line)}
-  @media(max-width:560px){.fv-row{flex-direction:column;align-items:stretch}.fv-thumb{width:100%;height:auto;aspect-ratio:16/9}}
-  .ph-ttl{font-size:13.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .ph-path{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted);font-weight:400}
-  .ph-preview{width:100%;height:200px;object-fit:cover;border-radius:12px;background:#000;border:1px solid var(--line);display:block;margin-bottom:10px}
-  textarea{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;min-height:150px;resize:vertical;line-height:1.5}
+  /* status strip on Home */
+  .strip{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:6px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 12px;text-align:left;cursor:pointer;min-height:64px}
+  .stat b{display:block;font-size:15px}
+  .stat span{font-size:12px;color:var(--muted)}
+  .stat.hot{border-color:rgba(232,55,42,.6)}
+  .stat.hot b{color:#ffb4ab}
 
-  .btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#180203;border:none;border-radius:9px;padding:10px 16px;font-weight:800;font-size:13.5px;cursor:pointer;text-decoration:none}
-  .btn:hover{filter:brightness(1.08)}
-  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-  .btn.ghost:hover{background:rgba(255,255,255,.06)}
-  .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:14px}
-  .msg{font-size:12.5px;color:var(--ok);min-height:16px}
+  /* news items */
+  .news-item{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line)}
+  .news-item:first-child{border-top:0}
+  .news-item .txt{flex:1;min-width:0}
+  .news-item .t{font-weight:700;overflow-wrap:anywhere}
+  .news-item .d{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+  .news-item.expired .t,.news-item.expired .d{opacity:.5;text-decoration:line-through}
+  .icon-btn{width:42px;height:42px;flex-shrink:0;border-radius:11px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;font-size:16px}
+  .empty{color:var(--muted);font-size:13.5px;padding:6px 0}
+  details.raw{margin-top:12px}
+  details.raw summary{cursor:pointer;color:var(--muted);font-size:13px;min-height:32px;display:flex;align-items:center}
 
-  .linkcard{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .linkcard .meta{font-size:12.5px;color:var(--muted);margin-top:4px}
+  /* thumbnails */
+  .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:#000;border:1px solid var(--line);display:block;margin-top:12px}
+  .thumb.contain{object-fit:contain}
+  .thumb[hidden]{display:none}
 
-  .savebar{position:fixed;left:0;right:0;bottom:0;background:rgba(16,11,12,.96);border-top:1px solid var(--line);
-    padding:12px 16px;display:none;align-items:center;justify-content:space-between;gap:12px;backdrop-filter:blur(6px);z-index:50}
-  .savebar.show{display:flex}
-  .savebar .txt{font-size:13px;color:var(--muted)}
-  .savebar .txt b{color:var(--ink)}
-  .note{font-size:12px;color:var(--muted);background:rgba(0,0,0,.25);border-left:3px solid var(--accent);padding:10px 12px;border-radius:6px;margin-top:14px;line-height:1.5}
+  /* link lists */
+  .list{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+  .list a,.list button.li{display:flex;align-items:center;gap:12px;padding:13px 14px;min-height:58px;text-decoration:none;border:0;
+       border-top:1px solid var(--line);background:none;width:100%;text-align:left;cursor:pointer}
+  .list a:first-child,.list button.li:first-child{border-top:0}
+  .list .em{font-size:21px;width:28px;text-align:center;flex-shrink:0}
+  .list .lt{flex:1;min-width:0}
+  .list .lt b{display:block;font-size:15px}
+  .list .lt span{display:block;font-size:12.5px;color:var(--muted)}
+  .list .go{color:var(--muted);font-size:18px}
+  .list .cnt{background:var(--accent);color:#fff;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:800}
+
+  .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+  .tile{display:flex;flex-direction:column;gap:6px;justify-content:flex-end;min-height:96px;padding:14px;border-radius:var(--r);
+        background:var(--panel);border:1px solid var(--line);text-decoration:none}
+  .tile .em{font-size:24px}
+  .tile b{font-size:15px}
+  .tile span{font-size:12px;color:var(--muted)}
+  .tile.hot{border-color:rgba(232,55,42,.55);background:linear-gradient(160deg,#2a1012,var(--panel))}
+
+  /* newsletter */
+  .issue{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:10px}
+  .issue .n{font-size:26px;font-weight:900;letter-spacing:-.02em;line-height:1.15}
+  .steps{list-style:none;margin-top:12px}
+  .steps li{display:flex;gap:10px;align-items:center;padding:7px 0;font-size:14px;color:var(--muted)}
+  .steps li .s{width:22px;text-align:center}
+  .steps li.now{color:var(--ink)} .steps li.done{color:var(--ok)} .steps li.bad{color:var(--err)}
+  .help{background:rgba(231,181,60,.08);border:1px solid rgba(231,181,60,.35);border-radius:12px;padding:12px 13px;margin-top:12px;font-size:13.5px}
+  .help ol{margin:8px 0 0 18px}
+  .help li{margin:4px 0}
+  .help code{background:rgba(0,0,0,.4);padding:1px 5px;border-radius:5px;font-size:12.5px}
+
+  /* sheet (confirm / connect) */
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;display:none;align-items:flex-end;justify-content:center}
+  .scrim.on{display:flex}
+  .sheet{width:100%;max-width:560px;background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:20px 20px 0 0;
+         padding:20px 18px calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+  .sheet h3{font-size:19px;margin-bottom:6px}
+  .sheet .grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:-8px auto 14px}
+  @media(min-width:700px){ .scrim{align-items:center} .sheet{border-radius:20px;border-bottom:1px solid var(--line)} }
+
+  .toast{position:fixed;left:50%;bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 14px);transform:translateX(-50%) translateY(20px);
+         background:#241a1c;border:1px solid var(--line);padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;
+         transition:.25s;z-index:70;max-width:calc(100% - 32px)}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.ok{border-color:rgba(126,231,135,.5)} .toast.err{border-color:rgba(255,138,122,.6)}
+  /* The chat bubble's home corner is where the tab bar lives on this page:
+     start it above the tabs. Stronger than its own rule, weaker than the
+     inline position it takes once dragged, so moving it still works. */
+  body .cbub-btn{bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 14px)}
+  body .cbub-panel{bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 82px);max-height:calc(100vh - var(--tabh) - 120px)}
+  @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="top">
-    <div>
-      <h1>🎛️ Site Admin</h1>
-      <div class="sub">Flip switches and edit content — no code. Changes save straight to your live site.</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <a class="btn ghost" href="/index.html" target="_blank" rel="noopener">🏠 My homepage ↗</a>
-      <div class="status"><span class="dot" id="connDot" style="background:#6b7280"></span><span id="connText">not connected</span></div>
-    </div>
-  </div>
 
-  <!-- ===================== TONIGHT ===================== -->
-  <div class="card wide" id="showCard" style="border-color:var(--accent)">
-    <div class="hd">
-      <div class="ttl">💡 Light Show <span class="tag live">stage tool</span></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <a class="btn" href="/light-show.html" style="background:var(--accent);color:#180a03;border-color:var(--accent)">GRANITE →</a>
-        <a class="btn" href="/light-show.html?band=lta" style="background:var(--accent);color:#180a03;border-color:var(--accent)">Lift the Anchor →</a>
+  <header class="top">
+    <h1>🎛️ Admin <small id="hello">Miki Drummer</small></h1>
+    <button class="pill" id="connPill" type="button"><span class="dot"></span><span id="connText">Connect</span></button>
+  </header>
+
+  <!-- ================================================================ HOME -->
+  <section class="view" id="v-home" aria-labelledby="t-home">
+    <div class="strip" id="strip">
+      <button class="stat" data-jump="newsCard"><b id="sNews">…</b><span>News ticker</span></button>
+      <button class="stat" data-jump="posterCard"><b id="sPoster">…</b><span>Poster</span></button>
+      <button class="stat" data-jump="introCard"><b id="sIntro">…</b><span>Intro video</span></button>
+      <button class="stat" data-tab="punkbc" id="sQueueBox"><b id="sQueue">…</b><span>Shows waiting</span></button>
+    </div>
+
+    <!-- News: the thing changed most often, so it comes first and is a form, not a text file -->
+    <div class="card" id="newsCard">
+      <div class="hd"><div class="ttl">📰 News ticker</div><span class="tag" id="newsTag">…</span></div>
+      <div class="desc">The scrolling bar across the top of every page.</div>
+      <div id="newsList" style="margin-top:8px"></div>
+      <div class="row" id="newsTools">
+        <button class="btn ghost sm" id="newsAdd" type="button">＋ Add item</button>
+        <button class="btn ghost sm" id="newsPrune" type="button" hidden>Remove expired</button>
+      </div>
+      <div id="newsForm" hidden>
+        <label class="fld" for="nTitle">Headline</label>
+        <input type="text" id="nTitle" placeholder="Granite at Bully's Studios, Nov 14">
+        <label class="fld" for="nDesc">Detail <span style="opacity:.7">(optional)</span></label>
+        <input type="text" id="nDesc" placeholder="Doors 8pm · $15">
+        <label class="fld" for="nLink">Link <span style="opacity:.7">(optional)</span></label>
+        <input type="url" id="nLink" placeholder="https://…" inputmode="url">
+        <label class="fld" for="nExp">Take it down after <span style="opacity:.7">(optional)</span></label>
+        <input type="date" id="nExp">
+        <div class="row">
+          <button class="btn" id="nSave" type="button">Add &amp; publish</button>
+          <button class="btn ghost" id="nCancel" type="button">Cancel</button>
+        </div>
+      </div>
+      <details class="raw">
+        <summary>Edit as text</summary>
+        <textarea id="newsBox" spellcheck="false"></textarea>
+        <div class="row"><button class="btn" id="saveNewsRaw" type="button">Save text</button></div>
+      </details>
+      <div class="msg" id="newsMsg"></div>
+    </div>
+
+    <!-- Poster -->
+    <div class="card" id="posterCard">
+      <div class="hd"><div class="ttl">🪧 Poster</div><span class="tag" id="posterTag">…</span></div>
+      <div class="desc">Pops up full screen when someone lands on the site — a flyer, a release.</div>
+      <img class="thumb contain" id="posterThumb" alt="" hidden>
+      <label class="fld" for="posterUrl">Image link</label>
+      <input type="url" id="posterUrl" placeholder="https://…/poster.jpg" inputmode="url">
+      <label class="fld">Take it down after</label>
+      <div class="chips" style="margin-top:0" id="posterDays">
+        <button class="chip" data-days="1" type="button">1 day</button>
+        <button class="chip" data-days="3" type="button">3 days</button>
+        <button class="chip" data-days="7" type="button">1 week</button>
+        <button class="chip" data-days="14" type="button">2 weeks</button>
+        <button class="chip" data-days="0" type="button">Never</button>
+      </div>
+      <div class="two" style="margin-top:12px;align-items:end">
+        <div><label class="fld" for="posterSecs" style="margin-top:0">On screen for (seconds)</label>
+          <input type="number" id="posterSecs" min="1" max="600" value="15" inputmode="numeric"></div>
+        <a class="btn ghost" href="/poster.html">🎨 Make one</a>
+      </div>
+      <div class="row">
+        <button class="btn" id="savePoster" type="button">Publish poster</button>
+        <button class="btn ghost" id="removePoster" type="button">Remove</button>
+      </div>
+      <div class="msg" id="posterMsg"></div>
+    </div>
+
+    <!-- Intro video -->
+    <div class="card" id="introCard">
+      <div class="hd">
+        <div class="ttl">🎬 Intro video</div>
+        <label class="switch" aria-label="Intro video on the homepage"><input type="checkbox" id="videoToggle"><span class="track"></span></label>
+      </div>
+      <div class="desc" id="introStatus">Full-screen video on the homepage.</div>
+      <div class="chips" id="introHours">
+        <button class="chip" data-hrs="1" type="button">1h</button>
+        <button class="chip" data-hrs="3" type="button">3h</button>
+        <button class="chip" data-hrs="6" type="button">6h</button>
+        <button class="chip" data-hrs="24" type="button">24h</button>
+      </div>
+      <div class="hd" style="margin-top:14px">
+        <div><b style="font-size:14.5px">Follow my live stream</b><div class="desc" style="margin-top:2px" id="liveStatus">…</div></div>
+        <label class="switch" aria-label="Turn on automatically when I go live"><input type="checkbox" id="liveAuto"><span class="track"></span></label>
+      </div>
+      <div class="row" id="backRow" hidden><button class="btn ghost sm" id="backToAuto" type="button">Back to auto</button></div>
+      <div class="msg" id="videoMsg"></div>
+    </div>
+
+    <!-- Season -->
+    <div class="card" id="seasonCard">
+      <div class="hd"><div class="ttl">🎃 Season</div><span class="tag" id="seasonTag">…</span></div>
+      <div class="desc" id="seasonNow">Pumpkins for Halloween, snow for Christmas — on every page.</div>
+      <div class="chips">
+        <button class="chip" data-season="auto" type="button">Auto</button>
+        <button class="chip" data-season="pumpkins" type="button">🎃 Pumpkins</button>
+        <button class="chip" data-season="snow" type="button">❄️ Snow</button>
+        <button class="chip" data-season="off" type="button">Off</button>
+      </div>
+      <div class="msg" id="seasonMsg"></div>
+    </div>
+
+    <h2 class="sec">Tonight</h2>
+    <div class="tiles">
+      <a class="tile hot" href="/light-show.html"><span class="em">💡</span><b>Light show</b><span>GRANITE</span></a>
+      <a class="tile hot" href="/light-show.html?band=lta"><span class="em">💡</span><b>Light show</b><span>Lift the Anchor</span></a>
+      <a class="tile" href="/gig-checklist.html"><span class="em">✅</span><b>Gig checklist</b><span>Pack &amp; load</span></a>
+      <a class="tile" href="/click-track.html"><span class="em">🎚</span><b>Click track</b><span>Tempo &amp; count-in</span></a>
+    </div>
+  </section>
+
+  <!-- ============================================================== PUNK BC -->
+  <section class="view" id="v-punkbc" aria-labelledby="t-punkbc">
+    <h2 class="sec">Newsletter</h2>
+    <div class="card hot" id="nlCard">
+      <div class="hd"><div class="ttl">📨 Punk BC newsletter</div><span class="tag" id="nlTag">…</span></div>
+      <div class="issue">
+        <div class="n" id="nlMonth">…</div>
+        <div class="desc" style="margin-top:0;text-align:right" id="nlCount">…</div>
+      </div>
+      <select id="nlPick" aria-label="Which issue" style="margin-top:10px"></select>
+      <div class="row">
+        <a class="btn ghost" id="nlPreview" href="/digest/" target="_blank" rel="noopener">👀 Preview</a>
+        <button class="btn ghost" id="nlDraft" type="button">Draft in MailerLite</button>
+      </div>
+      <button class="btn big" id="nlSend" type="button" style="margin-top:10px">📨 Send newsletter</button>
+      <ul class="steps" id="nlSteps" hidden>
+        <li id="st1"><span class="s">○</span><span>Update the issue with the latest shows</span></li>
+        <li id="st2"><span class="s">○</span><span id="st2t">Send it to the list</span></li>
+      </ul>
+      <div class="msg" id="nlMsg"></div>
+      <div class="help" id="nlHelp" hidden>
+        <b>One-time setup: MailerLite's key isn't in GitHub yet.</b>
+        <ol>
+          <li>In MailerLite: <b>Integrations → API</b> → generate a token and copy it.</li>
+          <li><a href="https://github.com/TaikoGames/MikiDrummerWebsite/settings/secrets/actions/new" target="_blank" rel="noopener"><b>Open GitHub's new-secret page ↗</b></a>
+              — name <code>MAILERLITE_API_KEY</code>, paste the token, save.</li>
+          <li>Once more: name <code>MAILERLITE_FROM</code>, value <code>digest@mikidrummer.ca</code>
+              (mikidrummer.ca must be verified under MailerLite → Domains).</li>
+          <li>Come back and press <b>Send newsletter</b>.</li>
+        </ol>
       </div>
     </div>
-    <div class="desc">
-      Artwork driven live by the Behringer — map each channel to a light zone, hit Show mode,
-      put it on the projector. Runs on its own, no token needed.
-      GRANITE lights the cover art; Lift the Anchor lights the band photo, one zone per player.
-    </div>
-  </div>
 
-  <!-- ===================== QUICK TOOLS ===================== -->
-  <div class="row" style="margin:0 0 20px;gap:9px">
-    <a class="btn ghost" href="/cymbal-designer.html">🥁 Cymbal Designer</a>
-    <a class="btn ghost" href="/drum-viz.html">🎛 Drum Visualiser</a>
-    <a class="btn ghost" href="/gig-checklist.html">✅ Gig Checklist</a>
-    <a class="btn ghost" href="/click-track.html">🎚 Click Track</a>
-    <a class="btn ghost" href="/punkbc.html">🎫 Shows</a>
-    <a class="btn ghost" href="/room-walk.html">🚪 Room Walk-through</a>
-  </div>
+    <h2 class="sec">Shows</h2>
+    <div class="list">
+      <a href="/shows-queue.html"><span class="em">🎫</span><span class="lt"><b>Shows waiting</b><span>Wave new finds onto the board</span></span><span class="cnt" id="qCnt" hidden></span><span class="go">›</span></a>
+      <a href="/punkbc.html"><span class="em">🗓️</span><span class="lt"><b>The board</b><span id="boardInfo">…</span></span><span class="go">›</span></a>
+      <a href="/shows-import.html"><span class="em">📋</span><span class="lt"><b>Import shows</b><span>Paste a listings page, add what's new</span></span><span class="go">›</span></a>
+      <a href="/slideshow.html"><span class="em">🖥️</span><span class="lt"><b>Shows on screen</b><span>Full-screen board for a venue TV</span></span><span class="go">›</span></a>
+    </div>
 
-  <!-- ===================== CONNECT ===================== -->
-  <div class="card wide" id="ghCard">
-    <div class="hd"><div class="ttl">🔑 Connection <span class="tag" id="ghTag">not connected</span></div></div>
-    <div class="desc">
-      Paste a GitHub token so switches save straight to the site. It's stored only in this browser — never in the page.<br><br>
-      <b>Easiest:</b> a <b>classic</b> token with just the <b>public_repo</b> scope — use the button below, the scope is
-      pre-ticked. This repo is public and owned by the <b>TaikoGames organisation</b>, and classic tokens work on org
-      repos as long as you have write access.<br>
-      <b>Fine-grained tokens</b> also work, but for an org repo they need more setup: resource owner set to
-      <b>TaikoGames</b> (not your personal account), this repository selected, <b>Contents: Read and write</b>, and the
-      org must allow fine-grained tokens — an owner may have to approve it. If yours 404s, that's almost always why.
+    <h2 class="sec">Run now</h2>
+    <div class="list">
+      <button class="li" type="button" data-run="punkbc-refresh.yml" data-what="Refreshing the board from the sheet"><span class="em">🔄</span><span class="lt"><b>Refresh from the sheet</b><span>Pull the Google Sheet onto the board</span></span><span class="go">▶</span></button>
+      <button class="li" type="button" data-run="punkbc-collect.yml" data-what="Looking for new shows" data-inputs='{"dry_run":"false"}'><span class="em">🔎</span><span class="lt"><b>Look for new shows</b><span>Check the calendar and venue feeds</span></span><span class="go">▶</span></button>
+      <button class="li" type="button" data-run="punkbc-art.yml" data-what="Finding pictures" data-inputs='{"check_only":"false"}'><span class="em">🖼️</span><span class="lt"><b>Find pictures</b><span>Real art for shows that need it</span></span><span class="go">▶</span></button>
     </div>
-    <label class="fld" for="ghToken">GitHub token</label>
-    <div class="row" style="margin-top:0">
-      <input type="password" id="ghToken" placeholder="ghp_… or github_pat_…" autocomplete="off" style="flex:1;min-width:200px">
-      <button class="btn" id="ghSave">Connect</button>
-      <a class="btn ghost" href="https://github.com/settings/tokens/new?scopes=public_repo&amp;description=Miki%20site%20admin" target="_blank" rel="noopener">Get a classic token ↗</a>
-      <a class="btn ghost" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained ↗</a>
-    </div>
-    <div class="msg" id="ghMsg" style="color:var(--muted)"></div>
-  </div>
+    <div class="msg" id="runMsg"></div>
+  </section>
 
-  <!-- ===================== LIVE CONTROLS ===================== -->
-  <h2 class="sec">Live controls</h2>
+  <!-- ================================================================= SITE -->
+  <section class="view" id="v-site" aria-labelledby="t-site">
+    <h2 class="sec">Content</h2>
 
-  <div class="card wide">
-    <div class="hd">
-      <div class="ttl">🎬 Intro video <span class="tag live">live</span></div>
-      <label class="switch"><input type="checkbox" id="videoToggle"><span class="track"></span></label>
-    </div>
-    <div class="desc">When ON, visitors landing on the homepage see the intro video full-screen with a close button. Turn OFF for a normal homepage. The video itself is already set in the site config — this is just the on/off.</div>
-    <div class="autooff">
-      <span class="ao-label">Show for the next:</span>
-      <button class="chip" data-hrs="1">1h</button>
-      <button class="chip" data-hrs="3">3h</button>
-      <button class="chip" data-hrs="6">6h</button>
-      <button class="chip" data-hrs="12">12h</button>
-      <button class="chip" data-hrs="24">24h</button>
-      <span class="ao-status" id="aoStatus"></span>
-    </div>
-    <div class="autooff">
-      <span class="ao-label">Auto: follow my live stream</span>
-      <label class="switch"><input type="checkbox" id="liveAuto"><span class="track"></span></label>
-      <span class="ao-status" id="liveAutoStatus"></span>
-      <button class="chip" id="backToAuto" style="display:none">Back to auto</button>
-    </div>
-    <div class="msg" id="videoMsg" style="margin-top:14px;color:var(--muted)"></div>
-    <div class="note">Flipping the switch (or a timer) saves straight to <b>config.json</b> and the site updates in about a minute — no download.<br>
-      With <b>Auto</b> on, a check runs on GitHub every 5 minutes: the moment your YouTube channel goes live the overlay turns itself on, and when the stream ends it turns itself off. Scheduled checks queue on shared runners, so allow roughly 5–15 minutes either way.<br>
-      <b>The switch above always wins.</b> If a stream is running and the overlay hasn't come on — or it's on and you want it gone — just flip it: that holds for 12 hours and the automatic check stands down until then. Press <b>Back to auto</b> (or wait it out) to hand control back.</div>
-  </div>
-
-  <div class="card wide">
-    <div class="hd">
-      <div class="ttl">🪧 Poster <span class="tag live">live</span></div>
-    </div>
-    <div class="desc">Paste an image link to pop a poster full-screen (with a fade-in) the moment visitors arrive — a gig flyer, a release. <b>Leave the field empty for no poster.</b></div>
-    <label class="fld" for="posterUrl">Image link <span style="color:var(--muted)">(empty = off)</span></label>
-    <div class="fv-row">
-      <img class="fv-thumb" id="posterThumb" alt="" style="object-fit:contain">
-      <div style="flex:1;min-width:0">
-        <input type="url" id="posterUrl" placeholder="https://…/poster.jpg">
-        <div class="row"><button class="btn" id="savePoster">Save poster</button><span class="msg" id="posterMsg"></span></div>
+    <div class="card" id="fvCard">
+      <div class="hd"><div class="ttl">⭐ Featured video</div></div>
+      <div class="desc">The big video at the top of the Videos page.</div>
+      <img class="thumb" id="fvThumb" alt="">
+      <label class="fld" for="fvSelect">Video</label>
+      <select id="fvSelect"></select>
+      <div id="fvNew" hidden>
+        <label class="fld" for="fvLink">YouTube link or ID</label>
+        <input type="text" id="fvLink" placeholder="https://youtu.be/…">
+        <label class="fld" for="fvTitle">Title</label>
+        <input type="text" id="fvTitle" placeholder="Song - Artist">
       </div>
+      <div class="row"><button class="btn" id="saveFeatured" type="button">Save featured video</button></div>
+      <div class="msg" id="fvMsg"></div>
     </div>
-    <div class="autooff">
-      <span class="ao-label">Auto-remove after:</span>
-      <button class="pchip" data-days="1">1d</button>
-      <button class="pchip" data-days="3">3d</button>
-      <button class="pchip" data-days="7">7d</button>
-      <button class="pchip" data-days="14">14d</button>
-      <button class="pchip" data-days="30">30d</button>
-      <button class="pchip" data-days="0">No expiry</button>
-      <span class="ao-status" id="posterAo"></span>
-    </div>
-    <div class="autooff">
-      <span class="ao-label">Show for</span>
-      <input type="number" id="posterSecs" min="1" max="600" value="15" style="width:90px">
-      <span class="ao-label">seconds each visit, then it fades out.</span>
-    </div>
-    <div class="note">Any public image URL works (JPG, PNG, GIF — an animated GIF plays as it pops in). Clear the field and Save to turn the poster off; pick a day count to auto-remove it.</div>
-  </div>
 
-  <div class="card wide">
-    <div class="hd">
-      <div class="ttl">📰 News ticker <span class="tag live">live</span></div>
+    <div class="card">
+      <div class="hd"><div class="ttl">🖼️ Photos</div></div>
+      <div class="desc">Replaces the image file, so every page that uses it updates.</div>
+      <div data-photo="images/miki-drummer-live-vancouver.png" data-label="Profile / hero"></div>
+      <div data-photo="images/miki-drummer-drum-kit.png" data-label="Drum photo"></div>
     </div>
-    <div class="desc">The scrolling news bar at the top of the site. One item per block: <code>Title</code>, optional <code>Description</code>, <code>Link</code>, <code>Expires: YYYY-MM-DD</code>.</div>
-    <label class="fld" for="newsBox">news.txt</label>
-    <textarea id="newsBox" spellcheck="false"></textarea>
+
+    <div class="card">
+      <div class="hd"><div class="ttl">🎞️ Granite photo filter</div><span class="tag" id="gfxStatus">…</span></div>
+      <img class="thumb" id="gfxThumb" src="images/granite/live-08.jpg" alt="Filter preview">
+      <div class="chips" id="gfxChips">
+        <button class="chip" data-filter="none" type="button">None</button>
+        <button class="chip" data-filter="warm" type="button">Warm</button>
+        <button class="chip" data-filter="punch" type="button">Punch</button>
+        <button class="chip" data-filter="faded" type="button">Faded</button>
+        <button class="chip" data-filter="cool" type="button">Cool</button>
+        <button class="chip" data-filter="mono" type="button">Mono</button>
+        <button class="chip" data-filter="vivid" type="button">Vivid</button>
+      </div>
+      <div class="msg" id="gfxMsg"></div>
+    </div>
+
+    <h2 class="sec">Manage</h2>
+    <div class="list">
+      <a href="/jukebox-manager.html"><span class="em">💿</span><span class="lt"><b>Jukebox</b><span id="songCount">Add, remove, reorder</span></span><span class="go">›</span></a>
+      <a href="/lta-review.html"><span class="em">✅</span><span class="lt"><b>Review LTA changes</b><span>Approve what the band sent</span></span><span class="go">›</span></a>
+      <a href="/lta-admin.html"><span class="em">🎸</span><span class="lt"><b>LTA press kit editor</b><span>For the band — no login</span></span><span class="go">›</span></a>
+      <a href="/drum-map.html"><span class="em">🥁</span><span class="lt"><b>Drum kit</b><span>The “my setup” map</span></span><span class="go">›</span></a>
+    </div>
+    <h2 class="sec">Booking</h2>
+    <div class="list">
+      <a href="/dates-admin.html"><span class="em">📅</span><span class="lt"><b>Open dates</b><span>Dates you're offering other bands</span></span><span class="go">›</span></a>
+      <a href="/find-bands.html"><span class="em">🔎</span><span class="lt"><b>Who to ask</b><span>Bands from the board, ranked by fit</span></span><span class="go">›</span></a>
+      <a href="/ask-a-band.html"><span class="em">📨</span><span class="lt"><b>Ask a band</b><span>Send one message, track who you asked</span></span><span class="go">›</span></a>
+      <a href="/contacts-admin.html"><span class="em">📇</span><span class="lt"><b>Band contacts</b><span>Addresses the finder couldn't get</span></span><span class="go">›</span></a>
+    </div>
+    <h2 class="sec">Behind the scenes</h2>
+    <div class="list">
+      <a href="/site-tree.html"><span class="em">🌳</span><span class="lt"><b>Site tree</b><span>Every page, with dead-link counts</span></span><span class="go">›</span></a>
+      <a href="/chat.html"><span class="em">🤖</span><span class="lt"><b>Ask the site</b><span>Answers from the board and pages</span></span><span class="go">›</span></a>
+      <a href="/index.html" target="_blank" rel="noopener"><span class="em">🏠</span><span class="lt"><b>Open the homepage</b><span>See what visitors see</span></span><span class="go">↗</span></a>
+    </div>
+  </section>
+
+  <!-- ================================================================ TOOLS -->
+  <section class="view" id="v-tools" aria-labelledby="t-tools">
+    <h2 class="sec">Make</h2>
+    <div class="tiles">
+      <a class="tile hot" href="/story-cutter.html"><span class="em">✂️</span><b>Story Cutter</b><span>One video → story clips</span></a>
+      <a class="tile hot" href="/poster.html"><span class="em">🎨</span><b>Poster maker</b><span>Gig flyers</span></a>
+      <a class="tile" href="/cymbal-designer.html"><span class="em">🥁</span><b>Cymbal designer</b><span>Engrave or paint</span></a>
+      <a class="tile" href="/razor-cut-tool.html"><span class="em">🔪</span><b>Razor Cut</b><span>Split audio into clips</span></a>
+    </div>
+    <h2 class="sec">Stage</h2>
+    <div class="tiles">
+      <a class="tile" href="/light-show.html"><span class="em">💡</span><b>Light show</b><span>GRANITE</span></a>
+      <a class="tile" href="/light-show.html?band=lta"><span class="em">💡</span><b>Light show</b><span>Lift the Anchor</span></a>
+      <a class="tile" href="/drum-viz.html"><span class="em">🎛</span><b>Drum visualiser</b><span>Kit lights up as you play</span></a>
+      <a class="tile" href="/click-track.html"><span class="em">🎚</span><b>Click track</b><span>Tempo &amp; count-in</span></a>
+      <a class="tile" href="/gig-checklist.html"><span class="em">✅</span><b>Gig checklist</b><span>Pack &amp; load</span></a>
+      <a class="tile" href="/playbook.html"><span class="em">📋</span><b>Stage playbook</b><span>Hand signals &amp; dress</span></a>
+    </div>
+    <h2 class="sec">Other</h2>
+    <div class="list">
+      <a href="/room-walk.html"><span class="em">🚪</span><span class="lt"><b>Room walk-through</b><span>The 3D scan</span></span><span class="go">›</span></a>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs" aria-label="Admin sections">
+  <div class="in" role="tablist">
+    <button class="tab" role="tab" id="t-home" data-tab="home" aria-controls="v-home"><span class="ic">🏠</span>Home</button>
+    <button class="tab" role="tab" id="t-punkbc" data-tab="punkbc" aria-controls="v-punkbc"><span class="ic">🎫</span>Punk BC<span class="badge" id="tabBadge" hidden></span></button>
+    <button class="tab" role="tab" id="t-site" data-tab="site" aria-controls="v-site"><span class="ic">🌐</span>Site</button>
+    <button class="tab" role="tab" id="t-tools" data-tab="tools" aria-controls="v-tools"><span class="ic">🧰</span>Tools</button>
+  </div>
+</nav>
+
+<!-- connect sheet -->
+<div class="scrim" id="connSheet" role="dialog" aria-modal="true" aria-labelledby="connH">
+  <div class="sheet">
+    <div class="grab"></div>
+    <h3 id="connH">🔑 Connect to GitHub</h3>
+    <div class="desc">Saving and sending go through a GitHub token kept only in this browser.
+      A <b>classic</b> token with the <b>repo</b> box ticked does everything here, including the newsletter.</div>
+    <label class="fld" for="ghToken">Token</label>
+    <input type="password" id="ghToken" placeholder="ghp_… or github_pat_…" autocomplete="off">
     <div class="row">
-      <button class="btn" id="saveNews">Save news</button>
-      <span class="msg" id="newsMsg"></span>
+      <button class="btn" id="ghSave" type="button">Connect</button>
+      <a class="btn ghost" href="https://github.com/settings/tokens/new?scopes=repo&amp;description=Miki%20site%20admin" target="_blank" rel="noopener">Get a token ↗</a>
     </div>
-  </div>
-
-  <div class="card wide">
-    <div class="hd">
-      <div class="ttl">⭐ Featured video <span class="tag live">live</span></div>
-    </div>
-    <div class="desc">The big video at the top of the Videos page. Pick one you already have, or paste a new YouTube link.</div>
-    <div class="fv-row">
-      <img class="fv-thumb" id="fvThumb" alt="">
-      <div style="flex:1;min-width:0">
-        <label class="fld" for="fvSelect">Featured video</label>
-        <select id="fvSelect"></select>
-      </div>
-    </div>
-    <div id="fvNew" hidden>
-      <label class="fld" for="fvLink">YouTube link or ID</label>
-      <input type="text" id="fvLink" placeholder="https://youtu.be/…  or  VIDEO_ID">
-      <label class="fld" for="fvTitle">Title</label>
-      <input type="text" id="fvTitle" placeholder="Song - Artist">
-    </div>
-    <div class="row">
-      <button class="btn" id="saveFeatured">Save featured video</button>
-      <span class="msg" id="fvMsg"></span>
-    </div>
-  </div>
-
-  <div class="card wide">
-    <div class="hd"><div class="ttl">🖼️ Photos <span class="tag live">live</span></div></div>
-    <div class="desc">Swap the main photos. Uploads are resized and saved straight to the site (they replace the existing image files, so every page using them updates).</div>
-    <div class="grid" style="margin-top:14px">
-      <div>
-        <div class="ph-ttl">Profile / hero <span class="ph-path">images/miki-drummer-live-vancouver.png</span></div>
-        <img class="ph-preview" id="phProfile" alt="" src="images/miki-drummer-live-vancouver.png">
-        <div class="row" style="margin-top:0">
-          <label class="btn ghost" for="fileProfile">Choose photo…</label>
-          <input type="file" id="fileProfile" accept="image/*" hidden>
-          <button class="btn" id="saveProfile" disabled>Save</button>
-          <span class="msg" id="profileMsg"></span>
-        </div>
-      </div>
-      <div>
-        <div class="ph-ttl">Drum photo <span class="ph-path">images/miki-drummer-drum-kit.png</span></div>
-        <img class="ph-preview" id="phDrum" alt="" src="images/miki-drummer-drum-kit.png">
-        <div class="row" style="margin-top:0">
-          <label class="btn ghost" for="fileDrum">Choose photo…</label>
-          <input type="file" id="fileDrum" accept="image/*" hidden>
-          <button class="btn" id="saveDrum" disabled>Save</button>
-          <span class="msg" id="drumMsg"></span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card wide">
-    <div class="hd"><div class="ttl">🎞️ Granite photo filter <span class="tag live">live</span></div></div>
-    <div class="desc">An Instagram-style filter on the <b>Granite press-kit</b> photos. Pick a look — it saves to the site and every gallery photo updates in about a minute.</div>
-    <div class="fv-row" style="margin-top:14px">
-      <img class="gfx-thumb" id="gfxThumb" src="images/granite/live-08.jpg" alt="filter preview">
-      <div style="flex:1;min-width:0">
-        <div class="autooff" style="margin-top:0">
-          <button class="gfxchip" data-filter="none">None</button>
-          <button class="gfxchip" data-filter="warm">Warm</button>
-          <button class="gfxchip" data-filter="punch">Punch</button>
-          <button class="gfxchip" data-filter="faded">Faded</button>
-          <button class="gfxchip" data-filter="cool">Cool</button>
-          <button class="gfxchip" data-filter="mono">Mono</button>
-          <button class="gfxchip" data-filter="vivid">Vivid</button>
-          <span class="ao-status" id="gfxStatus"></span>
-        </div>
-        <div class="msg" id="gfxMsg" style="margin-top:12px"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== SEASON ===================== -->
-  <div class="card wide">
-    <div class="hd">
-      <div class="ttl">🎃 Season <span class="tag live" id="seasonTag">auto</span></div>
-      <span class="ao-status" id="seasonNow"></span>
-    </div>
-    <div class="desc">
-      Weather across the site — pumpkins for Halloween, snow for Christmas. This saves
-      to <b>config.json</b>, so it changes every page for everyone, not just this browser.
-      <b>Auto</b> puts pumpkins up 24 October to 1 November and snow through December to
-      6 January, and takes them down on its own.
-    </div>
-    <div class="autooff">
-      <button class="pchip" data-season="auto">Auto</button>
-      <button class="pchip" data-season="pumpkins">🎃 Pumpkins</button>
-      <button class="pchip" data-season="snow">❄️ Snow</button>
-      <button class="pchip" data-season="off">Off</button>
-      <span class="msg" id="seasonMsg"></span>
-    </div>
-    <div class="note">Anyone who has asked their system to reduce motion sees none of
-      it, whatever this says.</div>
-  </div>
-
-  <!-- ===================== TOOLS ===================== -->
-  <h2 class="sec">Manage</h2>
-  <div class="grid">
-    <a class="card linkcard" href="/site-tree.html">
-      <div><div class="ttl">🌳 Site tree</div><div class="meta">Every page as a branch graph, with the counts in the nodes</div><div class="meta">Redrawn from the site on every push — never a stale number</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/find-bands.html">
-      <div><div class="ttl">🔎 Who to ask</div><div class="meta">Bands from your own board, ranked by fit</div><div class="meta">One message, a button per channel, remembers who you asked</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/contacts-admin.html">
-      <div><div class="ttl">📇 Band contacts</div><div class="meta">Addresses the crawler can't find on its own</div><div class="meta">Paste once, everyone's phone gets it · the nightly finder won't overwrite them</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/ask-a-band.html">
-      <div><div class="ttl">📨 Ask a band</div><div class="meta">Send this one to the rest of the band</div><div class="meta">Type a name, send it, tap once so nobody asks twice · no login</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/dates-admin.html">
-      <div><div class="ttl">📅 Open dates</div><div class="meta">Dates you're offering other bands</div><div class="meta">Feeds /play-with-us.html · mark one filled when it's gone</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/shows-queue.html">
-      <div><div class="ttl">🎫 Shows waiting</div><div class="meta">What the collector found, for you to wave through</div><div class="meta">Nothing reaches the board unreviewed</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/slideshow.html">
-      <div><div class="ttl">🖥️ Shows on screen</div><div class="meta">The whole board, full screen, one at a time</div><div class="meta">For a venue screen · ?city= ?venue= ?days= ?secs=</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/shows-import.html">
-      <div><div class="ttl">📋 Import shows</div><div class="meta">Paste a listings page, add what's new</div><div class="meta">Parses dates and venues · flags duplicates</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/chat.html">
-      <div><div class="ttl">🤖 Ask the site <span class="tag idea">prototype</span></div><div class="meta">Answers from the shows board and the site's own pages</div><div class="meta">No key needed · Claude optional</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/jukebox-manager.html">
-      <div><div class="ttl">💿 Jukebox</div><div class="meta" id="songCount">songs…</div><div class="meta">add · remove · reorder · save live</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/drum-map.html">
-      <div><div class="ttl">🥁 Drum kit</div><div class="meta">Edit the “my setup” map</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/punkbc.html">
-      <div><div class="ttl">🎫 Shows</div><div class="meta">Punk BC listings</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/light-show.html">
-      <div><div class="ttl">💡 Light Show — GRANITE</div><div class="meta">Cover artwork, live</div><div class="meta">Behringer channels → lights on the image</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/lta-review.html">
-      <div><div class="ttl">✅ Review LTA Changes</div><div class="meta">Approve or reject what the band sent</div><div class="meta">Diff, preview, one button to publish</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/lta-admin.html">
-      <div><div class="ttl">🎸 LTA Press Kit Editor</div><div class="meta">For the band — no login</div><div class="meta">Toggle songs, add photos and videos, sends to you</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/light-show.html?band=lta">
-      <div><div class="ttl">💡 Light Show — Lift the Anchor</div><div class="meta">Band photo, live</div><div class="meta">One zone per player, plus the wall behind</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/drum-viz.html">
-      <div><div class="ttl">🥁 Drum Visualiser</div><div class="meta">Kit lights up as you play</div><div class="meta">MIDI or audio · overlay for videos</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/room-walk.html">
-      <div><div class="ttl">🚪 Room Walk-through</div><div class="meta">Walk around the 3D scan</div><div class="meta">WASD + mouse · private page</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/cymbal-designer.html">
-      <div><div class="ttl">🥁 Cymbal Designer</div><div class="meta">Engrave or paint a cymbal</div><div class="meta">quarter symmetry · download PNG</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/razor-cut-tool.html">
-      <div><div class="ttl">✂️ Razor Cut</div><div class="meta">Split audio into clips</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-    <a class="card linkcard" href="/playbook.html">
-      <div><div class="ttl">📋 Stage Playbook</div><div class="meta">Hand signals &amp; dress code</div></div>
-      <span class="btn ghost">Open →</span>
-    </a>
-  </div>
-
-  <!-- ===================== IDEAS ===================== -->
-  <h2 class="sec">Ideas — say which you want wired up</h2>
-  <div class="grid">
-    <div class="card">
-      <div class="hd"><div class="ttl">🎆 Celebration mode</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
-      <div class="desc">One switch to fire the confetti/fireworks (España win, a release, NYE) instead of date-hardcoding it. <span class="tag idea">idea</span></div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="ttl">📢 Announcement banner</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
-      <div class="desc">A dismissible site-wide bar — “New single out Friday”, “On tour in Spain”. Toggle + custom text. <span class="tag idea">idea</span></div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="ttl">🟢 Availability status</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
-      <div class="desc">Flip between “Available for sessions / lessons” and “Booked / on tour” — shown as a badge. <span class="tag idea">idea</span></div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="ttl">🎨 Accent colour</div><span class="tag idea">idea</span></div>
-      <div class="desc">Change the site’s red accent site-wide with a colour picker for seasonal looks.</div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="ttl">🔗 Social links</div><span class="tag idea">idea</span></div>
-      <div class="desc">Edit the Instagram / TikTok / YouTube handles in one place.</div>
-    </div>
-    <div class="card">
-      <div class="hd"><div class="ttl">🚧 Maintenance mode</div><label class="switch"><input type="checkbox" disabled><span class="track"></span></label></div>
-      <div class="desc">Show a “back soon” splash while you rework a page. <span class="tag idea">idea</span></div>
-    </div>
-  </div>
-
-  <div class="note" style="margin-top:22px">
-    <b>How saving works:</b> switches commit straight to your GitHub repo via the API (using your token above), and GitHub Pages redeploys in ~1 minute. The “idea” cards are mockups; tell me which to make real and I’ll wire them up like the intro video.
+    <div class="msg" id="ghMsg"></div>
+    <div class="note">Fine-grained tokens work too: owner <b>TaikoGames</b>, this repository,
+      <b>Contents</b> and <b>Actions</b> set to Read and write.</div>
+    <div class="row"><button class="btn ghost" id="ghForget" type="button">Disconnect this browser</button>
+      <button class="btn ghost" data-close type="button">Done</button></div>
   </div>
 </div>
 
+<!-- confirm sheet -->
+<div class="scrim" id="askSheet" role="dialog" aria-modal="true" aria-labelledby="askH">
+  <div class="sheet">
+    <div class="grab"></div>
+    <h3 id="askH">Send it?</h3>
+    <div class="desc" id="askBody"></div>
+    <div class="row">
+      <button class="btn" id="askYes" type="button">Send</button>
+      <button class="btn ghost" id="askNo" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
 (function(){
+  'use strict';
   const GH = { owner:'TaikoGames', repo:'MikiDrummerWebsite', branch:'main' };
-  const state = { showOverlay:'no', overlayUntil:'', posterUrl:'', posterUntil:'', posterSeconds:15, news:'', graniteFilter:'warm', liveAuto:'no', liveNow:'no', overlayManual:'', overlayManualUntil:'', season:'auto' };
-  const HOLD_HOURS = 12;   // how long a switch flipped by hand keeps auto out
+  const API = 'https://api.github.com/repos/' + GH.owner + '/' + GH.repo;
+  const HOLD_HOURS = 12;   // a switch flipped by hand keeps the live check off this long
   const GFX = { none:'none', warm:'contrast(1.08) saturate(1.3) brightness(1.03)', punch:'contrast(1.26) saturate(1.38) brightness(1.02)', faded:'contrast(.9) saturate(.88) brightness(1.09) sepia(.08)', cool:'contrast(1.06) saturate(1.12) brightness(1.03) hue-rotate(-8deg)', mono:'grayscale(1) contrast(1.14) brightness(1.02)', vivid:'contrast(1.14) saturate(1.55)' };
   const $ = id => document.getElementById(id);
-  const videoToggle=$('videoToggle'), newsBox=$('newsBox');
+  const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+  const store = {
+    get(k){ try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
+    set(k, v){ try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
+  };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  // ---------- GitHub API ----------
-  function token(){ return localStorage.getItem('gh_token')||''; }
-  function connected(){ return !!token(); }
-  function authHeaders(){ return {'Authorization':'Bearer '+token(),'Accept':'application/vnd.github+json','Content-Type':'application/json'}; }
-  function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
-  function ytId(u){ if(!u) return ''; u=String(u).trim(); if(/^[A-Za-z0-9_-]{11}$/.test(u)) return u; const m=u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/); return m?m[1]:''; }
+  // ------------------------------------------------------------------ toast / messages
+  let toastT;
+  function toast(text, kind){
+    const t = $('toast'); t.textContent = text; t.className = 'toast on ' + (kind || '');
+    clearTimeout(toastT); toastT = setTimeout(() => t.className = 'toast', 3200);
+  }
+  function msg(el, text, kind){ el.textContent = text || ''; el.className = 'msg' + (kind ? ' ' + kind : ''); }
+
+  // ------------------------------------------------------------------ tabs
+  const TABS = ['home','punkbc','site','tools'];
+  function showTab(name, push){
+    if (!TABS.includes(name)) name = 'home';
+    TABS.forEach(t => {
+      $('v-' + t).classList.toggle('on', t === name);
+      $('t-' + t).setAttribute('aria-selected', t === name ? 'true' : 'false');
+    });
+    store.set('admin_tab', name);
+    if (push) history.replaceState(null, '', '#' + name);
+    window.scrollTo(0, 0);
+  }
+  $$('.tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab, true)));
+  $$('[data-tab]').forEach(b => { if (!b.classList.contains('tab')) b.addEventListener('click', () => showTab(b.dataset.tab, true)); });
+  $$('[data-jump]').forEach(b => b.addEventListener('click', () => {
+    const el = $(b.dataset.jump); if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }));
+  showTab((location.hash || '').slice(1) || store.get('admin_tab') || 'home');
+
+  // ------------------------------------------------------------------ sheets
+  function openSheet(id){ $(id).classList.add('on'); }
+  function closeSheet(id){ $(id).classList.remove('on'); }
+  // Closing the confirm sheet any way other than its buttons counts as Cancel.
+  function dismiss(s){ if (s.id === 'askSheet') $('askNo').click(); else s.classList.remove('on'); }
+  $$('.scrim').forEach(s => s.addEventListener('click', e => { if (e.target === s || e.target.hasAttribute('data-close')) dismiss(s); }));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') $$('.scrim.on').forEach(dismiss); });
+  function ask(title, body, yesText){
+    return new Promise(res => {
+      $('askH').textContent = title; $('askBody').innerHTML = body; $('askYes').textContent = yesText || 'Yes';
+      openSheet('askSheet');
+      const done = v => { closeSheet('askSheet'); $('askYes').onclick = $('askNo').onclick = null; res(v); };
+      $('askYes').onclick = () => done(true);
+      $('askNo').onclick = () => done(false);
+    });
+  }
+
+  // ------------------------------------------------------------------ GitHub
+  const token = () => store.get('gh_token');
+  const connected = () => !!token();
+  function headers(json){
+    const h = { 'Authorization':'Bearer ' + token(), 'Accept':'application/vnd.github+json' };
+    if (json) h['Content-Type'] = 'application/json';
+    return h;
+  }
+  const b64 = s => btoa(unescape(encodeURIComponent(s)));
+  const unb64 = s => decodeURIComponent(escape(atob(String(s).replace(/\s/g, ''))));
+  async function ghError(r){
+    let m = ''; try { m = (await r.json()).message || ''; } catch (e) {}
+    if (r.status === 401) return new Error('GitHub rejected the token — it may have expired. Tap “Connect” to add a new one.');
+    if (r.status === 404 || r.status === 403) return new Error('This token can’t do that. Tap “Connect” for one with the repo box ticked.' + (m ? ' (' + m + ')' : ''));
+    if (r.status === 409) return new Error('The file changed on GitHub a moment ago — try again.');
+    return new Error(r.status + (m ? ' ' + m : ''));
+  }
   async function ghGet(path){
-    const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path+'?ref='+GH.branch,{headers:authHeaders(),cache:'no-store'});
-    if(r.status===404) return null;
-    if(!r.ok){ let m=''; try{m=(await r.json()).message||'';}catch(e){} throw new Error(r.status+(m?' '+m:'')); }
+    const r = await fetch(API + '/contents/' + path + '?ref=' + GH.branch, { headers:headers(), cache:'no-store' });
+    if (r.status === 404) return null;
+    if (!r.ok) throw await ghError(r);
     return r.json();
   }
-  // GitHub answers 404 rather than 403 when a token can't see a repo, so a bare
-  // "404 Not Found" here almost always means token access, not a missing file.
-  function tokenHelp(){
-    return 'this token cannot write to ' + GH.owner + '/' + GH.repo + '. '
-         + GH.owner + ' is an organisation, which fine-grained tokens treat strictly: the token\'s '
-         + 'resource owner must be ' + GH.owner + ' (not your personal account), this repository must be '
-         + 'selected, permissions must include Contents: Read and write, and the org must allow '
-         + 'fine-grained tokens — an owner may need to approve it. The quicker route is a classic token '
-         + 'with the public_repo scope; use the "Get a classic token" button above.';
-  }
-  async function saveFile(path,content,message){
-    const cur=await ghGet(path);
-    const body={message:message,content:b64(content),branch:GH.branch};
-    if(cur&&cur.sha) body.sha=cur.sha;
-    const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path,{method:'PUT',headers:authHeaders(),body:JSON.stringify(body)});
-    if(!r.ok){
-      if(r.status===404) throw new Error(tokenHelp());
-      if(r.status===401) throw new Error('the token was rejected — it may be expired or mistyped');
-      if(r.status===409) throw new Error('the file changed on GitHub since this page loaded — reload and try again');
-      let m=''; try{m=(await r.json()).message||'';}catch(e){} throw new Error(r.status+(m?' '+m:''));
-    }
+  async function putFile(path, base64, message, sha){
+    const body = { message, content:base64, branch:GH.branch };
+    if (sha) body.sha = sha;
+    const r = await fetch(API + '/contents/' + path, { method:'PUT', headers:headers(true), body:JSON.stringify(body) });
+    if (!r.ok) throw await ghError(r);
     return r.json();
   }
-  function msg(el,text,kind){ el.textContent=text; el.style.color = kind==='err'?'#ff8a7a' : kind==='ok'?'#7ee787' : 'var(--muted)'; }
-  function download(name,text,type){
-    const blob=new Blob([text],{type:type||'application/json'});
-    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+  async function saveText(path, text, message){
+    const cur = await ghGet(path);
+    return putFile(path, b64(text), message, cur && cur.sha);
+  }
+  function needToken(el){
+    if (connected()) return false;
+    msg(el, 'Connect GitHub first — tap “Connect” at the top.', 'err');
+    openSheet('connSheet');
+    return true;
   }
 
-  // ---------- config helpers ----------
-  function configJson(){
-    const o={ showOverlay: state.showOverlay };
-    if(state.showOverlay==='yes' && state.overlayUntil) o.overlayUntil = state.overlayUntil;
-    if(state.posterUrl){ o.posterUrl = state.posterUrl; o.posterSeconds = state.posterSeconds; if(state.posterUntil) o.posterUntil = state.posterUntil; }
-    o.graniteFilter = state.graniteFilter;
-    o.season = state.season;
-    o.liveAuto = state.liveAuto;
-    // written by the live check on GitHub — keep it so saving from here doesn't wipe it
-    o.liveNow = state.liveNow;
-    if(state.overlayManual && state.overlayManualUntil){
-      o.overlayManual = state.overlayManual;
-      o.overlayManualUntil = state.overlayManualUntil;
-    }
-    return JSON.stringify(o, null, 2)+'\n';
-  }
-  function fmtWhen(iso){ try{ return new Date(iso).toLocaleString([], {weekday:'short', hour:'2-digit', minute:'2-digit'}); }catch(e){ return iso; } }
-  function updateAoStatus(){
-    const st=$('aoStatus');
-    if(state.showOverlay==='yes' && state.overlayUntil) st.textContent='→ off '+fmtWhen(state.overlayUntil);
-    else if(state.showOverlay==='yes') st.textContent='→ on until switched off';
-    else st.textContent='';
-  }
-  function clearChips(){ document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); }
-  function holding(){
-    if(state.overlayManual!=='on' && state.overlayManual!=='off') return false;
-    return !!state.overlayManualUntil && new Date(state.overlayManualUntil) > new Date();
-  }
-  function updateLiveStatus(){
-    const st=$('liveAutoStatus'), back=$('backToAuto');
-    back.style.display = (state.liveAuto==='yes' && holding()) ? '' : 'none';
-    if(state.liveAuto!=='yes'){ st.textContent='off — the switch above is yours alone'; return; }
-    if(holding()){
-      st.textContent='held '+state.overlayManual+' by hand — auto resumes '+fmtWhen(state.overlayManualUntil);
-      return;
-    }
-    st.textContent = state.liveNow==='yes' ? '● streaming now — overlay on' : 'watching the channel — last check: not live';
-  }
-  // The detector is a convenience; this switch is the guarantee. Using it by
-  // hand parks the automatic check for a while so a missed stream can still be
-  // put on screen — and so it can't be yanked back off two minutes later.
-  function takeManual(on){
-    state.overlayManual = on ? 'on' : 'off';
-    state.overlayManualUntil = new Date(Date.now()+HOLD_HOURS*3600000).toISOString();
-  }
-  function releaseManual(){ state.overlayManual=''; state.overlayManualUntil=''; }
-
-  async function commitConfigTo(el, reason){
-    if(!connected()){ msg(el,'Connect GitHub above first — nothing saved.','err'); return; }
-    msg(el,'Saving…');
-    try{ await saveFile('config.json',configJson(),reason); msg(el,'Saved ✓ — live in ~1 min','ok'); }
-    catch(e){ download('config.json',configJson()); msg(el,'Token couldn’t save ('+e.message+') — downloaded config.json instead. Commit it or send it to Claude.','err'); }
-  }
-  function commitConfig(reason){ return commitConfigTo($('videoMsg'), reason); }
-
-  // ---------- connection UI ----------
+  // ------------------------------------------------------------------ connection
   function reflectConn(){
-    const on=connected();
-    $('ghTag').textContent=on?'connected':'not connected';
-    $('ghTag').className='tag'+(on?' live':'');
-    $('connText').textContent=on?'connected':'not connected';
-    $('connDot').style.background=on?'#7ee787':'#6b7280';
+    const on = connected();
+    $('connPill').classList.toggle('on', on);
+    $('connText').textContent = on ? 'Connected' : 'Connect';
   }
-  $('ghToken').value=token();
-  reflectConn();
-  $('ghSave').addEventListener('click',async()=>{
-    const t=$('ghToken').value.trim();
-    if(!t){ msg($('ghMsg'),'Paste your token first.','err'); return; }
-    localStorage.setItem('gh_token',t);
-    msg($('ghMsg'),'Checking access…');
-    // Check the repo itself, not a file inside it: ghGet() returns null on 404,
-    // so a token with no access to this repo used to report "Connected ✓" and
-    // only fail later when a switch tried to save.
-    try{
-      const r = await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo, {headers:authHeaders(), cache:'no-store'});
-      if(r.status===401){ throw new Error('the token was rejected — it may be expired or mistyped'); }
-      if(r.status===404){ throw new Error(tokenHelp()); }
-      if(!r.ok){ let m=''; try{ m=(await r.json()).message||''; }catch(e){} throw new Error(r.status+(m?' '+m:'')); }
+  $('connPill').addEventListener('click', () => { $('ghToken').value = token(); openSheet('connSheet'); });
+  $('ghForget').addEventListener('click', () => { store.set('gh_token', ''); $('ghToken').value = ''; reflectConn(); msg($('ghMsg'), 'Disconnected — this browser no longer holds a token.'); });
+  $('ghSave').addEventListener('click', async () => {
+    const t = $('ghToken').value.trim();
+    if (!t) { msg($('ghMsg'), 'Paste your token first.', 'err'); return; }
+    store.set('gh_token', t);
+    msg($('ghMsg'), 'Checking…');
+    try {
+      const r = await fetch(API, { headers:headers(), cache:'no-store' });
+      if (!r.ok) throw await ghError(r);
       const info = await r.json();
-      if(info.permissions && info.permissions.push === false){
-        throw new Error('this token can read the repo but not write to it — it needs Contents: Read and write');
-      }
-      msg($('ghMsg'),'Connected ✓ — switches now save live.','ok'); reflectConn();
-    }
-    catch(e){ msg($('ghMsg'),'Could not verify token: '+e.message,'err'); }
+      if (info.permissions && info.permissions.push === false) throw new Error('This token can read the site but not change it.');
+      msg($('ghMsg'), 'Connected ✓', 'ok'); reflectConn(); toast('Connected to GitHub', 'ok');
+      setTimeout(() => closeSheet('connSheet'), 700);
+      loadNewsletterHistory();
+    } catch (e) { msg($('ghMsg'), e.message, 'err'); reflectConn(); }
   });
+  reflectConn();
 
-  // ---------- load current state (public files, no token needed) ----------
-  fetch('config.json?_='+Date.now()).then(r=>r.json()).then(d=>{
-    state.showOverlay=(d.showOverlay||'no'); state.overlayUntil=(d.overlayUntil||'');
-    state.posterUrl=(d.posterUrl||''); state.posterUntil=(d.posterUntil||''); state.posterSeconds=(d.posterSeconds||15);
-    state.graniteFilter=(d.graniteFilter||'warm');
-    state.season=(d.season||'auto');
-    reflectSeason();
-    state.liveAuto=(d.liveAuto||'no'); state.liveNow=(d.liveNow||'no');
-    state.overlayManual=(d.overlayManual||''); state.overlayManualUntil=(d.overlayManualUntil||'');
-    videoToggle.checked=state.showOverlay==='yes'; updateAoStatus();
-    $('liveAuto').checked=state.liveAuto==='yes'; updateLiveStatus();
-    posterUrlEl.value=state.posterUrl; posterSecs.value=state.posterSeconds; updatePosterPreview(); updatePosterAo();
-    reflectGfx();
-  }).catch(()=>{});
-  fetch('news.txt?_='+Date.now()).then(r=>r.text()).then(t=>{ state.news=t; newsBox.value=t; }).catch(()=>{});
-  fetch('playlist.json?_='+Date.now()).then(r=>r.json()).then(d=>{
-    const n=(d.songs||[]).length; $('songCount').textContent=n+' song'+(n===1?'':'s');
-  }).catch(()=>{ $('songCount').textContent='manage playlist'; });
-
-  // ---------- controls (commit straight to the repo) ----------
-  videoToggle.addEventListener('change',()=>{
-    state.showOverlay=videoToggle.checked?'yes':'no';
-    state.overlayUntil=''; clearChips(); updateAoStatus();
-    takeManual(videoToggle.checked); updateLiveStatus();
-    commitConfig('Intro video: '+state.showOverlay+(state.liveAuto==='yes'?' (manual, auto paused '+HOLD_HOURS+'h)':''));
-  });
-  $('backToAuto').addEventListener('click',()=>{
-    releaseManual(); updateLiveStatus();
-    commitConfig('Intro video: back to auto');
-  });
-  $('liveAuto').addEventListener('change',()=>{
-    state.liveAuto=$('liveAuto').checked?'yes':'no';
-    updateLiveStatus();
-    commitConfig('Live auto-detect: '+state.liveAuto);
-  });
-  document.querySelectorAll('.chip[data-hrs]').forEach(chip=>{
-    chip.addEventListener('click',()=>{
-      const hrs=+chip.dataset.hrs;
-      state.showOverlay='yes'; videoToggle.checked=true;
-      state.overlayUntil=new Date(Date.now()+hrs*3600000).toISOString();
-      // a timer is a manual decision too: hold auto off for exactly its length
-      state.overlayManual='on'; state.overlayManualUntil=state.overlayUntil;
-      clearChips(); chip.classList.add('active'); updateAoStatus(); updateLiveStatus();
-      commitConfig('Intro video on for '+hrs+'h');
-    });
-  });
-
-  // ---------- poster (empty link = no poster) ----------
-  const posterUrlEl=$('posterUrl'), posterThumb=$('posterThumb'), posterSecs=$('posterSecs');
-  posterSecs.addEventListener('input',()=>{ let v=parseInt(posterSecs.value,10); if(!v||v<1)v=15; if(v>600)v=600; state.posterSeconds=v; });
-  function updatePosterPreview(){ const u=posterUrlEl.value.trim(); if(u){ posterThumb.src=u; } else { posterThumb.removeAttribute('src'); posterThumb.style.visibility='hidden'; } }
-  posterThumb.addEventListener('error',()=>{ posterThumb.style.visibility='hidden'; });
-  posterThumb.addEventListener('load',()=>{ posterThumb.style.visibility='visible'; });
-  function clearPChips(){ document.querySelectorAll('.pchip').forEach(c=>c.classList.remove('active')); }
-  function fmtDay(iso){ try{ return new Date(iso).toLocaleDateString([], {month:'short', day:'numeric'}); }catch(e){ return iso; } }
-  function updatePosterAo(){
-    const st=$('posterAo');
-    if(state.posterUrl && state.posterUntil) st.textContent='→ removes '+fmtDay(state.posterUntil);
-    else if(state.posterUrl) st.textContent='→ stays until removed';
-    else st.textContent='';
+  // ------------------------------------------------------------------ config.json
+  // Every save reads the live file first and changes only its own field, so
+  // the live-stream check (which writes liveNow every few minutes) and a
+  // second phone never get their changes overwritten by a stale copy here.
+  let cfg = {};
+  async function patchConfig(change, reason, el){
+    if (needToken(el)) return false;
+    msg(el, 'Saving…');
+    try {
+      const cur = await ghGet('config.json');
+      const live = cur ? JSON.parse(unb64(cur.content)) : {};
+      change(live);
+      Object.keys(live).forEach(k => { if (live[k] === '' || live[k] == null) delete live[k]; });
+      await putFile('config.json', b64(JSON.stringify(live, null, 2) + '\n'), reason, cur && cur.sha);
+      cfg = live; reflectAll();
+      msg(el, 'Saved ✓ — live in about a minute', 'ok'); toast('Saved', 'ok');
+      return true;
+    } catch (e) { msg(el, e.message, 'err'); reflectAll(); return false; }
   }
-  posterUrlEl.addEventListener('input',()=>{ state.posterUrl=posterUrlEl.value.trim(); updatePosterPreview(); updatePosterAo(); });
-  $('savePoster').addEventListener('click',()=>{
-    state.posterUrl=posterUrlEl.value.trim();
-    if(!state.posterUrl) state.posterUntil='';
-    clearPChips(); updatePosterAo();
-    commitConfigTo($('posterMsg'), state.posterUrl ? 'Set poster' : 'Remove poster');
-  });
-  document.querySelectorAll('.pchip').forEach(chip=>{
-    chip.addEventListener('click',()=>{
-      state.posterUrl=posterUrlEl.value.trim();
-      if(!state.posterUrl){ msg($('posterMsg'),'Paste a poster link first.','err'); return; }
-      const days=+chip.dataset.days;
-      state.posterUntil = days>0 ? new Date(Date.now()+days*86400000).toISOString() : '';
-      clearPChips(); chip.classList.add('active'); updatePosterAo();
-      commitConfigTo($('posterMsg'), days>0 ? ('Poster for '+days+'d') : 'Poster (no expiry)');
-    });
-  });
-  $('saveNews').addEventListener('click',async()=>{
-    const nm=$('newsMsg');
-    if(!connected()){ msg(nm,'Connect GitHub above first.','err'); return; }
-    state.news=newsBox.value; msg(nm,'Saving…');
-    try{ await saveFile('news.txt',state.news,'Update news via admin'); msg(nm,'Saved ✓ — live in ~1 min','ok'); }
-    catch(e){ download('news.txt',state.news,'text/plain'); msg(nm,'Token couldn’t save ('+e.message+') — downloaded news.txt instead.','err'); }
-  });
+  const when = iso => { try { return new Date(iso).toLocaleString([], { weekday:'short', hour:'numeric', minute:'2-digit' }); } catch (e) { return iso; } };
+  const day = iso => { try { return new Date(iso).toLocaleDateString([], { month:'short', day:'numeric' }); } catch (e) { return iso; } };
+  const future = iso => !!iso && new Date(iso) > new Date();
 
-  // ---------- featured video ----------
-  const fvSelect=$('fvSelect'), fvThumb=$('fvThumb'), fvNew=$('fvNew'), fvLink=$('fvLink'), fvTitle=$('fvTitle');
-  let videos={ featured:null, sidebar:[] };
-  function thumbFor(id){ return id ? 'https://img.youtube.com/vi/'+id+'/hqdefault.jpg' : ''; }
-  function allVideos(){ const arr=[]; if(videos.featured) arr.push(videos.featured); (videos.sidebar||[]).forEach(v=>arr.push(v)); return arr; }
-  function onFvChange(){
-    const isNew=fvSelect.value==='__new__';
-    fvNew.hidden=!isNew;
-    fvThumb.src = isNew ? thumbFor(ytId(fvLink.value)) : thumbFor(fvSelect.value);
+  function reflectAll(){ reflectIntro(); reflectPoster(); reflectSeason(); reflectGfx(); }
+
+  // ---- intro video
+  function holding(){ return (cfg.overlayManual === 'on' || cfg.overlayManual === 'off') && future(cfg.overlayManualUntil); }
+  function reflectIntro(){
+    const on = cfg.showOverlay === 'yes' && (!cfg.overlayUntil || future(cfg.overlayUntil));
+    $('videoToggle').checked = on;
+    $('introStatus').textContent = on ? (cfg.overlayUntil ? 'On — goes off ' + when(cfg.overlayUntil) : 'On until you switch it off') : 'Off — the homepage opens normally.';
+    $('sIntro').textContent = on ? 'On' : 'Off';
+    $$('#introHours .chip').forEach(c => c.classList.remove('on'));
+    $('liveAuto').checked = cfg.liveAuto === 'yes';
+    let s;
+    if (cfg.liveAuto !== 'yes') s = 'Off — only the switch above controls it.';
+    else if (holding()) s = 'Paused: you flipped it by hand. Auto resumes ' + when(cfg.overlayManualUntil) + '.';
+    else s = cfg.liveNow === 'yes' ? '● You’re live — the video is on.' : 'Watching your channel. Not live right now.';
+    $('liveStatus').textContent = s;
+    $('backRow').hidden = !(cfg.liveAuto === 'yes' && holding());
+  }
+  function manual(o, on, untilIso){ o.overlayManual = on ? 'on' : 'off'; o.overlayManualUntil = untilIso || new Date(Date.now() + HOLD_HOURS * 3600000).toISOString(); }
+  $('videoToggle').addEventListener('change', e => {
+    const on = e.target.checked;
+    patchConfig(o => { o.showOverlay = on ? 'yes' : 'no'; delete o.overlayUntil; manual(o, on); },
+      'Intro video: ' + (on ? 'yes' : 'no'), $('videoMsg'));
+  });
+  $$('#introHours .chip').forEach(c => c.addEventListener('click', () => {
+    const hrs = +c.dataset.hrs, until = new Date(Date.now() + hrs * 3600000).toISOString();
+    patchConfig(o => { o.showOverlay = 'yes'; o.overlayUntil = until; manual(o, true, until); }, 'Intro video on for ' + hrs + 'h', $('videoMsg'))
+      .then(ok => { if (ok) c.classList.add('on'); });
+  }));
+  $('liveAuto').addEventListener('change', e => {
+    const on = e.target.checked;
+    patchConfig(o => { o.liveAuto = on ? 'yes' : 'no'; }, 'Live auto-detect: ' + (on ? 'yes' : 'no'), $('videoMsg'));
+  });
+  $('backToAuto').addEventListener('click', () => patchConfig(o => { delete o.overlayManual; delete o.overlayManualUntil; }, 'Intro video: back to auto', $('videoMsg')));
+
+  // ---- poster
+  const posterUrl = $('posterUrl'), posterThumb = $('posterThumb');
+  let posterDays = null;
+  function showPosterThumb(u){ if (u) { posterThumb.src = u; } else { posterThumb.hidden = true; posterThumb.removeAttribute('src'); } }
+  posterThumb.addEventListener('load', () => posterThumb.hidden = false);
+  posterThumb.addEventListener('error', () => posterThumb.hidden = true);
+  function reflectPoster(){
+    const live = cfg.posterUrl && (!cfg.posterUntil || future(cfg.posterUntil));
+    const tag = $('posterTag');
+    tag.textContent = live ? (cfg.posterUntil ? 'until ' + day(cfg.posterUntil) : 'up') : 'off';
+    tag.className = 'tag' + (live ? ' ok' : '');
+    $('sPoster').textContent = live ? 'Up' : 'None';
+    if (document.activeElement !== posterUrl) posterUrl.value = cfg.posterUrl || '';
+    $('posterSecs').value = cfg.posterSeconds || 15;
+    showPosterThumb(posterUrl.value.trim());
+  }
+  posterUrl.addEventListener('input', () => showPosterThumb(posterUrl.value.trim()));
+  $$('#posterDays .chip').forEach(c => c.addEventListener('click', () => {
+    posterDays = +c.dataset.days;
+    $$('#posterDays .chip').forEach(x => x.classList.toggle('on', x === c));
+  }));
+  $('savePoster').addEventListener('click', () => {
+    const u = posterUrl.value.trim();
+    if (!/^https?:\/\//i.test(u)) { msg($('posterMsg'), 'Paste the poster’s image link first (starts with https://).', 'err'); return; }
+    let secs = parseInt($('posterSecs').value, 10); if (!secs || secs < 1) secs = 15; if (secs > 600) secs = 600;
+    const days = posterDays;
+    patchConfig(o => {
+      o.posterUrl = u; o.posterSeconds = secs;
+      if (days === null) { /* keep whatever expiry it had */ }
+      else if (days > 0) o.posterUntil = new Date(Date.now() + days * 86400000).toISOString();
+      else delete o.posterUntil;
+    }, days > 0 ? 'Poster for ' + days + 'd' : 'Set poster', $('posterMsg'));
+  });
+  $('removePoster').addEventListener('click', () => patchConfig(o => { delete o.posterUrl; delete o.posterUntil; delete o.posterSeconds; }, 'Remove poster', $('posterMsg'))
+    .then(ok => { if (ok) { posterUrl.value = ''; showPosterThumb(''); } }));
+
+  // ---- season
+  function reflectSeason(){
+    const v = cfg.season || 'auto';
+    $$('#seasonCard .chip').forEach(c => c.classList.toggle('on', c.dataset.season === v));
+    $('seasonTag').textContent = v;
+    const running = window.Seasonal ? Seasonal.apply(v) : '';
+    let note;
+    if (window.Seasonal && Seasonal.reduced()) note = 'Your phone asks for reduced motion, so nothing animates here.';
+    else if (v === 'auto') note = running ? 'Auto: ' + running + ' today.' : 'Auto: nothing today. Pumpkins Oct 24–Nov 1, snow Dec 1–Jan 6.';
+    else note = running ? running + ' on every page.' : 'Off on every page.';
+    $('seasonNow').textContent = note;
+  }
+  $$('#seasonCard .chip').forEach(c => c.addEventListener('click', () => {
+    const v = c.dataset.season;
+    patchConfig(o => { o.season = v; }, 'Season: ' + v, $('seasonMsg'));
+  }));
+
+  // ---- Granite filter
+  function reflectGfx(){
+    const v = cfg.graniteFilter || 'warm';
+    $$('#gfxChips .chip').forEach(c => c.classList.toggle('on', c.dataset.filter === v));
+    $('gfxThumb').style.filter = GFX[v] || 'none';
+    $('gfxStatus').textContent = v;
+  }
+  $$('#gfxChips .chip').forEach(c => c.addEventListener('click', () => {
+    const v = c.dataset.filter;
+    $('gfxThumb').style.filter = GFX[v] || 'none';
+    patchConfig(o => { o.graniteFilter = v; }, 'Granite photo filter: ' + v, $('gfxMsg'));
+  }));
+
+  fetch('config.json?_=' + Date.now()).then(r => r.json()).then(d => { cfg = d || {}; reflectAll(); }).catch(() => reflectAll());
+
+  // ------------------------------------------------------------------ news
+  // news.txt: blocks of "Title:", "Description:", "Link:", "Expires: YYYY-MM-DD".
+  let news = [];
+  function parseNews(text){
+    const out = []; let cur = null;
+    String(text || '').split('\n').forEach(raw => {
+      const line = raw.trim(), m = line.match(/^(Title|Description|Link|Expires):\s*(.*)$/i);
+      if (!m) return;
+      const k = m[1].toLowerCase(), v = m[2].trim();
+      if (k === 'title') { if (cur && cur.title) out.push(cur); cur = { title:v }; }
+      else if (cur) cur[k === 'description' ? 'desc' : k === 'link' ? 'link' : 'expires'] = v;
+    });
+    if (cur && cur.title) out.push(cur);
+    return out;
+  }
+  function serialiseNews(items){
+    return items.map(n => ['Title: ' + n.title,
+      n.desc ? 'Description: ' + n.desc : '', n.link ? 'Link: ' + n.link : '', n.expires ? 'Expires: ' + n.expires : '']
+      .filter(Boolean).join('\n')).join('\n\n') + (items.length ? '\n' : '');
+  }
+  const expired = n => n.expires && !isNaN(new Date(n.expires + 'T23:59:59')) && new Date(n.expires + 'T23:59:59') < new Date();
+  function renderNews(){
+    const list = $('newsList');
+    const live = news.filter(n => !expired(n)).length, gone = news.length - live;
+    $('newsTag').textContent = live + ' showing'; $('newsTag').className = 'tag' + (live ? ' ok' : '');
+    $('sNews').textContent = live ? live + ' item' + (live === 1 ? '' : 's') : 'Empty';
+    $('newsPrune').hidden = !gone;
+    if (!news.length) { list.innerHTML = '<div class="empty">Nothing in the ticker. Add an item below.</div>'; return; }
+    list.innerHTML = news.map((n, i) => '<div class="news-item' + (expired(n) ? ' expired' : '') + '">'
+      + '<div class="txt"><div class="t">' + esc(n.title) + '</div>'
+      + '<div class="d">' + [n.desc && esc(n.desc), n.link && '🔗 link', n.expires && (expired(n) ? 'expired ' : 'until ') + esc(n.expires)].filter(Boolean).join(' · ') + '</div></div>'
+      + '<button class="icon-btn" type="button" data-up="' + i + '" aria-label="Move up"' + (i ? '' : ' disabled style="opacity:.3"') + '>↑</button>'
+      + '<button class="icon-btn" type="button" data-del="' + i + '" aria-label="Remove ' + esc(n.title) + '">✕</button></div>').join('');
+  }
+  // Like config.json: read the live file, make the one change, write it back,
+  // so an edit made from another phone in the meantime isn't thrown away.
+  async function publishNews(change, reason){
+    const el = $('newsMsg');
+    if (needToken(el)) return false;
+    msg(el, 'Saving…');
+    try {
+      const cur = await ghGet('news.txt');
+      const items = change(cur ? parseNews(unb64(cur.content)) : []);
+      const text = serialiseNews(items);
+      await putFile('news.txt', b64(text), reason, cur && cur.sha);
+      news = items; $('newsBox').value = text; renderNews();
+      msg(el, 'Published ✓ — live in about a minute', 'ok'); toast('News published', 'ok');
+      return true;
+    } catch (e) { msg(el, e.message, 'err'); return false; }
+  }
+  $('newsList').addEventListener('click', async e => {
+    const del = e.target.closest('[data-del]'), up = e.target.closest('[data-up]');
+    // Items are matched by headline, not position: the live file may differ.
+    if (del) {
+      const t = news[+del.dataset.del].title;
+      if (!(await ask('Remove this item?', '“' + esc(t) + '” comes off the ticker.', 'Remove'))) return;
+      publishNews(l => l.filter(n => n.title !== t), 'News: remove ' + t);
+    } else if (up) {
+      const t = news[+up.dataset.up].title;
+      publishNews(l => { const i = l.findIndex(n => n.title === t); if (i > 0) [l[i - 1], l[i]] = [l[i], l[i - 1]]; return l; }, 'News: move up ' + t);
+    }
+  });
+  $('newsAdd').addEventListener('click', () => { $('newsForm').hidden = false; $('newsTools').hidden = true; $('nTitle').focus(); });
+  $('nCancel').addEventListener('click', () => { $('newsForm').hidden = true; $('newsTools').hidden = false; });
+  $('nSave').addEventListener('click', async () => {
+    const title = $('nTitle').value.trim().replace(/\s+/g, ' ');
+    if (!title) { msg($('newsMsg'), 'Give it a headline.', 'err'); $('nTitle').focus(); return; }
+    const link = $('nLink').value.trim();
+    if (link && !/^https?:\/\//i.test(link)) { msg($('newsMsg'), 'The link should start with https://', 'err'); return; }
+    const item = { title, desc:$('nDesc').value.trim().replace(/\s+/g, ' '), link, expires:$('nExp').value };
+    if (await publishNews(l => [item].concat(l), 'News: ' + title)) {
+      ['nTitle','nDesc','nLink','nExp'].forEach(id => $(id).value = '');
+      $('newsForm').hidden = true; $('newsTools').hidden = false;
+    }
+  });
+  $('newsPrune').addEventListener('click', () => publishNews(l => l.filter(n => !expired(n)), 'News: remove expired items'));
+  $('saveNewsRaw').addEventListener('click', async () => {
+    const el = $('newsMsg');
+    if (needToken(el)) return;
+    msg(el, 'Saving…');
+    try { const t = $('newsBox').value; await saveText('news.txt', t, 'Update news via admin'); news = parseNews(t); renderNews(); msg(el, 'Saved ✓', 'ok'); }
+    catch (e) { msg(el, e.message, 'err'); }
+  });
+  fetch('news.txt?_=' + Date.now()).then(r => r.ok ? r.text() : '').then(t => { $('newsBox').value = t; news = parseNews(t); renderNews(); })
+    .catch(() => { news = []; renderNews(); });
+
+  // ------------------------------------------------------------------ featured video
+  const ytId = u => { if (!u) return ''; u = String(u).trim(); if (/^[A-Za-z0-9_-]{11}$/.test(u)) return u; const m = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/); return m ? m[1] : ''; };
+  const ytThumb = id => id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : '';
+  let videos = { featured:null, sidebar:[] };
+  const allVideos = () => (videos.featured ? [videos.featured] : []).concat(videos.sidebar || []);
+  function onFv(){
+    const isNew = $('fvSelect').value === '__new__';
+    $('fvNew').hidden = !isNew;
+    const id = isNew ? ytId($('fvLink').value) : $('fvSelect').value;
+    $('fvThumb').hidden = !id; if (id) $('fvThumb').src = ytThumb(id);
   }
   function renderFv(){
-    fvSelect.innerHTML='';
-    allVideos().forEach(v=>{ const o=document.createElement('option'); o.value=v.id; o.textContent=v.title||v.id; fvSelect.appendChild(o); });
-    const o=document.createElement('option'); o.value='__new__'; o.textContent='➕ New (paste a link)'; fvSelect.appendChild(o);
-    if(videos.featured) fvSelect.value=videos.featured.id;
-    onFvChange();
+    const sel = $('fvSelect'); sel.innerHTML = '';
+    allVideos().forEach(v => { const o = document.createElement('option'); o.value = v.id; o.textContent = v.title || v.id; sel.appendChild(o); });
+    const o = document.createElement('option'); o.value = '__new__'; o.textContent = '＋ A new one (paste a link)'; sel.appendChild(o);
+    if (videos.featured) sel.value = videos.featured.id;
+    onFv();
   }
-  fvSelect.addEventListener('change',onFvChange);
-  fvLink.addEventListener('input',()=>{ fvThumb.src=thumbFor(ytId(fvLink.value)); });
-  fvThumb.addEventListener('error',()=>{ fvThumb.style.visibility='hidden'; });
-  fvThumb.addEventListener('load',()=>{ fvThumb.style.visibility='visible'; });
-  fetch('videos.json?_='+Date.now()).then(r=>r.json()).then(d=>{ videos={ featured:d.featured||null, sidebar:d.sidebar||[] }; renderFv(); }).catch(()=>{});
-
-  $('saveFeatured').addEventListener('click',async()=>{
-    const fm=$('fvMsg');
-    if(!connected()){ msg(fm,'Connect GitHub above first.','err'); return; }
-    let newFeatured, rest;
-    if(fvSelect.value==='__new__'){
-      const id=ytId(fvLink.value);
-      if(!id){ msg(fm,'Paste a valid YouTube link or 11-character ID.','err'); return; }
-      const t=fvTitle.value.trim();
-      newFeatured={ id, title: t||'Featured video' };
-      rest=allVideos().filter(v=>v.id!==id);
-    } else {
-      const id=fvSelect.value;
-      newFeatured=allVideos().find(v=>v.id===id);
-      rest=allVideos().filter(v=>v.id!==id);
-    }
-    const out={ featured:{ id:newFeatured.id, title:newFeatured.title }, sidebar:rest.map(v=>({ id:v.id, title:v.title })) };
-    msg(fm,'Saving…');
-    try{
-      await saveFile('videos.json', JSON.stringify(out,null,2)+'\n', 'Set featured video: '+newFeatured.title);
-      videos={ featured:out.featured, sidebar:out.sidebar }; renderFv(); fvLink.value=''; fvTitle.value='';
-      msg(fm,'Saved ✓ — live in ~1 min','ok');
-    } catch(e){ download('videos.json', JSON.stringify(out,null,2)+'\n'); msg(fm,'Token couldn’t save ('+e.message+') — downloaded videos.json instead.','err'); }
+  $('fvSelect').addEventListener('change', onFv);
+  $('fvLink').addEventListener('input', onFv);
+  fetch('videos.json?_=' + Date.now()).then(r => r.json()).then(d => { videos = { featured:d.featured || null, sidebar:d.sidebar || [] }; renderFv(); }).catch(renderFv);
+  $('saveFeatured').addEventListener('click', async () => {
+    const el = $('fvMsg'); if (needToken(el)) return;
+    let pick;
+    if ($('fvSelect').value === '__new__') {
+      const id = ytId($('fvLink').value);
+      if (!id) { msg(el, 'Paste a YouTube link or 11-character ID.', 'err'); return; }
+      pick = { id, title:$('fvTitle').value.trim() || 'Featured video' };
+    } else pick = allVideos().find(v => v.id === $('fvSelect').value);
+    if (!pick) return;
+    const out = { featured:{ id:pick.id, title:pick.title }, sidebar:allVideos().filter(v => v.id !== pick.id).map(v => ({ id:v.id, title:v.title })) };
+    msg(el, 'Saving…');
+    try { await saveText('videos.json', JSON.stringify(out, null, 2) + '\n', 'Set featured video: ' + pick.title);
+      videos = out; renderFv(); $('fvLink').value = ''; $('fvTitle').value = ''; msg(el, 'Saved ✓', 'ok'); toast('Featured video saved', 'ok'); }
+    catch (e) { msg(el, e.message, 'err'); }
   });
 
-  // ---------- photos ----------
+  // ------------------------------------------------------------------ photos
   function resizeImage(file, maxPx, mime, q){
-    return new Promise((res,rej)=>{
-      if(!/^image\//.test(file.type)){ rej(new Error('Please choose an image.')); return; }
-      const im=new Image(), url=URL.createObjectURL(file);
-      im.onload=()=>{
-        let w=im.width,h=im.height; const mx=Math.max(w,h);
-        if(mx>maxPx){ const s=maxPx/mx; w=Math.round(w*s); h=Math.round(h*s); }
-        const c=document.createElement('canvas'); c.width=w; c.height=h;
-        c.getContext('2d').drawImage(im,0,0,w,h);
-        URL.revokeObjectURL(url); res(c.toDataURL(mime,q));
+    return new Promise((res, rej) => {
+      if (!/^image\//.test(file.type)) { rej(new Error('Please choose an image.')); return; }
+      const im = new Image(), url = URL.createObjectURL(file);
+      im.onload = () => {
+        let w = im.width, h = im.height; const mx = Math.max(w, h);
+        if (mx > maxPx) { const s = maxPx / mx; w = Math.round(w * s); h = Math.round(h * s); }
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(im, 0, 0, w, h);
+        URL.revokeObjectURL(url); res(c.toDataURL(mime, q));
       };
-      im.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('Could not read that image.')); };
-      im.src=url;
+      im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Could not read that image.')); };
+      im.src = url;
     });
   }
-  async function saveBinary(path, base64, message){
-    const cur=await ghGet(path);
-    const body={ message, content:base64, branch:GH.branch };
-    if(cur&&cur.sha) body.sha=cur.sha;
-    const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path,{method:'PUT',headers:authHeaders(),body:JSON.stringify(body)});
-    if(!r.ok){ let m=''; try{m=(await r.json()).message||'';}catch(e){} throw new Error(r.status+(m?' '+m:'')); }
-    return r.json();
-  }
-  function wirePhoto(fileId, previewId, saveId, msgId, path){
-    const fileEl=$(fileId), prev=$(previewId), saveEl=$(saveId), m=$(msgId);
-    const mime = path.endsWith('.png') ? 'image/png' : 'image/jpeg';
-    let pending='';
-    fileEl.addEventListener('change',()=>{
-      const f=fileEl.files&&fileEl.files[0]; if(!f) return;
-      resizeImage(f,1200,mime,0.85).then(dataUrl=>{ pending=dataUrl.split(',')[1]; prev.src=dataUrl; saveEl.disabled=false; msg(m,'Ready — hit Save','ok'); }).catch(e=>msg(m,e.message,'err'));
+  $$('[data-photo]').forEach((box, i) => {
+    const path = box.dataset.photo, mime = path.endsWith('.png') ? 'image/png' : 'image/jpeg', fid = 'ph' + i;
+    box.innerHTML = '<label class="fld">' + esc(box.dataset.label) + '</label>'
+      + '<img class="thumb" style="margin-top:0" alt="" src="' + esc(path) + '">'
+      + '<div class="row"><label class="btn ghost" for="' + fid + '">Choose photo…</label>'
+      + '<input type="file" id="' + fid + '" accept="image/*" hidden>'
+      + '<button class="btn" type="button" disabled>Save</button></div><div class="msg"></div>';
+    const img = box.querySelector('img'), file = box.querySelector('input'), save = box.querySelector('button'), m = box.querySelector('.msg');
+    let pending = '';
+    file.addEventListener('change', () => {
+      const f = file.files && file.files[0]; if (!f) return;
+      resizeImage(f, 1200, mime, .85).then(d => { pending = d.split(',')[1]; img.src = d; save.disabled = false; msg(m, 'Looks right? Tap Save.', 'ok'); })
+        .catch(e => msg(m, e.message, 'err'));
     });
-    saveEl.addEventListener('click',async()=>{
-      if(!connected()){ msg(m,'Connect GitHub above first.','err'); return; }
-      if(!pending){ msg(m,'Choose a photo first.','err'); return; }
-      msg(m,'Saving…');
-      try{ await saveBinary(path, pending, 'Update '+path+' via admin'); msg(m,'Saved ✓ — live in ~1 min','ok'); saveEl.disabled=true; }
-      catch(e){ msg(m,'Save failed: '+e.message,'err'); }
-    });
-  }
-  wirePhoto('fileProfile','phProfile','saveProfile','profileMsg','images/miki-drummer-live-vancouver.png');
-  wirePhoto('fileDrum','phDrum','saveDrum','drumMsg','images/miki-drummer-drum-kit.png');
-
-  // ---------- Granite photo filter ----------
-  const gfxThumb=$('gfxThumb');
-  // Season: the same shape as the filter chips above — change state, reflect,
-  // save config.json. It has to live in here: state and commitConfigTo belong
-  // to this closure, and a separate script block at the end of the page cannot
-  // see them. That was the first attempt and it threw on every click.
-  //
-  // (And the second attempt wrote the closing script tag out in full in this
-  // very comment, which ends the block early and takes the rest of the page's
-  // JavaScript with it. Hence the careful wording.)
-  function reflectSeason(){
-    var v = state.season || 'auto';
-    document.querySelectorAll('.pchip[data-season]').forEach(c=>c.classList.toggle('active', c.dataset.season===v));
-    $('seasonTag').textContent = v;
-    // Run it here too, so you can see what you are about to publish.
-    var running = window.Seasonal ? Seasonal.apply(v) : '';
-    var note = $('seasonNow');
-    if(window.Seasonal && Seasonal.reduced()) note.textContent = '→ your system asks for reduced motion, so nothing animates here';
-    else if(v==='auto') note.textContent = running ? '→ auto: '+running+' today' : '→ auto: nothing today';
-    else note.textContent = running ? '→ '+running+' on every page' : '→ off on every page';
-  }
-  document.querySelectorAll('.pchip[data-season]').forEach(chip=>{
-    chip.addEventListener('click',()=>{
-      state.season = chip.dataset.season; reflectSeason();
-      commitConfigTo($('seasonMsg'),'Season: '+state.season);
+    save.addEventListener('click', async () => {
+      if (needToken(m) || !pending) return;
+      msg(m, 'Saving…');
+      try { const cur = await ghGet(path); await putFile(path, pending, 'Update ' + path + ' via admin', cur && cur.sha); msg(m, 'Saved ✓', 'ok'); save.disabled = true; pending = ''; }
+      catch (e) { msg(m, e.message, 'err'); }
     });
   });
 
-  function reflectGfx(){
-    document.querySelectorAll('.gfxchip').forEach(c=>c.classList.toggle('active', c.dataset.filter===state.graniteFilter));
-    if(gfxThumb) gfxThumb.style.filter = GFX[state.graniteFilter]||'none';
-    $('gfxStatus').textContent = state.graniteFilter==='none' ? '→ no filter' : '→ '+state.graniteFilter;
+  fetch('playlist.json?_=' + Date.now()).then(r => r.json()).then(d => {
+    const n = (d.songs || []).length; $('songCount').textContent = n + ' song' + (n === 1 ? '' : 's') + ' · add, remove, reorder';
+  }).catch(() => {});
+
+  // ------------------------------------------------------------------ Punk BC board + queue
+  const todayISO = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  let boardShows = [];
+  fetch('punkbc-shows.json?_=' + Date.now()).then(r => r.json()).then(d => {
+    const t = todayISO();
+    boardShows = (d.shows || []).filter(s => (s.date || '') >= t).sort((a, b) => a.date < b.date ? -1 : 1);
+    const next = boardShows[0];
+    $('boardInfo').textContent = boardShows.length + ' upcoming' + (next ? ' · next: ' + next.band.split(' / ')[0] + ', ' + day(next.date + 'T12:00') : '');
+    renderIssue();
+  }).catch(() => { $('boardInfo').textContent = 'Punk BC listings'; renderIssue(); });
+  fetch('data/shows-queue.json?_=' + Date.now()).then(r => r.json()).then(q => {
+    const n = (q.pending || []).length;
+    $('sQueue').textContent = n ? n + ' to review' : 'None';
+    $('sQueueBox').classList.toggle('hot', n > 0);
+    if (n) { $('qCnt').hidden = false; $('qCnt').textContent = n; $('tabBadge').hidden = false; $('tabBadge').textContent = n; }
+  }).catch(() => { $('sQueue').textContent = '—'; });
+
+  // ------------------------------------------------------------------ GitHub jobs
+  // Starts a workflow and follows it to the end. GitHub doesn't hand back the
+  // run it just made, so the newest dispatch run created after we asked is it.
+  async function startJob(file, inputs){
+    const t0 = Date.now() - 15000;
+    const r = await fetch(API + '/actions/workflows/' + file + '/dispatches', {
+      method:'POST', headers:headers(true), body:JSON.stringify({ ref:GH.branch, inputs:inputs || {} }) });
+    if (r.status === 404 || r.status === 403) throw new Error('This token can’t start GitHub jobs. Tap “Connect” and use a classic token with the repo box ticked (or a fine-grained one with Actions: Read and write).');
+    if (!r.ok) throw await ghError(r);
+    for (let i = 0; i < 20; i++) {
+      await sleep(3000);
+      const lr = await fetch(API + '/actions/workflows/' + file + '/runs?event=workflow_dispatch&per_page=5', { headers:headers(), cache:'no-store' });
+      if (!lr.ok) continue;
+      const run = ((await lr.json()).workflow_runs || []).find(x => new Date(x.created_at).getTime() >= t0);
+      if (run) return run;
+    }
+    throw new Error('GitHub accepted the job but it hasn’t shown up yet — check GitHub Actions in a minute.');
   }
-  document.querySelectorAll('.gfxchip').forEach(chip=>{
-    chip.addEventListener('click',()=>{
-      state.graniteFilter=chip.dataset.filter; reflectGfx();
-      commitConfigTo($('gfxMsg'),'Granite photo filter: '+state.graniteFilter);
-    });
-  });
-  reflectGfx();
+  async function waitJob(run, onTick){
+    const until = Date.now() + 12 * 60000;
+    while (Date.now() < until) {
+      const r = await fetch(API + '/actions/runs/' + run.id, { headers:headers(), cache:'no-store' });
+      if (r.ok) { run = await r.json(); if (run.status === 'completed') return run; if (onTick) onTick(run); }
+      await sleep(5000);
+    }
+    throw new Error('Still running after 12 minutes — follow it on GitHub.');
+  }
+  async function failedStep(run){
+    try {
+      const r = await fetch(API + '/actions/runs/' + run.id + '/jobs', { headers:headers(), cache:'no-store' });
+      const jobs = (await r.json()).jobs || [];
+      for (const j of jobs) for (const s of (j.steps || [])) if (s.conclusion === 'failure') return s.name;
+    } catch (e) {}
+    return '';
+  }
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+  $$('[data-run]').forEach(b => b.addEventListener('click', async () => {
+    const el = $('runMsg'); if (needToken(el)) return;
+    const what = b.dataset.what, go = b.querySelector('.go');
+    b.disabled = true; go.textContent = '…';
+    msg(el, what + '…');
+    try {
+      const run = await startJob(b.dataset.run, b.dataset.inputs ? JSON.parse(b.dataset.inputs) : {});
+      const done = await waitJob(run, () => msg(el, what + '… (running on GitHub)'));
+      if (done.conclusion === 'success') { msg(el, b.querySelector('b').textContent + ' — done ✓. The site updates in about a minute.', 'ok'); toast('Done', 'ok'); go.textContent = '✓'; }
+      else { const s = await failedStep(done); msg(el, 'It stopped' + (s ? ' at “' + s + '”' : '') + '. Details: ' + done.html_url, 'err'); go.textContent = '!'; }
+    } catch (e) { msg(el, e.message, 'err'); go.textContent = '▶'; }
+    b.disabled = false; setTimeout(() => { if (go.textContent !== '▶') go.textContent = '▶'; }, 8000);
+  }));
+
+  // ------------------------------------------------------------------ newsletter
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const ym = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+  const ymLabel = s => MONTHS[+s.slice(5, 7) - 1] + ' ' + s.slice(0, 4);
+  (function fillPick(){
+    const now = new Date(), next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const sel = $('nlPick');
+    [ym(now), ym(next)].forEach((v, i) => { const o = document.createElement('option'); o.value = v; o.textContent = (i ? 'Next: ' : 'This month: ') + MONTHS[+v.slice(5, 7) - 1]; sel.appendChild(o); });
+    // Late in the month the next issue is usually the one you mean.
+    if (now.getDate() >= 25) sel.value = ym(next);
+  })();
+  let lastSent = {};   // month -> ISO date, from GitHub's run history
+  function renderIssue(){
+    const m = $('nlPick').value;
+    const t = todayISO();
+    const n = boardShows.filter(s => s.date.slice(0, 7) === m && s.date >= t).length;
+    $('nlMonth').textContent = ymLabel(m);
+    $('nlCount').textContent = n + ' show' + (n === 1 ? '' : 's') + ' coming up' + (m === ym(new Date()) ? ' this month' : '');
+    $('nlPreview').href = '/digest/' + m + '.html';
+    const sentOn = lastSent[m] || store.get('nl_sent_' + m);
+    const tag = $('nlTag');
+    if (sentOn) { tag.textContent = 'sent ' + day(sentOn); tag.className = 'tag ok'; }
+    else { tag.textContent = 'not sent'; tag.className = 'tag warn'; }
+  }
+  $('nlPick').addEventListener('change', renderIssue);
+
+  // Which issues have actually gone out: a punkbc-send run whose "Send it to
+  // the group" step succeeded. The month isn't in the run, so it's the month
+  // the run happened in — close enough to warn before a double send.
+  async function loadNewsletterHistory(){
+    try {
+      const r = await fetch(API + '/actions/workflows/punkbc-send.yml/runs?status=success&per_page=10', { headers:connected() ? headers() : {}, cache:'no-store' });
+      if (!r.ok) return;
+      for (const run of ((await r.json()).workflow_runs || [])) {
+        const jr = await fetch(API + '/actions/runs/' + run.id + '/jobs', { headers:connected() ? headers() : {}, cache:'no-store' });
+        if (!jr.ok) continue;
+        const sent = ((await jr.json()).jobs || []).some(j => (j.steps || []).some(s => s.name === 'Send it to the group' && s.conclusion === 'success'));
+        if (sent) { const k = run.created_at.slice(0, 7); if (!lastSent[k]) lastSent[k] = run.created_at; }
+      }
+      renderIssue();
+    } catch (e) {}
+  }
+  loadNewsletterHistory();
+
+  function step(id, state, text){
+    const li = $(id); li.className = state;
+    li.querySelector('.s').textContent = { now:'◌', done:'✓', bad:'✕', '':'○' }[state] || '○';
+    if (text) li.querySelector('span:last-child').textContent = text;
+  }
+  async function runNewsletter(deliver){
+    const el = $('nlMsg'), m = $('nlPick').value;
+    if (needToken(el)) return;
+    const label = ymLabel(m);
+    if (deliver) {
+      const already = lastSent[m] || store.get('nl_sent_' + m);
+      const ok = await ask('Send the ' + label + ' newsletter?',
+        (already ? '<b style="color:var(--gold)">It looks like this issue already went out on ' + esc(day(already)) + '.</b><br><br>' : '')
+        + 'It goes to everyone on the Punk BC list straight away. An email can’t be unsent.<br><br>'
+        + 'First the issue is rebuilt with the latest shows, then it’s sent — about two minutes.', already ? 'Send again' : 'Send now');
+      if (!ok) return;
+    }
+    $('nlSend').disabled = $('nlDraft').disabled = true;
+    $('nlHelp').hidden = true;
+    $('nlSteps').hidden = false;
+    step('st1', ''); step('st2', '', deliver ? 'Send it to the list' : 'Make a draft in MailerLite');
+    msg(el, '');
+    try {
+      step('st1', 'now');
+      const b = await waitJob(await startJob('punkbc-digest.yml', { month:m }));
+      if (b.conclusion !== 'success') { step('st1', 'bad'); throw new Error('Rebuilding the issue failed — ' + b.html_url); }
+      step('st1', 'done');
+      step('st2', 'now');
+      const s = await waitJob(await startJob('punkbc-send.yml', { month:m, send:deliver ? 'SEND' : 'draft' }));
+      if (s.conclusion !== 'success') {
+        step('st2', 'bad');
+        const where = await failedStep(s);
+        if (/draft|send it/i.test(where)) {
+          $('nlHelp').hidden = false;
+          throw new Error('MailerLite didn’t take it. If you haven’t added the key yet, the steps are below. Otherwise the reason is in the log: ' + s.html_url);
+        }
+        throw new Error('It stopped' + (where ? ' at “' + where + '”' : '') + ' — ' + s.html_url);
+      }
+      step('st2', 'done');
+      if (deliver) {
+        lastSent[m] = new Date().toISOString(); store.set('nl_sent_' + m, lastSent[m]);
+        msg(el, 'Sent ✓ The ' + label + ' issue is on its way to the list.', 'ok'); toast('Newsletter sent 📨', 'ok');
+      } else {
+        msg(el, 'Draft made ✓ Open MailerLite → Campaigns to look it over.', 'ok'); toast('Draft ready in MailerLite', 'ok');
+      }
+      renderIssue();
+    } catch (e) { msg(el, e.message, 'err'); toast('Not sent', 'err'); }
+    $('nlSend').disabled = $('nlDraft').disabled = false;
+  }
+  $('nlSend').addEventListener('click', () => runNewsletter(true));
+  $('nlDraft').addEventListener('click', () => runNewsletter(false));
 })();
 </script>
 <script src="/js/seasonal.js"></script>
-<!-- The floating chat bubble. Admin only for now: it is a trial of putting
-     the site chat where it is one tap away instead of a page you have to go
-     to. It runs chat.html itself in an iframe, so there is one matcher to
-     keep tuned rather than a widget copy that drifts from it. -->
+<!-- The floating chat bubble: it runs chat.html itself in an iframe, so there
+     is one matcher to keep tuned rather than a widget copy that drifts. -->
 <script src="/js/chat-bubble.js" defer></script>
 </body>
 </html>
