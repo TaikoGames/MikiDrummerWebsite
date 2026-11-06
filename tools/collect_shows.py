@@ -187,6 +187,28 @@ def clean_band(name: str, venue: str) -> str:
     return s.strip(" -–—·|,") or name
 
 
+# "Red Gate Arts Society 1965 Main St" and "Red Gate Arts Society" are one
+# room. The calendar sometimes writes the street address into the venue, which
+# made the same show arrive twice, once under each.
+ADDRESS = re.compile(
+    r"[\s,]+\d{1,5}\s+[\w .'-]*?\b(?:st|street|ave|avenue|rd|road|dr|drive|blvd|"
+    r"boulevard|way|hwy|highway|pl|place|cres|crescent)\.?(?:\s*,.*)?$", re.I)
+
+
+def venue_name(raw: str) -> str:
+    return canonical_venue(ADDRESS.sub("", raw or "").strip())
+
+
+def slot(row: dict) -> tuple:
+    """Date and room. The same night at the same venue is the same show,
+    however the bill was typed -- "The Restarts, Alien Boys, Mean Bikini" on
+    the calendar is "The Restarts / Alien Boys / Mean Bikini" on the board,
+    and matching on the wording alone queued every such show as new, every
+    day, burying the shows that really were missing. (A venue with an early
+    and a late show the same day is rare enough to accept missing one.)"""
+    return (str(row.get("date", "")).strip(), venue_name(str(row.get("venue", ""))).lower())
+
+
 def key(row: dict) -> tuple:
     return (str(row.get("band", "")).strip().lower(),
             str(row.get("date", "")).strip(),
@@ -198,7 +220,7 @@ def normalise(row: dict, src: dict) -> dict | None:
     date = str(row.get("date") or "")
     if not band or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
         return None
-    venue = canonical_venue(str(row.get("venue") or "") or src.get("venue", ""))
+    venue = venue_name(str(row.get("venue") or "") or src.get("venue", ""))
     city = canonical_city(str(row.get("city") or "") or src.get("city", ""))
     ticket = str(row.get("ticket") or "")
     if ticket and not ticket.startswith("http"):
@@ -249,6 +271,8 @@ def main() -> int:
     known = {key(s) for s in board}
     known |= {key(s) for s in queue["pending"]}
     known |= {key(s) for s in queue["dismissed"]}
+    taken = {slot(s) for s in board} | {slot(s) for s in queue["pending"]} \
+        | {slot(s) for s in queue["dismissed"]}
 
     sources = [s for s in cfg.get("sources", [])
                if s.get("enabled") and (not args.only or args.only in s["id"])]
@@ -277,9 +301,10 @@ def main() -> int:
             if not n or not in_window(n["date"], today, horizon):
                 continue
             k = key(n)
-            if k in known:
+            if k in known or slot(n) in taken:
                 continue
             known.add(k)
+            taken.add(slot(n))
             n["first_seen"] = today
             fresh.append(n)
 
@@ -338,6 +363,17 @@ def self_test() -> int:
         checks.append(("jsonld: city folded", n["city"] == "Vancouver"))
         checks.append(("jsonld: price", n["price"] == "$18"))
         checks.append(("jsonld: tracking stripped", n["ticket"] == "https://x.test/t"))
+
+    checks.append(("address cut from venue",
+                   venue_name("Red Gate Arts Society 1965 Main St") == "Red Gate Arts Society"))
+    checks.append(("address and alias",
+                   venue_name("LANALOU'S Rock n' Roll Eatery 362 Powell St") == "LanaLou's"))
+    checks.append(("plain venue untouched", venue_name("The Cobalt") == "The Cobalt"))
+    checks.append(("a number in a name is not an address",
+                   venue_name("Club 9ONE9") == "Club 9ONE9"))
+    checks.append(("same night, same room, different wording is one show",
+                   slot({"date": "2026-11-18", "venue": "Green Auto"})
+                   == slot({"date": "2026-11-18", "venue": "Green Auto Music 1822 Pandora St"})))
 
     checks.append(("jsonld: bad block skipped",
                    read_jsonld('<script type="application/ld+json">{oops</script>'

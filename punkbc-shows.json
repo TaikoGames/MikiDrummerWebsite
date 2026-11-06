@@ -2,6 +2,19 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
+      "band": "Brasser",
+      "date": "2026-11-06",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/brasser-big-time-the-fomites-m/1568455571746398/",
+      "genre": "Punk",
+      "notes": "With Big Time, The Fomites, Mooshy Face.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
       "band": "Jon Spencer",
       "date": "2026-11-08",
       "time": "19:00",
@@ -101,6 +114,19 @@
       "image": "https://lastfm.freetls.fastly.net/i/u/300x300/07449b45cb96703b275d98124e5dc196"
     },
     {
+      "band": "Lethbridge Invasion — Night 1",
+      "date": "2026-11-13",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion/1653147899703601/",
+      "genre": "Punk / Hardcore",
+      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood, Zero Index. Night 2 is the next day at Bully's.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
       "band": "Arch Enemy",
       "date": "2026-11-14",
       "time": "17:00",
@@ -123,6 +149,19 @@
       "genre": "Black/Doom Metal",
       "notes": "With Perdurabo, Deliriant Fracture, Occisor. A Night of Death and Doom. Music starts 9pm",
       "image": "https://astoria.pub/wp-content/uploads/2026/07/Black-Death-Cult-663x1024.jpeg",
+      "curated": ""
+    },
+    {
+      "band": "Lethbridge Invasion — Night 2",
+      "date": "2026-11-14",
+      "time": "",
+      "venue": "Bully's Studios",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion-night-2/2907068749648249/",
+      "genre": "Punk / Hardcore",
+      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "curated": ""
     },
     {
@@ -214,6 +253,32 @@
       "curated": ""
     },
     {
+      "band": "Vic Bondi and His Issues",
+      "date": "2026-11-21",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/demolition-days-vic-bondi-and-/1113248167832234/",
+      "genre": "Hardcore Punk",
+      "notes": "Demolition Days. With Slip~Ons, Uptights, Earmarked.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
+      "band": "Anchoress",
+      "date": "2026-11-27",
+      "time": "",
+      "venue": "LanaLou's",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.instagram.com/p/De2fYOyAuhP/",
+      "genre": "Punk",
+      "notes": "With Storm Boy, Bad Luck Charm, Skung, Skellytune.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
       "band": "Pointed Sticks",
       "date": "2026-11-28",
       "time": "19:30",
@@ -224,6 +289,19 @@
       "genre": "Punk",
       "notes": "Final show ever. Vancouver punk legends. Support to be announced. 19+",
       "image": "https://rickshawtheatre.com/wp-content/uploads/2026/09/PS-NOV-SHOW1-400x533.jpg",
+      "curated": ""
+    },
+    {
+      "band": "The Oldest Man I Know",
+      "date": "2026-11-28",
+      "time": "",
+      "venue": "Green Auto",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://gigpit.ca/shows/event:1vnttTAwF3c",
+      "genre": "Punk",
+      "notes": "With Beastie, Staggers and Jags, Call Before You Dig, Shorefox.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "curated": ""
     },
     {
@@ -276,6 +354,45 @@
       "genre": "Hardcore",
       "notes": "With Gates to Hell, Mauled. 19+",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Guilt_Trip_Full_Force_2023_04.jpg?width=600",
+      "curated": ""
+    },
+    {
+      "band": "1876",
+      "date": "2026-12-04",
+      "time": "",
+      "venue": "Green Auto",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/1876-with-terminal-city-rats-d/974565791671228/",
+      "genre": "Punk",
+      "notes": "With Terminal City Rats.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
+      "band": "Emo Orchestra",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "Harbour Event & Convention Centre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/emo-orchestra-w-the-spill-canv/1416258253798343/",
+      "genre": "Emo",
+      "notes": "With The Spill Canvas and Greywind.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
+      "band": "X-Mas in Skaville",
+      "date": "2026-12-12",
+      "time": "",
+      "venue": "The WISE Hall",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "Ska",
+      "notes": "Christmas ska night.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "curated": ""
     },
     {
@@ -344,6 +461,19 @@
       "curated": ""
     },
     {
+      "band": "Diesel Boy",
+      "date": "2027-01-30",
+      "time": "",
+      "venue": "The WISE Hall",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/dieselboy-with-downway-another/29192009527083481/",
+      "genre": "Pop Punk",
+      "notes": "With Downway and Another Joe.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
       "band": "Winona Fighter",
       "date": "2027-02-05",
       "time": "19:30",
@@ -354,6 +484,32 @@
       "genre": "Punk",
       "notes": "",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
+      "curated": ""
+    },
+    {
+      "band": "Frank Turner and The Sleeping Souls",
+      "date": "2027-02-10",
+      "time": "",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/frank-turner-the-sleeping-soul/1457102043304201/",
+      "genre": "Folk Punk",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
+      "band": "Dropkick Murphys",
+      "date": "2027-02-12",
+      "time": "",
+      "venue": "PNE Forum",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/dropkick-murphys-at-pne-forum/1067398236158457/",
+      "genre": "Celtic Punk",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "curated": ""
     },
     {
@@ -469,6 +625,19 @@
       "genre": "Punk",
       "notes": "With SPRINTS",
       "image": "https://commons.wikimedia.org/wiki/Special:FilePath/WideAwake250524_%2811_of_209%29_%2853748502026%29_%28cropped%29.jpg?width=400",
+      "curated": ""
+    },
+    {
+      "band": "Haywire",
+      "date": "2027-04-29",
+      "time": "",
+      "venue": "The Pearl",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "Oi! / Street Punk",
+      "notes": "With Béton Armé.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "curated": ""
     }
   ]

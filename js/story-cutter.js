@@ -335,3 +335,31 @@ export function zipParts(files, when = new Date()) {
   end.setUint32(16, offset, true);
   return parts.concat(central, [new Uint8Array(end.buffer)]);
 }
+
+/* ---- handing clips to a phone's share sheet in batches ----------------
+ *
+ * A share sheet takes only so much at once -- Chrome on Android about 50 MB
+ * and 10 files -- and five full-size clips are over that, so "Save all"
+ * was refused outright. Group the clips, in order, into batches under the
+ * limit; each batch is one share sheet. A clip bigger than the limit on its
+ * own still gets a batch to itself (the phone may yet take it).
+ * Returns arrays of indices into `sizes`. */
+export const SHARE_MAX_BYTES = 45 * 1024 * 1024;
+export const SHARE_MAX_FILES = 10;
+export function shareBatches(sizes, maxBytes = SHARE_MAX_BYTES, maxFiles = SHARE_MAX_FILES) {
+  const out = [];
+  let cur = [], bytes = 0;
+  sizes.forEach((sz, i) => {
+    if (cur.length && (bytes + sz > maxBytes || cur.length >= maxFiles)) { out.push(cur); cur = []; bytes = 0; }
+    cur.push(i); bytes += sz;
+  });
+  if (cur.length) out.push(cur);
+  return out;
+}
+
+/* Bits per second for a clip: about 0.1 bit per pixel per frame at 30 fps,
+ * between 2 and 6 Mbps. 6 Mbps is plenty for 1080p from a phone camera and
+ * keeps a 15 second clip near 11 MB -- four to a share sheet, not three. */
+export function bitrateFor(w, h, fps = 30) {
+  return Math.round(Math.max(2e6, Math.min(6e6, w * h * fps * 0.1)));
+}
