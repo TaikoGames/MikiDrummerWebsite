@@ -130,8 +130,6 @@ ART_SOURCES = {
     # with a credited band photo.
     "winona fighter": ["https://www.melodicmag.com/interviews/cover-story-winona-fighter-is-turning-summer-school-into-a-basement-show/",
                        "https://www.orlandoweekly.com/music/rising-pop-punkers-winona-fighter-do-warped-tour-double-duty-in-orlando/"],
-    # Finnish black metal.
-    "beherit": ["https://en.wikipedia.org/wiki/Beherit"],
     # Las Vegas, formed 2023: the Astoria's event page is tried first (its
     # ticket link), then their artist page.
     "deathtape": ["https://music.apple.com/us/artist/deathtape/1726844976"],
@@ -140,6 +138,14 @@ ART_SOURCES = {
     "metal church": ["https://en.wikipedia.org/wiki/Metal_Church", "https://en.wikipedia.org/wiki/Armored_Saint"],
     # Two nights: each gets a different picture.
     "3 inches of blood": ["https://en.wikipedia.org/wiki/3_Inches_of_Blood"],
+    # Vancouver punk since 1978. The Rickshaw's poster for their final show
+    # would be better, but the Rickshaw refuses the art job (406).
+    "pointed sticks": ["https://en.wikipedia.org/wiki/Pointed_Sticks"],
+    # San Jose death metal; was on a Spotify playlist cover.
+    "exhumed": ["https://en.wikipedia.org/wiki/Exhumed_(band)"],
+    # Finnish black metal: their album on KVLT, their label's Bandcamp.
+    "beherit": ["https://kvltfinland.bandcamp.com/album/bardo-exist",
+                "https://en.wikipedia.org/wiki/Beherit"],
     # X-Mas in Skaville has no art of its own anywhere, and one band's photo
     # on a many-band night would be wrong. It keeps the placeholder.
 }
@@ -212,7 +218,10 @@ def usable(raw: bytes) -> tuple[bool, str]:
 # images, the site's own crowd shots. A show carrying one of these is treated
 # as having no art at all.
 GENERIC = ("Moshpit2", "punkbc-crowd", "placeholder", "encrypted-tbn", "gstatic.com",
-           "lastfm.freetls.fastly.net", "last.fm", "lastfm.")
+           "lastfm.freetls.fastly.net", "last.fm", "lastfm.",
+           # a Spotify *playlist* cover ("The Complete X Discography", Spotify
+           # logo and all) -- not the band's art
+           "spotifycdn.com/image/ab67706c")
 
 
 def is_generic(url: str) -> bool:
@@ -272,7 +281,7 @@ def ahash(raw: bytes) -> int:
     hashes the same, which a byte comparison would miss."""
     from PIL import Image
     im = Image.open(io.BytesIO(raw)).convert("L").resize((8, 8), Image.LANCZOS)
-    px = list(im.getdata())
+    px = list(im.tobytes())        # one byte per pixel in L mode
     avg = sum(px) / 64
     return sum(1 << i for i, v in enumerate(px) if v >= avg)
 
@@ -400,6 +409,10 @@ def make_card(show: dict) -> bytes:
     return out.getvalue()
 
 
+def is_card(show: dict) -> bool:
+    return (show.get("image_source") or "").startswith("Made for Punk BC")
+
+
 def needs_art(show: dict) -> bool:
     im = (show.get("image") or "").strip()
     if not im or is_generic(im):
@@ -434,9 +447,16 @@ def main() -> int:
 
     # Every show must end with its own picture, saved here. A show whose saved
     # picture is the same as an earlier show's counts as having none.
+    # Cards are left out of the comparison: they are unique by what they say,
+    # but all look alike to a picture hash. They are tried again each run in
+    # case real art has appeared, and kept as they are if it has not.
     taken: list[int] = []
     todo = []
+    used_names = {(x.get("image") or "").rsplit("/", 1)[-1] for x in shows}
     for s in shows:
+        if is_card(s) and not needs_art(s):
+            todo.append(s)
+            continue
         h = None if needs_art(s) else local_hash(s)
         if h is not None and not any(same_picture(h, t) for t in taken):
             taken.append(h)
@@ -452,7 +472,19 @@ def main() -> int:
         print(head)
         for line in report:
             print(line)
-        name = f"{slug(s['band'].split(' / ')[0])}-{s['date']}.jpg"
+        # The whole bill in the name, and a number if it is still taken: two
+        # listings that start with the same band on the same night (Metal
+        # Church; Metal Church / Armored Saint) wrote one file, and the second
+        # show's picture replaced the first's.
+        mine = (s.get("image") or "").rsplit("/", 1)[-1]
+        base = f"{slug(s['band'])[:60]}-{s['date']}"
+        name, n = f"{base}.jpg", 2
+        while name in used_names and name != mine:
+            name, n = f"{base}-{n}.jpg", n + 1
+        used_names.add(name)
+        if not found and is_card(s) and not needs_art(s):
+            print("      -> no real picture yet; keeping its card\n")
+            continue
         if found:
             raw, src, where = found
             print(f"      -> images/shows/{name}  (via the {where})\n")
@@ -461,7 +493,8 @@ def main() -> int:
             raw, src, where = make_card(s), "Made for Punk BC: no picture of this show or band could be found.", "card"
             print(f"      -> images/shows/{name}  (a card: nothing unique and right was found)\n")
             cards += 1
-        taken.append(ahash(raw))
+        if found:
+            taken.append(ahash(raw))
         if not args.check:
             from PIL import Image
             im = Image.open(io.BytesIO(raw)).convert("RGB")
@@ -497,6 +530,8 @@ def _rule_checks(checks: list) -> None:
     checks.append(("generic: last.fm stand-in", is_generic("https://lastfm.freetls.fastly.net/i/u/300x300/abc")))
     checks.append(("generic: google thumbnail", is_generic("https://encrypted-tbn0.gstatic.com/images?q=x")))
     checks.append(("a band photo is not generic", not is_generic("https://commons.wikimedia.org/wiki/Special:FilePath/Devil_Master.jpg")))
+    checks.append(("generic: a Spotify playlist cover", is_generic("https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84f7")))
+    checks.append(("a card is recognised", is_card({"image_source": "Made for Punk BC: no picture"})))
     checks.append(("venue home page is not a show page", not is_show_page("https://rickshawtheatre.com")))
     checks.append(("venue shows list is not a show page", not is_show_page("https://www.commodoreballroom.com/shows")))
     checks.append(("an event page is a show page", is_show_page("https://astoria.pub/events/deathtape-live-in-vancouver/")))
