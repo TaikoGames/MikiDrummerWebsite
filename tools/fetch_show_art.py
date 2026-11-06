@@ -115,6 +115,17 @@ ART_SOURCES = {
     # Stone's piece on their album carries the band's own press image.
     "l7": "https://en.wikipedia.org/wiki/L7_(band)",
     "babe haven": ["https://babehaven.bandcamp.com/", "https://www.ticketweb.ca/event/babe-haven-the-fox-cabaret-tickets/14940993"],
+    # The tour's other BC nights, each with a picture of its own.
+    "the restarts@2026-11-15": ["https://en.wikipedia.org/wiki/The_Restarts",
+                                "https://exclaim.ca/music/article/the-restarts-map-out-first-canadian-tour-in-15-years"],
+    "the restarts@2026-11-16": ["https://exclaim.ca/music/article/the-restarts-map-out-first-canadian-tour-in-15-years",
+                                "https://alienboys.ca/"],
+    "the restarts@2026-11-17": ["https://www.theglobelivestudio.com/",
+                                "https://seerocklive.com/the-restarts-canadian-tour-2026-diy-punk-circuit/"],
+    "bad waitress@2026-11-14": ["https://exclaim.ca/music/article/subhumans-uk-tap-bad-waitress-for-2026-canada-tour",
+                                "https://badwaitress.bandcamp.com/",
+                                "https://www.herecomestheflood.com/2026/10/bad-waitress-in-hole.html"],
+    "fleabane": ["https://fleabane.bandcamp.com/"],
     "haywire": "https://ca.rollingstone.com/music/haywire-617-i-dont-wanna-say-goodbye/",
     # ── Added 2026-11-06 (second pass): shows on a generic or stand-in picture ──
     # Helsinki black metal; their own Bandcamp.
@@ -250,7 +261,10 @@ def candidates(show: dict) -> list[tuple[str, str]]:
     if ticket.startswith("http") and not any(h in ticket for h in SKIP_HOSTS) \
             and is_show_page(ticket):
         out.append(("ticket page", ticket))
-    src = ART_SOURCES.get((show.get("band") or "").split(" / ")[0].strip().lower())
+    name = (show.get("band") or "").split(" / ")[0].strip().lower()
+    # A band on tour plays several nights; "band@date" gives one night its own
+    # picture so the same photo is not refused as a repeat and turned into a card.
+    src = ART_SOURCES.get(f"{name}@{show.get('date', '')}") or ART_SOURCES.get(name)
     # One page, or several to try in order.
     for u in ([src] if isinstance(src, str) else (src or [])):
         out.append(("band's own page", u))
