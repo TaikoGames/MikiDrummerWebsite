@@ -120,8 +120,8 @@ ART_SOURCES = {
                                 "https://exclaim.ca/music/article/the-restarts-map-out-first-canadian-tour-in-15-years"],
     "the restarts@2026-11-16": ["https://exclaim.ca/music/article/the-restarts-map-out-first-canadian-tour-in-15-years",
                                 "https://alienboys.ca/"],
-    "the restarts@2026-11-17": ["https://www.theglobelivestudio.com/",
-                                "https://seerocklive.com/the-restarts-canadian-tour-2026-diy-punk-circuit/"],
+    # Not The Globe's site: its picture is the venue's sign, not the band.
+    "the restarts@2026-11-17": ["https://seerocklive.com/the-restarts-canadian-tour-2026-diy-punk-circuit/"],
     "bad waitress@2026-11-14": ["https://exclaim.ca/music/article/subhumans-uk-tap-bad-waitress-for-2026-canada-tour",
                                 "https://badwaitress.bandcamp.com/",
                                 "https://www.herecomestheflood.com/2026/10/bad-waitress-in-hole.html"],
