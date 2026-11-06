@@ -917,7 +917,7 @@
       }
     },
     "image": [
-      "https://www.mikidrummer.ca/images/shows/the-obgms-2026-11-20.jpg"
+      "https://www.mikidrummer.ca/images/shows/the-obgms-the-cobalt-vancouver-2026-11-20.jpg"
     ],
     "performer": [
       {
@@ -3147,7 +3147,7 @@
         </div>
       </a>
       <a class="show-card" href="https://facebook.com/events/s/the-obgms-heart-problems-tour-/1577569990697370/" target="_blank" rel="noopener noreferrer">
-        <div style="position:relative;overflow:visible"><img class="show-card-img" src="https://www.mikidrummer.ca/images/shows/the-obgms-2026-11-20.jpg" alt="The OBGMs live in Vancouver" referrerpolicy="no-referrer" loading="lazy" onerror="this.src='https://www.mikidrummer.ca/images/punkbc-crowd-2.jpg';this.onerror=null"></div>
+        <div style="position:relative;overflow:visible"><img class="show-card-img" src="https://www.mikidrummer.ca/images/shows/the-obgms-the-cobalt-vancouver-2026-11-20.jpg" alt="The OBGMs live in Vancouver" referrerpolicy="no-referrer" loading="lazy" onerror="this.src='https://www.mikidrummer.ca/images/punkbc-crowd-2.jpg';this.onerror=null"></div>
         <div class="show-card-body">
           <div class="show-date">FRI, NOV 20</div>
           <div class="show-name">The OBGMs</div>
@@ -3694,7 +3694,7 @@
     { 'Band / Artist': "The Restarts / Alien Boys / Mean Bikini", 'Date': "2026-11-18", 'Time': "", 'Venue': "Green Auto", 'City': "Vancouver", 'Price': "", 'Ticket Link': "", 'Genre': "", 'Notes': "", 'Image URL': "https://www.mikidrummer.ca/images/shows/the-restarts-2026-11-18.jpg" },
     { 'Band / Artist': "Devil Master", 'Date': "2026-11-18", 'Time': "19:00", 'Venue': "The Astoria", 'City': "Vancouver", 'Price': "$30 + fees", 'Ticket Link': "https://astoria.pub/events/devil-master/", 'Genre': "Black Metal / Punk", 'Notes': "The Invisible Orange presents. 19+", 'Image URL': "https://commons.wikimedia.org/wiki/Special:FilePath/Devil_Master.jpg?width=500" },
     { 'Band / Artist': "Korpiklaani", 'Date': "2026-11-18", 'Time': "19:00", 'Venue': "Rickshaw Theatre", 'City': "Vancouver", 'Price': "$32 adv", 'Ticket Link': "https://rickshawtheatre.com/show_listings/korpiklaani-2/", 'Genre': "Folk Metal", 'Notes': "With Crimson Shadows. 19+", 'Image URL': "https://commons.wikimedia.org/wiki/Special:FilePath/Korpiklaani_-_Rakuunarock_2013.jpg?width=600" },
-    { 'Band / Artist': "The OBGMs", 'Date': "2026-11-20", 'Time': "", 'Venue': "The Cobalt", 'City': "Vancouver", 'Price': "", 'Ticket Link': "https://facebook.com/events/s/the-obgms-heart-problems-tour-/1577569990697370/", 'Genre': "", 'Notes': "Heart Problems tour", 'Image URL': "https://www.mikidrummer.ca/images/shows/the-obgms-2026-11-20.jpg" },
+    { 'Band / Artist': "The OBGMs", 'Date': "2026-11-20", 'Time': "", 'Venue': "The Cobalt", 'City': "Vancouver", 'Price': "", 'Ticket Link': "https://facebook.com/events/s/the-obgms-heart-problems-tour-/1577569990697370/", 'Genre': "", 'Notes': "Heart Problems tour", 'Image URL': "https://www.mikidrummer.ca/images/shows/the-obgms-the-cobalt-vancouver-2026-11-20.jpg" },
     { 'Band / Artist': "Vic Bondi and His Issues", 'Date': "2026-11-21", 'Time': "", 'Venue': "Red Gate Arts Society", 'City': "Vancouver", 'Price': "", 'Ticket Link': "https://facebook.com/events/s/demolition-days-vic-bondi-and-/1113248167832234/", 'Genre': "Hardcore Punk", 'Notes': "Demolition Days. With Slip~Ons, Uptights, Earmarked.", 'Image URL': "https://www.mikidrummer.ca/images/shows/vic-bondi-and-his-issues-2026-11-21.jpg" },
     { 'Band / Artist': "WAAX", 'Date': "2026-11-21", 'Time': "19:00", 'Venue': "The Cobalt", 'City': "Vancouver", 'Price': "$22 adv", 'Ticket Link': "https://rickshawtheatre.com/show_listings/waax-angels-mess-tour/", 'Genre': "Punk/Alt Rock", 'Notes': "Angel's Mess Tour. Rickshaw and Cobalt present. 19+", 'Image URL': "https://commons.wikimedia.org/wiki/Special:FilePath/SXSW_2019_-_WAAX_%2833555039998%29.jpg?width=600" },
     { 'Band / Artist': "Anchoress", 'Date': "2026-11-27", 'Time': "", 'Venue': "LanaLou's", 'City': "Vancouver", 'Price': "", 'Ticket Link': "https://www.instagram.com/p/De2fYOyAuhP/", 'Genre': "Punk", 'Notes': "With Storm Boy, Bad Luck Charm, Skung, Skellytune.", 'Image URL': "https://www.mikidrummer.ca/images/shows/anchoress-2026-11-27.jpg" },
@@ -3858,8 +3858,14 @@
     for (const r of sheet) {
       const k = showKey(r), have = byKey.get(k)
       if (!have) { byKey.set(k, r); continue }
-      // a blank cell in the sheet must not wipe a value that is already there
-      for (const [field, value] of Object.entries(r)) if (value) have[field] = value
+      // a blank cell in the sheet must not wipe a value that is already there,
+      // and a picture saved on this site is not swapped back for the sheet's
+      // hotlink -- that swap is what put the crowd fallback on so many cards
+      const saved = (have['Image URL'] || '').includes('mikidrummer.ca/images/shows/')
+      for (const [field, value] of Object.entries(r)) {
+        if (!value || (field === 'Image URL' && saved)) continue
+        have[field] = value
+      }
     }
     return [...byKey.values()]
   }
