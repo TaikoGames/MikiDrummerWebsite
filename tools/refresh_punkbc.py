@@ -165,6 +165,10 @@ def merge(existing: list[dict], sheet: list[dict]) -> list[dict]:
             # image or note is not wiped by an empty cell
             merged = dict(by_key[k])
             merged.update({f: v for f, v in show.items() if v})
+            # A picture saved on this site was checked and chosen for this
+            # show; the sheet's link is usually the hotlink it replaced. Keep it.
+            if "mikidrummer.ca/images/shows/" in (by_key[k].get("image") or ""):
+                merged["image"] = by_key[k]["image"]
             by_key[k] = merged
         else:
             by_key[k] = show

@@ -71,7 +71,8 @@ ART_SOURCES = {
     # Lethbridge Invasion is a two-night bill; Golers top both nights, so
     # their own page stands for the event.
     "lethbridge invasion — night 1": "https://thegolers.bandcamp.com/",
-    "lethbridge invasion — night 2": "https://thegolers.bandcamp.com/",
+    "lethbridge invasion — night 2": ["https://thegolers.bandcamp.com/album/backwoods-messages",
+                                      "https://thegolers.bandcamp.com/"],
     # Vic Bondi of Articles of Faith; His Issues is his Seattle band on
     # Alternative Tentacles. His own Bandcamp.
     "vic bondi and his issues": "https://vicbondi.bandcamp.com/",
@@ -113,6 +114,32 @@ ART_SOURCES = {
     # Boston hardcore (Haywire 617) on Roadrunner -- no Bandcamp. Rolling
     # Stone's piece on their album carries the band's own press image.
     "haywire": "https://ca.rollingstone.com/music/haywire-617-i-dont-wanna-say-goodbye/",
+    # ── Added 2026-11-06 (second pass): shows on a generic or stand-in picture ──
+    # Helsinki black metal; their own Bandcamp.
+    "ride for revenge": ["https://ride-for-revenge.bandcamp.com/", "https://rideforrevenge.bandcamp.com/"],
+    # No page of their own: their album on their label's Bandcamp (Nuclear War Now!).
+    "blasphamagoatachrist": ["https://nuclearwarnowproductions.bandcamp.com/album/bastardizing-the-purity",
+                             "https://nuclearwarnowproductions.bandcamp.com/album/black-metal-warfare"],
+    # The Burnaby war metal band.
+    "blasphemy": ["https://en.wikipedia.org/wiki/Blasphemy_(band)"],
+    # Montreal, ex-TRUCK; their own Bandcamp, then Southern Lord's page for them.
+    "truck violence": ["https://truckviolence.bandcamp.com/", "https://truckviolencesl.bandcamp.com/"],
+    # Victoria, BC: the punk-cover elves.
+    "angry snowmans": ["https://angrysnowmans.bandcamp.com/"],
+    # Nashville, Rise Records. Their cover story in Melodic, then a feature
+    # with a credited band photo.
+    "winona fighter": ["https://www.melodicmag.com/interviews/cover-story-winona-fighter-is-turning-summer-school-into-a-basement-show/",
+                       "https://www.orlandoweekly.com/music/rising-pop-punkers-winona-fighter-do-warped-tour-double-duty-in-orlando/"],
+    # Finnish black metal.
+    "beherit": ["https://en.wikipedia.org/wiki/Beherit"],
+    # Las Vegas, formed 2023: the Astoria's event page is tried first (its
+    # ticket link), then their artist page.
+    "deathtape": ["https://music.apple.com/us/artist/deathtape/1726844976"],
+    # One night is listed twice (Metal Church; Metal Church / Armored Saint):
+    # the second listing gets Armored Saint rather than the same photo again.
+    "metal church": ["https://en.wikipedia.org/wiki/Metal_Church", "https://en.wikipedia.org/wiki/Armored_Saint"],
+    # Two nights: each gets a different picture.
+    "3 inches of blood": ["https://en.wikipedia.org/wiki/3_Inches_of_Blood"],
     # X-Mas in Skaville has no art of its own anywhere, and one band's photo
     # on a many-band night would be wrong. It keeps the placeholder.
 }
@@ -180,11 +207,37 @@ def usable(raw: bytes) -> tuple[bool, str]:
     return True, f"{w}x{h} {im.format}"
 
 
+# Pictures that are not of the show or the band: a stock mosh-pit photo used
+# for four different shows, Google image-search thumbnails, last.fm's stand-in
+# images, the site's own crowd shots. A show carrying one of these is treated
+# as having no art at all.
+GENERIC = ("Moshpit2", "punkbc-crowd", "placeholder", "encrypted-tbn", "gstatic.com",
+           "lastfm.freetls.fastly.net", "last.fm", "lastfm.")
+
+
+def is_generic(url: str) -> bool:
+    return any(g.lower() in (url or "").lower() for g in GENERIC)
+
+
+def is_show_page(url: str) -> bool:
+    """A ticket link to a venue's home page or its list of shows has that
+    venue's logo as its picture -- the same logo for every show there."""
+    from urllib.parse import urlsplit
+    path = urlsplit(url).path.strip("/").lower()
+    return path not in ("", "shows", "events", "calendar", "whats-on", "tickets")
+
+
 def candidates(show: dict) -> list[tuple[str, str]]:
-    """(where it came from, url) in the order they should be tried."""
+    """(where it came from, url) in the order they should be tried. "current
+    picture" is an image, everything else is a page to read og:image from."""
     out = []
+    current = (show.get("image") or "").strip()
+    if current.startswith("http") and "mikidrummer.ca/images/shows/" not in current \
+            and not is_generic(current):
+        out.append(("current picture", current))
     ticket = (show.get("ticket") or "").strip()
-    if ticket.startswith("http") and not any(h in ticket for h in SKIP_HOSTS):
+    if ticket.startswith("http") and not any(h in ticket for h in SKIP_HOSTS) \
+            and is_show_page(ticket):
         out.append(("ticket page", ticket))
     src = ART_SOURCES.get((show.get("band") or "").split(" / ")[0].strip().lower())
     # One page, or several to try in order.
@@ -214,11 +267,42 @@ def bandcamp_album(html: bytes, page: str) -> str | None:
     return href
 
 
-def art_for(show: dict, report: list) -> tuple[bytes, str, str] | None:
+def ahash(raw: bytes) -> int:
+    """A 64-bit average hash: the same picture at another size or quality
+    hashes the same, which a byte comparison would miss."""
+    from PIL import Image
+    im = Image.open(io.BytesIO(raw)).convert("L").resize((8, 8), Image.LANCZOS)
+    px = list(im.getdata())
+    avg = sum(px) / 64
+    return sum(1 << i for i, v in enumerate(px) if v >= avg)
+
+
+def same_picture(a: int, b: int) -> bool:
+    return bin(a ^ b).count("1") <= 6
+
+
+def art_for(show: dict, report: list, taken: list | None = None) -> tuple[bytes, str, str] | None:
+    taken = taken if taken is not None else []
     todo = list(candidates(show))
     followed = set()
     while todo:
         where, page = todo.pop(0)
+        if where == "current picture":
+            # Already an image: no page to read, just check it.
+            try:
+                raw = get(page)
+                time.sleep(PAUSE)
+            except Exception as e:
+                report.append(f"      {where}: would not download — {e}")
+                continue
+            ok, why = usable(raw)
+            if ok and any(same_picture(ahash(raw), t) for t in taken):
+                ok, why = False, "the same picture as another show"
+            if not ok:
+                report.append(f"      {where}: refused — {why}")
+                continue
+            report.append(f"      {where}: {why}, kept and saved here")
+            return raw, page, where
         try:
             html = get(page)
             time.sleep(PAUSE)
@@ -243,13 +327,97 @@ def art_for(show: dict, report: list) -> tuple[bytes, str, str] | None:
             report.append(f"      {where}: image would not download — {e}")
             continue
         ok, why = usable(raw)
+        if ok and is_generic(img):
+            ok, why = False, "a stand-in, not a picture of the band"
+        if ok and any(same_picture(ahash(raw), t) for t in taken):
+            ok, why = False, "the same picture as another show"
         if not ok:
             report.append(f"      {where}: refused — {why}")
-            try_album("picture too small")
+            try_album("no usable picture")
             continue
         report.append(f"      {where}: {why} from {img[:70]}")
         return raw, img, where
     return None
+
+
+CARD_FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+CARD_FONT_REG = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+
+
+def make_card(show: dict) -> bytes:
+    """The last resort, and an honest one: the band's name, the date and the
+    room, set in the board's colours. Unique to the show by construction, and
+    it says exactly what it is rather than standing a stranger's photo in."""
+    from datetime import datetime
+    from PIL import Image, ImageDraw, ImageFont
+
+    def font(path, size):
+        try:
+            return ImageFont.truetype(path, size)
+        except Exception:
+            return ImageFont.load_default(size=size)
+
+    W = H = 1080
+    im = Image.new("RGB", (W, H), (11, 12, 14))
+    d = ImageDraw.Draw(im)
+    # a stripe of checkerboard top and bottom, the board's ska/punk furniture
+    sq = 60
+    for y0 in (0, H - sq * 2):
+        for row in range(2):
+            for col in range(W // sq + 1):
+                if (row + col) % 2 == 0:
+                    d.rectangle([col * sq, y0 + row * sq, col * sq + sq - 1, y0 + row * sq + sq - 1],
+                                fill=(233, 235, 238))
+    eyebrow = (show.get("genre") or "Live").upper()
+    d.text((90, 250), eyebrow[:34], font=font(CARD_FONT, 30), fill=(232, 103, 42))
+    name = (show.get("band") or "").split(" / ")[0].upper()
+    words, lines, cur = name.split(), [], ""
+    size = 130 if len(name) < 14 else 104 if len(name) < 26 else 84
+    f = font(CARD_FONT, size)
+    for w in words:
+        t = (cur + " " + w).strip()
+        if d.textlength(t, font=f) > W - 180 and cur:
+            lines.append(cur); cur = w
+        else:
+            cur = t
+    if cur:
+        lines.append(cur)
+    y = 310
+    for ln in lines[:4]:
+        d.text((90, y), ln, font=f, fill=(233, 235, 238))
+        y += int(size * 1.02)
+    try:
+        when = datetime.fromisoformat(show["date"]).strftime("%A, %B ") + str(int(show["date"][8:]))
+    except Exception:
+        when = show.get("date", "")
+    d.text((90, y + 30), when, font=font(CARD_FONT, 46), fill=(233, 235, 238))
+    where = ", ".join(x for x in (show.get("venue"), show.get("city")) if x)
+    d.text((90, y + 92), where, font=font(CARD_FONT_REG, 38), fill=(166, 173, 182))
+    d.text((W - 90 - d.textlength("PUNK BC", font=font(CARD_FONT, 24)), H - sq * 2 - 70),
+           "PUNK BC", font=font(CARD_FONT, 24), fill=(125, 132, 141))
+    out = io.BytesIO()
+    im.save(out, "JPEG", quality=88)
+    return out.getvalue()
+
+
+def needs_art(show: dict) -> bool:
+    im = (show.get("image") or "").strip()
+    if not im or is_generic(im):
+        return True
+    if "mikidrummer.ca/images/shows/" in im:
+        return not (ART_DIR / im.rsplit("/", 1)[1].split("?")[0]).exists()
+    return True        # someone else's server: bring it home, or replace it
+
+
+def local_hash(show: dict) -> int | None:
+    im = (show.get("image") or "")
+    if "mikidrummer.ca/images/shows/" not in im:
+        return None
+    f = ART_DIR / im.rsplit("/", 1)[1].split("?")[0]
+    try:
+        return ahash(f.read_bytes())
+    except Exception:
+        return None
 
 
 def main() -> int:
@@ -261,40 +429,50 @@ def main() -> int:
         return self_test()
 
     data = json.loads(DATA.read_text(encoding="utf-8"))
-    shows = data["shows"]
+    shows = sorted(data["shows"], key=lambda s: (s.get("date") or "", s.get("band") or ""))
     ART_DIR.mkdir(parents=True, exist_ok=True)
 
-    todo = [s for s in shows if not (s.get("image") or "").strip()
-            or s.get("image") == PLACEHOLDER]
-    print(f"{len(todo)} of {len(shows)} shows have no real art\n")
+    # Every show must end with its own picture, saved here. A show whose saved
+    # picture is the same as an earlier show's counts as having none.
+    taken: list[int] = []
+    todo = []
+    for s in shows:
+        h = None if needs_art(s) else local_hash(s)
+        if h is not None and not any(same_picture(h, t) for t in taken):
+            taken.append(h)
+        else:
+            todo.append(s)
+    print(f"{len(todo)} of {len(shows)} shows need their own picture\n")
 
-    got = kept = 0
+    got = cards = 0
     for s in todo:
         head = f"{s['date']}  {s['band'][:52]}"
         report: list[str] = []
-        found = art_for(s, report)
+        found = art_for(s, report, taken)
         print(head)
         for line in report:
             print(line)
-        if not found:
-            print("      -> keeping the placeholder\n")
-            kept += 1
-            continue
-        raw, src, where = found
         name = f"{slug(s['band'].split(' / ')[0])}-{s['date']}.jpg"
+        if found:
+            raw, src, where = found
+            print(f"      -> images/shows/{name}  (via the {where})\n")
+            got += 1
+        else:
+            raw, src, where = make_card(s), "Made for Punk BC: no picture of this show or band could be found.", "card"
+            print(f"      -> images/shows/{name}  (a card: nothing unique and right was found)\n")
+            cards += 1
+        taken.append(ahash(raw))
         if not args.check:
             from PIL import Image
             im = Image.open(io.BytesIO(raw)).convert("RGB")
             im.thumbnail((1200, 1200))
             im.save(ART_DIR / name, quality=86, optimize=True, progressive=True)
             s["image"] = f"{SITE}/images/shows/{name}"
-            s.setdefault("image_source", src)
-        print(f"      -> images/shows/{name}  (via the {where})\n")
-        got += 1
+            s["image_source"] = src
 
     if not args.check:
         DATA.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"art found for {got}, placeholder kept for {kept}"
+    print(f"pictures found for {got}, cards made for {cards}"
           + ("  (check only, nothing written)" if args.check else ""))
     return 0
 
@@ -314,9 +492,36 @@ def _bandcamp_checks(checks: list) -> None:
                    == ["https://en.wikipedia.org/wiki/Diesel_Boy"]))
 
 
+def _rule_checks(checks: list) -> None:
+    checks.append(("generic: the stock mosh pit", is_generic("https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400")))
+    checks.append(("generic: last.fm stand-in", is_generic("https://lastfm.freetls.fastly.net/i/u/300x300/abc")))
+    checks.append(("generic: google thumbnail", is_generic("https://encrypted-tbn0.gstatic.com/images?q=x")))
+    checks.append(("a band photo is not generic", not is_generic("https://commons.wikimedia.org/wiki/Special:FilePath/Devil_Master.jpg")))
+    checks.append(("venue home page is not a show page", not is_show_page("https://rickshawtheatre.com")))
+    checks.append(("venue shows list is not a show page", not is_show_page("https://www.commodoreballroom.com/shows")))
+    checks.append(("an event page is a show page", is_show_page("https://astoria.pub/events/deathtape-live-in-vancouver/")))
+    try:
+        from PIL import Image
+        card = make_card({"band": "3 Inches of Blood", "date": "2027-01-16", "venue": "Rickshaw Theatre",
+                          "city": "Vancouver", "genre": "Heavy Metal"})
+        im = Image.open(io.BytesIO(card))
+        checks.append(("card is a 1080 square image", im.size == (1080, 1080)))
+        other = make_card({"band": "3 Inches of Blood", "date": "2027-01-15", "venue": "Rickshaw Theatre",
+                           "city": "Vancouver", "genre": "Heavy Metal"})
+        checks.append(("the same band on two nights gets two different cards", card != other))
+        a = ahash(card)
+        buf = io.BytesIO(); im.resize((540, 540)).save(buf, "JPEG", quality=60)
+        checks.append(("a resized copy is the same picture", same_picture(a, ahash(buf.getvalue()))))
+        blank = io.BytesIO(); Image.new("RGB", (600, 600), (200, 30, 30)).save(blank, "JPEG")
+        checks.append(("a different picture is not", not same_picture(a, ahash(blank.getvalue()))))
+    except ImportError:
+        pass
+
+
 def self_test() -> int:
     checks = []
     _bandcamp_checks(checks)
+    _rule_checks(checks)
 
     html = b'<meta property="og:image" content="https://x.test/a.jpg">'
     checks.append(("og:image read", og_image(html, "https://x.test/p") == "https://x.test/a.jpg"))
