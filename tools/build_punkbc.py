@@ -24,6 +24,7 @@ import collections
 import html
 import json
 import re
+import urllib.parse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -469,15 +470,33 @@ def replace_region(text: str, name: str, start_pat: str, end_pat: str, body: str
 # page would be a near-duplicate of punkbc.html competing with it for the same
 # queries. Venues are genuinely distinct subsets; cities here are not.
 VENUE_PAGE_DIR = ROOT / "shows"
-VENUE_PAGE_MIN = 4  # below this a page is thin content and does more harm than good
+VENUE_PAGE_MIN = 2  # a venue page needs at least this many shows behind it...
+# ...except the rooms that book punk week in, week out: they get a page from
+# their first listed show, because "<venue> shows" is searched whether this
+# week has one gig there or six. Each page carries a summary, a FAQ and links
+# built from its own listings, so even a short page says something no other
+# page on the site does.
+VENUE_PAGES_ALWAYS = {
+    "Rickshaw Theatre", "Commodore Ballroom", "The Cobalt", "The Astoria", "The Pearl",
+    "Red Gate Arts Society", "The WISE Hall", "LanaLou's", "Green Auto", "Biltmore Cabaret",
+    "Bully's Studios", "PNE Forum",
+}
+SHARE_IMAGE = "https://www.mikidrummer.ca/images/punkbc-crowd-1.jpg"
 
 
 def slugify(name: str) -> str:
-    s = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+    # "Bully's" is bullys, not bully-s: apostrophes go before anything else.
+    s = re.sub(r"[^a-z0-9]+", "-", re.sub(r"['’]", "", name.lower())).strip("-")
     return s or "venue"
 
 
-def venue_page_html(venue: str, city: str, shows: list[dict], today: str) -> str:
+def nice_date(iso: str) -> str:
+    d = datetime.fromisoformat(iso)
+    return d.strftime("%A, %B ") + str(d.day)
+
+
+def venue_page_html(venue: str, city: str, shows: list[dict], today: str,
+                    others: list[tuple[str, int]] | None = None) -> str:
     addr = VENUE_ADDRESS.get(venue)
     link = VENUE_LINK.get(venue)
     slug = slugify(venue)
@@ -485,14 +504,68 @@ def venue_page_html(venue: str, city: str, shows: list[dict], today: str) -> str
     n = len(shows)
 
     where = f"{addr}, {city}" if addr else city
-    title = f"Upcoming Shows at {venue} — {city} | Punk BC"
+    maps = "https://www.google.com/maps/search/?api=1&query=" + urllib.parse.quote(
+        f"{venue}, {addr + ', ' if addr else ''}{city}, BC")
+
+    # What people type is "<venue> shows" / "<venue> upcoming events": lead
+    # with the venue's name, keep it inside the ~60 characters Google shows.
+    title = f"{venue} Shows — Upcoming Gigs & Tickets | Punk BC"
+    if len(title) > 60:
+        title = f"{venue} Shows — Upcoming Gigs | Punk BC"
+    if len(title) > 60:
+        title = f"{venue} — Upcoming Shows"
+    nxt = shows[0] if shows else None
     if n:
-        desc = (
-            f"{n} upcoming punk, hardcore and metal show{'s' if n != 1 else ''} at "
-            f"{venue} in {city}, BC. Dates, door times, ticket prices and lineups."
-        )
+        desc = (f"{n} upcoming show{'s' if n != 1 else ''} at {venue}, {where}. Next: "
+                f"{nxt['band']} on {nice_date(nxt['date'])}. Lineups, times, tickets.")
+        if len(desc) > 155:
+            desc = (f"{n} upcoming show{'s' if n != 1 else ''} at {venue} in {city}. "
+                    f"Next: {nxt['band']}, {nice_date(nxt['date'])}.")
+        if len(desc) > 155:
+            desc = f"{n} upcoming punk, hardcore and metal shows at {venue} in {city}, BC."
     else:
         desc = f"Upcoming punk and hardcore shows at {venue} in {city}, BC."
+
+    # ── words only this page has, all from its own listings ──
+    genres = collections.Counter(
+        g.strip() for s_ in shows for g in re.split(r"[/,]", s_.get("genre") or "") if g.strip())
+    top_genres = [g for g, _ in genres.most_common(3)]
+    acts = [s_["band"] for s_ in shows[1:6]]
+    summary = ""
+    if nxt:
+        summary = (f"Next up at {html.escape(venue)}: <b>{html.escape(nxt['band'])}</b> on "
+                   f"{html.escape(nice_date(nxt['date']))}"
+                   + (f" ({html.escape(nxt['time'])})" if nxt.get("time") else "") + ".")
+        if acts:
+            summary += " Also coming: " + html.escape(", ".join(acts)) + (
+                f" and {n - 1 - len(acts)} more." if n - 1 > len(acts) else ".")
+    if len(top_genres) > 1:
+        genre_words = ", ".join(top_genres[:-1]) + " and " + top_genres[-1]
+    elif top_genres:
+        genre_words = top_genres[0]
+    else:
+        genre_words = "punk, hardcore and metal"
+    faq = [
+        (f"What's the next show at {venue}?",
+         (f"{nxt['band']} on {nice_date(nxt['date'])}" + (f" at {nxt['time']}" if nxt.get('time') else "")
+          + f". There {'are' if n != 1 else 'is'} {n} show{'s' if n != 1 else ''} listed at {venue} on Punk BC right now.")
+         if nxt else f"Nothing is listed at {venue} right now. The full BC board is at mikidrummer.ca/punkbc.html."),
+        (f"Where is {venue}?",
+         f"{venue} is at {addr}, {city}, BC." if addr else f"{venue} is in {city}, BC."),
+        (f"What kind of shows does {venue} have?",
+         f"On this board, mostly {genre_words.lower()}. Punk BC lists the punk, hardcore and metal "
+         f"side of what the room books."),
+        (f"How do I get tickets for shows at {venue}?",
+         "Each show on this page links to its tickets or event page. Prices shown are advance prices "
+         "where they have been published; it may cost more at the door."),
+    ]
+    faq_html = "\n".join(
+        f"    <h3>{html.escape(q)}</h3>\n    <p>{html.escape(a)}</p>" for q, a in faq)
+    others = [o for o in (others or []) if o[0] != venue]
+    others_html = "\n".join(
+        f'      <a class="lnk" href="/shows/{slugify(v)}.html">{html.escape(v)} '
+        f'<span style="color:var(--dim)">{c}</span></a>'
+        for v, c in others)
 
     events = json.loads(build_events_jsonld(shows).split(">", 1)[1].rsplit("<", 1)[0]) if shows else []
     for e in events:
@@ -518,6 +591,14 @@ def venue_page_html(venue: str, city: str, shows: list[dict], today: str) -> str
                     "addressCountry": "CA",
                 },
                 **({"url": link} if link else {}),
+                "hasMap": maps,
+            },
+            {
+                "@type": "FAQPage",
+                "mainEntity": [
+                    {"@type": "Question", "name": q,
+                     "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq
+                ],
             },
             *events,
         ],
@@ -568,7 +649,9 @@ def venue_page_html(venue: str, city: str, shows: list[dict], today: str) -> str
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc, quote=True)}">
 <meta property="og:site_name" content="Punk BC">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="{SHARE_IMAGE}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{SHARE_IMAGE}">
 <script type="application/ld+json">
 {json.dumps(graph, indent=2, ensure_ascii=False)}
 </script>
@@ -602,6 +685,14 @@ def venue_page_html(venue: str, city: str, shows: list[dict], today: str) -> str
   .lnk{{border:1px solid var(--edge);background:var(--card);border-radius:100px;padding:10px 18px;font-size:14px;font-weight:600}}
   .lnk:hover{{border-color:var(--hot)}}
   .lnk.primary{{background:var(--hot);color:#180a03;border-color:var(--hot)}}
+  .next{{margin-top:22px;background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:14px 16px;color:var(--mid);font-size:15px}}
+  .next b{{color:var(--fg)}}
+  .faq{{margin-top:34px}}
+  .faq h2,.more h2{{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}}
+  .faq h3{{font-size:15px;margin:14px 0 3px}}
+  .faq p{{color:var(--mid);font-size:14.5px;max-width:70ch}}
+  .more{{margin-top:34px}}
+  .more .links{{margin-top:0}}
   footer{{margin-top:40px;padding-top:22px;border-top:1px solid var(--edge);color:var(--dim);font-size:13px}}
   footer a{{color:var(--hot)}}
   @media(max-width:620px){{ .row{{grid-template-columns:1fr;gap:4px}} .tags{{justify-content:flex-start}} }}
@@ -618,14 +709,24 @@ def venue_page_html(venue: str, city: str, shows: list[dict], today: str) -> str
     <div class="crumb"><a href="/punkbc.html">← All BC shows</a></div>
   </header>
 
+  {'<p class="next">' + summary + '</p>' if summary else ''}
+
   <ul>
 {listing}
   </ul>
 
   <div class="links">
     <a class="lnk primary" href="/punkbc.html">All punk shows in BC</a>
+    <a class="lnk" href="{html.escape(maps, quote=True)}" target="_blank" rel="noopener">Map: {html.escape(where)}</a>
     {other}
   </div>
+
+  <section class="faq">
+    <h2>{html.escape(venue)} — questions</h2>
+{faq_html}
+  </section>
+
+  {('<section class="more"><h2>Other venues</h2><div class="links">' + chr(10) + others_html + chr(10) + '    </div></section>') if others_html else ''}
 
   <footer>
     Part of <a href="/punkbc.html">Punk BC</a>, a listing of punk, hardcore and metal shows across
@@ -661,12 +762,15 @@ def city_page_html(city: str, shows: list[dict], today: str) -> str:
     n = len(shows)
     venues = collections.Counter(s.get("venue") or "Venue" for s in shows)
 
-    title = f"{city} Punk Shows — Upcoming Gigs, Venues & Tickets | Punk BC"
-    desc = (
-        f"{n} upcoming punk, hardcore and metal show{'s' if n != 1 else ''} in {city}, BC. "
-        f"Dates, door times, ticket prices and lineups at "
-        f"{', '.join(v for v, _ in venues.most_common(3))} and more. Updated weekly."
-    )
+    # Inside what Google shows: ~60 characters of title, ~155 of description.
+    title = f"{city} Punk Shows — Upcoming Gigs & Tickets | Punk BC"
+    top = [v for v, _ in venues.most_common(3)]
+    desc = (f"{n} upcoming punk, hardcore and metal show{'s' if n != 1 else ''} in {city}, BC, "
+            f"at {', '.join(top)} and more. Dates, lineups, tickets.")
+    while len(desc) > 155 and len(top) > 1:
+        top = top[:-1]
+        desc = (f"{n} upcoming punk, hardcore and metal show{'s' if n != 1 else ''} in {city}, BC, "
+                f"at {', '.join(top)} and more. Dates, lineups, tickets.")
 
     events = json.loads(build_events_jsonld(shows).split(">", 1)[1].rsplit("<", 1)[0]) if shows else []
     for e in events:
@@ -860,7 +964,8 @@ def build_venue_links(shows: list[dict]) -> str:
     counts = collections.Counter(s.get("venue") or "Venue" for s in shows)
     listed = [
         (v, n) for v, n in counts.most_common()
-        if n >= VENUE_PAGE_MIN or (VENUE_PAGE_DIR / f"{slugify(v)}.html").exists()
+        if n >= VENUE_PAGE_MIN or v in VENUE_PAGES_ALWAYS
+        or (VENUE_PAGE_DIR / f"{slugify(v)}.html").exists()
     ]
     if not listed:
         return ""
@@ -922,9 +1027,13 @@ def build_venue_pages(shows: list[dict], today: str) -> list[str]:
 
     existing = {p.stem for p in VENUE_PAGE_DIR.glob("*.html")}
     wanted = {v for v, rows in by_venue.items() if len(rows) >= VENUE_PAGE_MIN}
+    wanted |= {v for v in by_venue if v in VENUE_PAGES_ALWAYS}
     # keep refreshing pages that already exist
     wanted |= {v for v in by_venue if slugify(v) in existing}
 
+    # Every venue page links to every other: they are a set, and a page with
+    # links in is one a crawler finds without the sitemap.
+    others = sorted(((v, len(by_venue.get(v, []))) for v in wanted), key=lambda x: (-x[1], x[0]))
     written = []
     for venue in sorted(wanted):
         rows = sorted(by_venue.get(venue, []), key=lambda s: s["date"])
@@ -932,7 +1041,7 @@ def build_venue_pages(shows: list[dict], today: str) -> list[str]:
             (s.get("city") or "Vancouver") for s in rows
         ).most_common(1)[0][0] if rows else "Vancouver"
         path = VENUE_PAGE_DIR / f"{slugify(venue)}.html"
-        path.write_text(venue_page_html(venue, city, rows, today), encoding="utf-8")
+        path.write_text(venue_page_html(venue, city, rows, today, others), encoding="utf-8")
         written.append(f"shows/{path.name} ({len(rows)})")
     return written
 
