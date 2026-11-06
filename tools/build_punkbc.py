@@ -280,7 +280,7 @@ def build_events_jsonld(shows: list[dict]) -> str:
         }
         if venue in VENUE_ADDRESS:
             address["streetAddress"] = VENUE_ADDRESS[venue]
-        img = s.get("image") or FALLBACK_IMG
+        img = s.get("image") or fallback_img(0)
         offer = {
             "@type": "Offer",
             "url": href_for(s),
@@ -329,7 +329,7 @@ def build_show_cards(shows: list[dict]) -> str:
         genre = html.escape(s.get("genre") or "")
         notes = html.escape(s.get("notes") or "")
         price = html.escape(s.get("price") or "")
-        img = html.escape(s.get("image") or FALLBACK_IMG, quote=True)
+        img = html.escape(s.get("image") or fallback_img(0), quote=True)
         href = html.escape(href_for(s), quote=True)
         genre_tag = f'<span class="tag tag-genre">{genre}</span>' if genre else ""
         price_row = f'<div class="show-price">{price}</div>' if price else ""

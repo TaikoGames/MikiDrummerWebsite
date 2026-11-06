@@ -113,6 +113,8 @@ ART_SOURCES = {
     ],
     # Boston hardcore (Haywire 617) on Roadrunner -- no Bandcamp. Rolling
     # Stone's piece on their album carries the band's own press image.
+    "l7": "https://en.wikipedia.org/wiki/L7_(band)",
+    "babe haven": ["https://babehaven.bandcamp.com/", "https://www.ticketweb.ca/event/babe-haven-the-fox-cabaret-tickets/14940993"],
     "haywire": "https://ca.rollingstone.com/music/haywire-617-i-dont-wanna-say-goodbye/",
     # ── Added 2026-11-06 (second pass): shows on a generic or stand-in picture ──
     # Helsinki black metal; their own Bandcamp.
