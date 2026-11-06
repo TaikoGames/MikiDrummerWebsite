@@ -68,4 +68,17 @@ jobs:
           fi
           git add -A
           git commit -m "Punk BC: real artwork for shows that had the placeholder"
-          git push origin "$GITHUB_REF_NAME"
+          # Other jobs (the board refresh, the site tree) push to the same
+          # branch, often within the same minute. Rebase onto whatever landed
+          # and try again rather than throwing the found art away.
+          for i in 1 2 3 4; do
+            git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 5))
+            git pull --rebase --no-edit origin "$GITHUB_REF_NAME" || {
+              # Only the generated board can clash; rebuild it on top.
+              git checkout --theirs punkbc.html shows/ sitemap.xml 2>/dev/null || true
+              python3 tools/build_punkbc.py
+              git add -A && GIT_EDITOR=true git rebase --continue
+            }
+          done
+          echo "Could not push after 4 tries"; exit 1
