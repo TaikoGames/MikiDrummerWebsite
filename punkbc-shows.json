@@ -25,8 +25,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/jon-spencer-2/",
       "genre": "Punk Blues",
       "notes": "With Genre Is Death. Timbre presents. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jon_Spencer._2013.jpg?width=500",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/jon-spencer-2026-11-08.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Jon_Spencer._2013.jpg?width=500"
     },
     {
       "band": "Exhumed",
@@ -38,7 +39,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Death Metal",
       "notes": "With Jarhead Fertilizer, Savage Master, Molder. 19+",
-      "image": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84f7d3dcb488936e0ea2a6c59e"
+      "image": "https://www.mikidrummer.ca/images/shows/exhumed-2026-11-09.jpg",
+      "image_source": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84f7d3dcb488936e0ea2a6c59e"
     },
     {
       "band": "Bad Waitress",
@@ -50,8 +52,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/bad-waitress/",
       "genre": "Punk",
       "notes": "West Coast Tour. With Cursed Words, Die Job. Rickshaw presents. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bad_Waitress_%2852062784998%29.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/bad-waitress-2026-11-10.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Bad_Waitress_%2852062784998%29.jpg?width=600"
     },
     {
       "band": "Ride For Revenge",
@@ -63,7 +66,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Metal",
       "notes": "With Hellwitch, Tsalal, Devouring Void. 19+",
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXR6RwKfR9ZZBbs7wvXvKyuk_kB67D-s7CQ2g_4XCdlLnZUVIkDCpalQf8&s=10"
+      "image": "https://www.mikidrummer.ca/images/shows/ride-for-revenge-2026-11-11.jpg",
+      "image_source": "https://f4.bcbits.com/img/a0073228294_5.jpg"
     },
     {
       "band": "Blasphamagoatachrist",
@@ -75,7 +79,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Metal",
       "notes": "",
-      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/08abd2fca0e0351276f814b74a20e208"
+      "image": "https://www.mikidrummer.ca/images/shows/blasphamagoatachrist-2026-11-12.jpg",
+      "image_source": "https://f4.bcbits.com/img/a1777007909_5.jpg"
     },
     {
       "band": "Lethbridge Invasion — Night 1",
@@ -101,7 +106,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Metal",
       "notes": "SOLD OUT",
-      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/7a50a7b866ac7710257c061c4eb53bfa"
+      "image": "https://www.mikidrummer.ca/images/shows/blasphemy-2026-11-13.jpg",
+      "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/2009-10-25blasphemy.JPG/1280px-2009-10-25blasphemy.JPG?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
     },
     {
       "band": "Deathtape",
@@ -113,8 +119,9 @@
       "ticket": "https://astoria.pub/events/deathtape-live-in-vancouver/",
       "genre": "Metal",
       "notes": "Las Vegas metal. The Invisible Orange presents. More TBA. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/deathtape-2026-11-13.jpg",
+      "curated": "",
+      "image_source": "https://astoria.pub/wp-content/uploads/2026/10/20261113_Deathtape_IG45_updated.webp"
     },
     {
       "band": "Truck Violence",
@@ -126,7 +133,8 @@
       "ticket": "https://www.eventbrite.ca/e/truck-violence-tickets-1992091123175",
       "genre": "Punk",
       "notes": "",
-      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/07449b45cb96703b275d98124e5dc196"
+      "image": "https://www.mikidrummer.ca/images/shows/truck-violence-2026-11-13.jpg",
+      "image_source": "https://www.eventbrite.ca/_next/image?url=https%3A%2F%2Fimg.evbuc.com%2Fhttps%253A%252F%252Fcdn.evbuc.com%252Fimages%252F1187151549%252F278048894574%252F1%252Foriginal.20260617-224549%3Fcrop%3Dfocalpoint%26fit%3Dcrop%26w%3D940%26auto%3Dformat%252Ccompress%26q%3D75%26sharp%3D10%26fp-x%3D0.507%26fp-y%3D0.342%26s%3Dc8f8772261cd5c5ccd477e53db46f554&w=940&q=75"
     },
     {
       "band": "Lethbridge Invasion — Night 2",
@@ -140,7 +148,7 @@
       "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood.",
       "image": "https://www.mikidrummer.ca/images/shows/lethbridge-invasion-night-2-2026-11-14.jpg",
       "curated": "",
-      "image_source": "https://f4.bcbits.com/img/a3805293918_5.jpg"
+      "image_source": "https://f4.bcbits.com/img/a3288970953_5.jpg"
     },
     {
       "band": "Arch Enemy",
@@ -152,7 +160,8 @@
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Melodic Death Metal",
       "notes": "Wrath Across North America tour. With The Black Dahlia Murder, Septicflesh, Crypta, Thrown Into Exile",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Arch_Enemy_since_2026_collage.jpg?width=500"
+      "image": "https://www.mikidrummer.ca/images/shows/arch-enemy-2026-11-14.jpg",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Arch_Enemy_since_2026_collage.jpg?width=500"
     },
     {
       "band": "Black Death Cult",
@@ -164,8 +173,9 @@
       "ticket": "https://astoria.pub/events/black-death-cult-perdurabo-deliriant-fracture-occisor/",
       "genre": "Black/Doom Metal",
       "notes": "With Perdurabo, Deliriant Fracture, Occisor. A Night of Death and Doom. Music starts 9pm",
-      "image": "https://astoria.pub/wp-content/uploads/2026/07/Black-Death-Cult-663x1024.jpeg",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/black-death-cult-2026-11-14.jpg",
+      "curated": "",
+      "image_source": "https://astoria.pub/wp-content/uploads/2026/10/old-event-845.webp"
     },
     {
       "band": "Metal Church",
@@ -177,7 +187,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Heavy Metal",
       "notes": "With Armored Saint, Livekill. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Metal_Church-_Wacken_Open_Air_2016-AL3427.jpg?width=600"
+      "image": "https://www.mikidrummer.ca/images/shows/metal-church-2026-11-15.jpg",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Metal_Church-_Wacken_Open_Air_2016-AL3427.jpg?width=600"
     },
     {
       "band": "Metal Church / Armored Saint",
@@ -189,7 +200,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Metal",
       "notes": "",
-      "image": "https://lastfm.freetls.fastly.net/i/u/300x300/b857c1e715824af49a5d4feee2bf12de"
+      "image": "https://www.mikidrummer.ca/images/shows/metal-church-2026-11-15.jpg",
+      "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Armored_Saint_-_Wacken_Open_Air_2024_06.jpg/1280px-Armored_Saint_-_Wacken_Open_Air_2024_06.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
     },
     {
       "band": "Underoath / August Burns Red",
@@ -228,8 +240,9 @@
       "ticket": "https://astoria.pub/events/devil-master/",
       "genre": "Black Metal / Punk",
       "notes": "The Invisible Orange presents. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Devil_Master.jpg?width=500",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/devil-master-2026-11-18.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Devil_Master.jpg?width=500"
     },
     {
       "band": "Korpiklaani",
@@ -241,8 +254,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/korpiklaani-2/",
       "genre": "Folk Metal",
       "notes": "With Crimson Shadows. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Korpiklaani_-_Rakuunarock_2013.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/korpiklaani-2026-11-18.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Korpiklaani_-_Rakuunarock_2013.jpg?width=600"
     },
     {
       "band": "The OBGMs",
@@ -281,8 +295,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/waax-angels-mess-tour/",
       "genre": "Punk/Alt Rock",
       "notes": "Angel's Mess Tour. Rickshaw and Cobalt present. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/SXSW_2019_-_WAAX_%2833555039998%29.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/waax-2026-11-21.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/SXSW_2019_-_WAAX_%2833555039998%29.jpg?width=600"
     },
     {
       "band": "Anchoress",
@@ -322,8 +337,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/pointed-sticks-final-show/",
       "genre": "Punk",
       "notes": "Final show ever. Vancouver punk legends. Support to be announced. 19+",
-      "image": "https://rickshawtheatre.com/wp-content/uploads/2026/09/PS-NOV-SHOW1-400x533.jpg",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/pointed-sticks-2026-11-28.jpg",
+      "curated": "",
+      "image_source": "Made for Punk BC: no picture of this show or band could be found."
     },
     {
       "band": "Insomnium & Amorphis",
@@ -335,8 +351,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/insomnium-amorphis/",
       "genre": "Melodic Death Metal",
       "notes": "With Hinayana. MRG presents. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Insomnium_Party.San_Metal_Open_Air_2017_46.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/insomnium-amorphis-2026-11-30.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Insomnium_Party.San_Metal_Open_Air_2017_46.jpg?width=600"
     },
     {
       "band": "The Meteors",
@@ -348,8 +365,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/the-meteors/",
       "genre": "Psychobilly",
       "notes": "With Billy and The Parole Models, Cryptyds. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Meteors_live_in_Pordenone%2C_Italy%2C_2006.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/the-meteors-2026-12-03.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Meteors_live_in_Pordenone%2C_Italy%2C_2006.jpg?width=600"
     },
     {
       "band": "Protest the Hero",
@@ -361,8 +379,9 @@
       "ticket": "https://thepearlvancouver.com/tm-event/protest-the-hero-with-special-guests/",
       "genre": "Progressive Metal",
       "notes": "With Royal Tusk, Kaonashi. 19+",
-      "image": "https://en.wikipedia.org/wiki/Special:FilePath/ProtestAtSOMF.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/protest-the-hero-2026-12-03.jpg",
+      "curated": "",
+      "image_source": "https://en.wikipedia.org/wiki/Special:FilePath/ProtestAtSOMF.jpg?width=600"
     },
     {
       "band": "1876",
@@ -388,8 +407,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/guilt-trip/",
       "genre": "Hardcore",
       "notes": "With Gates to Hell, Mauled. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Guilt_Trip_Full_Force_2023_04.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/guilt-trip-2026-12-04.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Guilt_Trip_Full_Force_2023_04.jpg?width=600"
     },
     {
       "band": "Emo Orchestra",
@@ -429,8 +449,9 @@
       "ticket": "https://lanalous.wixsite.com/lanalous",
       "genre": "Punk",
       "notes": "Holiday punk. With The Rubes",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/angry-snowmans-2026-12-18.jpg",
+      "curated": "",
+      "image_source": "https://f4.bcbits.com/img/a3031830760_5.jpg"
     },
     {
       "band": "Bridge City Sinners",
@@ -442,8 +463,9 @@
       "ticket": "https://thepearlvancouver.com/tm-event/bridge-city-sinners/",
       "genre": "Gospel Punk",
       "notes": "New Years Evil Tour. With Riley Downing, Roselit Bone. 19+",
-      "image": "https://images.weserv.nl/?url=i.ticketweb.com/i/00/13/03/84/14_Edp.jpg&w=500&output=jpg&q=75",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/bridge-city-sinners-2027-01-02.jpg",
+      "curated": "",
+      "image_source": "https://images.weserv.nl/?url=i.ticketweb.com/i/00/13/03/84/14_Edp.jpg&w=500&output=jpg&q=75"
     },
     {
       "band": "Wolves in the Throne Room",
@@ -455,8 +477,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/wolves-in-the-throne-room-3/",
       "genre": "Black Metal",
       "notes": "Estuary tour. With Stygian Bough, Spirit Possession. MRG Live presents. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/WOLVES_IN_THE_THRONE_ROOM.jpg?width=500",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/wolves-in-the-throne-room-2027-01-12.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/WOLVES_IN_THE_THRONE_ROOM.jpg?width=500"
     },
     {
       "band": "3 Inches of Blood",
@@ -468,8 +491,9 @@
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Heavy Metal",
       "notes": "Night 1 of 2. With Unleash The Archers",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/3_inches_of_blood_toronto.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/3-inches-of-blood-2027-01-15.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/3_inches_of_blood_toronto.jpg?width=600"
     },
     {
       "band": "3 Inches of Blood",
@@ -481,8 +505,9 @@
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Heavy Metal",
       "notes": "Night 2 of 2. With Unleash The Archers",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/3_inches_of_blood_toronto.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/3-inches-of-blood-2027-01-16.jpg",
+      "curated": "",
+      "image_source": "Made for Punk BC: no picture of this show or band could be found."
     },
     {
       "band": "Diesel Boy",
@@ -508,8 +533,9 @@
       "ticket": "https://www.biltmorecabaret.com",
       "genre": "Punk",
       "notes": "",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/winona-fighter-2027-02-05.jpg",
+      "curated": "",
+      "image_source": "https://www.melodicmag.com/wp-content/uploads/2026/06/winona-LEAD-PIC-scaled.jpg"
     },
     {
       "band": "Frank Turner and The Sleeping Souls",
@@ -562,8 +588,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/eluveitie/",
       "genre": "Folk Metal",
       "notes": "With NiNi, Illumishade. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Eluveitie_-_Manchester_2025.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/eluveitie-2027-02-26.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Eluveitie_-_Manchester_2025.jpg?width=600"
     },
     {
       "band": "Nervosa",
@@ -575,7 +602,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Thrash Metal",
       "notes": "With Castrator, Anger Within. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nervosa_Rock_%26_Metal_Day%27z_2024_07.jpg?width=600"
+      "image": "https://www.mikidrummer.ca/images/shows/nervosa-2027-03-13.jpg",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Nervosa_Rock_%26_Metal_Day%27z_2024_07.jpg?width=600"
     },
     {
       "band": "Northlane",
@@ -587,8 +615,9 @@
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Metalcore",
       "notes": "Anemoia Tour. With Reliqa, ALLT, Aviana. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Northlane_2019_gen_use_lores.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/northlane-2027-03-16.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Northlane_2019_gen_use_lores.jpg?width=600"
     },
     {
       "band": "Beherit",
@@ -600,8 +629,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/beherit/",
       "genre": "Black Metal",
       "notes": "With Grave Infestation, Sorguinazia. The Invisible Orange, Covenant Festival and Nuclear War Now present. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Moshpit2.jpg?width=400",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/beherit-2027-03-27.jpg",
+      "curated": "",
+      "image_source": "Made for Punk BC: no picture of this show or band could be found."
     },
     {
       "band": "Death from Above 1979",
@@ -613,8 +643,9 @@
       "ticket": "https://www.thecapitalballroom.com",
       "genre": "Noise Rock / Punk",
       "notes": "",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/DeathFromAbove1979LiveApril2004.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/death-from-above-1979-2027-03-27.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/DeathFromAbove1979LiveApril2004.jpg?width=600"
     },
     {
       "band": "Larry and His Flask",
@@ -626,8 +657,9 @@
       "ticket": "https://rickshawtheatre.com/show_listings/larry-and-his-flask/",
       "genre": "Folk Punk",
       "notes": "19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Larry_and_His_Flask_-_Pfingsttheatron_2013_Munich.jpg?width=600",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/larry-and-his-flask-2027-03-28.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Larry_and_His_Flask_-_Pfingsttheatron_2013_Munich.jpg?width=600"
     },
     {
       "band": "The Damned",
@@ -639,8 +671,9 @@
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Punk",
       "notes": "",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Damned_-_Live_2018.jpg?width=500",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/the-damned-2027-04-03.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Damned_-_Live_2018.jpg?width=500"
     },
     {
       "band": "Lambrini Girls",
@@ -652,8 +685,9 @@
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Punk",
       "notes": "With SPRINTS",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/WideAwake250524_%2811_of_209%29_%2853748502026%29_%28cropped%29.jpg?width=400",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/lambrini-girls-2027-04-13.jpg",
+      "curated": "",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/WideAwake250524_%2811_of_209%29_%2853748502026%29_%28cropped%29.jpg?width=400"
     },
     {
       "band": "Haywire",
