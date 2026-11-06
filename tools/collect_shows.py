@@ -38,7 +38,9 @@ import json
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
+import urllib.robotparser
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -67,6 +69,42 @@ def get(url: str) -> str:
     with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
         raw = r.read(4_000_000)
     return raw.decode("utf-8", "replace")
+
+
+# Every venue's robots.txt is read before its page, every run, and a source
+# whose robots.txt says no is skipped -- that check used to be a note in
+# show-sources.json for a person to do by hand, and so it was never done and
+# the venue feeds sat switched off. A site with no robots.txt (404) allows
+# everything; one whose robots.txt cannot be read at all is treated as a no
+# for this run rather than guessed at.
+_ROBOTS: dict[str, urllib.robotparser.RobotFileParser | None] = {}
+
+
+def robots_allow(url: str) -> bool | None:
+    """True allowed, False disallowed, None robots.txt unreadable."""
+    from urllib.parse import urlsplit
+    parts = urlsplit(url)
+    base = f"{parts.scheme}://{parts.netloc}"
+    if base not in _ROBOTS:
+        rp = urllib.robotparser.RobotFileParser()
+        try:
+            req = urllib.request.Request(base + "/robots.txt", headers={"User-Agent": UA})
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                rp.parse(r.read(500_000).decode("utf-8", "replace").splitlines())
+        except urllib.error.HTTPError as e:
+            if e.code in (404, 410):
+                rp.parse([])                       # no robots.txt: everything allowed
+            elif e.code in (401, 403):
+                rp.parse(["User-agent: *", "Disallow: /"])
+            else:
+                rp = None
+        except Exception:
+            rp = None
+        _ROBOTS[base] = rp
+    rp = _ROBOTS[base]
+    if rp is None:
+        return None
+    return rp.can_fetch(UA, url)
 
 
 # ── readers ─────────────────────────────────────────────────────────────────
@@ -280,18 +318,35 @@ def main() -> int:
         print("No sources enabled." if not args.only else f"No enabled source matches {args.only!r}.")
         return 0
 
-    added, problems = [], []
+    added, problems, warnings = [], [], []
     for src in sources:
         reader = READERS.get(src.get("kind", ""))
         if not reader:
             problems.append(f"{src['id']}: unknown kind {src.get('kind')!r}")
+            continue
+        was_good = queue["last_good"].get(src["id"], 0)
+        # A source that has never worked is still being tried out: its
+        # trouble is reported, but it does not turn the daily run red. Only a
+        # source that used to work and has stopped is a failure.
+        trouble = problems if was_good else warnings
+        # Calendar feeds are subscriptions, made to be fetched by calendar
+        # apps; robots.txt is about crawling web pages, and Google's would
+        # block the one source that has always worked. Pages get the check.
+        allowed = True if src.get("kind") == "ics" else robots_allow(src["url"])
+        if allowed is False:
+            trouble.append(f"{src['id']}: robots.txt asks bots not to read {src['url']} — skipped")
+            print(f"  {src['id']:<26} SKIPPED  robots.txt says no")
+            continue
+        if allowed is None:
+            trouble.append(f"{src['id']}: could not read robots.txt — skipped this run")
+            print(f"  {src['id']:<26} SKIPPED  robots.txt unreadable")
             continue
         try:
             text = get(src["url"])
             time.sleep(PAUSE)
             rows = reader(text)
         except Exception as e:
-            problems.append(f"{src['id']}: could not read — {e}")
+            trouble.append(f"{src['id']}: could not read — {e}")
             print(f"  {src['id']:<26} FAILED  {e}")
             continue
 
@@ -309,7 +364,9 @@ def main() -> int:
             fresh.append(n)
 
         found = len(rows)
-        was_good = queue["last_good"].get(src["id"], 0)
+        if found == 0 and not was_good:
+            warnings.append(f"{src['id']}: no events found on {src['url']} — the page may not "
+                            "carry schema.org Event data; try its events page instead")
         print(f"  {src['id']:<26} {found:>3} on the page, {len(fresh):>3} new")
         # A source that used to work and now returns nothing is broken, not idle.
         if found == 0 and was_good > 0:
@@ -333,6 +390,10 @@ def main() -> int:
     if not args.dry_run:
         QUEUE.write_text(json.dumps(queue, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
+    if warnings:
+        print("\nWARNINGS (new sources still being tried out):")
+        for w in warnings:
+            print("  " + w)
     if problems:
         print("\nPROBLEMS:")
         for p in problems:
@@ -363,6 +424,14 @@ def self_test() -> int:
         checks.append(("jsonld: city folded", n["city"] == "Vancouver"))
         checks.append(("jsonld: price", n["price"] == "$18"))
         checks.append(("jsonld: tracking stripped", n["ticket"] == "https://x.test/t"))
+
+    rp = urllib.robotparser.RobotFileParser()
+    rp.parse(["User-agent: *", "Disallow: /admin/"])
+    checks.append(("robots: listings allowed", rp.can_fetch(UA, "https://x.test/events/")))
+    checks.append(("robots: disallowed path respected", not rp.can_fetch(UA, "https://x.test/admin/a")))
+    rp2 = urllib.robotparser.RobotFileParser()
+    rp2.parse(["User-agent: *", "Disallow: /"])
+    checks.append(("robots: whole-site no respected", not rp2.can_fetch(UA, "https://x.test/")))
 
     checks.append(("address cut from venue",
                    venue_name("Red Gate Arts Society 1965 Main St") == "Red Gate Arts Society"))
