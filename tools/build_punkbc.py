@@ -132,6 +132,16 @@ VENUE_ALIAS = {
     "the pearl vancouver": "The Pearl",
     "lucky bar": "Lucky Bar",
     "luckybar": "Lucky Bar",
+    # Spellings the community calendar uses.
+    "lanalou's rock n' roll eatery": "LanaLou's",
+    "lanalous rock n roll eatery": "LanaLou's",
+    "green auto music": "Green Auto",
+    "bully's": "Bully's Studios",
+    "bullys": "Bully's Studios",
+    "bullys studios": "Bully's Studios",
+    "wise hall and lounge": "The WISE Hall",
+    "harbour events centre": "Harbour Event & Convention Centre",
+    "harbour event centre": "Harbour Event & Convention Centre",
 }
 
 # "Victoria" and "Victoria, BC" are one city, but render as two tabs.
