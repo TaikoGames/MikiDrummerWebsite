@@ -382,10 +382,13 @@ def main() -> int:
 
     print(f"\n{len(added)} new, {len(queue['pending'])} waiting for review"
           + ("  (dry run, nothing written)" if args.dry_run else ""))
-    for s in added[:15]:
+    # A dry run is for checking what is out there, so it lists everything;
+    # a real run's log only needs a taste (the rest is in the queue).
+    shown = added if args.dry_run else added[:15]
+    for s in shown:
         print(f"   {s['date']}  {s['band'][:46]:<48} {s['venue']}")
-    if len(added) > 15:
-        print(f"   … and {len(added) - 15} more")
+    if len(added) > len(shown):
+        print(f"   … and {len(added) - len(shown)} more")
 
     if not args.dry_run:
         QUEUE.write_text(json.dumps(queue, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
