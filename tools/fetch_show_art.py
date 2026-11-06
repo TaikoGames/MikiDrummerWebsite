@@ -63,6 +63,43 @@ ART_SOURCES = {
     "the restarts": "https://therestarts.bandcamp.com/",
     # Toronto. Their own site rather than a label or a festival listing.
     "the obgms": "https://theobgms.com/",
+
+    # ── Added 2026-11-06, each checked against what the band is ──
+    # Vancouver ska-punk with a horn section. Not BRASS (Vancouver hardcore,
+    # brassvan.bandcamp.com) and not The Brass Action (ska, split up).
+    "brasser": "https://brasserska.bandcamp.com/",
+    # Lethbridge Invasion is a two-night bill; Golers top both nights, so
+    # their own page stands for the event.
+    "lethbridge invasion — night 1": "https://thegolers.bandcamp.com/",
+    "lethbridge invasion — night 2": "https://thegolers.bandcamp.com/",
+    # Vic Bondi of Articles of Faith; His Issues is his Seattle band on
+    # Alternative Tentacles. His own Bandcamp.
+    "vic bondi and his issues": "https://vicbondi.bandcamp.com/",
+    # Vancouver punk since 2010 -- not The Anchoress (Catherine Anne Davies, UK).
+    "anchoress": "https://anchoress.bandcamp.com/",
+    # Victoria, BC. Not "Meredith Moon & The Oldest Man I Know", a Toronto
+    # folk duo that comes back first on a name search.
+    "the oldest man i know": "https://theoldestmaniknow.bandcamp.com/",
+    # Portland's "pow wow punk rock" band -- the 1876 touring with Terminal
+    # City Rats. Their own Bandcamp.
+    "1876": "https://1876band.bandcamp.com/",
+    # The Spill Canvas's orchestra tour; its own site.
+    "emo orchestra": "https://emosnotdead.com/",
+    # Famous enough that a name search is a minefield of tributes and fan
+    # pages: the band's Wikipedia article instead, whose lead image is a
+    # free-licensed photo of that exact band.
+    "underoath": "https://en.wikipedia.org/wiki/Underoath",
+    "dropkick murphys": "https://en.wikipedia.org/wiki/Dropkick_Murphys",
+    "frank turner and the sleeping souls": "https://en.wikipedia.org/wiki/Frank_Turner",
+    "the bouncing souls": "https://en.wikipedia.org/wiki/Bouncing_Souls",
+    # Santa Rosa pop-punk, back since 2023 on SBÄM. No site or Bandcamp of
+    # their own, so their Wikipedia article.
+    "diesel boy": "https://en.wikipedia.org/wiki/Diesel_Boy",
+    # Boston hardcore (Haywire 617) on Roadrunner -- no Bandcamp. Rolling
+    # Stone's piece on their album carries the band's own press image.
+    "haywire": "https://ca.rollingstone.com/music/haywire-617-i-dont-wanna-say-goodbye/",
+    # X-Mas in Skaville has no art of its own anywhere, and one band's photo
+    # on a many-band night would be wrong. It keeps the placeholder.
 }
 
 # Hosts that hand back a login wall or an expiring signed URL rather than the
