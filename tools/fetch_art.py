@@ -72,7 +72,20 @@ def wanted(s: dict) -> bool:
     img = (s.get("image") or "").lower()
     if not img or any(g in img for g in GENERIC):
         return False
-    return "mikidrummer.ca" not in img        # ours already, leave it alone
+    # A show picture saved on our own domain is still whatever shape the band
+    # posted -- often a square album cover -- so it is cropped like any other.
+    # The rest of our domain (site images, already the right shape) is left alone.
+    return "mikidrummer.ca" not in img or "/images/shows/" in img
+
+
+def local_file(url: str) -> Path | None:
+    """The repo copy of a show picture we host, so it is read from disk rather
+    than fetched back from the site we are in the middle of building."""
+    m = re.search(r"mikidrummer\.ca(/images/shows/[^?#]+)", url)
+    if not m:
+        return None
+    path = (ROOT / m.group(1).lstrip("/")).resolve()
+    return path if path.is_file() and ROOT in path.parents else None
 
 
 def name_for(band: str, url: str) -> str:
@@ -128,6 +141,9 @@ _last_hit: dict[str, float] = {}
 
 def download(url: str) -> bytes:
     """One image, politely: spaced out per host, and one retry if asked to wait."""
+    here = local_file(url)
+    if here:
+        return here.read_bytes()
     host = urllib.parse.urlsplit(url).netloc
     for attempt in (1, 2):
         wait = PAUSE - (time.monotonic() - _last_hit.get(host, 0))
@@ -217,6 +233,10 @@ def self_test() -> int:
     checks.append((not wanted({"image": "img/moshpit2.jpg"}), "generic photo skipped"))
     checks.append((not wanted({"image": "https://www.mikidrummer.ca/img/x.jpg"}),
                    "our own file left alone"))
+    checks.append((wanted({"image": "https://www.mikidrummer.ca/images/shows/x-2026-11-15.jpg"}),
+                   "a show picture we host is still cropped"))
+    checks.append((local_file("https://www.mikidrummer.ca/images/shows/../../etc/passwd") is None,
+                   "a path that climbs out of the repo is not read"))
 
     bad = 0
     for ok, label in checks:
