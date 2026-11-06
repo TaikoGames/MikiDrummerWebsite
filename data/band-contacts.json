@@ -326,6 +326,22 @@
       "by": "auto"
     },
     {
+      "band": "Big Time",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://bigtime.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Billy and The Parole Models",
       "checked": "2026-10-25",
       "email": "",
@@ -531,24 +547,19 @@
     },
     {
       "band": "Brasser",
-      "checked": "2026-09-13",
+      "checked": "2026-11-06",
       "email": "",
       "email_source": "",
+      "instagram": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://brasser.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://7c33659f530ef43fb4532fc6e83354dd@o363271.ingest.us.sentry.io",
-          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
-      "by": "auto",
-      "instagram": ""
+      "by": "auto"
     },
     {
       "band": "Brehdren",
@@ -674,6 +685,22 @@
         {
           "name": "Bandcamp",
           "url": "https://castrator.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Ceremonial Bloodbath. Nuclear War Now! presents.",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://ceremonialbloodbathnuclearwarnowpresents.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -1377,6 +1404,22 @@
       "instagram": ""
     },
     {
+      "band": "Emma Goldman.",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://emmagoldman.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "ENDR",
       "checked": "2026-09-26",
       "email": "",
@@ -1543,6 +1586,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Fleabane",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://fleabane.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Fotocrime",
@@ -2267,6 +2326,47 @@
       "by": "auto"
     },
     {
+      "band": "L7",
+      "checked": "2026-11-06",
+      "email": "contact@dreamgames.com",
+      "email_source": "play.google.com",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://l7.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/Bandcamp",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/bandcamp",
+          "found": "profile"
+        },
+        {
+          "name": "tiktok.com",
+          "url": "https://www.tiktok.com/@bandcamp",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "https://bsky.app",
+          "found": "form"
+        },
+        {
+          "name": "Site",
+          "url": "https://play.google.com",
+          "found": "email"
+        }
+      ],
+      "note": "",
+      "by": "auto"
+    },
+    {
       "band": "Lambrini Girls",
       "checked": "2026-10-26",
       "email": "",
@@ -2322,6 +2422,38 @@
         {
           "name": "Site",
           "url": "http://www.myspace.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Lethbridge Invasion — Night 1",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://lethbridgeinvasionnight1.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Lethbridge Invasion — Night 2",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://lethbridgeinvasionnight2.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -2653,6 +2785,32 @@
           "name": "Bandcamp",
           "url": "https://molder.bandcamp.com/",
           "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Mooshy Face.",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "mooshyfaceband",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://mooshyface.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/mooshyfaceband/",
+          "found": "profile"
+        },
+        {
+          "name": "open.spotify.com",
+          "url": "https://open.spotify.com/show/75ZSeZZKmlCPOnzZD8hOz1&quot;,&quot;alt&quot;:&quot;Mooshy",
+          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3613,6 +3771,22 @@
       "by": "auto"
     },
     {
+      "band": "Tall Mary",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://tallmary.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Ten Days Late",
       "checked": "2026-09-26",
       "email": "",
@@ -4111,6 +4285,22 @@
       "by": "auto"
     },
     {
+      "band": "Witchcraft",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://witchcraft.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Witiko",
       "checked": "2026-09-14",
       "email": "",
@@ -4193,6 +4383,22 @@
         {
           "name": "Site",
           "url": "http://www.wittr.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Wrathprayer",
+      "checked": "2026-11-06",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://wrathprayer.bandcamp.com/",
           "found": "form"
         }
       ],
