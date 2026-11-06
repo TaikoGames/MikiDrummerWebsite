@@ -39,7 +39,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Death Metal",
       "notes": "With Jarhead Fertilizer, Savage Master, Molder. 19+",
-      "image": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84f7d3dcb488936e0ea2a6c59e"
+      "image": "https://www.mikidrummer.ca/images/shows/exhumed-2026-11-09.jpg",
+      "image_source": "Made for Punk BC: no picture of this show or band could be found."
     },
     {
       "band": "Bad Waitress",
@@ -186,7 +187,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Heavy Metal",
       "notes": "With Armored Saint, Livekill. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Metal_Church-_Wacken_Open_Air_2016-AL3427.jpg?width=600"
+      "image": "https://www.mikidrummer.ca/images/shows/metal-church-2026-11-15.jpg",
+      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Metal_Church-_Wacken_Open_Air_2016-AL3427.jpg?width=600"
     },
     {
       "band": "Metal Church / Armored Saint",
@@ -198,7 +200,8 @@
       "ticket": "https://rickshawtheatre.com",
       "genre": "Metal",
       "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg"
+      "image": "https://www.mikidrummer.ca/images/shows/metal-church-armored-saint-2026-11-15.jpg",
+      "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/20/Armored_Saint_-_Wacken_Open_Air_2024_06.jpg/1280px-Armored_Saint_-_Wacken_Open_Air_2024_06.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
     },
     {
       "band": "Underoath / August Burns Red",
