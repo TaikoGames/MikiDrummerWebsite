@@ -19,15 +19,17 @@
    "url": "https://rickshawtheatre.com",
    "venue": "Rickshaw Theatre",
    "city": "Vancouver",
-   "enabled": true
+   "enabled": true,
+   "note": "Skipped: the site's robots.txt cannot be read by a bot (checked 2026-11-06), so the collector stays out. Left on: it starts working by itself if that changes."
   },
   {
    "id": "the-cobalt",
    "kind": "jsonld",
-   "url": "https://thecobalt.ca",
+   "url": "https://www.thecobalt.ca",
    "venue": "The Cobalt",
    "city": "Vancouver",
-   "enabled": true
+   "enabled": true,
+   "note": "Reachable, but the site publishes no schema.org Event data (checked 2026-11-06, homepage and events pages). Left on: it starts working by itself if the venue adds it."
   },
   {
    "id": "the-astoria",
@@ -35,7 +37,8 @@
    "url": "https://theastoria.ca",
    "venue": "The Astoria",
    "city": "Vancouver",
-   "enabled": true
+   "enabled": true,
+   "note": "Skipped: the site's robots.txt cannot be read by a bot (checked 2026-11-06), so the collector stays out. Left on: it starts working by itself if that changes."
   },
   {
    "id": "the-pearl",
@@ -43,7 +46,8 @@
    "url": "https://thepearlvancouver.com",
    "venue": "The Pearl",
    "city": "Vancouver",
-   "enabled": true
+   "enabled": true,
+   "note": "Reachable, but the site publishes no schema.org Event data (checked 2026-11-06, homepage and events pages). Left on: it starts working by itself if the venue adds it."
   },
   {
    "id": "commodore-ballroom",
@@ -51,7 +55,8 @@
    "url": "https://www.commodoreballroom.com",
    "venue": "Commodore Ballroom",
    "city": "Vancouver",
-   "enabled": true
+   "enabled": true,
+   "note": "Works: reads the schema.org event data on the homepage. Books far more than punk, so its shows go to the review queue for a pick."
   },
   {
    "id": "red-gate",
@@ -59,7 +64,8 @@
    "url": "https://redgate.tv",
    "venue": "Red Gate Arts Society",
    "city": "Vancouver",
-   "enabled": true
+   "enabled": true,
+   "note": "Reachable, but the site publishes no schema.org Event data (checked 2026-11-06, homepage and events pages). Left on: it starts working by itself if the venue adds it."
   },
   {
    "id": "biltmore-cabaret",
@@ -67,7 +73,8 @@
    "url": "https://biltmorecabaret.com",
    "venue": "Biltmore Cabaret",
    "city": "Vancouver",
-   "enabled": true
+   "enabled": true,
+   "note": "Reachable, but the site publishes no schema.org Event data (checked 2026-11-06, homepage and events pages). Left on: it starts working by itself if the venue adds it."
   }
  ]
 }
