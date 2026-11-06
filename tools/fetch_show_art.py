@@ -84,7 +84,13 @@ ART_SOURCES = {
     # City Rats. Their own Bandcamp.
     "1876": "https://1876band.bandcamp.com/",
     # The Spill Canvas's orchestra tour; its own site.
-    "emo orchestra": "https://emosnotdead.com/",
+    # The tour's own event pages: their image is the Emo Orchestra artwork.
+    # (emosnotdead.com was tried first and gave its merch shop's banner.)
+    "emo orchestra": [
+        "https://tafttheatre.org/events/2026/04/emo-orchestra-featuring-the-spill-canvas",
+        "https://www.centerstage-atlanta.com/events/emo-orchestra",
+        "https://en.wikipedia.org/wiki/The_Spill_Canvas",
+    ],
     # Famous enough that a name search is a minefield of tributes and fan
     # pages: the band's Wikipedia article instead, whose lead image is a
     # free-licensed photo of that exact band.
@@ -94,7 +100,11 @@ ART_SOURCES = {
     "the bouncing souls": "https://en.wikipedia.org/wiki/Bouncing_Souls",
     # Santa Rosa pop-punk, back since 2023 on SBÄM. No site or Bandcamp of
     # their own, so their Wikipedia article.
-    "diesel boy": "https://en.wikipedia.org/wiki/Diesel_Boy",
+    "diesel boy": [
+        "https://en.wikipedia.org/wiki/Diesel_Boy",
+        # Their publicist's page for the 2023 comeback album: the band's press shot.
+        "https://www.earshotmedia.com/diesel-boy/",
+    ],
     # Boston hardcore (Haywire 617) on Roadrunner -- no Bandcamp. Rolling
     # Stone's piece on their album carries the band's own press image.
     "haywire": "https://ca.rollingstone.com/music/haywire-617-i-dont-wanna-say-goodbye/",
@@ -172,22 +182,54 @@ def candidates(show: dict) -> list[tuple[str, str]]:
     if ticket.startswith("http") and not any(h in ticket for h in SKIP_HOSTS):
         out.append(("ticket page", ticket))
     src = ART_SOURCES.get((show.get("band") or "").split(" / ")[0].strip().lower())
-    if src:
-        out.append(("band's own page", src))
+    # One page, or several to try in order.
+    for u in ([src] if isinstance(src, str) else (src or [])):
+        out.append(("band's own page", u))
     return out
 
 
+# A Bandcamp front page offers only a small band photo (300x200 and
+# refused); the art is on the album pages. When the front page's image is
+# no good, follow its first album -- the newest, as Bandcamp lists them --
+# and take that cover. It is the band's own page either way.
+BANDCAMP_ALBUM = re.compile(rb'href=["\']((?:https://[a-z0-9-]+\.bandcamp\.com)?/(?:album|track)/[a-z0-9-]+)', re.I)
+
+
+def bandcamp_album(html: bytes, page: str) -> str | None:
+    if ".bandcamp.com" not in page:
+        return None
+    m = BANDCAMP_ALBUM.search(html)
+    if not m:
+        return None
+    href = m.group(1).decode()
+    if href.startswith("/"):
+        from urllib.parse import urlsplit
+        p = urlsplit(page)
+        href = f"{p.scheme}://{p.netloc}{href}"
+    return href
+
+
 def art_for(show: dict, report: list) -> tuple[bytes, str, str] | None:
-    for where, page in candidates(show):
+    todo = list(candidates(show))
+    followed = set()
+    while todo:
+        where, page = todo.pop(0)
         try:
             html = get(page)
             time.sleep(PAUSE)
         except Exception as e:
             report.append(f"      {where}: could not open — {e}")
             continue
+        album = bandcamp_album(html, page)
+        def try_album(why_not: str) -> None:
+            if album and album not in followed and album != page:
+                followed.add(album)
+                report.append(f"      {where}: {why_not} -- trying its latest album")
+                todo.insert(0, ("band's album page", album))
         img = og_image(html, page)
         if not img:
             report.append(f"      {where}: no og:image on the page")
+            try_album("no picture")
             continue
         try:
             raw = get(img)
@@ -198,6 +240,7 @@ def art_for(show: dict, report: list) -> tuple[bytes, str, str] | None:
         ok, why = usable(raw)
         if not ok:
             report.append(f"      {where}: refused — {why}")
+            try_album("picture too small")
             continue
         report.append(f"      {where}: {why} from {img[:70]}")
         return raw, img, where
@@ -251,8 +294,24 @@ def main() -> int:
     return 0
 
 
+def _bandcamp_checks(checks: list) -> None:
+    html = b'<a href="/album/in-n-outlaws">x</a><a href="/album/older">y</a>'
+    checks.append(("bandcamp: first album followed",
+                   bandcamp_album(html, "https://thegolers.bandcamp.com/")
+                   == "https://thegolers.bandcamp.com/album/in-n-outlaws"))
+    checks.append(("bandcamp: only on bandcamp", bandcamp_album(html, "https://x.test/") is None))
+    full = b'<a href="https://anchoress.bandcamp.com/album/crime">'
+    checks.append(("bandcamp: absolute link kept",
+                   bandcamp_album(full, "https://anchoress.bandcamp.com/")
+                   == "https://anchoress.bandcamp.com/album/crime"))
+    checks.append(("a list of sources is tried in order",
+                   [u for _, u in candidates({"band": "Diesel Boy", "ticket": ""})][:1]
+                   == ["https://en.wikipedia.org/wiki/Diesel_Boy"]))
+
+
 def self_test() -> int:
     checks = []
+    _bandcamp_checks(checks)
 
     html = b'<meta property="og:image" content="https://x.test/a.jpg">'
     checks.append(("og:image read", og_image(html, "https://x.test/p") == "https://x.test/a.jpg"))
