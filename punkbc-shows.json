@@ -77,6 +77,19 @@
       "image": "https://lastfm.freetls.fastly.net/i/u/300x300/08abd2fca0e0351276f814b74a20e208"
     },
     {
+      "band": "Lethbridge Invasion — Night 1",
+      "date": "2026-11-13",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion/1653147899703601/",
+      "genre": "Punk / Hardcore",
+      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood, Zero Index. Night 2 is the next day at Bully's.",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
       "band": "Blasphemy",
       "date": "2026-11-13",
       "time": "19:00",
@@ -114,15 +127,15 @@
       "image": "https://lastfm.freetls.fastly.net/i/u/300x300/07449b45cb96703b275d98124e5dc196"
     },
     {
-      "band": "Lethbridge Invasion — Night 1",
-      "date": "2026-11-13",
+      "band": "Lethbridge Invasion — Night 2",
+      "date": "2026-11-14",
       "time": "",
-      "venue": "Red Gate Arts Society",
+      "venue": "Bully's Studios",
       "city": "Vancouver",
       "price": "",
-      "ticket": "https://facebook.com/events/s/lethbridge-invasion/1653147899703601/",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion-night-2/2907068749648249/",
       "genre": "Punk / Hardcore",
-      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood, Zero Index. Night 2 is the next day at Bully's.",
+      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood.",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "curated": ""
     },
@@ -149,19 +162,6 @@
       "genre": "Black/Doom Metal",
       "notes": "With Perdurabo, Deliriant Fracture, Occisor. A Night of Death and Doom. Music starts 9pm",
       "image": "https://astoria.pub/wp-content/uploads/2026/07/Black-Death-Cult-663x1024.jpeg",
-      "curated": ""
-    },
-    {
-      "band": "Lethbridge Invasion — Night 2",
-      "date": "2026-11-14",
-      "time": "",
-      "venue": "Bully's Studios",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/lethbridge-invasion-night-2/2907068749648249/",
-      "genre": "Punk / Hardcore",
-      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood.",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "curated": ""
     },
     {
@@ -240,19 +240,6 @@
       "image_source": "http://static1.squarespace.com/static/5e18e652d375b8296da6709b/t/67f4aa6065ed532f93e4754c/1744087648669/OBGMs-Logo-Gif-2025.gif?format=1500w"
     },
     {
-      "band": "WAAX",
-      "date": "2026-11-21",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "$22 adv",
-      "ticket": "https://rickshawtheatre.com/show_listings/waax-angels-mess-tour/",
-      "genre": "Punk/Alt Rock",
-      "notes": "Angel's Mess Tour. Rickshaw and Cobalt present. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/SXSW_2019_-_WAAX_%2833555039998%29.jpg?width=600",
-      "curated": ""
-    },
-    {
       "band": "Vic Bondi and His Issues",
       "date": "2026-11-21",
       "time": "",
@@ -263,6 +250,19 @@
       "genre": "Hardcore Punk",
       "notes": "Demolition Days. With Slip~Ons, Uptights, Earmarked.",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
+      "band": "WAAX",
+      "date": "2026-11-21",
+      "time": "19:00",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "$22 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/waax-angels-mess-tour/",
+      "genre": "Punk/Alt Rock",
+      "notes": "Angel's Mess Tour. Rickshaw and Cobalt present. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/SXSW_2019_-_WAAX_%2833555039998%29.jpg?width=600",
       "curated": ""
     },
     {
@@ -279,19 +279,6 @@
       "curated": ""
     },
     {
-      "band": "Pointed Sticks",
-      "date": "2026-11-28",
-      "time": "19:30",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$25 adv",
-      "ticket": "https://rickshawtheatre.com/show_listings/pointed-sticks-final-show/",
-      "genre": "Punk",
-      "notes": "Final show ever. Vancouver punk legends. Support to be announced. 19+",
-      "image": "https://rickshawtheatre.com/wp-content/uploads/2026/09/PS-NOV-SHOW1-400x533.jpg",
-      "curated": ""
-    },
-    {
       "band": "The Oldest Man I Know",
       "date": "2026-11-28",
       "time": "",
@@ -302,6 +289,19 @@
       "genre": "Punk",
       "notes": "With Beastie, Staggers and Jags, Call Before You Dig, Shorefox.",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
+      "band": "Pointed Sticks",
+      "date": "2026-11-28",
+      "time": "19:30",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$25 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/pointed-sticks-final-show/",
+      "genre": "Punk",
+      "notes": "Final show ever. Vancouver punk legends. Support to be announced. 19+",
+      "image": "https://rickshawtheatre.com/wp-content/uploads/2026/09/PS-NOV-SHOW1-400x533.jpg",
       "curated": ""
     },
     {
@@ -344,19 +344,6 @@
       "curated": ""
     },
     {
-      "band": "Guilt Trip",
-      "date": "2026-12-04",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$30 adv",
-      "ticket": "https://rickshawtheatre.com/show_listings/guilt-trip/",
-      "genre": "Hardcore",
-      "notes": "With Gates to Hell, Mauled. 19+",
-      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Guilt_Trip_Full_Force_2023_04.jpg?width=600",
-      "curated": ""
-    },
-    {
       "band": "1876",
       "date": "2026-12-04",
       "time": "",
@@ -367,6 +354,19 @@
       "genre": "Punk",
       "notes": "With Terminal City Rats.",
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
+    },
+    {
+      "band": "Guilt Trip",
+      "date": "2026-12-04",
+      "time": "18:00",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "$30 adv",
+      "ticket": "https://rickshawtheatre.com/show_listings/guilt-trip/",
+      "genre": "Hardcore",
+      "notes": "With Gates to Hell, Mauled. 19+",
+      "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Guilt_Trip_Full_Force_2023_04.jpg?width=600",
       "curated": ""
     },
     {
