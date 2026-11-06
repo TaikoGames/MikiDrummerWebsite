@@ -95,6 +95,10 @@ VENUE_ADDRESS = {
     "The WISE Hall": "1882 Adanac St",
     "Green Auto": "1822 Pandora St",
     "Jackknife Brewing": "727 Baillie Ave",
+    "Bully's Studios": "67 6th St",                 # New Westminster, not Vancouver
+    "PNE Forum": "2901 E Hastings St",
+    "Harbour Event & Convention Centre": "750 Pacific Blvd",
+    "LanaLou's": "362 Powell St",
 }
 
 # The same venue arrives spelled several ways (hand-entered here and in the

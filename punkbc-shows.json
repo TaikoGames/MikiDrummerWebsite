@@ -78,34 +78,20 @@
       "price": "$20",
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Metal",
-      "notes": "",
+      "notes": "With Wrathprayer, Witchcraft, Ceremonial Bloodbath. Nuclear War Now! presents.",
       "image": "https://www.mikidrummer.ca/images/shows/blasphamagoatachrist-2026-11-12.jpg",
       "image_source": "https://f4.bcbits.com/img/a1777007909_5.jpg"
     },
     {
-      "band": "Lethbridge Invasion — Night 1",
-      "date": "2026-11-13",
-      "time": "",
-      "venue": "Red Gate Arts Society",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/lethbridge-invasion/1653147899703601/",
-      "genre": "Punk / Hardcore",
-      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood, Zero Index. Night 2 is the next day at Bully's.",
-      "image": "https://www.mikidrummer.ca/images/shows/lethbridge-invasion-night-1-2026-11-13.jpg",
-      "curated": "",
-      "image_source": "https://f4.bcbits.com/img/a3805293918_5.jpg"
-    },
-    {
       "band": "Blasphemy",
       "date": "2026-11-13",
-      "time": "19:00",
+      "time": "18:00",
       "venue": "Rickshaw Theatre",
       "city": "Vancouver",
       "price": "$30",
       "ticket": "https://rickshawtheatre.com",
       "genre": "Black Metal",
-      "notes": "SOLD OUT",
+      "notes": "Live Ritual: Friday the 13th Part II. With Revenge, Death Worship, Black Witchery, Witches Hammer, Bloody Vengeance. Nuclear War Now! presents. SOLD OUT",
       "image": "https://www.mikidrummer.ca/images/shows/blasphemy-2026-11-13.jpg",
       "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/2009-10-25blasphemy.JPG/1280px-2009-10-25blasphemy.JPG?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
     },
@@ -118,7 +104,7 @@
       "price": "$25 + fees",
       "ticket": "https://astoria.pub/events/deathtape-live-in-vancouver/",
       "genre": "Metal",
-      "notes": "Las Vegas metal. The Invisible Orange presents. More TBA. 19+",
+      "notes": "Las Vegas metal. With Phantom Lamb. The Invisible Orange presents. 19+",
       "image": "https://www.mikidrummer.ca/images/shows/deathtape-2026-11-13.jpg",
       "curated": "",
       "image_source": "https://astoria.pub/wp-content/uploads/2026/10/20261113_Deathtape_IG45_updated.webp"
@@ -129,26 +115,26 @@
       "time": "19:00",
       "venue": "The Cobalt",
       "city": "Vancouver",
-      "price": "",
+      "price": "$20",
       "ticket": "https://www.eventbrite.ca/e/truck-violence-tickets-1992091123175",
       "genre": "Punk",
-      "notes": "",
+      "notes": "With Tall Mary, Emma Goldman.",
       "image": "https://www.mikidrummer.ca/images/shows/truck-violence-2026-11-13.jpg",
       "image_source": "https://www.eventbrite.ca/_next/image?url=https%3A%2F%2Fimg.evbuc.com%2Fhttps%253A%252F%252Fcdn.evbuc.com%252Fimages%252F1187151549%252F278048894574%252F1%252Foriginal.20260617-224549%3Fcrop%3Dfocalpoint%26fit%3Dcrop%26w%3D940%26auto%3Dformat%252Ccompress%26q%3D75%26sharp%3D10%26fp-x%3D0.507%26fp-y%3D0.342%26s%3Dc8f8772261cd5c5ccd477e53db46f554&w=940&q=75"
     },
     {
-      "band": "Lethbridge Invasion — Night 2",
-      "date": "2026-11-14",
-      "time": "",
-      "venue": "Bully's Studios",
+      "band": "Lethbridge Invasion — Night 1",
+      "date": "2026-11-13",
+      "time": "20:00",
+      "venue": "Red Gate Arts Society",
       "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/lethbridge-invasion-night-2/2907068749648249/",
+      "price": "$15 adv / $20 door",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion/1653147899703601/",
       "genre": "Punk / Hardcore",
-      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood.",
-      "image": "https://www.mikidrummer.ca/images/shows/lethbridge-invasion-night-2-2026-11-14.jpg",
+      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood, Zero Index. Night 2 is the next day at Bully's.",
+      "image": "https://www.mikidrummer.ca/images/shows/lethbridge-invasion-night-1-2026-11-13.jpg",
       "curated": "",
-      "image_source": "https://f4.bcbits.com/img/a3288970953_5.jpg"
+      "image_source": "https://f4.bcbits.com/img/a3805293918_5.jpg"
     },
     {
       "band": "Arch Enemy",
@@ -162,6 +148,20 @@
       "notes": "Wrath Across North America tour. With The Black Dahlia Murder, Septicflesh, Crypta, Thrown Into Exile",
       "image": "https://www.mikidrummer.ca/images/shows/arch-enemy-2026-11-14.jpg",
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Arch_Enemy_since_2026_collage.jpg?width=500"
+    },
+    {
+      "band": "Lethbridge Invasion — Night 2",
+      "date": "2026-11-14",
+      "time": "19:00",
+      "venue": "Bully's Studios",
+      "city": "New Westminster",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/lethbridge-invasion-night-2/2907068749648249/",
+      "genre": "Punk / Hardcore",
+      "notes": "Golers, Squidz, Brutalize, Built to Decay, Void of Mood.",
+      "image": "https://www.mikidrummer.ca/images/shows/lethbridge-invasion-night-2-2026-11-14.jpg",
+      "curated": "",
+      "image_source": "https://f4.bcbits.com/img/a3288970953_5.jpg"
     },
     {
       "band": "Black Death Cult",
@@ -218,19 +218,6 @@
       "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Underoath_-_2019159150712_2019-06-08_Rock_am_Ring_-_0156_-_5DSR0728.jpg/1280px-Underoath_-_2019159150712_2019-06-08_Rock_am_Ring_-_0156_-_5DSR0728.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
     },
     {
-      "band": "The Restarts / Alien Boys / Mean Bikini",
-      "date": "2026-11-18",
-      "time": "",
-      "venue": "Green Auto",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/images/shows/the-restarts-2026-11-18.jpg",
-      "image_source": "https://f4.bcbits.com/img/a2055505358_5.jpg"
-    },
-    {
       "band": "Devil Master",
       "date": "2026-11-18",
       "time": "19:00",
@@ -239,7 +226,7 @@
       "price": "$30 + fees",
       "ticket": "https://astoria.pub/events/devil-master/",
       "genre": "Black Metal / Punk",
-      "notes": "The Invisible Orange presents. 19+",
+      "notes": "With Deathwinds, Hellslaughter, Ostrom. The Invisible Orange presents. 19+",
       "image": "https://www.mikidrummer.ca/images/shows/devil-master-2026-11-18.jpg",
       "curated": "",
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Devil_Master.jpg?width=500"
@@ -253,10 +240,23 @@
       "price": "$32 adv",
       "ticket": "https://rickshawtheatre.com/show_listings/korpiklaani-2/",
       "genre": "Folk Metal",
-      "notes": "With Crimson Shadows. 19+",
+      "notes": "With Crimson Shadows, Kayas. 19+",
       "image": "https://www.mikidrummer.ca/images/shows/korpiklaani-2026-11-18.jpg",
       "curated": "",
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Korpiklaani_-_Rakuunarock_2013.jpg?width=600"
+    },
+    {
+      "band": "The Restarts / Alien Boys / Mean Bikini",
+      "date": "2026-11-18",
+      "time": "19:00",
+      "venue": "Green Auto",
+      "city": "Vancouver",
+      "price": "$20 adv / $25 door",
+      "ticket": "https://gigpit.ca/shows/event:2vbjba0sBSY",
+      "genre": "",
+      "notes": "The Restarts' first Canadian tour in 15 years. 19+",
+      "image": "https://www.mikidrummer.ca/images/shows/the-restarts-2026-11-18.jpg",
+      "image_source": "https://f4.bcbits.com/img/a2055505358_5.jpg"
     },
     {
       "band": "The OBGMs",
@@ -272,20 +272,6 @@
       "image_source": "http://static1.squarespace.com/static/5e18e652d375b8296da6709b/t/67f4aa6065ed532f93e4754c/1744087648669/OBGMs-Logo-Gif-2025.gif?format=1500w"
     },
     {
-      "band": "Vic Bondi and His Issues",
-      "date": "2026-11-21",
-      "time": "",
-      "venue": "Red Gate Arts Society",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/demolition-days-vic-bondi-and-/1113248167832234/",
-      "genre": "Hardcore Punk",
-      "notes": "Demolition Days. With Slip~Ons, Uptights, Earmarked.",
-      "image": "https://www.mikidrummer.ca/images/shows/vic-bondi-and-his-issues-2026-11-21.jpg",
-      "curated": "",
-      "image_source": "https://f4.bcbits.com/img/a3909317052_5.jpg"
-    },
-    {
       "band": "WAAX",
       "date": "2026-11-21",
       "time": "19:00",
@@ -298,6 +284,20 @@
       "image": "https://www.mikidrummer.ca/images/shows/waax-2026-11-21.jpg",
       "curated": "",
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/SXSW_2019_-_WAAX_%2833555039998%29.jpg?width=600"
+    },
+    {
+      "band": "Vic Bondi and His Issues",
+      "date": "2026-11-21",
+      "time": "20:00",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "$17",
+      "ticket": "https://facebook.com/events/s/demolition-days-vic-bondi-and-/1113248167832234/",
+      "genre": "Hardcore Punk",
+      "notes": "Demolition Days. With Slip~Ons, Uptights, Earmarked.",
+      "image": "https://www.mikidrummer.ca/images/shows/vic-bondi-and-his-issues-2026-11-21.jpg",
+      "curated": "",
+      "image_source": "https://f4.bcbits.com/img/a3909317052_5.jpg"
     },
     {
       "band": "Anchoress",
@@ -336,7 +336,7 @@
       "price": "$25 adv",
       "ticket": "https://rickshawtheatre.com/show_listings/pointed-sticks-final-show/",
       "genre": "Punk",
-      "notes": "Final show ever. Vancouver punk legends. Support to be announced. 19+",
+      "notes": "Final show ever. Vancouver punk legends. With Butch Murphy & The Lowbrows. 19+ SOLD OUT",
       "image": "https://www.mikidrummer.ca/images/shows/pointed-sticks-2026-11-28.jpg",
       "curated": "",
       "image_source": "Made for Punk BC: no picture of this show or band could be found."
@@ -414,13 +414,13 @@
     {
       "band": "Emo Orchestra",
       "date": "2026-12-05",
-      "time": "",
+      "time": "18:00",
       "venue": "Harbour Event & Convention Centre",
       "city": "Vancouver",
       "price": "",
       "ticket": "https://facebook.com/events/s/emo-orchestra-w-the-spill-canv/1416258253798343/",
       "genre": "Emo",
-      "notes": "With The Spill Canvas and Greywind.",
+      "notes": "With The Spill Canvas and Greywind. 19+",
       "image": "https://www.mikidrummer.ca/images/shows/emo-orchestra-2026-12-05.jpg",
       "curated": "",
       "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/The_Spill_Canvas%2C_2005-09-16%2C_The_Masquerade_%28Hell%29%2C_Atlanta.jpg/1280px-The_Spill_Canvas%2C_2005-09-16%2C_The_Masquerade_%28Hell%29%2C_Atlanta.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
@@ -428,13 +428,13 @@
     {
       "band": "X-Mas in Skaville",
       "date": "2026-12-12",
-      "time": "",
+      "time": "19:00",
       "venue": "The WISE Hall",
       "city": "Vancouver",
       "price": "",
       "ticket": "",
       "genre": "Ska",
-      "notes": "Christmas ska night.",
+      "notes": "Xmas in Skaville #23, the yearly Christmas ska night.",
       "image": "https://www.mikidrummer.ca/images/shows/x-mas-in-skaville-2026-12-12.jpg",
       "curated": "",
       "image_source": "Made for Punk BC: the night has no artwork of its own."
@@ -448,7 +448,7 @@
       "price": "$15",
       "ticket": "https://lanalous.wixsite.com/lanalous",
       "genre": "Punk",
-      "notes": "Holiday punk. With The Rubes",
+      "notes": "Holiday punk. With The Rubes, The Fondlers.",
       "image": "https://www.mikidrummer.ca/images/shows/angry-snowmans-2026-12-18.jpg",
       "curated": "",
       "image_source": "https://f4.bcbits.com/img/a3031830760_5.jpg"
@@ -532,24 +532,10 @@
       "price": "",
       "ticket": "https://www.biltmorecabaret.com",
       "genre": "Punk",
-      "notes": "",
+      "notes": "Their first show in Canada.",
       "image": "https://www.mikidrummer.ca/images/shows/winona-fighter-2027-02-05.jpg",
       "curated": "",
       "image_source": "https://www.melodicmag.com/wp-content/uploads/2026/06/winona-LEAD-PIC-scaled.jpg"
-    },
-    {
-      "band": "Frank Turner and The Sleeping Souls",
-      "date": "2027-02-10",
-      "time": "",
-      "venue": "Commodore Ballroom",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/frank-turner-the-sleeping-soul/1457102043304201/",
-      "genre": "Folk Punk",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/images/shows/frank-turner-and-the-sleeping-souls-2027-02-10.jpg",
-      "curated": "",
-      "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Highfield_-_Frank_Turner_%28cropped%29.jpg/1280px-Highfield_-_Frank_Turner_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
     },
     {
       "band": "Dropkick Murphys",
@@ -560,7 +546,7 @@
       "price": "",
       "ticket": "https://facebook.com/events/s/dropkick-murphys-at-pne-forum/1067398236158457/",
       "genre": "Celtic Punk",
-      "notes": "",
+      "notes": "St. Patrick's Day tour. With Home Front, Spiritual Cramp.",
       "image": "https://www.mikidrummer.ca/images/shows/dropkick-murphys-2027-02-12.jpg",
       "curated": "",
       "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/DKMshamrock.jpg/1280px-DKMshamrock.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
@@ -591,6 +577,20 @@
       "image": "https://www.mikidrummer.ca/images/shows/eluveitie-2027-02-26.jpg",
       "curated": "",
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Eluveitie_-_Manchester_2025.jpg?width=600"
+    },
+    {
+      "band": "Frank Turner and The Sleeping Souls",
+      "date": "2027-03-10",
+      "time": "",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/frank-turner-the-sleeping-soul/1457102043304201/",
+      "genre": "Folk Punk",
+      "notes": "Last Evenings farewell tour.",
+      "image": "https://www.mikidrummer.ca/images/shows/frank-turner-and-the-sleeping-souls-2027-02-10.jpg",
+      "curated": "",
+      "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Highfield_-_Frank_Turner_%28cropped%29.jpg/1280px-Highfield_-_Frank_Turner_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
     },
     {
       "band": "Nervosa",
@@ -670,7 +670,7 @@
       "price": "",
       "ticket": "https://www.commodoreballroom.com/shows",
       "genre": "Punk",
-      "notes": "",
+      "notes": "With Mudhoney.",
       "image": "https://www.mikidrummer.ca/images/shows/the-damned-2027-04-03.jpg",
       "curated": "",
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Damned_-_Live_2018.jpg?width=500"
