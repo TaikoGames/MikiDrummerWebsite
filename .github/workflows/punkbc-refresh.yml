@@ -25,9 +25,13 @@ on:
 permissions:
   contents: write
 
+# One queue for every job that rewrites the board (refresh, show art,
+# localise art): they run one after another, never on top of each other.
+# Two at once is how a run's work got rejected or tangled at push time.
+# Nothing in the queue is cancelled: a waiting refresh just runs next.
 concurrency:
-  group: punkbc-refresh
-  cancel-in-progress: true
+  group: punkbc-board
+  cancel-in-progress: false
 
 jobs:
   refresh:
