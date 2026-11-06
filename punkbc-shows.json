@@ -374,9 +374,8 @@
       "ticket": "https://facebook.com/events/s/1876-with-terminal-city-rats-d/974565791671228/",
       "genre": "Punk",
       "notes": "With Terminal City Rats.",
-      "image": "https://www.mikidrummer.ca/images/shows/1876-2026-12-04.jpg",
-      "curated": "",
-      "image_source": "https://f4.bcbits.com/img/a0082946436_5.jpg"
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
     },
     {
       "band": "Guilt Trip",
@@ -401,9 +400,8 @@
       "ticket": "https://facebook.com/events/s/emo-orchestra-w-the-spill-canv/1416258253798343/",
       "genre": "Emo",
       "notes": "With The Spill Canvas and Greywind.",
-      "image": "https://www.mikidrummer.ca/images/shows/emo-orchestra-2026-12-05.jpg",
-      "curated": "",
-      "image_source": "https://tafttheatre.imgix.net/events/PrAp47Cbf43DGRNnbqyAxpWdiTvwrXxI2XBwbAWY.jpg?auto=compress%2Cformat&fit=crop&h=630&w=1200&s=1f8b5419e8f30a60d26b938dbc5858f8"
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "curated": ""
     },
     {
       "band": "X-Mas in Skaville",
@@ -415,8 +413,9 @@
       "ticket": "",
       "genre": "Ska",
       "notes": "Christmas ska night.",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/x-mas-in-skaville-2026-12-12.jpg",
+      "curated": "",
+      "image_source": "Made for Punk BC: the night has no artwork of its own."
     },
     {
       "band": "Angry Snowmans",

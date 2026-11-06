@@ -82,15 +82,18 @@ ART_SOURCES = {
     "the oldest man i know": "https://theoldestmaniknow.bandcamp.com/",
     # Portland's "pow wow punk rock" band -- the 1876 touring with Terminal
     # City Rats. Their own Bandcamp.
-    "1876": "https://1876band.bandcamp.com/",
+    # Their own album first -- the newest release on the front page was a
+    # "Nun Eyes" single that could not be confirmed as theirs.
+    "1876": ["https://1876band.bandcamp.com/album/pow-wow-punk-rock-iiii",
+             "https://1876band.bandcamp.com/album/pow-wow-punk-rock-iii",
+             "https://1876band.bandcamp.com/"],
     # The Spill Canvas's orchestra tour; its own site.
     # The tour's own event pages: their image is the Emo Orchestra artwork.
     # (emosnotdead.com was tried first and gave its merch shop's banner.)
-    "emo orchestra": [
-        "https://tafttheatre.org/events/2026/04/emo-orchestra-featuring-the-spill-canvas",
-        "https://www.centerstage-atlanta.com/events/emo-orchestra",
-        "https://en.wikipedia.org/wiki/The_Spill_Canvas",
-    ],
+    # Not the tour's posters: each is printed with another city's date and
+    # venue (the Taft Theatre one said "4/8/26 Cincinnati"). A photo of The
+    # Spill Canvas, whose show it is, says nothing wrong.
+    "emo orchestra": ["https://en.wikipedia.org/wiki/The_Spill_Canvas"],
     # Famous enough that a name search is a minefield of tributes and fan
     # pages: the band's Wikipedia article instead, whose lead image is a
     # free-licensed photo of that exact band.
@@ -104,6 +107,8 @@ ART_SOURCES = {
         "https://en.wikipedia.org/wiki/Diesel_Boy",
         # Their publicist's page for the 2023 comeback album: the band's press shot.
         "https://www.earshotmedia.com/diesel-boy/",
+        # Their artist page: Apple's picture is the band's own press image.
+        "https://music.apple.com/us/artist/diesel-boy/63683166",
     ],
     # Boston hardcore (Haywire 617) on Roadrunner -- no Bandcamp. Rolling
     # Stone's piece on their album carries the band's own press image.
