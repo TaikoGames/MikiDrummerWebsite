@@ -23,8 +23,9 @@ on:
 permissions:
   contents: write
 
+# Shares a queue with the board refresh -- see punkbc-refresh.yml.
 concurrency:
-  group: punkbc-art
+  group: punkbc-board
   cancel-in-progress: false
 
 jobs:
@@ -71,14 +72,18 @@ jobs:
           # Other jobs (the board refresh, the site tree) push to the same
           # branch, often within the same minute. Rebase onto whatever landed
           # and try again rather than throwing the found art away.
-          for i in 1 2 3 4; do
+          for i in 1 2 3; do
             git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
-            sleep $((i * 5))
-            git pull --rebase --no-edit origin "$GITHUB_REF_NAME" || {
-              # Only the generated board can clash; rebuild it on top.
-              git checkout --theirs punkbc.html shows/ sitemap.xml 2>/dev/null || true
-              python3 tools/build_punkbc.py
-              git add -A && GIT_EDITOR=true git rebase --continue
-            }
+            # Something landed in between anyway. Merging the board by hand is
+            # how runs failed before, so start over from what landed and do the
+            # work again on top of it -- the sources give the same pictures.
+            sleep $((i * 10))
+            git fetch origin "$GITHUB_REF_NAME"
+            git reset --hard "origin/$GITHUB_REF_NAME"
+            python3 tools/fetch_show_art.py
+            python3 tools/build_punkbc.py
+            git diff --quiet && { echo "Nothing left to do."; exit 0; }
+            git add -A
+            git commit -m "Punk BC: real artwork for shows that had the placeholder"
           done
-          echo "Could not push after 4 tries"; exit 1
+          echo "Could not push after 3 tries"; exit 1

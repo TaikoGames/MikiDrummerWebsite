@@ -17,6 +17,12 @@ on:
 permissions:
   contents: write
 
+
+# Shares a queue with the board refresh -- see punkbc-refresh.yml.
+concurrency:
+  group: punkbc-board
+  cancel-in-progress: false
+
 jobs:
   localise:
     runs-on: ubuntu-latest
