@@ -407,8 +407,8 @@ def render_email(ym: str, shows: list[dict]) -> str:
            fonts and draw emoji their own way. Its alt text is the name, so it
            still reads right with images off. Made from tools/punkbc-email-header.html. -->
       <tr><td style="padding-bottom:18px;">
-        <a href="{BOARD}" style="text-decoration:none;"><img src="{SITE}/images/punkbc-email-header.png" width="568" height="137"
-             alt="🤘 PUNK BC — British Columbia punk &amp; hardcore shows"
+        <a href="{BOARD}" style="text-decoration:none;"><img src="{SITE}/images/punkbc-email-logo.png" width="568" height="137"
+             alt="PUNK BC — British Columbia punk &amp; hardcore shows"
              style="display:block;width:100%;max-width:568px;height:auto;border:0;border-radius:6px;background:#0d0b0c;color:#f4efe6;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:bold;"></a>
       </td></tr>
       <tr><td style="font-family:Arial,Helvetica,sans-serif;">
