@@ -92,8 +92,27 @@ def find_group(key: str, name: str, opener=None) -> str:
     raise SystemExit(f"no group named {name!r} in MailerLite — found: {known}")
 
 
+# CASL requires a working unsubscribe link in commercial email, and MailerLite
+# refuses custom HTML without its own. The digest is also an RSS feed and a web
+# page, where MailerLite's merge tag would show as literal text, so the link
+# goes in here, at send time, and nowhere else.
+UNSUBSCRIBE = """
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr><td align="center" style="padding:6px 12px 26px;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#777777;">
+    You're getting this because you signed up for the Punk BC monthly digest.
+    <a href="{$unsubscribe}" style="color:#777777;">Unsubscribe</a>
+  </td></tr>
+</table>
+"""
+
+
+def with_unsubscribe(html: str) -> str:
+    return html if "{$unsubscribe}" in html else html.rstrip() + "\n" + UNSUBSCRIBE
+
+
 def build(key: str, ym: str, html: str, group_id: str, sender: str, opener=None) -> dict:
     label = month_name(ym)
+    html = with_unsubscribe(html)
     return call("POST", "/campaigns", key, {
         "name": f"Punk BC — {label}",
         "type": "regular",
@@ -146,7 +165,9 @@ def self_test() -> int:
         (campaign["emails"][0]["subject"] == "Punk BC — September 2026 shows",
          f"subject reads {campaign['emails'][0]['subject']!r}"),
         (campaign["emails"][0]["from"] == "digest@mikidrummer.ca", "sender carried through"),
-        (campaign["emails"][0]["content"] == "<b>hi</b>", "email html carried through"),
+        (campaign["emails"][0]["content"].startswith("<b>hi</b>"), "email html carried through"),
+        ("{$unsubscribe}" in campaign["emails"][0]["content"], "an unsubscribe link is added"),
+        (with_unsubscribe("x {$unsubscribe}") == "x {$unsubscribe}", "and never added twice"),
         (sched_url.endswith("/campaigns/camp42/schedule"), "sends the campaign it just made"),
         (sched == {"delivery": "instant"}, "instant delivery"),
     ]

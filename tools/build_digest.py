@@ -78,6 +78,11 @@ def tidy_time(t: str) -> str:
 def shows_for(ym: str) -> list[dict]:
     shows = json.loads(DATA.read_text(encoding="utf-8"))["shows"]
     picked = [s for s in shows if (s.get("date") or "").startswith(ym)]
+    # Sent or rebuilt part-way through the month, the issue is about what's
+    # still coming: a show that already happened is no use in an inbox. Past
+    # months keep every show, so the archive stays a full record.
+    if ym == today().strftime("%Y-%m"):
+        picked = [s for s in picked if s["date"] >= today().isoformat()]
     for s in picked:
         s["time"] = tidy_time(s.get("time"))
         s["city"] = tidy_city(s.get("city"))
