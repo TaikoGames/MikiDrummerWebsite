@@ -120,6 +120,27 @@
       "instagram": ""
     },
     {
+      "band": "Anchoress",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://anchoress.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43428541-storm-boy-us-at-lana-lous-rock-and-roll-eatery?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Lana",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Anciients",
       "checked": "2026-09-13",
       "email": "",
@@ -237,6 +258,22 @@
       "instagram": ""
     },
     {
+      "band": "August Burns Red",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://augustburnsred.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Author & Punisher",
       "checked": "2026-09-15",
       "email": "",
@@ -266,6 +303,43 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": "authorandpunisher"
+    },
+    {
+      "band": "Babe Haven",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://babehaven.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43260406-babe-haven-at-le-dropkick-bar?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Le",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Bad Luck Charm",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://badluckcharm.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Bad Waitress",
@@ -1286,6 +1360,22 @@
       ],
       "note": "East Vancouver melodic punk on Kinda Cool Records. Band address and label address both published.",
       "instagram": "diejobpunk"
+    },
+    {
+      "band": "Dirtnap",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://dirtnap.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Dismal Outlook",
@@ -3027,6 +3117,22 @@
       "by": "auto"
     },
     {
+      "band": "Pepper Spray",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://pepperspray.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Perdurabo",
       "checked": "2026-09-28",
       "email": "",
@@ -3571,6 +3677,38 @@
       "by": "auto"
     },
     {
+      "band": "Skellytune.",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://skellytune.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Skung",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://skung.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Sleep",
       "checked": "2026-09-14",
       "email": "",
@@ -3691,6 +3829,22 @@
         {
           "name": "Bandcamp",
           "url": "https://sprints.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Storm Boy",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://stormboy.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -4079,6 +4233,27 @@
       "by": "auto"
     },
     {
+      "band": "The Oldest Man I Know",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "theoldestmaniknowofficial",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://theoldestmaniknow.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/theoldestmaniknowofficial/",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "The Restarts",
       "checked": "2026-11-03",
       "email": "",
@@ -4185,6 +4360,22 @@
       "instagram": ""
     },
     {
+      "band": "Underoath",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://underoath.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Unsane",
       "checked": "2026-09-14",
       "email": "",
@@ -4204,6 +4395,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Vic Bondi and His Issues",
+      "checked": "2026-11-07",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://vicbondiandhisissues.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "WAAX",
