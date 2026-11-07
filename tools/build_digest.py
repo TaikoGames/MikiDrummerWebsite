@@ -403,8 +403,16 @@ def render_email(ym: str, shows: list[dict]) -> str:
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f6f6;padding:24px 12px;">
   <tr><td align="center">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:620px;background:#ffffff;border-radius:10px;padding:26px;">
+      <!-- The Punk BC header is one picture, not text: email clients drop web
+           fonts and draw emoji their own way. Its alt text is the name, so it
+           still reads right with images off. Made from tools/punkbc-email-header.html. -->
+      <tr><td style="padding-bottom:18px;">
+        <a href="{BOARD}" style="text-decoration:none;"><img src="{SITE}/images/punkbc-email-header.png" width="568" height="137"
+             alt="🤘 PUNK BC — British Columbia punk &amp; hardcore shows"
+             style="display:block;width:100%;max-width:568px;height:auto;border:0;border-radius:6px;background:#0d0b0c;color:#f4efe6;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:bold;"></a>
+      </td></tr>
       <tr><td style="font-family:Arial,Helvetica,sans-serif;">
-        <div style="color:#dc2626;font-size:12px;letter-spacing:.2em;text-transform:uppercase;">Punk BC · monthly</div>
+        <div style="color:#dc2626;font-size:12px;letter-spacing:.2em;text-transform:uppercase;">Monthly digest</div>
         <h1 style="font-size:24px;margin:6px 0 4px;color:#111111;">{label}</h1>
         <div style="color:#555555;font-size:13px;">
           {len(shows)} show{'s' if len(shows) != 1 else ''} across British Columbia.
