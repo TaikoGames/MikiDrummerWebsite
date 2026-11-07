@@ -198,6 +198,20 @@
       "first_seen": "2026-11-06"
     },
     {
+      "band": "Thievery Corporation",
+      "date": "2027-01-02",
+      "time": "19:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.ticketmaster.ca/thievery-corporation-vancouver-british-columbia-01-02-2027/event/11006566A5786991",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "commodore-ballroom",
+      "first_seen": "2026-11-07"
+    },
+    {
       "band": "SuperSonic - North America's Tribute To OASIS",
       "date": "2027-01-08",
       "time": "19:00",
@@ -375,5 +389,5 @@
     "vancouver-punk-calendar": 1140,
     "commodore-ballroom": 25
   },
-  "updated": "2026-11-06"
+  "updated": "2026-11-07"
 }
