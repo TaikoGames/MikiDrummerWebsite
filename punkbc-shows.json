@@ -2,20 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Brasser",
-      "date": "2026-11-06",
-      "time": "",
-      "venue": "Red Gate Arts Society",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/brasser-big-time-the-fomites-m/1568455571746398/",
-      "genre": "Punk",
-      "notes": "With Big Time, The Fomites, Mooshy Face.",
-      "image": "https://www.mikidrummer.ca/images/shows/brasser-2026-11-06.jpg",
-      "curated": "",
-      "image_source": "https://f4.bcbits.com/img/a1070296930_5.jpg"
-    },
-    {
       "band": "Fleabane",
       "date": "2026-11-07",
       "time": "19:30",
