@@ -456,18 +456,17 @@ def render_email(ym: str, shows: list[dict]) -> str:
                                       esc(s.get("price") or "")] if x)
         notes = esc(s.get("notes") or "")
         tags = (pill("Sold out", "#111111") if sold_out(s) else "")
-        thumb = (f'<a href="{ticket}" style="text-decoration:none;">{img_tag(s, 120, 68, 4)}</a>'
-                 if has_photo(s) else "")
+        # The photo isn't a link: the Tickets button is, right beside it, and
+        # each repeated address costs room the email doesn't have.
+        thumb = img_tag(s, 120, 68, 4) if has_photo(s) else ""
         rows.append(f"""
           <tr>
             <td width="120" valign="top" style="padding:14px 12px 12px 0;border-bottom:1px solid #eeeeee;">{thumb}</td>
-            <td valign="top" style="padding:12px 0;border-bottom:1px solid #eeeeee;{FONT}">
-              <div style="color:#dc2626;font-size:11px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;">{when(s)}</div>
-              <div style="font-size:16px;font-weight:bold;margin-top:2px;line-height:1.25;">
-                <a href="{ticket}" style="color:#111111;text-decoration:none;">{esc(s['band'])}</a></div>
-              <div style="color:#555555;font-size:13px;margin-top:2px;">{meta}</div>
-              {f'<div style="color:#777777;font-size:12px;margin-top:3px;">{notes}</div>' if notes else ''}
-              <div style="margin-top:7px;">{tags}<a href="{ticket}" style="display:inline-block;{FONT}font-size:11px;font-weight:bold;color:#dc2626;text-decoration:none;border:1px solid #dc2626;border-radius:3px;padding:3px 8px;">Tickets &rarr;</a></div>
+            <td valign="top" style="padding:12px 0;border-bottom:1px solid #eeeeee;">
+              <div style="color:#dc2626;font-size:11px;font-weight:bold;text-transform:uppercase;">{when(s)}</div>
+              <div style="font-size:16px;font-weight:bold;color:#111111;">{esc(s['band'])}</div>
+              <div style="color:#555555;font-size:13px;">{meta}{f'<br><span style="color:#777777;font-size:12px;">{notes}</span>' if notes else ''}</div>
+              <div style="margin-top:7px;">{tags}<a href="{ticket}" style="font-size:11px;font-weight:bold;color:#dc2626;text-decoration:none;border:1px solid #dc2626;border-radius:3px;padding:3px 8px;">Tickets &rarr;</a></div>
             </td>
           </tr>""")
     listing = "".join(rows) or """
@@ -475,7 +474,7 @@ def render_email(ym: str, shows: list[dict]) -> str:
             Nothing listed yet this month — <a href="%s" style="color:#dc2626;">check the board</a>.
           </td></tr>""" % BOARD
 
-    return f"""<!-- Punk BC digest — {label}. Paste into your email service, or let it
+    return compact_email(f"""<!-- Punk BC digest — {label}. Paste into your email service, or let it
      pull {SITE}/punkbc-digest.xml as an RSS campaign.
      Your provider adds the unsubscribe link; if it does not, add one — it is
      required by CASL for commercial email in Canada. -->
@@ -512,7 +511,38 @@ def render_email(ym: str, shows: list[dict]) -> str:
     </table>
   </td></tr>
 </table>
-"""
+""")
+
+
+def compact_email(src: str) -> str:
+    """Make the email small without changing how it looks.
+
+    Every style has to be inline: Gmail throws away a <style> block in mail
+    sent through its API, which leaves bare text and full-size pictures. Inline
+    styles on fifty shows add up, though, and Gmail clips a message over about
+    100 KB behind a "View entire message" link. So, without touching the look:
+    the font is set on table cells and inherited, not repeated on every div,
+    span, link and image inside them; colours use their short hex form; and
+    the whitespace between tags goes.
+    """
+    font = "font-family:Arial,Helvetica,sans-serif;"
+
+    def strip_font(m: re.Match) -> str:
+        tag = m.group(0)
+        return tag if tag.startswith("<td") or tag.startswith("<table") else tag.replace(font, "")
+
+    out = re.sub(r"<(?:div|span|a|img|h1)\b[^>]*>", strip_font, src)
+    # the outer card carries the font for everything that no longer names it
+    out = out.replace('style="max-width:620px;', 'style="' + font + 'max-width:620px;', 1)
+    for long, short in (("#ffffff", "#fff"), ("#111111", "#111"), ("#555555", "#555"),
+                        ("#777777", "#777"), ("#eeeeee", "#eee"), ("#222222", "#222")):
+        out = out.replace(long, short)
+    # alt-text styling on the small pictures: only seen with images off
+    out = out.replace("background:#222;color:#fff;font-size:13px;", "")
+    out = re.sub(r"<!--(?!\s*Punk BC digest).*?-->", "", out, flags=re.S)
+    out = re.sub(r">\s+<", "><", out)
+    out = re.sub(r"\s{2,}", " ", out)
+    return out.strip() + "\n"
 
 
 # ── the feed ───────────────────────────────────────────────────────────────
