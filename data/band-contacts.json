@@ -11,6 +11,22 @@
   },
   "bands": [
     {
+      "band": "1876",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://1876.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "3 Inches of Blood",
       "checked": "2026-10-25",
       "email": "",
@@ -384,6 +400,22 @@
       "instagram": ""
     },
     {
+      "band": "Beastie",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://beastie.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Beherit",
       "checked": "2026-10-26",
       "email": "",
@@ -732,6 +764,22 @@
       "note": "",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Call Before You Dig",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://callbeforeyoudig.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Carly Cosgrove",
@@ -1362,6 +1410,22 @@
       "instagram": "diejobpunk"
     },
     {
+      "band": "Diesel Boy",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://dieselboy.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Dirtnap",
       "checked": "2026-11-07",
       "email": "",
@@ -1392,6 +1456,38 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Downway and Another Joe.",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://downwayandanotherjoe.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Dropkick Murphys",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://dropkickmurphys.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Dusty Pines",
@@ -1503,6 +1599,22 @@
         {
           "name": "Bandcamp",
           "url": "https://emmagoldman.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Emo Orchestra",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://emoorchestra.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -3636,6 +3748,22 @@
       "instagram": ""
     },
     {
+      "band": "Shorefox.",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://shorefox.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "SiM",
       "checked": "2026-09-18",
       "email": "",
@@ -3836,6 +3964,22 @@
       "by": "auto"
     },
     {
+      "band": "Staggers and Jags",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://staggersandjags.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Storm Boy",
       "checked": "2026-11-07",
       "email": "",
@@ -3991,6 +4135,22 @@
       ],
       "note": "Vancouver punk. Did a split with The Fomites.",
       "instagram": ""
+    },
+    {
+      "band": "Terminal City Rats.",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://terminalcityrats.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "The Aggrolites",
@@ -4274,6 +4434,22 @@
           "name": "songkick.com",
           "url": "https://www.songkick.com/festivals/3792752-smash-the-fash-fest-ii/id/43287218-smash-the-fash-fest-ii-2027?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Walthamstow",
           "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "The Spill Canvas and Greywind",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://thespillcanvasandgreywind.bandcamp.com/",
+          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -4606,6 +4782,22 @@
         {
           "name": "Bandcamp",
           "url": "https://wrathprayer.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "X-Mas in Skaville",
+      "checked": "2026-11-08",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://xmasinskaville.bandcamp.com/",
           "found": "form"
         }
       ],
