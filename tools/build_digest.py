@@ -333,62 +333,141 @@ def render_email(ym: str, shows: list[dict]) -> str:
     Light background on purpose: dark-themed email is a lottery across clients.
     """
     label = month_name(ym)
+    FONT = "font-family:Arial,Helvetica,sans-serif;"
+    esc = html.escape
 
-    # Featured acts, two to a row. Tables and fixed widths because Outlook has
-    # no grid, and every client blocks images until the reader allows them —
-    # hence the alt text carrying the band name.
-    picks = featured(shows)
-    pick_cells = []
-    for s2 in picks:
-        href = html.escape(s2.get("ticket") or BOARD, quote=True)
-        src = art(s2["image"])
-        # A cropped file is 16:9 already, so telling the client its height costs
-        # nothing and stops the layout jumping as it loads. A photo we could not
-        # crop is whatever shape it was: give it a width and let it keep its own
-        # ratio, because Outlook obeys a height attribute by stretching to it.
+    def img_tag(s: dict, w: int, h: int, radius: int = 6) -> str:
+        """A show's photo at w x h. A cropped file is 16:9 already, so the height
+        is safe to state and stops the layout jumping as it loads. A photo we
+        could not crop keeps its own shape: width only, because Outlook obeys a
+        height attribute by stretching. Every client blocks images until the
+        reader allows them, hence the band name as alt text."""
+        src = art(s["image"])
         cropped = src.startswith(f"{SITE}/img/digest/")
-        dims = 'width="270" height="150"' if cropped else 'width="270"'
-        pick_cells.append(f"""
-            <td width="50%" valign="top" style="padding:6px;">
-              <a href="{href}" style="text-decoration:none;color:#111111;">
-                <img src="{html.escape(src, quote=True)}" {dims}
-                     alt="{html.escape(s2['band'])}"
-                     style="display:block;width:100%;max-width:270px;height:auto;border-radius:6px;background:#eeeeee;border:0;">
-                <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;margin-top:6px;">{html.escape(s2['band'])}</div>
-                <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#555555;">{html.escape(day_label(s2['date']))} &middot; {html.escape(s2.get('venue') or 'TBA')}</div>
+        dims = f'width="{w}" height="{h}"' if cropped else f'width="{w}"'
+        return (f'<img src="{esc(src, quote=True)}" {dims} alt="{esc(s["band"])}" '
+                f'style="display:block;width:100%;max-width:{w}px;height:auto;border:0;'
+                f'border-radius:{radius}px;background:#222222;color:#ffffff;{FONT}font-size:13px;">')
+
+    def sold_out(s: dict) -> bool:
+        return "sold out" in ((s.get("notes") or "") + " " + (s.get("price") or "")).lower()
+
+    def pill(text: str, bg: str, fg: str = "#ffffff") -> str:
+        return (f'<span style="display:inline-block;background:{bg};color:{fg};{FONT}font-size:10px;'
+                f'font-weight:bold;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;'
+                f'border-radius:3px;margin-right:4px;">{text}</span>')
+
+    def when(s: dict) -> str:
+        return esc(day_label(s["date"])) + (" · " + esc(s["time"]) if s.get("time") else "")
+
+    # ── the lead: one show big, the next three in a row under it ──────────────
+    # Tables and fixed widths, because Outlook has no grid.
+    picks = list(featured(shows))
+    # The lead is shown big, so it should be a photo of a band, not an album
+    # cover (Bandcamp art is mostly lettering) or one of the board's own text
+    # cards. Whichever pick has a real photo goes first; the rest keep order.
+    def is_photo(s: dict) -> bool:
+        src = (s.get("image_source") or "").lower()
+        return "bcbits" not in src and not src.startswith("made for punk bc")
+    lead_i = next((i for i, s in enumerate(picks) if is_photo(s)), 0)
+    if picks:
+        picks.insert(0, picks.pop(lead_i))
+    lead_block = ""
+    if picks:
+        top = picks[0]
+        href = esc(top.get("ticket") or BOARD, quote=True)
+        lead_block = f"""
+      <tr><td style="padding-top:18px;">
+        <a href="{href}" style="text-decoration:none;">{img_tag(top, 568, 320, 0)}</a>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0d0b0c;">
+          <tr><td style="padding:12px 16px 14px;{FONT}">
+            <div style="color:#e8372a;font-size:11px;font-weight:bold;letter-spacing:.14em;text-transform:uppercase;">Don't miss &middot; {when(top)}</div>
+            <div style="color:#f4efe6;font-size:22px;font-weight:bold;line-height:1.2;margin-top:4px;">
+              <a href="{href}" style="color:#f4efe6;text-decoration:none;">{esc(top['band'])}</a></div>
+            <div style="color:#a99a92;font-size:13px;margin-top:3px;">{esc(top.get('venue') or 'TBA')} &middot; {esc(top.get('city') or '')}</div>
+          </td></tr>
+        </table>
+      </td></tr>"""
+        rest = picks[1:4]
+        if rest:
+            cells = []
+            for s2 in rest:
+                href2 = esc(s2.get("ticket") or BOARD, quote=True)
+                cells.append(f"""
+            <td width="33%" valign="top" style="padding:10px 4px 0;">
+              <a href="{href2}" style="text-decoration:none;color:#111111;">{img_tag(s2, 182, 102)}
+                <div style="{FONT}font-size:13px;font-weight:bold;margin-top:6px;line-height:1.25;">{esc(s2['band'])}</div>
+                <div style="{FONT}font-size:11px;color:#dc2626;margin-top:2px;text-transform:uppercase;letter-spacing:.05em;">{esc(day_label(s2['date']))}</div>
               </a>
             </td>""")
-    pick_rows = []
-    for i in range(0, len(pick_cells), 2):
-        pair = pick_cells[i:i + 2]
-        if len(pair) == 1:
-            pair.append('<td width="50%"></td>')
-        pick_rows.append("          <tr>" + "".join(pair) + "\n          </tr>")
-    picks_block = ("""
-      <tr><td style="padding-top:18px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-""" + "\n".join(pick_rows) + """
+            while len(cells) < 3:
+                cells.append('<td width="33%"></td>')
+            lead_block += f"""
+      <tr><td>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 -4px;">
+          <tr>{''.join(cells)}
+          </tr>
         </table>
-      </td></tr>""") if pick_rows else ""
+      </td></tr>"""
 
-    rows = []
+    # ── the month in numbers ──────────────────────────────────────────────────
+    venues = {(s.get("venue") or "").strip().lower() for s in shows if s.get("venue")}
+    cities = {(s.get("city") or "").strip().lower() for s in shows if s.get("city")}
+    stats = [(len(shows), "shows"), (len(venues), "venues"), (len(cities), "cities")]
+    stat_cells = "".join(
+        f'<td width="33%" align="center" style="padding:12px 4px;{FONT}">'
+        f'<div style="color:#f4efe6;font-size:26px;font-weight:bold;line-height:1;">{n}</div>'
+        f'<div style="color:#e8372a;font-size:10px;font-weight:bold;letter-spacing:.16em;text-transform:uppercase;margin-top:4px;">{word}</div></td>'
+        for n, word in stats)
+    stats_block = f"""
+      <tr><td style="padding-top:20px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0d0b0c;border-radius:6px;">
+          <tr>{stat_cells}</tr>
+        </table>
+      </td></tr>"""
+
+    # ── the listing, a week at a time, a picture beside every show ───────────
+    def week_start(d: str):
+        day = datetime.strptime(d, "%Y-%m-%d").date()
+        return day - timedelta(days=day.weekday())          # Monday
+
+    def week_label(start) -> str:
+        end = start + timedelta(days=6)
+        t = today()
+        if start <= t <= end:
+            return "This week"
+        if start <= t + timedelta(days=7) <= end:
+            return "Next week"
+        same = start.month == end.month
+        return (f"{start.strftime('%b')} {start.day} – {end.day}" if same
+                else f"{start.strftime('%b')} {start.day} – {end.strftime('%b')} {end.day}")
+
+    rows, current = [], None
     for s in shows:
-        ticket = html.escape(s.get("ticket") or BOARD, quote=True)
-        meta = " · ".join(x for x in [html.escape(s.get("venue") or "TBA"),
-                                      html.escape(s.get("city") or ""),
-                                      html.escape(s.get("price") or "")] if x)
-        notes = html.escape(s.get("notes") or "")
+        wk = week_start(s["date"])
+        if wk != current:
+            current = wk
+            rows.append(f"""
+          <tr><td colspan="2" style="padding:22px 0 0;">
+            <div style="background:#dc2626;color:#ffffff;{FONT}font-size:11px;font-weight:bold;letter-spacing:.16em;text-transform:uppercase;padding:7px 10px;border-radius:4px;">{esc(week_label(wk))}</div>
+          </td></tr>""")
+        ticket = esc(s.get("ticket") or BOARD, quote=True)
+        meta = " · ".join(x for x in [esc(s.get("venue") or "TBA"), esc(s.get("city") or ""),
+                                      esc(s.get("price") or "")] if x)
+        notes = esc(s.get("notes") or "")
+        tags = (pill("Sold out", "#111111") if sold_out(s) else "")
+        thumb = (f'<a href="{ticket}" style="text-decoration:none;">{img_tag(s, 120, 68, 4)}</a>'
+                 if has_photo(s) else "")
         rows.append(f"""
           <tr>
-            <td style="padding:12px 0;border-top:1px solid #e5e5e5;font-family:Arial,Helvetica,sans-serif;">
-              <div style="color:#dc2626;font-size:12px;letter-spacing:.06em;text-transform:uppercase;">
-                {html.escape(day_label(s['date']))}{' · ' + html.escape(s['time']) if s.get('time') else ''}
-              </div>
-              <div style="font-size:16px;font-weight:bold;margin-top:2px;">
-                <a href="{ticket}" style="color:#111111;text-decoration:none;">{html.escape(s['band'])}</a>
-              </div>
+            <td width="120" valign="top" style="padding:14px 12px 12px 0;border-bottom:1px solid #eeeeee;">{thumb}</td>
+            <td valign="top" style="padding:12px 0;border-bottom:1px solid #eeeeee;{FONT}">
+              <div style="color:#dc2626;font-size:11px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;">{when(s)}</div>
+              <div style="font-size:16px;font-weight:bold;margin-top:2px;line-height:1.25;">
+                <a href="{ticket}" style="color:#111111;text-decoration:none;">{esc(s['band'])}</a></div>
               <div style="color:#555555;font-size:13px;margin-top:2px;">{meta}</div>
-              {f'<div style="color:#777777;font-size:12px;margin-top:2px;">{notes}</div>' if notes else ''}
+              {f'<div style="color:#777777;font-size:12px;margin-top:3px;">{notes}</div>' if notes else ''}
+              <div style="margin-top:7px;">{tags}<a href="{ticket}" style="display:inline-block;{FONT}font-size:11px;font-weight:bold;color:#dc2626;text-decoration:none;border:1px solid #dc2626;border-radius:3px;padding:3px 8px;">Tickets &rarr;</a></div>
             </td>
           </tr>""")
     listing = "".join(rows) or """
@@ -418,15 +497,17 @@ def render_email(ym: str, shows: list[dict]) -> str:
           {len(shows)} show{'s' if len(shows) != 1 else ''} across British Columbia.
           <a href="{SITE}/digest/{ym}.html" style="color:#dc2626;">Read it in a browser</a>.
         </div>
-      </td></tr>{picks_block}
+      </td></tr>{lead_block}{stats_block}
       <tr><td>
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;">{listing}
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">{listing}
         </table>
       </td></tr>
-      <tr><td style="padding-top:20px;font-family:Arial,Helvetica,sans-serif;color:#777777;font-size:12px;line-height:1.7;">
+      <tr><td style="padding-top:24px;" align="center">
+        <a href="{BOARD}" style="display:inline-block;background:#dc2626;color:#ffffff;{FONT}font-size:15px;font-weight:bold;text-decoration:none;padding:13px 26px;border-radius:6px;">See the full board &rarr;</a>
+      </td></tr>
+      <tr><td align="center" style="padding-top:16px;{FONT}color:#777777;font-size:12px;line-height:1.7;">
         Dates change and shows sell out — check the ticket link before you go.<br>
-        <a href="{BOARD}" style="color:#dc2626;">The full board</a> ·
-        <a href="{SITE}/digest/" style="color:#dc2626;">past issues</a>
+        <a href="{SITE}/digest/" style="color:#dc2626;">Past issues</a>
       </td></tr>
     </table>
   </td></tr>
