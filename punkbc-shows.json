@@ -2,20 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Fleabane",
-      "date": "2026-11-07",
-      "time": "19:30",
-      "venue": "The Open Studios",
-      "city": "Victoria",
-      "price": "$15",
-      "ticket": "https://victoriabuzz.com/2026/11/16-concerts-worth-checking-out-in-and-around-victoria-this-november/",
-      "genre": "Psych-Punk",
-      "notes": "Whitehorse psych-punk trio. With Boss Saint B, Exit 14.",
-      "image": "https://www.mikidrummer.ca/images/shows/fleabane-2026-11-07.jpg",
-      "curated": "",
-      "image_source": "https://f4.bcbits.com/img/a3458050174_5.jpg"
-    },
-    {
       "band": "Jon Spencer",
       "date": "2026-11-08",
       "time": "19:00",
