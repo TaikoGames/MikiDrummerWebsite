@@ -350,6 +350,20 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "commodore-ballroom",
       "first_seen": "2026-11-08"
+    },
+    {
+      "band": "Odds & The Pursuit of Happiness: The Odds of Happiness Show",
+      "date": "2027-02-20",
+      "time": "19:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.ticketmaster.ca/odds-the-pursuit-of-happiness-the-vancouver-british-columbia-02-20-2027/event/1100654EBF121135",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "commodore-ballroom",
+      "first_seen": "2026-11-09"
     }
   ],
   "dismissed": [
@@ -403,5 +417,5 @@
     "vancouver-punk-calendar": 1140,
     "commodore-ballroom": 25
   },
-  "updated": "2026-11-08"
+  "updated": "2026-11-09"
 }
