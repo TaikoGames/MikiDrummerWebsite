@@ -2,20 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Jon Spencer",
-      "date": "2026-11-08",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$27.50 adv",
-      "ticket": "https://rickshawtheatre.com/show_listings/jon-spencer-2/",
-      "genre": "Punk Blues",
-      "notes": "With Genre Is Death. Timbre presents. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/jon-spencer-2026-11-08.jpg",
-      "curated": "",
-      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Jon_Spencer._2013.jpg?width=500"
-    },
-    {
       "band": "Exhumed",
       "date": "2026-11-09",
       "time": "18:30",
