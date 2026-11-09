@@ -766,6 +766,22 @@
       "instagram": ""
     },
     {
+      "band": "Béton Armé.",
+      "checked": "2026-11-09",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://btonarm.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Call Before You Dig",
       "checked": "2026-11-08",
       "email": "",
@@ -1842,6 +1858,22 @@
       "instagram": "fotocrime"
     },
     {
+      "band": "Frank Turner and The Sleeping Souls",
+      "checked": "2026-11-09",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://frankturnerandthesleepingsouls.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Fuming Mouth",
       "checked": "2026-09-14",
       "email": "",
@@ -2102,6 +2134,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Haywire",
+      "checked": "2026-11-09",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://haywire.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Hellwitch",
@@ -3013,6 +3061,22 @@
           "name": "open.spotify.com",
           "url": "https://open.spotify.com/show/75ZSeZZKmlCPOnzZD8hOz1&quot;,&quot;alt&quot;:&quot;Mooshy",
           "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Mudhoney.",
+      "checked": "2026-11-09",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://mudhoney.bandcamp.com/",
+          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
