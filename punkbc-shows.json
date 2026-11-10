@@ -2,19 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Exhumed",
-      "date": "2026-11-09",
-      "time": "18:30",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$28 adv",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Death Metal",
-      "notes": "With Jarhead Fertilizer, Savage Master, Molder. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/exhumed-2026-11-09.jpg",
-      "image_source": "Made for Punk BC: no picture of this show or band could be found."
-    },
-    {
       "band": "Bad Waitress",
       "date": "2026-11-10",
       "time": "19:00",
