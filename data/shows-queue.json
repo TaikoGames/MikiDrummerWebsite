@@ -128,6 +128,20 @@
       "first_seen": "2026-11-06"
     },
     {
+      "band": "Punk Market @ Vines Den",
+      "date": "2026-12-13",
+      "time": "22:00",
+      "venue": "825 E Hastings St",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.instagram.com/p/DfXpKigvGEQ/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-10"
+    },
+    {
       "band": "ZULAN",
       "date": "2026-12-17",
       "time": "20:00",
@@ -252,6 +266,34 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "commodore-ballroom",
       "first_seen": "2026-11-06"
+    },
+    {
+      "band": "Piss with Ribbon Skirt, The Disintegration Collective",
+      "date": "2027-01-14",
+      "time": "",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/piss-with-ribbon-skirt-and-the/1444549157045376/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-10"
+    },
+    {
+      "band": "YDG",
+      "date": "2027-01-22",
+      "time": "22:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.ticketmaster.ca/ydg-vancouver-british-columbia-01-22-2027/event/11006566BBFA8775",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "commodore-ballroom",
+      "first_seen": "2026-11-10"
     },
     {
       "band": "Kim Mitchell",
@@ -414,8 +456,8 @@
     }
   ],
   "last_good": {
-    "vancouver-punk-calendar": 1140,
+    "vancouver-punk-calendar": 1141,
     "commodore-ballroom": 25
   },
-  "updated": "2026-11-09"
+  "updated": "2026-11-10"
 }
