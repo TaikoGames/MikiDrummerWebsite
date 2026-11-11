@@ -2,20 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Bad Waitress",
-      "date": "2026-11-10",
-      "time": "19:00",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "$20 adv",
-      "ticket": "https://rickshawtheatre.com/show_listings/bad-waitress/",
-      "genre": "Punk",
-      "notes": "West Coast Tour. With Cursed Words, Die Job. Rickshaw presents. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/bad-waitress-2026-11-10.jpg",
-      "curated": "",
-      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Bad_Waitress_%2852062784998%29.jpg?width=600"
-    },
-    {
       "band": "Ride For Revenge",
       "date": "2026-11-11",
       "time": "19:00",
