@@ -650,6 +650,34 @@
       "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Northlane_2019_gen_use_lores.jpg?width=600"
     },
     {
+      "time": "",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.rickshawtheatre.com",
+      "genre": "Celtic Punk / Folk-Punk",
+      "curated": "",
+      "image_source": "Rickshaw Theatre Punkstravaganza poster (Instagram)",
+      "band": "Punkstravaganza Night 1: The Dreadnoughts",
+      "date": "2027-03-19",
+      "notes": "With Empanadas Ilegales and the Vancouver Regiment Irish Pipes & Drums. Presale Thu 10am with code POLKAPIT; general sale Fri 10am.",
+      "image": "https://www.mikidrummer.ca/images/shows/punkstravaganza-night-1-2027-03-19.jpg"
+    },
+    {
+      "time": "",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.rickshawtheatre.com",
+      "genre": "Celtic Punk / Folk-Punk",
+      "curated": "",
+      "image_source": "Rickshaw Theatre Punkstravaganza poster (Instagram)",
+      "band": "Punkstravaganza Night 2: The Dreadnoughts",
+      "date": "2027-03-20",
+      "notes": "With Ninjaspy and Mean Bikini. Presale Thu 10am with code POLKAPIT; general sale Fri 10am.",
+      "image": "https://www.mikidrummer.ca/images/shows/punkstravaganza-night-2-2027-03-20.jpg"
+    },
+    {
       "band": "Beherit",
       "date": "2027-03-27",
       "time": "19:00",
