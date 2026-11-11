@@ -181,9 +181,15 @@
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/blog/</loc>
-    <lastmod>2026-09-26</lastmod>
+    <lastmod>2026-11-11</lastmod>
     <priority>0.6</priority>
     <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.mikidrummer.ca/blog/best-punk-venues-bc.html</loc>
+    <lastmod>2026-11-11</lastmod>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://www.mikidrummer.ca/blog/beginner-drum-practice-plan.html</loc>
