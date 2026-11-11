@@ -2909,6 +2909,22 @@
       "instagram": "mean.bikini.official"
     },
     {
+      "band": "Meshuggah",
+      "checked": "2026-11-11",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://meshuggah.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Messa",
       "checked": "2026-09-16",
       "email": "",
@@ -3532,6 +3548,38 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Punkstravaganza Night 1: The Dreadnoughts",
+      "checked": "2026-11-11",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://punkstravaganzanight1thedreadnoughts.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Punkstravaganza Night 2: The Dreadnoughts",
+      "checked": "2026-11-11",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://punkstravaganzanight2thedreadnoughts.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Quannnic",
