@@ -180,6 +180,12 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://www.mikidrummer.ca/punkbc-embed.html</loc>
+    <lastmod>2026-11-12</lastmod>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://www.mikidrummer.ca/blog/</loc>
     <lastmod>2026-11-11</lastmod>
     <priority>0.6</priority>

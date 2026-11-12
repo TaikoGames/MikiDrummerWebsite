@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/js/track.js" defer></script>
+<title>Add BC Punk Shows to Your Website — Free Widget | Punk BC</title>
+<meta name="description" content="Free widget for bands, venues and zines: paste two lines and your website shows upcoming punk, hardcore and metal shows in BC, always up to date.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.mikidrummer.ca/punkbc-embed.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.mikidrummer.ca/punkbc-embed.html">
+<meta property="og:title" content="Put BC punk shows on your website">
+<meta property="og:description" content="A free, always-up-to-date show list from Punk BC. Pick a city or venue, copy two lines, paste.">
+<meta property="og:image" content="https://www.mikidrummer.ca/images/punkbc-logo.png">
+<meta property="og:site_name" content="Punk BC">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Punk BC show widget",
+  "url": "https://www.mikidrummer.ca/punkbc-embed.html",
+  "applicationCategory": "WebApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CAD" },
+  "description": "Embed upcoming punk, hardcore and metal shows in British Columbia on any website."
+}
+</script>
+<style>
+  :root{--bg:#0b0908;--card:#151110;--edge:#2a2421;--ink:#f3eee9;--dim:#a39b95;--hot:#e8372a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 16px 60px}
+  .crumbs{font-size:13px;color:var(--dim)} .crumbs a{color:var(--dim)}
+  h1{font-size:clamp(28px,6vw,44px);line-height:1.1;margin:10px 0 8px;text-transform:uppercase;letter-spacing:.01em}
+  h1 em{color:var(--hot);font-style:normal}
+  .dek{color:var(--dim);max-width:640px;margin:0 0 26px}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+  @media (max-width:760px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:16px}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px;color:var(--dim)}
+  label{display:block;font-size:13px;color:var(--dim);margin:12px 0 5px}
+  select,input[type=number],input[type=text]{width:100%;min-height:44px;padding:8px 10px;border-radius:8px;
+    border:1px solid var(--edge);background:#0f0c0b;color:var(--ink);font:inherit}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .check{display:flex;align-items:center;gap:10px;min-height:44px;margin-top:8px;color:var(--ink);font-size:15px}
+  .check input{width:20px;height:20px;accent-color:var(--hot)}
+  pre{margin:14px 0 10px;padding:12px;border-radius:8px;background:#0f0c0b;border:1px solid var(--edge);
+    overflow-x:auto;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
+  button{min-height:48px;width:100%;border:0;border-radius:8px;background:var(--hot);color:#fff;font:700 15px system-ui,sans-serif;cursor:pointer}
+  button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #facc15;outline-offset:2px}
+  .hint{font-size:13px;color:var(--dim);margin:8px 0 0}
+  .how{margin-top:34px} .how li{margin-bottom:8px}
+  .how a,.note a{color:var(--ink);text-decoration-color:var(--hot)}
+  footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--edge);font-size:13px;color:var(--dim)}
+  footer a{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumbs"><a href="/">mikidrummer.ca</a> / <a href="/punkbc.html">Punk BC</a> / Widget</div>
+  <h1>Put BC punk shows <em>on your website</em></h1>
+  <p class="dek">A free show list for bands, venues, zines and record shops. It updates itself from the Punk BC board, so you never have to touch it again. Pick what to show, copy the code and paste it into your site.</p>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="opt-h">
+      <h2 id="opt-h">1. Choose</h2>
+      <label for="o-city">City</label>
+      <select id="o-city"><option value="">All of BC</option></select>
+      <label for="o-venue">Venue</label>
+      <select id="o-venue"><option value="">Any venue</option></select>
+      <label for="o-band">Band (optional)</label>
+      <input type="text" id="o-band" placeholder="e.g. The Dreadnoughts" autocomplete="off">
+      <div class="row">
+        <div>
+          <label for="o-limit">How many shows</label>
+          <input type="number" id="o-limit" min="1" max="50" value="5">
+        </div>
+        <div>
+          <label for="o-theme">Colours</label>
+          <select id="o-theme"><option value="dark">Dark</option><option value="light">Light</option></select>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="o-images"> Show pictures</label>
+
+      <h2 style="margin-top:22px">2. Copy</h2>
+      <pre id="code" aria-label="Embed code"></pre>
+      <button id="copy" type="button">Copy code</button>
+      <p class="hint" id="copied" role="status"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="prev-h">
+      <h2 id="prev-h">Preview</h2>
+      <div id="preview"></div>
+    </section>
+  </div>
+
+  <section class="how">
+    <h2>3. Paste it into your site</h2>
+    <ul>
+      <li><strong>Plain HTML:</strong> paste the code where you want the list to appear.</li>
+      <li><strong>WordPress:</strong> add a <em>Custom HTML</em> block and paste the code into it.</li>
+      <li><strong>Squarespace:</strong> add a <em>Code</em> block and paste the code into it.</li>
+      <li><strong>Wix:</strong> add <em>Embed Code → Embed HTML</em>, choose <em>Code</em>, and paste the code into it.</li>
+      <li><strong>Shopify:</strong> add a <em>Custom Liquid</em> section and paste the code into it.</li>
+    </ul>
+    <p class="note">The list matches your page width and works on phones. Want your show on it? <a href="/punkbc.html">Send it in on the Punk BC board</a> and it shows up on every site that runs the widget.</p>
+  </section>
+
+  <footer>Punk BC · <a href="/punkbc.html">The board</a> · <a href="https://www.mikidrummer.ca">mikidrummer.ca</a></footer>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var SRC = 'https://www.mikidrummer.ca/embed/punkbc.js';
+  // On a local copy or a preview deploy, load the widget from this site.
+  var LOCAL = location.hostname !== 'www.mikidrummer.ca' && location.hostname !== 'mikidrummer.ca';
+  var escAttr = function (v) { return String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); };
+
+  function opts() {
+    var o = [];
+    if ($('o-city').value) o.push(['city', $('o-city').value]);
+    if ($('o-venue').value) o.push(['venue', $('o-venue').value]);
+    if ($('o-band').value.trim()) o.push(['band', $('o-band').value.trim()]);
+    var n = Math.max(1, Math.min(50, parseInt($('o-limit').value, 10) || 5));
+    o.push(['limit', String(n)]);
+    if ($('o-theme').value === 'light') o.push(['theme', 'light']);
+    if ($('o-images').checked) o.push(['images', 'true']);
+    return o;
+  }
+
+  function divFor(o) {
+    return '<div class="punkbc-shows"' + o.map(function (p) { return ' data-' + p[0] + '="' + escAttr(p[1]) + '"'; }).join('') + '></div>';
+  }
+
+  var timer;
+  function update() {
+    var o = opts();
+    $('code').textContent = divFor(o) + '\n<script src="' + SRC + '" async><\/script>';
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      $('preview').innerHTML = divFor(o);
+      if (window.PunkBC) window.PunkBC.init();
+    }, 150);
+  }
+
+  ['o-city', 'o-venue', 'o-limit', 'o-theme', 'o-images'].forEach(function (id) { $(id).addEventListener('change', update); });
+  $('o-band').addEventListener('input', update);
+  $('o-limit').addEventListener('input', update);
+
+  $('copy').addEventListener('click', function () {
+    var text = $('code').textContent;
+    var done = function () { $('copied').textContent = 'Copied. Paste it into your site.'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else fallback();
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents($('code'));
+      var s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      $('copied').textContent = 'Selected. Press Ctrl+C (or ⌘C) to copy.';
+    }
+  });
+
+  // Fill the city and venue menus from the shows that are actually coming up.
+  fetch('/punkbc-shows.json').then(function (r) { return r.json(); }).then(function (d) {
+    var today = new Date().toISOString().slice(0, 10), cities = {}, venues = {};
+    (d.shows || d).forEach(function (s) {
+      if (s.date < today) return;
+      if (s.city) cities[s.city] = (cities[s.city] || 0) + 1;
+      if (s.venue) venues[s.venue] = (venues[s.venue] || 0) + 1;
+    });
+    var fill = function (sel, counts) {
+      Object.keys(counts).sort().forEach(function (k) {
+        var op = document.createElement('option'); op.value = k; op.textContent = k + ' (' + counts[k] + ')';
+        sel.appendChild(op);
+      });
+    };
+    fill($('o-city'), cities); fill($('o-venue'), venues);
+  }).catch(function () {});
+
+  var s = document.createElement('script');
+  s.src = LOCAL ? '/embed/punkbc.js' : SRC;
+  s.onload = update;
+  document.head.appendChild(s);
+  update();
+})();
+</script>
+</body>
+</html>
