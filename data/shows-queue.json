@@ -114,6 +114,20 @@
       "first_seen": "2026-11-06"
     },
     {
+      "band": "Northcote w/ Dead Flowers & Ben Arsenault",
+      "date": "2026-12-03",
+      "time": "",
+      "venue": "The WISE Hall",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/northcote-full-band-w-dead-flo/1461437485939539/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-12"
+    },
+    {
       "band": "Matt Rogers: THIS TIME IT'S *REALLY* CHRISTMAS Tour",
       "date": "2026-12-08",
       "time": "19:00",
@@ -196,6 +210,20 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "commodore-ballroom",
       "first_seen": "2026-11-06"
+    },
+    {
+      "band": "SJS NYE 2027",
+      "date": "2026-12-31",
+      "time": "21:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.ticketmaster.ca/sjs-nye-2027-vancouver-british-columbia-12-31-2026/event/11006569CA2C7E55",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "commodore-ballroom",
+      "first_seen": "2026-11-12"
     },
     {
       "band": "Thievery Corporation",
@@ -406,6 +434,20 @@
       "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
       "source": "commodore-ballroom",
       "first_seen": "2026-11-09"
+    },
+    {
+      "band": "Jack Kays",
+      "date": "2027-03-02",
+      "time": "",
+      "venue": "Hollywood Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.hollywoodtheatre.ca/events/jack-kays-kt96o",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-12"
     }
   ],
   "dismissed": [
@@ -456,8 +498,8 @@
     }
   ],
   "last_good": {
-    "vancouver-punk-calendar": 1141,
+    "vancouver-punk-calendar": 1144,
     "commodore-ballroom": 25
   },
-  "updated": "2026-11-10"
+  "updated": "2026-11-12"
 }
