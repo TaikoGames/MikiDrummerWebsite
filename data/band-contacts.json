@@ -465,7 +465,7 @@
     },
     {
       "band": "Black Death Cult",
-      "checked": "2026-09-28",
+      "checked": "2026-11-12",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -984,7 +984,7 @@
     },
     {
       "band": "Crimson Shadows",
-      "checked": "2026-09-28",
+      "checked": "2026-11-12",
       "email": "",
       "email_source": "",
       "instagram": "crimsonshadowsmetal",
@@ -1000,8 +1000,8 @@
           "found": "profile"
         },
         {
-          "name": "Instagram",
-          "url": "https://instagram.com/crimsonshadowsmetal",
+          "name": "youtube.com",
+          "url": "https://www.youtube.com/channel/UCjZ1FtE7C-m2EZPNLxMP7uw",
           "found": "profile"
         }
       ],
@@ -1313,7 +1313,7 @@
     },
     {
       "band": "Deliriant Fracture",
-      "checked": "2026-09-28",
+      "checked": "2026-11-12",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2310,7 +2310,7 @@
     },
     {
       "band": "Insomnium & Amorphis",
-      "checked": "2026-09-28",
+      "checked": "2026-11-12",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2524,7 +2524,7 @@
     },
     {
       "band": "Korpiklaani",
-      "checked": "2026-09-28",
+      "checked": "2026-11-12",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2533,11 +2533,6 @@
           "name": "Bandcamp",
           "url": "https://korpiklaani.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "songkick.com",
-          "url": "https://www.songkick.com/concerts/43387844-korpiklaani-at-overflow-brewing-co?utm_source=1471&utm_medium=partner",
-          "found": "profile"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3236,7 +3231,7 @@
     },
     {
       "band": "Occisor. A Night of Death and Doom. Music starts 9pm",
-      "checked": "2026-09-28",
+      "checked": "2026-11-12",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -3326,7 +3321,7 @@
     },
     {
       "band": "Perdurabo",
-      "checked": "2026-09-28",
+      "checked": "2026-11-12",
       "email": "",
       "email_source": "",
       "instagram": "perduraboworld",
@@ -3446,7 +3441,7 @@
     },
     {
       "band": "Pointed Sticks",
-      "checked": "2026-09-28",
+      "checked": "2026-11-12",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -4702,29 +4697,14 @@
     },
     {
       "band": "WAAX",
-      "checked": "2026-09-28",
+      "checked": "2026-11-12",
       "email": "",
       "email_source": "",
-      "instagram": "waax_band",
+      "instagram": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://waax.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Instagram",
-          "url": "https://www.instagram.com/waax_band/",
-          "found": "profile"
-        },
-        {
-          "name": "songkick.com",
-          "url": "https://www.songkick.com/concerts/43305433-waax-at-avalon-beach-rsl-club?utm_source=1471&utm_medium=partner",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://www.waaxband.com",
           "found": "form"
         }
       ],
