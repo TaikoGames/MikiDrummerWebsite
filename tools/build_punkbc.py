@@ -64,7 +64,7 @@ VENUE_LINK = {
     "Cobalt": "https://thecobalt.ca",
     "The Cobalt": "https://thecobalt.ca",
     "Venue": "https://venuelive.ca",
-    "Capital Ballroom": "https://capitalballroom.ca",
+    "Capital Ballroom": "https://www.thecapitalballroom.com",
     "Sugar Nightclub": "https://sugarnightclub.com",
     "The Pearl": "https://thepearlvancouver.com",
     "Astoria": "https://theastoria.ca",
@@ -85,6 +85,14 @@ VENUE_LINK = {
 # at someone else's page, which is worse than leaving it out.
 VENUE_SAMEAS = {
     "Rickshaw Theatre": ["https://www.instagram.com/rickshawtheatre/"],
+    "Commodore Ballroom": ["https://www.instagram.com/commodoreballroom/"],
+    "The Cobalt": ["https://www.instagram.com/thecobalt_van/"],
+    "Cobalt": ["https://www.instagram.com/thecobalt_van/"],
+    "The WISE Hall": ["https://www.instagram.com/wisehallandlounge/"],
+    "Red Gate": ["https://www.instagram.com/redgateartssociety/"],
+    "Red Gate Arts Society": ["https://www.instagram.com/redgateartssociety/"],
+    "Bully's Studios": ["https://www.instagram.com/bullysstudios/"],
+    "Lucky Bar": ["https://www.instagram.com/luckybaryyj/"],
 }
 
 # Venue → street address for structured data (public venue addresses).
