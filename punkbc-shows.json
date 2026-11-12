@@ -2,33 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Ride For Revenge",
-      "date": "2026-11-11",
-      "time": "19:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$70 adv",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Black Metal",
-      "notes": "With Hellwitch, Tsalal, Devouring Void. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/ride-for-revenge-2026-11-11.jpg",
-      "image_source": "https://f4.bcbits.com/img/a0073228294_5.jpg"
-    },
-    {
-      "band": "L7",
-      "date": "2026-11-11",
-      "time": "20:00",
-      "venue": "Vogue Theatre",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://admitone.com/events/l7-vancouver-162968",
-      "genre": "Punk / Grunge",
-      "notes": "The Last Hurrah Tour, their farewell world tour. Doors 7pm. All ages.",
-      "image": "https://www.mikidrummer.ca/images/shows/l7-2026-11-11.jpg",
-      "curated": "",
-      "image_source": "https://assets.nuwebgroup.com/public/media/production/4893064/conversions/dddnaDENwIDi77Y2-page_header_conversion.jpeg"
-    },
-    {
       "band": "Blasphamagoatachrist",
       "date": "2026-11-12",
       "time": "19:00",
