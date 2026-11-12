@@ -73,6 +73,18 @@ VENUE_LINK = {
     "Red Gate Arts Society": "https://redgate.tv",
     "Portside Pub": "https://theportsidepub.com",
     "The Portside Pub": "https://theportsidepub.com",
+    "The WISE Hall": "https://www.wisehall.ca",
+    "Lucky Bar": "https://luckybar.ca",
+    "LanaLou's": "https://www.lanalous.com",
+    "PNE Forum": "https://www.pne.ca",
+}
+
+# Venue profiles elsewhere (official social accounts), emitted as schema.org
+# sameAs so Google ties each venue to the entity it already knows. Only
+# accounts confirmed as the venue's own -- a wrong handle here points Google
+# at someone else's page, which is worse than leaving it out.
+VENUE_SAMEAS = {
+    "Rickshaw Theatre": ["https://www.instagram.com/rickshawtheatre/"],
 }
 
 # Venue → street address for structured data (public venue addresses).
@@ -267,19 +279,35 @@ def date_label(show: dict) -> str:
 
 # ── region builders ────────────────────────────────────────────────────────
 
+def maps_url(venue: str, city: str) -> str:
+    addr = VENUE_ADDRESS.get(venue)
+    return "https://www.google.com/maps/search/?api=1&query=" + urllib.parse.quote(
+        f"{venue}, {addr + ', ' if addr else ''}{city}, BC")
+
+
+def venue_entity(venue: str, city: str) -> dict:
+    """The schema.org MusicVenue for a venue: address, official site, map and
+    known profiles, the same everywhere it appears (events and venue pages)."""
+    address = {"@type": "PostalAddress"}
+    if venue in VENUE_ADDRESS:
+        address["streetAddress"] = VENUE_ADDRESS[venue]
+    address.update({"addressLocality": city, "addressRegion": "BC", "addressCountry": "CA"})
+    entity = {"@type": "MusicVenue", "name": venue, "address": address}
+    link = VENUE_LINK.get(venue)
+    if link and venue != "Venue":
+        entity["url"] = link
+    entity["hasMap"] = maps_url(venue, city)
+    same = [x for x in ([link] if link and venue != "Venue" else []) + VENUE_SAMEAS.get(venue, [])]
+    if same:
+        entity["sameAs"] = same
+    return entity
+
+
 def build_events_jsonld(shows: list[dict]) -> str:
     events = []
     for s in shows:
         city = s.get("city") or "Vancouver"
         venue = s.get("venue") or "Venue"
-        address = {
-            "@type": "PostalAddress",
-            "addressLocality": city,
-            "addressRegion": "BC",
-            "addressCountry": "CA",
-        }
-        if venue in VENUE_ADDRESS:
-            address["streetAddress"] = VENUE_ADDRESS[venue]
         img = s.get("image") or fallback_img(0)
         offer = {
             "@type": "Offer",
@@ -298,7 +326,7 @@ def build_events_jsonld(shows: list[dict]) -> str:
             "startDate": f"{s['date']}T{s.get('time') or '20:00'}:00{tz_offset(s['date'])}",
             "eventStatus": "https://schema.org/EventScheduled",
             "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-            "location": {"@type": "MusicVenue", "name": venue, "address": address},
+            "location": venue_entity(venue, city),
             "image": [img],
             "performer": [{"@type": "MusicGroup", "name": n} for n in performers(s)],
             "offers": offer,
@@ -508,8 +536,7 @@ def venue_page_html(venue: str, city: str, shows: list[dict], today: str,
     n = len(shows)
 
     where = f"{addr}, {city}" if addr else city
-    maps = "https://www.google.com/maps/search/?api=1&query=" + urllib.parse.quote(
-        f"{venue}, {addr + ', ' if addr else ''}{city}, BC")
+    maps = maps_url(venue, city)
 
     # What people type is "<venue> shows" / "<venue> upcoming events": lead
     # with the venue's name, keep it inside the ~60 characters Google shows.
@@ -584,19 +611,7 @@ def venue_page_html(venue: str, city: str, shows: list[dict], today: str,
                     {"@type": "ListItem", "position": 2, "name": venue, "item": url},
                 ],
             },
-            {
-                "@type": "MusicVenue",
-                "name": venue,
-                "address": {
-                    "@type": "PostalAddress",
-                    **({"streetAddress": addr} if addr else {}),
-                    "addressLocality": city,
-                    "addressRegion": "BC",
-                    "addressCountry": "CA",
-                },
-                **({"url": link} if link else {}),
-                "hasMap": maps,
-            },
+            venue_entity(venue, city),
             {
                 "@type": "FAQPage",
                 "mainEntity": [
