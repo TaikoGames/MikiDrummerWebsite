@@ -390,62 +390,6 @@
             </div>
         </section>
 
-        <!-- ===================== NEXT SHOWS IN BC =====================
-             The next three Punk BC shows, filled in by js/upcoming-shows.js
-             from punkbc-shows.json. Skeleton rows hold the space so nothing
-             shifts when they load; the board link works without JavaScript.
-        -->
-        <section id="upcoming" class="up-shows" aria-live="polite" aria-busy="true" aria-labelledby="up-title">
-          <div class="container">
-            <div class="up-head">
-              <h2 id="up-title">Next shows in BC</h2>
-              <a class="up-all" href="/punkbc.html">Full Punk BC board →</a>
-            </div>
-            <ul id="show-list" class="show-list">
-              <li class="skeleton"></li>
-              <li class="skeleton"></li>
-              <li class="skeleton"></li>
-            </ul>
-            <p id="show-error" hidden>Couldn't load shows. <a href="/punkbc.html">See the full board →</a></p>
-          </div>
-        </section>
-        <style>
-          .up-shows{background:#0b0908;border-top:1px solid #1e1a18;padding:28px 0 8px;color:#cfc9c5;
-                    font-family:'Space Mono','Courier New',monospace}
-          .up-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px;margin-bottom:14px}
-          .up-shows h2{margin:0;color:#f0ede8;font-size:20px;letter-spacing:.04em;text-transform:uppercase}
-          .up-all{color:#f0ede8;text-decoration:underline;text-decoration-color:#e8372a;text-underline-offset:3px;
-                  display:inline-flex;align-items:center;min-height:48px}
-          .up-all:hover{color:#e8372a}
-          .show-list{list-style:none;padding:0;margin:0}
-          .show-list li{min-height:76px;margin-bottom:10px;border-radius:8px}
-          .up-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:12px 14px;
-                  background:#141110;border:1px solid #1e1a18}
-          .up-date{flex:0 0 auto;min-width:96px;color:#e8372a;font-weight:700;text-transform:uppercase;font-size:13px}
-          .up-info{flex:1 1 220px;min-width:0;display:flex;flex-direction:column}
-          .up-band{color:#f0ede8;font-size:15px;overflow-wrap:anywhere}
-          .up-where{font-size:13px;color:#a39d98}
-          .up-empty{padding:14px;color:#a39d98}
-          .skeleton{background:linear-gradient(90deg,#141110 25%,#1f1a18 50%,#141110 75%);background-size:200% 100%;
-                    animation:up-shimmer 1.2s infinite}
-          @keyframes up-shimmer{to{background-position:-200% 0}}
-          @media (prefers-reduced-motion:reduce){.skeleton{animation:none}}
-          #show-error a{color:#f0ede8;text-decoration-color:#e8372a}
-
-          /* Tap targets: 48px minimum, 10px apart. */
-          .show-actions{display:flex;flex-wrap:wrap;gap:10px}
-          .tap-btn{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;
-                   padding:12px 16px;box-sizing:border-box;border-radius:8px;font:700 14px/1.2 'Space Mono','Courier New',monospace;
-                   text-decoration:none;touch-action:manipulation}
-          .tap-btn--tickets{background:#e8372a;color:#fff}
-          .tap-btn--tickets:hover{background:#c92b20;color:#fff;text-decoration:none}
-          .tap-btn--map{background:transparent;color:#f0ede8;border:2px solid #3a3330}
-          .tap-btn--map:hover{border-color:#e8372a;color:#f0ede8;text-decoration:none}
-          .tap-btn:focus-visible{outline:3px solid #facc15;outline-offset:3px}
-          @media (max-width:575px){ .show-actions{width:100%} .show-actions .tap-btn{flex:1 1 0} }
-        </style>
-        <script src="/js/upcoming-shows.js" defer></script>
-
         <!-- ===================== WHAT'S HERE =====================
              The page above is a photo, a video and one paragraph: fine for
              someone who already knows who Miki is, nothing for a search engine.
