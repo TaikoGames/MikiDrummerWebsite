@@ -699,7 +699,7 @@
     },
     {
       "band": "Bridge City Sinners",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -1575,7 +1575,7 @@
     },
     {
       "band": "Eluveitie",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2054,7 +2054,7 @@
     },
     {
       "band": "Guilt Trip",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2063,16 +2063,6 @@
           "name": "Bandcamp",
           "url": "https://guilttrip.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "songkick.com",
-          "url": "https://www.songkick.com/concerts/43333345-sepultura-at-pepsi-center-wtc?utm_source=1471&utm_medium=partner",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://www.mediafire.com/contact",
-          "found": "email"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -2174,7 +2164,7 @@
     },
     {
       "band": "Hinayana. MRG presents",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2237,7 +2227,7 @@
     },
     {
       "band": "Illumishade",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
       "instagram": "illumishade_official",
@@ -2254,7 +2244,7 @@
         },
         {
           "name": "songkick.com",
-          "url": "https://www.songkick.com/concerts/43387898-sirenia-at-legend-club?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;Legend",
+          "url": "https://www.songkick.com/concerts/43416640-eluveitie-at-rave-eagles-club?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;The",
           "found": "profile"
         }
       ],
@@ -2452,7 +2442,7 @@
     },
     {
       "band": "Kaonashi",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -2859,7 +2849,7 @@
     },
     {
       "band": "Mauled",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -3173,7 +3163,7 @@
     },
     {
       "band": "NiNi",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
       "instagram": "",
@@ -3478,35 +3468,15 @@
     },
     {
       "band": "Protest the Hero",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
-      "instagram": "protestthehero",
+      "instagram": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://protestthehero.bandcamp.com/",
           "found": "form"
-        },
-        {
-          "name": "Instagram",
-          "url": "http://instagram.com/protestthehero/",
-          "found": "profile"
-        },
-        {
-          "name": "youtube.com",
-          "url": "https://www.youtube.com/channel/UCO9wYfwEZD9W2cOSIvDHLxQ",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://www.protestthehero.ca",
-          "found": "form"
-        },
-        {
-          "name": "Site",
-          "url": "https://www.sheethappenspublishing.com",
-          "found": "email"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -3688,29 +3658,14 @@
     },
     {
       "band": "Royal Tusk",
-      "checked": "2026-09-29",
+      "checked": "2026-11-13",
       "email": "",
       "email_source": "",
-      "instagram": "royaltuskmusic",
+      "instagram": "",
       "profiles": [
         {
           "name": "Bandcamp",
           "url": "https://royaltusk.bandcamp.com/",
-          "found": "form"
-        },
-        {
-          "name": "Instagram",
-          "url": "https://www.instagram.com/royaltuskmusic/",
-          "found": "profile"
-        },
-        {
-          "name": "songkick.com",
-          "url": "https://www.songkick.com/concerts/43365653-big-wreck-at-hard-rock-hotel-and-casino-ottawa?utm_source=1471&utm_medium=partner",
-          "found": "profile"
-        },
-        {
-          "name": "Site",
-          "url": "http://www.royaltuskband.com",
           "found": "form"
         }
       ],
