@@ -1,7 +1,7 @@
 {
   "showOverlay": "no",
   "graniteFilter": "warm",
-  "season": "snow",
+  "season": "auto",
   "liveAuto": "yes",
   "liveNow": "no"
 }
