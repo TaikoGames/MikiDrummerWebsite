@@ -2,33 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Metal Church",
-      "date": "2026-11-15",
-      "time": "18:00",
-      "venue": "Rickshaw Theatre",
-      "city": "Vancouver",
-      "price": "$40",
-      "ticket": "https://rickshawtheatre.com",
-      "genre": "Heavy Metal",
-      "notes": "With Armored Saint, Livekill. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/metal-church-2026-11-15.jpg",
-      "image_source": "https://commons.wikimedia.org/wiki/Special:FilePath/Metal_Church-_Wacken_Open_Air_2016-AL3427.jpg?width=600"
-    },
-    {
-      "band": "The Restarts / Alien Boys",
-      "date": "2026-11-15",
-      "time": "20:00",
-      "venue": "Unleashed Brewing",
-      "city": "Kelowna",
-      "price": "",
-      "ticket": "https://exclaim.ca/concertcentral/concerts/the-restarts-kelowna-2026-11-15",
-      "genre": "Punk / Ska-Punk",
-      "notes": "East London punk veterans' first Canadian tour in 15 years.",
-      "image": "https://www.mikidrummer.ca/images/shows/the-restarts-alien-boys-2026-11-15.jpg",
-      "curated": "",
-      "image_source": "Made for Punk BC: no picture of this show or band could be found."
-    },
-    {
       "band": "The Restarts / Alien Boys / Pepper Spray",
       "date": "2026-11-16",
       "time": "21:00",
