@@ -274,6 +274,22 @@
       "instagram": ""
     },
     {
+      "band": "Atmosphere - The Winter Carnival Tour 2027",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://atmospherethewintercarnivaltour2027.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "August Burns Red",
       "checked": "2026-11-07",
       "email": "",
@@ -1474,6 +1490,22 @@
       "instagram": ""
     },
     {
+      "band": "DJ Meredith Marks - YOU. CAN. DANCE. Tour",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://djmeredithmarksyoucandancetour.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Downway and Another Joe.",
       "checked": "2026-11-08",
       "email": "",
@@ -2357,6 +2389,22 @@
       "instagram": ""
     },
     {
+      "band": "Jack Kays",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://jackkays.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Jarhead Fertilizer",
       "checked": "2026-11-02",
       "email": "",
@@ -2366,6 +2414,22 @@
         {
           "name": "Bandcamp",
           "url": "https://jarheadfertilizer.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Jesse Roper",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://jesseroper.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -2491,6 +2555,22 @@
       ],
       "note": "UNCONFIRMED. At least three bands use this name (a Seattle pop punk band, a queer mom-rock band, and a Gold Class song). None could be tied to the Oct 3 Red Gate bill with The Fomites. Check with The Fomites before reaching out.",
       "instagram": ""
+    },
+    {
+      "band": "Kim Mitchell",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://kimmitchell.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "King Buffalo",
@@ -3316,6 +3396,22 @@
       "by": "auto"
     },
     {
+      "band": "Odds & The Pursuit of Happiness: The Odds of Happiness Show",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://oddsandthepursuitofhappinesstheoddsofhappinessshow.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Out Of Order",
       "checked": "2026-09-13",
       "email": "",
@@ -3457,6 +3553,22 @@
           "name": "Instagram",
           "url": "https://instagram.com/pinkfuzzband",
           "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Piss with Ribbon Skirt, The Disintegration Collective",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://pisswithribbonskirtthedisintegrationcollective.bandcamp.com/",
+          "found": "form"
         }
       ],
       "note": "Found automatically; no address published.",
@@ -4170,6 +4282,22 @@
       "by": "auto"
     },
     {
+      "band": "Strangelove: The Depeche Mode Experience",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://strangelovethedepechemodeexperience.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Suicide Machines",
       "checked": "2026-11-03",
       "email": "",
@@ -4646,6 +4774,32 @@
       "by": "auto"
     },
     {
+      "band": "The Sheepdogs",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "thesheepdogs",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://thesheepdogs.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/thesheepdogs/",
+          "found": "profile"
+        },
+        {
+          "name": "tiktok.com",
+          "url": "https://www.tiktok.com/@thesheepdogsofficial",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "The Spill Canvas and Greywind",
       "checked": "2026-11-08",
       "email": "",
@@ -5037,6 +5191,42 @@
         {
           "name": "Bandcamp",
           "url": "https://xiphoiddementia.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "YDG",
+      "checked": "2026-11-16",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://ydg.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/Bandcamp",
+          "found": "profile"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/bandcamp",
+          "found": "profile"
+        },
+        {
+          "name": "tiktok.com",
+          "url": "https://www.tiktok.com/@bandcamp",
+          "found": "profile"
+        },
+        {
+          "name": "Site",
+          "url": "https://bsky.app",
           "found": "form"
         }
       ],
