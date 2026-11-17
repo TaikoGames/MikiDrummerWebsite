@@ -2,20 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "The Restarts / Alien Boys / Pepper Spray",
-      "date": "2026-11-16",
-      "time": "21:00",
-      "venue": "The Coda",
-      "city": "Victoria",
-      "price": "$20 adv / $25 door",
-      "ticket": "https://exclaim.ca/concertcentral/concerts/the-restarts-victoria-2026-11-16",
-      "genre": "Punk / Ska-Punk",
-      "notes": "First Canadian tour in 15 years. Doors 9pm. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/the-restarts-alien-boys-pepper-spray-2026-11-16.jpg",
-      "curated": "",
-      "image_source": "https://alienboys.ca/wp-content/uploads/2026/09/victoria-2026-scaled.jpeg"
-    },
-    {
       "band": "The Restarts",
       "date": "2026-11-17",
       "time": "",
