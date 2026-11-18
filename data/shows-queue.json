@@ -2,6 +2,20 @@
   "_readme": "Shows found by tools/collect_shows.py, waiting for review at /shows-queue.html. Nothing in here is on the site. Approving a row moves it to punkbc-shows.json; turning one down records it in \"dismissed\" so the collector never offers it again.",
   "pending": [
     {
+      "band": "Bry Scott, Sundiver, and Earle Matthews",
+      "date": "2026-11-18",
+      "time": "",
+      "venue": "The Heatley",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-18"
+    },
+    {
       "band": "A Very Culty Christmas w/ The Getmines & Mervis Blue",
       "date": "2026-12-06",
       "time": "",
@@ -78,8 +92,8 @@
     }
   ],
   "last_good": {
-    "vancouver-punk-calendar": 1144,
+    "vancouver-punk-calendar": 1145,
     "commodore-ballroom": 25
   },
-  "updated": "2026-11-17"
+  "updated": "2026-11-18"
 }
