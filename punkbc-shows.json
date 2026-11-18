@@ -2,34 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "The Restarts",
-      "date": "2026-11-17",
-      "time": "",
-      "venue": "The Globe",
-      "city": "Nanaimo",
-      "price": "",
-      "ticket": "https://www.theglobelivestudio.com/",
-      "genre": "Punk / Ska-Punk",
-      "notes": "Kanata Tour 2026.",
-      "image": "https://www.mikidrummer.ca/images/shows/the-restarts-2026-11-17.jpg",
-      "curated": "",
-      "image_source": "Made for Punk BC: no picture of this show or band could be found."
-    },
-    {
-      "band": "Underoath / August Burns Red",
-      "date": "2026-11-17",
-      "time": "18:30",
-      "venue": "PNE Forum",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.ticketmaster.ca/august-burns-red-tickets/artist/1115308",
-      "genre": "Metalcore",
-      "notes": "Underoath's Define the Great Line 20th anniversary tour, with August Burns Red. Atreyu and As Cities Burn also listed. Doors time varies by listing — check your ticket.",
-      "image": "https://www.mikidrummer.ca/images/shows/underoath-2026-11-17.jpg",
-      "curated": "",
-      "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Underoath_-_2019159150712_2019-06-08_Rock_am_Ring_-_0156_-_5DSR0728.jpg/1280px-Underoath_-_2019159150712_2019-06-08_Rock_am_Ring_-_0156_-_5DSR0728.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
-    },
-    {
       "band": "Turnover - Down On Earth Tour",
       "date": "2026-11-18",
       "time": "18:30",
