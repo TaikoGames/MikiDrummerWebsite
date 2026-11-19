@@ -176,6 +176,31 @@
           each one at its own channel for much tighter hits.
         </p>
       </div>
+
+      <div class="card">
+        <h2>4 · Real LED strips (WLED)</h2>
+        <label style="display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer">
+          <input type="checkbox" id="wledOn"> Send the show to the strips
+        </label>
+        <div class="status" id="wledStatus">Off.</div>
+        <div id="wledList"></div>
+        <div class="row">
+          <button class="btn mini" id="wledAdd">+ Add controller</button>
+        </div>
+        <label class="fld" for="wledBridge">Bridge address</label>
+        <input type="text" id="wledBridge" spellcheck="false">
+        <p class="hint">
+          <b>Setup:</b> each strip runs off a WLED controller on the same Wi-Fi as this laptop. Find each
+          one's IP in the WLED app and type it in. Then, on this laptop,
+          <a href="/tools/wled_bridge.py" download style="color:var(--molten)">download the bridge</a> and run
+          <code>python3 wled_bridge.py</code> (Windows: <code>py wled_bridge.py</code>) and leave the window open.
+          It passes the colours on, because browsers can't talk to the strips directly. Use Chrome or Edge.
+          <b>Side</b> picks which row of towers a strip copies. <b>Runs</b>: if one strip zig-zags up
+          and down a truss, say how many vertical runs it makes and each run becomes its own tower.
+          <b>Identify</b> sends a white dot up that strip so you know which is which.
+          If the page closes, the strips go back to their own WLED effect after 2 seconds.
+        </p>
+      </div>
     </div>
   </div>
 </div>
@@ -234,12 +259,18 @@ const DEFAULT_DRIVERS = {
   energy:{ src:'all',  gain:1.0, decay:0.45 },
 };
 
+const DEFAULT_WLED = { enabled: false, bridge: 'http://127.0.0.1:21325', fps: 40, controllers: [
+  { name: 'Left tower',  ip: '', leds: 144, side: 'left',  runs: 1, serpentine: true, reverse: false, bright: 0.8 },
+  { name: 'Right tower', ip: '', leds: 144, side: 'right', runs: 1, serpentine: true, reverse: false, bright: 0.8 },
+]};
 let state = { set: structuredClone(DEFAULT_SET), idx: 0, drivers: structuredClone(DEFAULT_DRIVERS),
-              master: 1, art: 1, titles: true };
+              master: 1, art: 1, titles: true, wled: structuredClone(DEFAULT_WLED) };
 try {
   const s = JSON.parse(localStorage.getItem(STORE) || 'null');
   if (s && Array.isArray(s.set) && s.set.length) state = Object.assign(state, s);
   for (const k in DEFAULT_DRIVERS) state.drivers[k] = Object.assign({}, DEFAULT_DRIVERS[k], state.drivers[k] || {});
+  state.wled = Object.assign(structuredClone(DEFAULT_WLED), state.wled || {});
+  if (!Array.isArray(state.wled.controllers)) state.wled.controllers = structuredClone(DEFAULT_WLED.controllers);
 } catch (e) {}
 state.idx = Math.min(Math.max(0, state.idx|0), state.set.length - 1);
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
@@ -278,6 +309,7 @@ const strips = [];   // {x,z,side,col}
 for (const side of [-1, 1]) for (let c = 0; c < COLS; c++)
   strips.push({ side, col: c, x: side * (4.0 + c * 0.35), z: 4.5 - c * 2.8 });   // a corridor either side
 const NPIX = strips.length * PIX;
+const ledRGB = new Float32Array(NPIX * 3);      // last frame's tower colours, for the real strips
 const pixGeo = new THREE.BoxGeometry(0.2, STRIP_H / PIX * 0.7, 0.12);
 const pixMat = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
 const leds = new THREE.InstancedMesh(pixGeo, pixMat, NPIX);
@@ -564,6 +596,7 @@ function updateShow(dt, t){
       }
       if (strobe > 0) { r += strobe; g += strobe; b += strobe; }
 
+      ledRGB[k*3] = r * out; ledRGB[k*3+1] = g * out; ledRGB[k*3+2] = b * out;
       tmp.setRGB(r * out, g * out, b * out);
       leds.setColorAt(k, tmp);
       tmp.multiplyScalar(0.32); ledsMirror.setColorAt(k, tmp);
@@ -610,6 +643,82 @@ function updateShow(dt, t){
   bloom.strength = 0.95 + LV.energy * 0.6;
 }
 
+// ===================================================================== real strips (WLED)
+// Each controller copies the nearest virtual tower(s) on its side. A controller
+// with several vertical runs (one strip zig-zagged up and down a truss) gets one
+// tower per run, front to back. The bridge (tools/wled_bridge.py) forwards the
+// bytes to WLED as realtime UDP.
+const IPV4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+const GAMMA = new Uint8Array(1024);
+for (let i = 0; i < 1024; i++) GAMMA[i] = Math.round(Math.pow(i / 1023, 2.2) * 255);
+let wledBusy = false, wledLast = 0, wledSent = 0, wledFails = 0, wledMsg = '';
+const identify = {};          // controller index -> until (clock seconds)
+
+function towerIndex(side, col){ return (side === 'right' ? COLS : 0) + Math.min(COLS - 1, col); }
+function wledFrame(t){
+  const list = state.wled.controllers.map((c, ci) => ({ c, ci, m: IPV4.exec((c.ip || '').trim()) }))
+    .filter(x => x.m && x.c.leds > 0);
+  if (!list.length) return null;
+  const size = list.reduce((n, x) => n + 8 + Math.min(4000, x.c.leds | 0) * 3, 0);
+  const buf = new Uint8Array(size), dv = new DataView(buf.buffer);
+  let o = 0;
+  for (const { c, ci, m } of list) {
+    const n = Math.min(4000, c.leds | 0), runs = Math.max(1, c.runs | 0), per = Math.ceil(n / runs);
+    for (let q = 1; q <= 4; q++) buf[o++] = +m[q] & 255;
+    dv.setUint16(o, 21324); dv.setUint16(o + 2, n); o += 4;
+    const ident = identify[ci] > t, br = Math.max(0, Math.min(1, c.bright));
+    for (let j = 0; j < n; j++) {
+      const run = Math.floor(j / per), inRun = j - run * per;
+      let u = per > 1 ? inRun / (per - 1) : 0;
+      if (c.serpentine && run % 2 === 1) u = 1 - u;
+      if (c.reverse) u = 1 - u;
+      let r, g, b;
+      if (ident) {                       // white dot running up so you can spot which strip is which
+        r = g = b = Math.abs(u - ((t * 0.8) % 1)) < 0.05 ? 1 : 0.04;
+      } else {
+        const sides = c.side === 'both' ? ['left', 'right'] : [c.side];
+        const f = u * (PIX - 1), i0 = Math.floor(f), i1 = Math.min(PIX - 1, i0 + 1), w = f - i0;
+        r = g = b = 0;
+        for (const sd of sides) {
+          const k0 = (towerIndex(sd, run) * PIX + i0) * 3, k1 = (towerIndex(sd, run) * PIX + i1) * 3;
+          r += ledRGB[k0] * (1 - w) + ledRGB[k1] * w;
+          g += ledRGB[k0+1] * (1 - w) + ledRGB[k1+1] * w;
+          b += ledRGB[k0+2] * (1 - w) + ledRGB[k1+2] * w;
+        }
+        r /= sides.length; g /= sides.length; b /= sides.length;
+      }
+      buf[o++] = GAMMA[Math.min(1023, (Math.min(1, r) * br * 1023) | 0)];
+      buf[o++] = GAMMA[Math.min(1023, (Math.min(1, g) * br * 1023) | 0)];
+      buf[o++] = GAMMA[Math.min(1023, (Math.min(1, b) * br * 1023) | 0)];
+    }
+  }
+  return buf;
+}
+function wledTick(t){
+  const w = state.wled;
+  if (!w.enabled || wledBusy || t - wledLast < 1 / Math.max(5, w.fps)) return;
+  const buf = wledFrame(t);
+  if (!buf) { wledMsg = 'Add a controller IP address below.'; return; }
+  wledBusy = true; wledLast = t;
+  fetch(w.bridge.replace(/\/+$/, '') + '/frame', { method: 'POST', body: buf,
+        headers: { 'Content-Type': 'application/octet-stream' } })
+    .then(async r => {
+      if (r.ok) { wledSent++; wledFails = 0; wledMsg = ''; }
+      else { wledFails++; const j = await r.json().catch(() => ({})); wledMsg = 'Bridge said: ' + (j.error || r.status); }
+    })
+    .catch(() => { wledFails++; wledMsg = 'Can’t reach the bridge. Is <code>tools/wled_bridge.py</code> running on this computer?'; })
+    .finally(() => { wledBusy = false; });
+}
+let wledShown = 0;
+function wledStatus(t){
+  if (t - wledShown < 0.5) return; wledShown = t;
+  const el = $('wledStatus'); if (!el) return;
+  if (!state.wled.enabled) { el.className = 'status'; el.innerHTML = 'Off.'; wledSent = 0; return; }
+  if (wledMsg) { el.className = 'status ' + (wledFails > 3 ? 'err' : 'warn'); el.innerHTML = wledMsg; }
+  else { el.className = 'status ok'; el.innerHTML = `Sending to the strips · ${Math.round(wledSent * 2)} fps`; }
+  wledSent = 0;
+}
+
 // ===================================================================== loop
 function resize(){
   const w = view.clientWidth, h = view.clientHeight;
@@ -626,6 +735,7 @@ function frame(now){
   if (mode === 'demo') demoT += dt;
   updateDrivers(dt, clock);
   updateShow(dt, clock);
+  wledTick(clock); wledStatus(clock);
   composer.render();
   fpsA += dt; fpsN++;
   if (fpsA > 0.5) { $('fpsOut').textContent = Math.round(fpsN / fpsA) + ' fps'; fpsA = 0; fpsN = 0; }
@@ -760,7 +870,58 @@ document.addEventListener('keydown', e => {
   else if (k === 'f' || k === 'F') enterShow();
 });
 
-renderSetlist(); renderPresets(); buildDriverUI();
+// ---- WLED card
+function renderWled(){
+  $('wledOn').checked = !!state.wled.enabled;
+  $('wledBridge').value = state.wled.bridge;
+  $('wledList').innerHTML = state.wled.controllers.map((c, i) => `
+    <div class="wctl" style="border:1px solid var(--edge);border-radius:10px;padding:8px;margin-top:8px;background:var(--stone-850)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <input type="text" data-w="name" data-i="${i}" value="${esc(c.name)}" aria-label="Name">
+        <input type="text" data-w="ip" data-i="${i}" value="${esc(c.ip)}" placeholder="192.168.1.50" spellcheck="false" aria-label="IP address">
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px;font-size:11px;color:var(--stone-400)">
+        <label>LEDs<input type="text" inputmode="numeric" data-w="leds" data-i="${i}" value="${c.leds}"></label>
+        <label>Side<select data-w="side" data-i="${i}">
+          ${['left','right','both'].map(v => `<option${v === c.side ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label>Runs<input type="text" inputmode="numeric" data-w="runs" data-i="${i}" value="${c.runs}"></label>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;font-size:12px;color:var(--stone-300)">
+        <label><input type="checkbox" data-w="serpentine" data-i="${i}"${c.serpentine ? ' checked' : ''}> zig-zag</label>
+        <label><input type="checkbox" data-w="reverse" data-i="${i}"${c.reverse ? ' checked' : ''}> starts at top</label>
+        <label style="flex:1;min-width:110px">Brightness <input type="range" min="0.05" max="1" step="0.05" data-w="bright" data-i="${i}" value="${c.bright}"></label>
+        <button class="btn mini" data-ident="${i}">Identify</button>
+        <button class="btn mini" data-wdel="${i}" title="Remove">✕</button>
+      </div>
+    </div>`).join('');
+}
+function wledEdit(e){
+  const t = e.target, i = t.dataset.i, f = t.dataset.w; if (f == null) return;
+  const c = state.wled.controllers[+i];
+  if (f === 'serpentine' || f === 'reverse') c[f] = t.checked;
+  else if (f === 'leds' || f === 'runs') c[f] = Math.max(f === 'runs' ? 1 : 0, Math.min(4000, parseInt(t.value, 10) || 0));
+  else if (f === 'bright') c[f] = +t.value;
+  else c[f] = t.value;
+  save();
+}
+$('wledList').addEventListener('input', wledEdit);
+$('wledList').addEventListener('change', wledEdit);
+$('wledList').addEventListener('click', e => {
+  const b = e.target.closest('[data-ident],[data-wdel]'); if (!b) return;
+  if (b.dataset.ident != null) {
+    identify[+b.dataset.ident] = clock + 3;
+    if (!state.wled.enabled) { state.wled.enabled = true; save(); renderWled(); }
+  } else { state.wled.controllers.splice(+b.dataset.wdel, 1); save(); renderWled(); }
+});
+$('wledAdd').onclick = () => {
+  state.wled.controllers.push({ name: 'Strip ' + (state.wled.controllers.length + 1), ip: '', leds: 144,
+    side: 'left', runs: 1, serpentine: true, reverse: false, bright: 0.8 });
+  save(); renderWled();
+};
+$('wledOn').onchange = e => { state.wled.enabled = e.target.checked; wledMsg = ''; save(); };
+$('wledBridge').oninput = e => { state.wled.bridge = e.target.value.trim(); save(); };
+
+renderSetlist(); renderPresets(); buildDriverUI(); renderWled();
 </script>
 </body>
 </html>
