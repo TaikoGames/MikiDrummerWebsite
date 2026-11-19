@@ -1,49 +1,6 @@
 {
   "_readme": "Shows found by tools/collect_shows.py, waiting for review at /shows-queue.html. Nothing in here is on the site. Approving a row moves it to punkbc-shows.json; turning one down records it in \"dismissed\" so the collector never offers it again.",
-  "pending": [
-    {
-      "band": "Bry Scott, Sundiver, and Earle Matthews",
-      "date": "2026-11-18",
-      "time": "",
-      "venue": "The Heatley",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "vancouver-punk-calendar",
-      "first_seen": "2026-11-18"
-    },
-    {
-      "band": "A Very Culty Christmas w/ The Getmines & Mervis Blue",
-      "date": "2026-12-06",
-      "time": "",
-      "venue": "The Cobalt",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/a-very-culty-christmas-w-the-g/1464225678998814/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "vancouver-punk-calendar",
-      "first_seen": "2026-11-16"
-    },
-    {
-      "band": "JR Country's Boots & Babes Ball",
-      "date": "2027-02-13",
-      "time": "20:00",
-      "venue": "Commodore Ballroom",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.ticketmaster.ca/jr-countrys-boots-babes-ball-vancouver-british-columbia-02-13-2027/event/1100655D9DBE7EFF",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "commodore-ballroom",
-      "first_seen": "2026-11-16"
-    }
-  ],
+  "pending": [],
   "dismissed": [
     {
       "band": "Morgan and Clay play acoustic guitar and sing songs for people playing pool downstairs at Wise Hall and Lounge",
