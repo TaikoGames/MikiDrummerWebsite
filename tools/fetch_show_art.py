@@ -427,7 +427,10 @@ def art_for(show: dict, report: list, taken: list | None = None) -> tuple[bytes,
                 report.append(f"      {where}: would not download — {e}")
                 continue
             ok, why = usable(raw)
-            if ok and any(same_picture(ahash(raw), t) for t in taken):
+            # A repeat is refused because it usually means one stock photo on
+            # unrelated shows. The venue listing is different: it names this
+            # date, so two nights of one run rightly share the tour poster.
+            if ok and where != "venue listing" and any(same_picture(ahash(raw), t) for t in taken):
                 ok, why = False, "the same picture as another show"
             if not ok:
                 report.append(f"      {where}: refused — {why}")
