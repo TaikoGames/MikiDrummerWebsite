@@ -893,6 +893,20 @@
       "image": "https://www.mikidrummer.ca/images/shows/haywire-2027-04-29.jpg",
       "curated": "",
       "image_source": "https://ca.rollingstone.com/media-library/image.webp?id=67643213&width=1200&height=600&coordinates=0%2C132%2C0%2C132"
+    },
+    {
+      "band": "Authority Zero / Belvedere / Ratsalad",
+      "date": "2027-05-14",
+      "time": "19:00",
+      "venue": "The WISE Hall",
+      "city": "Vancouver",
+      "price": "$30 adv",
+      "ticket": "https://www.eventbrite.com/e/authority-zero-belvedere-ratsalad-at-the-wise-hall-tickets-2004843606195",
+      "genre": "Punk / Skate Punk",
+      "notes": "MBBM Canada Tour 2027. Doors 7pm. $30 advance (CA$34.94 with fees). AF Entertainment presents",
+      "image": "https://www.mikidrummer.ca/images/shows/authority-zero-2027-05-14.jpg",
+      "curated": "",
+      "image_source": "Official tour poster (Eventbrite listing)"
     }
   ]
 }
