@@ -43,6 +43,22 @@
       "by": "auto"
     },
     {
+      "band": "A Very Culty Christmas w/ The Getmines & Mervis Blue",
+      "checked": "2026-11-20",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://averycultychristmaswthegetminesandmervisblue.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Accessory",
       "checked": "2026-09-27",
       "email": "",
@@ -337,6 +353,32 @@
       "instagram": "authorandpunisher"
     },
     {
+      "band": "Authority Zero",
+      "checked": "2026-11-20",
+      "email": "",
+      "email_source": "",
+      "instagram": "authorityzeromusic",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://authorityzero.bandcamp.com/",
+          "found": "form"
+        },
+        {
+          "name": "Instagram",
+          "url": "https://www.instagram.com/authorityzeromusic/",
+          "found": "profile"
+        },
+        {
+          "name": "songkick.com",
+          "url": "https://www.songkick.com/concerts/43423479-authority-zero-at-191-toole?utm_source=1471&utm_medium=partner&quot;,&quot;venue&quot;:&quot;191",
+          "found": "profile"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Babe Haven",
       "checked": "2026-11-07",
       "email": "",
@@ -441,6 +483,22 @@
         {
           "name": "Bandcamp",
           "url": "https://beherit.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Belvedere",
+      "checked": "2026-11-20",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://belvedere.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -2458,6 +2516,22 @@
       "by": "auto"
     },
     {
+      "band": "JR Country's Boots & Babes Ball",
+      "checked": "2026-11-20",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://jrcountrysbootsandbabesball.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Judge",
       "checked": "2026-09-16",
       "email": "",
@@ -2753,6 +2827,22 @@
         {
           "name": "Site",
           "url": "http://www.myspace.com",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "Less Than Jake",
+      "checked": "2026-11-20",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://lessthanjake.bandcamp.com/",
           "found": "form"
         }
       ],
@@ -3790,6 +3880,22 @@
       "note": "Found automatically; no address published.",
       "by": "auto",
       "instagram": ""
+    },
+    {
+      "band": "Ratsalad",
+      "checked": "2026-11-20",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://ratsalad.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
     },
     {
       "band": "Revocation",
