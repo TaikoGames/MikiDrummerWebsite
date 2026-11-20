@@ -57,6 +57,19 @@
       "image_source": "https://f4.bcbits.com/img/a2055505358_5.jpg"
     },
     {
+      "band": "Bry Scott, Sundiver, and Earle Matthews",
+      "date": "2026-11-18",
+      "time": "",
+      "venue": "The Heatley",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar"
+    },
+    {
       "band": "The OBGMs",
       "date": "2026-11-20",
       "time": "",
@@ -264,6 +277,19 @@
       "image": "https://www.mikidrummer.ca/images/shows/emo-orchestra-2026-12-05.jpg",
       "curated": "",
       "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/The_Spill_Canvas%2C_2005-09-16%2C_The_Masquerade_%28Hell%29%2C_Atlanta.jpg/1280px-The_Spill_Canvas%2C_2005-09-16%2C_The_Masquerade_%28Hell%29%2C_Atlanta.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
+    },
+    {
+      "band": "A Very Culty Christmas w/ The Getmines & Mervis Blue",
+      "date": "2026-12-06",
+      "time": "",
+      "venue": "The Cobalt",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/a-very-culty-christmas-w-the-g/1464225678998814/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar"
     },
     {
       "band": "Matt Rogers: THIS TIME IT'S *REALLY* CHRISTMAS Tour",
@@ -670,6 +696,19 @@
       "image": "https://www.mikidrummer.ca/images/shows/dropkick-murphys-2027-02-12.jpg",
       "curated": "",
       "image_source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/DKMshamrock.jpg/1280px-DKMshamrock.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail"
+    },
+    {
+      "band": "JR Country's Boots & Babes Ball",
+      "date": "2027-02-13",
+      "time": "20:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.ticketmaster.ca/jr-countrys-boots-babes-ball-vancouver-british-columbia-02-13-2027/event/1100655D9DBE7EFF",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "commodore-ballroom"
     },
     {
       "band": "Strangelove: The Depeche Mode Experience",
