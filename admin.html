@@ -943,11 +943,24 @@
     }
     throw new Error('GitHub accepted the job but it hasn’t shown up yet — check GitHub Actions in a minute.');
   }
+  // A job GitHub never hands to a machine sits in "queued" with no steps. That
+  // is GitHub's side (an outage, or Actions blocked on the account), not the
+  // job, so say so after a few minutes instead of spinning for twelve.
+  const STALL_MS = 4 * 60000;
+  const stalledMsg = run => 'GitHub hasn’t started this job (still queued after ' +
+    Math.round((Date.now() - new Date(run.created_at).getTime()) / 60000) + ' min). That’s GitHub’s side, not the button: ' +
+    'check githubstatus.com, and that Actions is allowed and billing is OK for the TaikoGames account. ' +
+    'It will run by itself once GitHub catches up, so no need to press again. ' + run.html_url;
   async function waitJob(run, onTick){
     const until = Date.now() + 12 * 60000;
     while (Date.now() < until) {
       const r = await fetch(API + '/actions/runs/' + run.id, { headers:headers(), cache:'no-store' });
-      if (r.ok) { run = await r.json(); if (run.status === 'completed') return run; if (onTick) onTick(run); }
+      if (r.ok) {
+        run = await r.json();
+        if (run.status === 'completed') return run;
+        if (run.status === 'queued' && Date.now() - new Date(run.created_at).getTime() > STALL_MS) throw new Error(stalledMsg(run));
+        if (onTick) onTick(run);
+      }
       await sleep(5000);
     }
     throw new Error('Still running after 12 minutes — follow it on GitHub.');
@@ -968,8 +981,14 @@
     b.disabled = true; go.textContent = '…';
     msg(el, what + '…');
     try {
-      const run = await startJob(b.dataset.run, b.dataset.inputs ? JSON.parse(b.dataset.inputs) : {});
-      const done = await waitJob(run, () => msg(el, what + '… (running on GitHub)'));
+      // Already one waiting for this job? Follow it rather than piling up another.
+      let run = null;
+      const qr = await fetch(API + '/actions/workflows/' + b.dataset.run + '/runs?per_page=5', { headers:headers(), cache:'no-store' });
+      if (qr.ok) run = ((await qr.json()).workflow_runs || []).find(x => x.status === 'queued' || x.status === 'in_progress' || x.status === 'waiting');
+      if (run && run.status === 'queued' && Date.now() - new Date(run.created_at).getTime() > STALL_MS) throw new Error(stalledMsg(run));
+      if (run) msg(el, what + '… (one was already going, following that)');
+      else run = await startJob(b.dataset.run, b.dataset.inputs ? JSON.parse(b.dataset.inputs) : {});
+      const done = await waitJob(run, r => msg(el, what + '… ' + (r.status === 'queued' ? '(waiting for GitHub to start it)' : '(running on GitHub)')));
       if (done.conclusion === 'success') { msg(el, b.querySelector('b').textContent + ' — done ✓. The site updates in about a minute.', 'ok'); toast('Done', 'ok'); go.textContent = '✓'; }
       else { const s = await failedStep(done); msg(el, 'It stopped' + (s ? ' at “' + s + '”' : '') + '. Details: ' + done.html_url, 'err'); go.textContent = '!'; }
     } catch (e) { msg(el, e.message, 'err'); go.textContent = '▶'; }
