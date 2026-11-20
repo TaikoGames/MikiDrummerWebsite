@@ -11,7 +11,11 @@ Where the art comes from, in order:
      venue's own calendar. Its og:image is the poster the promoter published
      for that exact night, which is better provenance than a band photo found
      by name: there is no chance of pulling the wrong band with a similar one.
-  2. Failing that, the band's own page named in ART_SOURCES below, hand-checked
+  2. The venue's own listing (the pages in data/show-sources.json). Venues
+     like the Commodore publish each show with its poster in schema.org
+     event data. This matters because their ticket links go to Ticketmaster,
+     which refuses automated requests (403), so step 1 never sees the poster.
+  3. Failing that, the band's own page named in ART_SOURCES below, hand-checked
      rather than guessed at from a search result.
 
 Every candidate is downloaded and opened before it is accepted. A URL that
@@ -250,6 +254,106 @@ def is_show_page(url: str) -> bool:
     return path not in ("", "shows", "events", "calendar", "whats-on", "tickets")
 
 
+# ---------------------------------------------------------------- venue listings
+# The venue pages the show collector reads (data/show-sources.json, kind
+# "jsonld") list each upcoming show as a schema.org Event, usually with the
+# promoter's poster as "image" and the venue's own event page as "url". Read
+# each page once per run and match shows to events by date and name.
+SOURCES_FILE = ROOT / "data" / "show-sources.json"
+_VENUE_EVENTS: dict[str, list[dict]] = {}
+
+
+def _jsonld_events(html: bytes) -> list[dict]:
+    out: list[dict] = []
+    def walk(node):
+        if isinstance(node, list):
+            for n in node:
+                walk(n)
+        elif isinstance(node, dict):
+            t = node.get("@type")
+            types = t if isinstance(t, list) else [t]
+            if any(isinstance(x, str) and x.endswith("Event") for x in types) and node.get("startDate"):
+                out.append(node)
+            for k in ("@graph", "itemListElement", "item", "subEvent", "event", "events"):
+                if k in node:
+                    walk(node[k])
+    for b in re.findall(rb'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>', html, re.S | re.I):
+        try:
+            walk(json.loads(b.decode("utf-8", "replace").strip()))
+        except Exception:
+            continue
+    return out
+
+
+def _event_image(e: dict) -> str:
+    img = e.get("image")
+    if isinstance(img, list):
+        img = img[0] if img else ""
+    if isinstance(img, dict):
+        img = img.get("url") or img.get("contentUrl") or ""
+    img = str(img or "").strip()
+    if img.startswith("//"):
+        img = "https:" + img
+    return img if img.startswith("http") else ""
+
+
+def _words(s: str) -> set[str]:
+    return {w for w in re.findall(r"[a-z0-9]+", (s or "").lower())
+            if w not in ("the", "and", "with", "w", "tour", "live", "presents", "a", "of", "in")}
+
+
+def same_show(band: str, event_name: str) -> bool:
+    """A listing's name and ours are often worded differently ("Matt Hansen -
+    The Orchid Tour" vs "Matt Hansen"): match on the headliner's words."""
+    head = _words(re.split(r"\s+(?:/|w/|with|-|–|:)\s+", band or "", maxsplit=1)[0])
+    ev = _words(event_name)
+    if not head or not ev:
+        return False
+    return len(head & ev) / len(head) >= 0.75
+
+
+def venue_events(venue: str) -> list[dict]:
+    key = (venue or "").strip().lower()
+    if key in _VENUE_EVENTS:
+        return _VENUE_EVENTS[key]
+    events: list[dict] = []
+    try:
+        cfg = json.loads(SOURCES_FILE.read_text(encoding="utf-8"))
+        srcs = cfg if isinstance(cfg, list) else cfg.get("sources", [])
+    except Exception:
+        srcs = []
+    for src in srcs:
+        if src.get("kind") != "jsonld" or (src.get("venue") or "").strip().lower() != key:
+            continue
+        try:
+            events += _jsonld_events(get(src["url"]))
+            time.sleep(PAUSE)
+        except Exception:
+            pass
+    _VENUE_EVENTS[key] = events
+    return events
+
+
+def venue_listing(show: dict) -> list[tuple[str, str]]:
+    out = []
+    for e in venue_events(show.get("venue", "")):
+        if str(e.get("startDate", ""))[:10] != show.get("date") or not same_show(show.get("band", ""), str(e.get("name", ""))):
+            continue
+        img = _event_image(e)
+        if img and not is_generic(img):
+            out.append(("venue listing", img))
+        page = str(e.get("url") or "").strip()
+        if page.startswith("http") and not any(h in page for h in SKIP_HOSTS + BLOCKING_HOSTS) and is_show_page(page):
+            out.append(("venue's event page", page))
+        break
+    return out
+
+
+# Ticket sites that refuse every automated request. Asking anyway just fills
+# the report with 403s; the venue listing is where their posters come from.
+BLOCKING_HOSTS = ("ticketmaster.", "livenation.")
+
+
 def candidates(show: dict) -> list[tuple[str, str]]:
     """(where it came from, url) in the order they should be tried. "current
     picture" is an image, everything else is a page to read og:image from."""
@@ -259,9 +363,10 @@ def candidates(show: dict) -> list[tuple[str, str]]:
             and not is_generic(current):
         out.append(("current picture", current))
     ticket = (show.get("ticket") or "").strip()
-    if ticket.startswith("http") and not any(h in ticket for h in SKIP_HOSTS) \
+    if ticket.startswith("http") and not any(h in ticket for h in SKIP_HOSTS + BLOCKING_HOSTS) \
             and is_show_page(ticket):
         out.append(("ticket page", ticket))
+    out += venue_listing(show)
     name = (show.get("band") or "").split(" / ")[0].strip().lower()
     # A band on tour plays several nights; "band@date" gives one night its own
     # picture so the same photo is not refused as a repeat and turned into a card.
@@ -313,7 +418,7 @@ def art_for(show: dict, report: list, taken: list | None = None) -> tuple[bytes,
     followed = set()
     while todo:
         where, page = todo.pop(0)
-        if where == "current picture":
+        if where in ("current picture", "venue listing"):
             # Already an image: no page to read, just check it.
             try:
                 raw = get(page)
@@ -610,6 +715,31 @@ def self_test() -> int:
                    candidates({"ticket": "https://facebook.com/events/s/x/1/"}) == []))
     checks.append(("ticket page used",
                    candidates({"ticket": "https://gigpit.ca/shows/event:x"})[0][0] == "ticket page"))
+
+    # venue listings: a Commodore-style page, read without the network
+    page = b'''<script type="application/ld+json">[{"@context":"https://schema.org","@type":"MusicEvent",
+      "name":"Matt Hansen - The Orchid Tour","startDate":"2026-12-01T19:00:00-08:00",
+      "image":["https://s1.ticketm.net/dam/a/1/poster_TABLET_LANDSCAPE_LARGE_16_9.jpg"],
+      "url":"https://www.commodoreballroom.com/event/abc123",
+      "offers":{"url":"https://www.ticketmaster.ca/event/X"}},
+      {"@type":"Event","name":"Other Band","startDate":"2026-12-02","image":{"url":"//cdn.test/o.jpg"}}]</script>'''
+    evs = _jsonld_events(page)
+    checks.append(("venue events read", len(evs) == 2))
+    checks.append(("image list read", _event_image(evs[0]).endswith("16_9.jpg")))
+    checks.append(("image object read", _event_image(evs[1]) == "https://cdn.test/o.jpg"))
+    checks.append(("tour name matches band", same_show("Matt Hansen - The Orchid Tour", "Matt Hansen - The Orchid Tour")))
+    checks.append(("headliner matches longer name", same_show("Thievery Corporation", "Thievery Corporation: Live")))
+    checks.append(("other band refused", not same_show("Matt Rogers", "Matt Hansen - The Orchid Tour")))
+    _VENUE_EVENTS["commodore ballroom"] = evs
+    show = {"band": "Matt Hansen - The Orchid Tour", "date": "2026-12-01", "venue": "Commodore Ballroom",
+            "ticket": "https://www.ticketmaster.ca/matt-hansen/event/X"}
+    c = candidates(show)
+    checks.append(("ticketmaster not asked", all("ticketmaster" not in u for _, u in c)))
+    checks.append(("venue poster tried, then its event page",
+                   [w for w, _ in c] == ["venue listing", "venue's event page"]))
+    checks.append(("wrong date not matched",
+                   venue_listing(dict(show, date="2026-12-02")) == []))
+    _VENUE_EVENTS.clear()
 
     for name, ok in checks:
         print(("  [ok] " if ok else "  [FAIL] ") + name)
