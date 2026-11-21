@@ -920,6 +920,34 @@
       "image": "https://www.mikidrummer.ca/images/shows/authority-zero-2027-05-14.jpg",
       "curated": "",
       "image_source": "Official tour poster (Eventbrite listing)"
+    },
+    {
+      "band": "Bodyjar",
+      "city": "Kelowna",
+      "price": "",
+      "ticket": "https://www.bodyjar.com",
+      "genre": "Punk / Skate Punk",
+      "curated": "",
+      "image_source": "Official Canada 2027 tour poster (Merit-Based Booking)",
+      "date": "2027-06-05",
+      "time": "",
+      "venue": "Metro Hub",
+      "notes": "Canada 2027 tour, their first Canadian shows this century. Merit-Based Booking presents. Tickets at bodyjar.com",
+      "image": "https://www.mikidrummer.ca/images/shows/bodyjar-2027-06-05.jpg"
+    },
+    {
+      "band": "Bodyjar",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.bodyjar.com",
+      "genre": "Punk / Skate Punk",
+      "curated": "",
+      "image_source": "Official Canada 2027 tour poster (Merit-Based Booking)",
+      "date": "2027-06-06",
+      "time": "18:30",
+      "venue": "The WISE Hall",
+      "notes": "Canada 2027 tour, their first Canadian shows this century. Small room, expected to sell out. Merit-Based Booking presents. Tickets at bodyjar.com",
+      "image": "https://www.mikidrummer.ca/images/shows/bodyjar-2027-06-06.jpg"
     }
   ]
 }
