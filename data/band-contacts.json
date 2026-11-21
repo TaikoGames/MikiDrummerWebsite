@@ -669,6 +669,22 @@
       "instagram": "bloodlinestexas"
     },
     {
+      "band": "Bodyjar",
+      "checked": "2026-11-21",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://bodyjar.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Bound By None",
       "checked": "2026-09-13",
       "email": "dg1company@gmail.com",
@@ -2680,6 +2696,22 @@
         }
       ],
       "note": "",
+      "by": "auto"
+    },
+    {
+      "band": "Kingfisher Bluez Christmas Party - ALL AGES MATINEE",
+      "checked": "2026-11-21",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://kingfisherbluezchristmaspartyallagesmatinee.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
       "by": "auto"
     },
     {
