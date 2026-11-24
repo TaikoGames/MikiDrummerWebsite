@@ -3207,6 +3207,22 @@
       "by": "auto"
     },
     {
+      "band": "Metallica",
+      "checked": "2026-11-24",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://metallica.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "Microwave & Free Throw",
       "checked": "2026-09-27",
       "email": "",
