@@ -1,6 +1,35 @@
 {
   "_readme": "Shows found by tools/collect_shows.py, waiting for review at /shows-queue.html. Nothing in here is on the site. Approving a row moves it to punkbc-shows.json; turning one down records it in \"dismissed\" so the collector never offers it again.",
-  "pending": [],
+  "pending": [
+    {
+      "band": "STVW @ Fortune Sound Club (punk themed rave)",
+      "date": "2026-12-03",
+      "time": "",
+      "venue": "Fortune Sound Club",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://on.fortunesoundclub.com/trk/TzTqc",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-24"
+    },
+    {
+      "band": "KT Tunstall: 20th Anniversary \"Eye To the Telesope\" Tour",
+      "date": "2027-01-20",
+      "time": "19:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.ticketmaster.ca/kt-tunstall-20th-anniversary-eye-to-vancouver-british-columbia-01-20-2027/event/110065729E8A8614",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "commodore-ballroom",
+      "first_seen": "2026-11-24"
+    }
+  ],
   "dismissed": [
     {
       "band": "Morgan and Clay play acoustic guitar and sing songs for people playing pool downstairs at Wise Hall and Lounge",
@@ -49,7 +78,7 @@
     }
   ],
   "last_good": {
-    "vancouver-punk-calendar": 1146,
+    "vancouver-punk-calendar": 1148,
     "commodore-ballroom": 25
   },
   "updated": "2026-11-24"
