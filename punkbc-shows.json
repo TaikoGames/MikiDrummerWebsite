@@ -221,8 +221,9 @@
       "ticket": "https://www.ticketmaster.ca/kingfisher-bluez-christmas-party-all-ages-vancouver-british-columbia-12-13-2026/event/110065710F3FC107",
       "genre": "",
       "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "commodore-ballroom"
+      "image": "https://www.mikidrummer.ca/images/shows/kingfisher-bluez-christmas-party-all-ages-matinee-2026-12-13.jpg",
+      "source": "commodore-ballroom",
+      "image_source": "https://s1.ticketm.net/dam/a/b74/9442dd51-42b9-428e-998c-4695d321fb74_TABLET_LANDSCAPE_LARGE_16_9.jpg"
     },
     {
       "band": "Punk Market @ Vines Den",
@@ -876,8 +877,9 @@
       "ticket": "https://www.metallica.com/tour/2027-05-08-vancouver-british-columbia.html",
       "genre": "Heavy Metal / Thrash",
       "notes": "M72 World Tour, the only Canadian date of the 2027 North American leg and their first Vancouver show since 2017. With Limp Bizkit and Avatar.",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "curated": ""
+      "image": "https://www.mikidrummer.ca/images/shows/metallica-2027-05-08.jpg",
+      "curated": "",
+      "image_source": "Made for Punk BC: no picture of this show or band could be found."
     },
     {
       "band": "Authority Zero / Belvedere / Ratsalad",
