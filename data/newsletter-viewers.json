@@ -1,0 +1,11 @@
+{
+ "_readme": "Public keys of the devices allowed to read the newsletter subscriber list. Public keys can only lock, not unlock. See tools/newsletter_subs.py.",
+ "keys": [
+  {
+   "key_id": "133e39ede2aad980",
+   "label": "Android",
+   "added": "2026-11-24",
+   "spki": "MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAtNCa92V0Xr8qurM3plcJMAW93dgcgMLPB5U1P/cofSTN5BvMnLD3+t6gAj6udjk4v8CDXclLKzufeC85vuu2pAn6175GKfk6Z/dxbA32XrlR8Dgkix63T4KNP6zKcAhLvpnxEdyEy6CjEiFvjrtXoddqbqZSVJSmYpyHAt1rZT7YFpcK8b4ipMDjsM72rEDrmveEpUhSPy/sUyp0ZCSeI+DYISakCEnIOJ/5Pn3lRua046PQvIR3ZmQEeh/PNOKe+QXUhshJ/hWfeH3WhLTamzlVOyMSEcS+w35bB0ER/CydnUriPcqSitXt9sM/N113yctiNjAIDqWf7ZejuJvd7XrRKNuNu7WT/op89Uzklohhrap3zSr4fe8+52Y3klrDkcdJ4RhXbvO0AACLPebSDoeOBkuxmfqzKKm1Jp1MbOJhuaHWTajzspqbTXcuyJ1VSb5WkVWU+QXbIHjK+e6vOz2VoC2jh0O3sPCPqvDKaTPz0o8guLG8Kz7dH+Dz1tbzAgMBAAE="
+  }
+ ]
+}
