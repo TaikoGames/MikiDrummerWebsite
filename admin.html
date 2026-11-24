@@ -165,6 +165,17 @@
   .help ol{margin:8px 0 0 18px}
   .help li{margin:4px 0}
   .help code{background:rgba(0,0,0,.4);padding:1px 5px;border-radius:5px;font-size:12.5px}
+  .subs{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .subs .hd2{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .subs .hd2 b{font-size:15px}
+  .sublist{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sublist li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:9px 11px;border-radius:10px;
+              background:rgba(255,255,255,.03);border:1px solid var(--line)}
+  .sublist .em{font-weight:600;font-size:14px;overflow-wrap:anywhere}
+  .sublist .st{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;align-self:center}
+  .sublist .st.active{color:var(--ok)} .sublist .st.unsubscribed,.sublist .st.bounced,.sublist .st.junk{color:var(--err)}
+  .sublist .st.unconfirmed{color:#e7b53c}
+  .sublist .meta{grid-column:1/-1;font-size:12px;color:var(--muted)}
 
   /* sheet (confirm / connect) */
   .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;display:none;align-items:flex-end;justify-content:center}
@@ -337,6 +348,21 @@
               (mikidrummer.ca must be verified under MailerLite → Domains).</li>
           <li>Come back and press <b>Send newsletter</b>.</li>
         </ol>
+      </div>
+
+      <!-- Subscribers. The repo is public, so the list is stored encrypted and
+           only opens on a device set up here (see tools/newsletter_subs.py). -->
+      <div class="subs" id="subsBox">
+        <div class="hd2"><b>👥 Subscribers</b><span class="tag" id="subsTag">…</span></div>
+        <div class="row">
+          <button class="btn ghost" id="subsShow" type="button">Show subscribers</button>
+          <button class="btn ghost" id="subsRefresh" type="button" hidden>↻ Refresh from MailerLite</button>
+        </div>
+        <div class="msg" id="subsMsg"></div>
+        <ul class="sublist" id="subsList" hidden></ul>
+        <div class="row" id="subsTools" hidden>
+          <button class="btn ghost" id="subsCopy" type="button">Copy active emails</button>
+        </div>
       </div>
     </div>
 
@@ -1090,6 +1116,111 @@
   }
   $('nlSend').addEventListener('click', () => runNewsletter(true));
   $('nlDraft').addEventListener('click', () => runNewsletter(false));
+
+  // ------------------------------------------------------------------ subscribers
+  // The list lives in MailerLite. A GitHub job fetches it and commits it
+  // encrypted (data/newsletter-subs.enc.json), because anything in this public
+  // repo is readable by anyone. Each device makes its own key pair the first
+  // time: the private key stays in this browser, the public key is committed to
+  // data/newsletter-viewers.json so the job can lock the list for it.
+  const SUBS_FILE = 'data/newsletter-subs.enc.json', VIEWERS_FILE = 'data/newsletter-viewers.json';
+  const KEY_STORE = 'nl_viewer_key';
+  const RSA = { name:'RSA-OAEP', hash:'SHA-256' };
+  const nlBytes = b => Uint8Array.from(atob(b), c => c.charCodeAt(0));
+  const nlUnb64 = s => nlBytes(s.replace(/\s+/g, ''));
+  const nlTob64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+  let subsCache = [];
+
+  async function keyIdOf(spki){
+    const h = new Uint8Array(await crypto.subtle.digest('SHA-256', spki));
+    return Array.from(h.slice(0, 8), x => x.toString(16).padStart(2, '0')).join('');
+  }
+  async function myKey(){
+    const raw = store.get(KEY_STORE); if (!raw) return null;
+    try {
+      const k = JSON.parse(raw);
+      return { id:k.id, priv: await crypto.subtle.importKey('jwk', k.jwk, RSA, false, ['decrypt']) };
+    } catch (e) { return null; }
+  }
+  async function setUpDevice(){
+    const pair = await crypto.subtle.generateKey({ ...RSA, modulusLength:3072, publicExponent:new Uint8Array([1,0,1]) }, true, ['encrypt','decrypt']);
+    const spki = await crypto.subtle.exportKey('spki', pair.publicKey);
+    const id = await keyIdOf(spki);
+    const cur = await ghGet(VIEWERS_FILE);
+    const doc = cur ? JSON.parse(decodeURIComponent(escape(atob(cur.content.replace(/\s+/g, ''))))) : {
+      _readme: 'Public keys of the devices allowed to read the newsletter subscriber list. Public keys can only lock, not unlock. See tools/newsletter_subs.py.',
+      keys: [] };
+    const label = (navigator.userAgentData && navigator.userAgentData.platform) || (/iPhone|iPad|Android|Mac|Windows|Linux/.exec(navigator.userAgent) || ['device'])[0];
+    doc.keys = (doc.keys || []).filter(k => k.key_id !== id);
+    doc.keys.push({ key_id:id, label, added: new Date().toISOString().slice(0, 10), spki: nlTob64(spki) });
+    await putFile(VIEWERS_FILE, b64(JSON.stringify(doc, null, 1) + '\n'), 'Newsletter: let a new admin device read the subscriber list', cur && cur.sha);
+    store.set(KEY_STORE, JSON.stringify({ id, jwk: await crypto.subtle.exportKey('jwk', pair.privateKey) }));
+    return id;
+  }
+  async function readList(key){
+    const f = await ghGet(SUBS_FILE);
+    if (!f) return { missing:true };
+    const doc = JSON.parse(atob(f.content.replace(/\s+/g, '')));
+    const lock = (doc.locks || []).find(l => l.key_id === key.id);
+    if (!lock) return { doc, locked:true };
+    const aesRaw = await crypto.subtle.decrypt(RSA, key.priv, nlUnb64(lock.key));
+    const aes = await crypto.subtle.importKey('raw', aesRaw, 'AES-GCM', false, ['decrypt']);
+    const plain = await crypto.subtle.decrypt({ name:'AES-GCM', iv: nlUnb64(doc.iv) }, aes, nlUnb64(doc.data));
+    return { doc, subs: JSON.parse(new TextDecoder().decode(plain)) };
+  }
+  const nlEsc = t => String(t || '').replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+  function renderSubs(doc, subs){
+    subsCache = subs;
+    const n = (doc.counts && doc.counts.active) || 0;
+    $('subsTag').textContent = n + ' active'; $('subsTag').className = 'tag ok';
+    const list = $('subsList');
+    list.innerHTML = subs.length ? subs.map(x => {
+      const when = x.status === 'unsubscribed' && x.unsubscribed ? 'left ' + day(x.unsubscribed.replace(' ', 'T'))
+                 : x.subscribed ? 'joined ' + day(x.subscribed.replace(' ', 'T')) : '';
+      return '<li><span class="em">' + nlEsc(x.email) + '</span><span class="st ' + nlEsc(x.status) + '">' + nlEsc(x.status) + '</span>'
+           + '<span class="meta">' + nlEsc([x.name, when, x.source && 'via ' + x.source].filter(Boolean).join(' · ')) + '</span></li>';
+    }).join('') : '<li><span class="meta">Nobody on the list yet.</span></li>';
+    list.hidden = false; $('subsTools').hidden = !subs.length;
+    $('subsRefresh').hidden = false; $('subsShow').hidden = true;
+    msg($('subsMsg'), 'As of ' + day(doc.updated) + ' ' + doc.updated.slice(11, 16) + ' UTC.');
+  }
+  async function refreshSubs(){
+    const el = $('subsMsg');
+    msg(el, 'Asking MailerLite for the list… (about a minute)');
+    const run = await startJob('newsletter-subs.yml', {});
+    const done = await waitJob(run, r => msg(el, r.status === 'queued' ? 'Waiting for GitHub to start the job…' : 'Fetching the list from MailerLite…'));
+    if (done.conclusion !== 'success') {
+      const st = await failedStep(done);
+      throw new Error('The job stopped' + (st ? ' at “' + st + '”' : '') + '. If it says the MailerLite key is missing, add MAILERLITE_API_KEY (steps above). Details: ' + done.html_url);
+    }
+  }
+  async function showSubs(forceRefresh){
+    const el = $('subsMsg'); if (needToken(el)) return;
+    if (!window.crypto || !crypto.subtle) { msg(el, 'This browser can’t unlock the list (needs a secure page and a modern browser).', 'err'); return; }
+    $('subsShow').disabled = $('subsRefresh').disabled = true;
+    try {
+      let key = await myKey();
+      if (!key) { msg(el, 'Setting up this device to read the list…'); await setUpDevice(); key = await myKey(); forceRefresh = true; }
+      let got = forceRefresh ? null : await readList(key);
+      if (forceRefresh || got.missing || got.locked) { await refreshSubs(); got = await readList(key); }
+      if (got.missing) throw new Error('The job ran but no list was saved. Try Refresh again.');
+      if (got.locked) throw new Error('The list isn’t locked for this device yet. Press Refresh in a moment.');
+      renderSubs(got.doc, got.subs);
+    } catch (e) { msg(el, e.message, 'err'); }
+    $('subsShow').disabled = $('subsRefresh').disabled = false;
+  }
+  $('subsShow').addEventListener('click', () => showSubs(false));
+  $('subsRefresh').addEventListener('click', () => showSubs(true));
+  $('subsCopy').addEventListener('click', async () => {
+    const emails = subsCache.filter(x => x.status === 'active').map(x => x.email).join('\n');
+    try { await navigator.clipboard.writeText(emails); toast('Copied ' + emails.split('\n').filter(Boolean).length + ' emails', 'ok'); }
+    catch (e) { msg($('subsMsg'), 'Couldn’t copy — your browser blocked the clipboard.', 'err'); }
+  });
+  // The count is public (no addresses), so show it without unlocking anything.
+  fetch(SUBS_FILE + '?_=' + Date.now()).then(r => r.ok ? r.json() : null).then(d => {
+    if (!d) { $('subsTag').textContent = 'not loaded yet'; return; }
+    $('subsTag').textContent = ((d.counts && d.counts.active) || 0) + ' active'; $('subsTag').className = 'tag ok';
+  }).catch(() => { $('subsTag').textContent = '—'; });
 })();
 </script>
 <script src="/js/seasonal.js"></script>
