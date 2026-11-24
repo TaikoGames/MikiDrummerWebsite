@@ -164,6 +164,10 @@ ART_SOURCES = {
     # Finnish black metal: their album on KVLT, their label's Bandcamp.
     "beherit": ["https://kvltfinland.bandcamp.com/album/bardo-exist",
                 "https://en.wikipedia.org/wiki/Beherit"],
+    # metallica.com answers 403 to the art job; BC Place's own event page for
+    # the night carries the tour poster. Wikipedia's band photo as a fallback.
+    "metallica@2027-05-08": ["https://www.bcplace.com/?event=metallica2027",
+                             "https://en.wikipedia.org/wiki/Metallica"],
     # X-Mas in Skaville has no art of its own anywhere, and one band's photo
     # on a many-band night would be wrong. It keeps the placeholder.
 }
