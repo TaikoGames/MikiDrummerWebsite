@@ -16,6 +16,34 @@
       "first_seen": "2026-11-24"
     },
     {
+      "band": "Retro Winter Fest 4 - Night 1 w/ The Greatest Son's, Quit It! Selfist, Earmarked",
+      "date": "2027-01-08",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/retro-winter-fest-4-celebratin/29136036206018138/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-25"
+    },
+    {
+      "band": "Retro Winter Fest 4 - Night 2 w/ Shame Banger, Frank Love, Dead Streets, Speed Leopard",
+      "date": "2027-01-09",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/retro-winter-fest-4-celebratin/29136036206018138/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-25"
+    },
+    {
       "band": "KT Tunstall: 20th Anniversary \"Eye To the Telesope\" Tour",
       "date": "2027-01-20",
       "time": "19:00",
@@ -78,8 +106,8 @@
     }
   ],
   "last_good": {
-    "vancouver-punk-calendar": 1148,
+    "vancouver-punk-calendar": 1151,
     "commodore-ballroom": 25
   },
-  "updated": "2026-11-24"
+  "updated": "2026-11-25"
 }
