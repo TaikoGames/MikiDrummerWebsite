@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>GRANITE sender setup</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<style>
+  :root{--bg:#111214;--panel:#1b1d20;--ink:#eceae6;--muted:#9aa0a7;--line:#2e3136;--hot:#e8562a;--hotInk:#160803;--ok:#5fd394}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;
+       padding:28px max(5vw,16px,env(safe-area-inset-right,0px)) 56px max(5vw,16px,env(safe-area-inset-left,0px))}
+  .wrap{max-width:640px;margin:0 auto}
+  h1{font:900 36px/1.05 "Arial Black",Impact,sans-serif;margin:0 0 6px;letter-spacing:-.02em}
+  p{color:var(--muted);margin:0 0 18px}
+  ol{margin:0;padding:0;list-style:none;counter-reset:s;display:grid;gap:12px}
+  li{counter-increment:s;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 14px 14px 54px;position:relative}
+  li::before{content:counter(s);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--hot);color:var(--hotInk);font-weight:800;display:grid;place-items:center}
+  li b{color:var(--ink)} li span{color:var(--muted);font-size:14px;display:block}
+  a{color:var(--hot)}
+  .btn{display:inline-block;margin-top:10px;font:700 16px Inter,system-ui,sans-serif;border:0;border-radius:10px;padding:12px 16px;background:var(--hot);color:var(--hotInk);cursor:pointer;text-decoration:none}
+  .ok{color:var(--ok);font-size:14px;margin-left:8px}
+  code{background:#000;padding:1px 6px;border-radius:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Turn on real sending</h1>
+  <p>One time, about 3 minutes, from the Gmail account the pitches should come from. After this, the band's pitch page sends for real.</p>
+  <ol>
+    <li><b>Copy the script.</b> It comes with a new band password made just now.
+      <button class="btn" id="copy" type="button">Copy the script</button><span class="ok" id="copied" hidden>Copied ✓</span>
+      <span id="pwBox" hidden>Band password: <b id="pw"></b>. Give this to the guys; the pitch page asks for it once.</span></li>
+    <li><b>Open a new Google script</b> while signed in to that Gmail:
+      <a class="btn" href="https://script.new" target="_blank" rel="noopener">Open script.new ↗</a>
+      <span>Select everything in the editor, paste over it, and press the save icon. Name it "GRANITE pitch sender".</span></li>
+    <li><b>Deploy it.</b> Top right: <b>Deploy → New deployment</b>. Click the gear, choose <b>Web app</b>.
+      Set <b>Execute as: Me</b> and <b>Who has access: Anyone</b>, then <b>Deploy</b>.</li>
+    <li><b>Allow it.</b> Google asks for permission to send email as you. Click <b>Authorize access</b>, pick your account, then
+      <b>Advanced → Go to GRANITE pitch sender</b> → <b>Allow</b>. <span>Google shows this warning for any script you write yourself.</span></li>
+    <li><b>Send Claude the Web app URL</b> it shows (it starts with <code>https://script.google.com/macros/s/</code>). That's it: the band page starts sending.</li>
+  </ol>
+</div>
+<script>
+  document.getElementById('copy').addEventListener('click', async () => {
+    try {
+      const words = ['riff','amp','stage','drum','crowd','stone','fuzz','snare','loud','tour','pit','volt'];
+      const r = new Uint32Array(3); crypto.getRandomValues(r);
+      const pw = words[r[0] % words.length] + '-' + words[r[1] % words.length] + '-' + (1000 + r[2] % 9000);
+      const code = (await (await fetch('/tools/granite-sender.gs', { cache: 'no-store' })).text())
+        .replace("'__SET_BY_SETUP_PAGE__'", JSON.stringify(pw).replace(/"/g, "'"));
+      await navigator.clipboard.writeText(code);
+      document.getElementById('pw').textContent = pw;
+      document.getElementById('pwBox').hidden = false;
+      document.getElementById('copied').hidden = false;
+    } catch (e) { alert('Copy failed; try again in Chrome or Safari.'); }
+  });
+</script>
+</body>
+</html>
