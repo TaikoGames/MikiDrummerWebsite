@@ -2747,6 +2747,22 @@
       "by": "auto"
     },
     {
+      "band": "KT Tunstall: 20th Anniversary \"Eye To the Telesope\" Tour",
+      "checked": "2026-11-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://kttunstall20thanniversaryeyetothetelesopetour.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
       "band": "L.A. Witch",
       "checked": "2026-09-28",
       "email": "",
@@ -4445,6 +4461,22 @@
         {
           "name": "Bandcamp",
           "url": "https://strangelovethedepechemodeexperience.bandcamp.com/",
+          "found": "form"
+        }
+      ],
+      "note": "Found automatically; no address published.",
+      "by": "auto"
+    },
+    {
+      "band": "STVW @ Fortune Sound Club (punk themed rave)",
+      "checked": "2026-11-26",
+      "email": "",
+      "email_source": "",
+      "instagram": "",
+      "profiles": [
+        {
+          "name": "Bandcamp",
+          "url": "https://stvwfortunesoundclubpunkthemedrave.bandcamp.com/",
           "found": "form"
         }
       ],
