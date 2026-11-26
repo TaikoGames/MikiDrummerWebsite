@@ -147,12 +147,41 @@ def find_contact(site: str, fetch=get) -> tuple[str | None, str, list[str]]:
     return sorted(found, key=lambda e: score(e, host))[0], name, looked
 
 
-def compose(to: str, venue: str, writer: str, note: str, sender: str) -> EmailMessage:
+FREE_MAIL = ("gmail.", "googlemail.", "hotmail.", "outlook.", "live.", "msn.", "yahoo.", "icloud.",
+             "me.com", "mac.com", "aol.", "proton", "shaw.ca", "telus.net", "rogers.com", "gmx.")
+
+
+def pasted_email(raw: str) -> str | None:
+    """An address in whatever was pasted: "a@b.com", "mailto:a@b.com?subject=..",
+    "Booking <a@b.com>". None when it is a website instead."""
+    raw = raw.strip()
+    if "@" not in raw or re.match(r"https?://", raw, re.I):
+        return None
+    m = EMAIL.search(raw.replace("mailto:", " "))
+    return m.group(0).strip(".").lower() if m else None
+
+
+def venue_for_email(email: str, fetch=get) -> str | None:
+    """A name to greet: the venue's own site title when the address is on its
+    own domain; None for personal mail (gmail and the like), so the pitch
+    doesn't say "Hi Gmail team"."""
+    domain = email.split("@", 1)[1]
+    if any(f in domain for f in FREE_MAIL):
+        return None
+    try:
+        return site_name(fetch("https://" + domain), "https://" + domain)
+    except Exception:
+        return domain.split(".")[0].replace("-", " ").title()
+
+
+def compose(to: str, venue: str | None, writer: str, note: str, sender: str) -> EmailMessage:
     first = writer.strip().split()[0] if writer.strip() else "GRANITE"
     note_line = f"\n{note.strip()}\n" if note.strip() else ""
-    text = f"""Hi {venue} team,
+    hello = f"Hi {venue} team," if venue else "Hi there,"
+    play = venue or "your room"
+    text = f"""{hello}
 
-I'm {first} from GRANITE, a metal and grunge band from Vancouver. Downtuned riffs, raw vocals, and a loud, sweaty live show. We'd love to play {venue}.
+I'm {first} from GRANITE, a metal and grunge band from Vancouver. Downtuned riffs, raw vocals, and a loud, sweaty live show. We'd love to play {play}.
 {note_line}
 Everything a booker needs is in our press kit, with photos, music, our bio and a live video:
 {EPK}
@@ -167,7 +196,7 @@ Thanks,
 GRANITE
 """
     msg = EmailMessage()
-    msg["Subject"] = f"GRANITE (Vancouver metal/grunge): booking enquiry for {venue}"
+    msg["Subject"] = "GRANITE (Vancouver metal/grunge): booking enquiry" + (f" for {venue}" if venue else "")
     msg["From"] = formataddr((f"{first} from GRANITE", sender))
     msg["To"] = to
     msg["Reply-To"] = sender
@@ -206,9 +235,10 @@ def main() -> int:
         raise SystemExit("Need the website and who's writing.")
 
     raw = a.site.strip()
-    if EMAIL.fullmatch(raw.removeprefix("mailto:")):
-        to, venue = raw.removeprefix("mailto:").lower(), raw.split("@")[1].split(".")[0].title()
-        print(f"Using the address you gave: {to}")
+    if pasted_email(raw):
+        to = pasted_email(raw)
+        venue = venue_for_email(to)
+        print(f"Using the address you gave: {to}" + (f" ({venue})" if venue else ""))
     else:
         try:
             to, venue, looked = find_contact(raw)
@@ -238,12 +268,12 @@ def main() -> int:
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=30) as s:
         s.login(sender, password)
         s.send_message(msg)
-    log["sent"].append({"at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "to": to, "venue": venue,
+    log["sent"].append({"at": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "to": to, "venue": venue or to,
                         "site": raw, "writer": a.writer.strip()})
     LOG.write_text(json.dumps(log, indent=1, ensure_ascii=False) + "\n")
     print(f"Sent to {to} for {venue}, signed {a.writer.strip()}.")
     if os.environ.get("GITHUB_ACTIONS"):
-        print(f"::notice title=sent::Sent to {to} ({venue})")
+        print(f"::notice title=sent::Sent to {to}" + (f" ({venue})" if venue else ""))
     return 0
 
 
@@ -275,6 +305,18 @@ def self_test() -> int:
     checks.append(("pitch is signed and personal", "I'm Miki from GRANITE" in body and "Miki Drummer\nGRANITE" in body
                    and "Hi Venue team" in body and "Friday in March" in body and EPK in body))
     checks.append(("replies go to the sender", msg["Reply-To"] == "me@example.test"))
+
+    checks.append(("email pasted plain", pasted_email(" Booking@Venue.test ") == "booking@venue.test"))
+    checks.append(("email from mailto link", pasted_email("mailto:booking@venue.test?subject=Hi") == "booking@venue.test"))
+    checks.append(("email with a name", pasted_email("The Venue <talent@venue.test>") == "talent@venue.test"))
+    checks.append(("a website is not an email", pasted_email("https://venue.test/contact") is None and pasted_email("venue.test") is None))
+    checks.append(("venue name from the address's own site",
+                   venue_for_email("talent@venue.test", fetch=lambda u: "<title>The Venue | Home</title>") == "The Venue"))
+    checks.append(("no 'Hi Gmail team'", venue_for_email("someone@gmail.com", fetch=lambda u: 1 / 0) is None))
+    plain = compose("someone@gmail.com", None, "Miki", "", "me@example.test")
+    checks.append(("personal address gets a plain greeting",
+                   plain.get_content().startswith("Hi there,") and "play your room" in plain.get_content()
+                   and plain["Subject"].endswith("booking enquiry")))
 
     now = datetime(2026, 11, 26, tzinfo=timezone.utc)
     log = {"sent": [{"at": "2026-11-01T00:00:00Z", "to": "talent@venue.test", "writer": "Miki"}]}

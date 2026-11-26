@@ -50,12 +50,12 @@
 <div class="wrap">
   <div class="top"><span class="eyebrow">GRANITE · Booking</span><a class="back" href="/admin.html">← Admin</a></div>
   <h1>Pitch GRANITE</h1>
-  <p class="lead">Paste a venue or promoter's website. It finds their booking email and sends them our press kit, signed by you.</p>
+  <p class="lead">Paste a venue or promoter's website or their email. With a website, it finds their booking email for you. Either way it sends them our press kit, signed by you.</p>
 
   <form id="f" novalidate>
     <div>
-      <label for="site">Their website</label>
-      <input id="site" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="thecobalt.ca">
+      <label for="site">Their website or email</label>
+      <input id="site" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="thecobalt.ca  or  booking@venue.com">
     </div>
     <div>
       <label for="writer">Who's writing</label>
@@ -141,7 +141,7 @@
 
   async function send(again){
     const site = $('site').value.trim(), writer = $('writer').value.trim(), note = $('note').value.trim();
-    if (!site) { status('Paste their website first.', 'err'); $('site').focus(); return; }
+    if (!site) { status('Paste their website or email first.', 'err'); $('site').focus(); return; }
     if (!writer) { status('Say who’s writing.', 'err'); $('writer').focus(); return; }
     if (!token()) { status('Connect GitHub in Admin first.', 'err'); return; }
     store.set('granite_writer', writer);
