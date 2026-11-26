@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Pitch GRANITE</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/images/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&display=swap">
+<style>
+  /* For the band: anyone with the link writes a booking pitch and sends it
+     from their own email. No account, nothing to set up. */
+  :root{--bg:#111214;--panel:#1b1d20;--paper:#f4f1ea;--ink:#eceae6;--paperInk:#1a1a1c;--muted:#9aa0a7;--line:#2e3136;--hot:#e8562a;--hotInk:#160803;--ok:#5fd394;--bad:#ff8a80}
+  *{box-sizing:border-box;min-width:0}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip;
+       padding:28px max(5vw,16px,env(safe-area-inset-right,0px)) 56px max(5vw,16px,env(safe-area-inset-left,0px))}
+  .wrap{max-width:1100px;margin:0 auto}
+  h1{font:400 clamp(36px,6vw,52px)/1.02 "Archivo Black",Impact,sans-serif;letter-spacing:-.02em;margin:0}
+  .sub{color:var(--muted);margin:8px 0 0;max-width:62ch}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:24px;margin-top:24px;align-items:start}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+  form{display:grid;gap:16px}
+  label{display:block;font-weight:700;margin-bottom:6px}
+  label small{font-weight:400;color:var(--muted)}
+  input,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
+  textarea{min-height:84px;resize:vertical}
+  input:focus,textarea:focus{outline:2px solid var(--hot);outline-offset:1px}
+  .hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+  .hint a{color:inherit}
+  .btns{display:grid;gap:10px}
+  .btn{display:block;text-align:center;text-decoration:none;font:700 17px/1.2 Inter,system-ui,sans-serif;border-radius:12px;padding:15px;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+  .btn.primary{background:var(--hot);border-color:var(--hot);color:var(--hotInk)}
+  .btn[aria-disabled=true]{opacity:.5;pointer-events:none}
+  .status{border-radius:10px;padding:12px 13px;border:1px solid var(--line);font-size:15px}
+  .status.ok{border-color:var(--ok);color:var(--ok)}.status.bad{border-color:var(--bad);color:var(--bad)}
+  .letter{background:var(--paper);color:var(--paperInk);border-radius:6px;padding:22px 22px 26px;box-shadow:0 12px 28px -18px #000a;position:relative}
+  .letter::before{content:"";position:absolute;top:-7px;left:50%;width:56px;height:14px;margin-left:-28px;background:#c9c3b6;border-radius:2px}
+  .hdr{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 10px;font-size:14px;border-bottom:1px solid #d9d4c8;padding-bottom:12px;margin:0 0 14px}
+  .hdr dt{color:#6a6a66}.hdr dd{margin:0;overflow-wrap:anywhere;font-weight:600}
+  .body{white-space:pre-wrap;font:15px/1.6 Inter,system-ui,sans-serif;overflow-wrap:anywhere;margin:0}
+  .cap{font-size:13px;color:var(--muted);margin:10px 2px 0}
+  @media(max-width:760px){.grid{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Pitch GRANITE</h1>
+  <p class="sub">Paste a venue or promoter's email, say who's writing, then open it in your email and hit Send. The pitch, the press kit PDF and our links are all written for you.</p>
+
+  <div class="grid">
+    <div class="panel">
+      <form id="f" novalidate>
+        <div>
+          <label for="to">Their email</label>
+          <input id="to" type="email" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="booking@thecobalt.ca">
+        </div>
+        <div>
+          <label for="writer">Who's writing</label>
+          <input id="writer" autocomplete="name" placeholder="Your name">
+        </div>
+        <div>
+          <label for="venue">Venue name <small>(optional, for the greeting)</small></label>
+          <input id="venue" autocomplete="off" placeholder="The Cobalt">
+        </div>
+        <div>
+          <label for="note">Anything to add <small>(optional)</small></label>
+          <textarea id="note" maxlength="500" placeholder="We'd love a Friday in March."></textarea>
+        </div>
+        <div class="btns">
+          <a class="btn primary" id="gmail" href="#" target="_blank" rel="noopener">Open in Gmail</a>
+          <a class="btn" id="mail" href="#">Open in my email app</a>
+          <button class="btn" id="copy" type="button">Copy the email</button>
+        </div>
+        <div class="status" id="st" hidden role="status" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <div>
+      <article class="letter" aria-label="The email as it will look">
+        <dl class="hdr"><dt>To</dt><dd id="pTo">their email</dd><dt>Subject</dt><dd id="pSub"></dd></dl>
+        <pre class="body" id="pBody"></pre>
+      </article>
+      <p class="cap">This is exactly what they'll get. It sends from your own email, so replies come to you.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const EPK = "https://www.mikidrummer.ca/granite-epk.html";
+  const KIT_PDF = "https://www.mikidrummer.ca/files/granite-press-kit.pdf";
+  const VIDEO = "https://www.youtube.com/watch?v=Qovij1CQUV4";
+  const IG = "https://www.instagram.com/granitevancouver/";
+  const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
+  const store = { get(k){ try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } },
+                  set(k, v){ try { localStorage.setItem(k, v); } catch (e) {} } };
+  $("writer").value = store.get("granite_writer");
+
+  const emailOf = raw => { const m = String(raw || "").replace(/mailto:/i, " ").match(EMAIL); return m ? m[0].replace(/\.$/, "").toLowerCase() : ""; };
+  function letter(){
+    const writer = $("writer").value.trim(), first = writer.split(/\s+/)[0] || "GRANITE";
+    const venue = $("venue").value.trim(), note = $("note").value.trim();
+    const subject = "GRANITE (Vancouver metal/grunge): booking enquiry" + (venue ? " for " + venue : "");
+    const body = (venue ? "Hi " + venue + " team," : "Hi there,") + "\n\n" +
+      "I'm " + first + " from GRANITE, a metal and grunge band from Vancouver. Downtuned riffs, raw vocals, and a loud, sweaty live show. We'd love to play " + (venue || "your room") + ".\n" +
+      (note ? "\n" + note + "\n" : "") +
+      "\nOur press kit (PDF, with our bio, press photos and artwork):\n" + KIT_PDF + "\n\n" +
+      "Music, photos and everything else are on our press page:\n" + EPK + "\n\n" +
+      "Live video: " + VIDEO + "\nInstagram: " + IG + "\n\n" +
+      "If there's a night that could fit us, just reply to this email. Happy to share draw numbers, a stage plot, or anything else you need.\n\n" +
+      "Thanks,\n" + (writer || first) + "\nGRANITE\n";
+    return { to: emailOf($("to").value), subject, body, writer };
+  }
+  function render(){
+    const l = letter();
+    $("pTo").textContent = l.to || "their email";
+    $("pSub").textContent = l.subject;
+    $("pBody").textContent = l.body;
+    const q = encodeURIComponent;
+    $("gmail").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + q(l.to) + "&su=" + q(l.subject) + "&body=" + q(l.body);
+    $("mail").href = "mailto:" + l.to + "?subject=" + q(l.subject) + "&body=" + q(l.body);
+    if (l.writer) store.set("granite_writer", l.writer);
+  }
+  ["to","writer","venue","note"].forEach(id => $(id).addEventListener("input", render));
+  render();
+
+  function status(text, kind){ const s = $("st"); s.hidden = false; s.className = "status " + (kind || ""); s.textContent = text; }
+  function check(e){
+    const l = letter();
+    if (!l.to) { e.preventDefault(); status("Paste their email address first.", "bad"); $("to").focus(); return; }
+    if (!l.writer) { e.preventDefault(); status("Say who's writing.", "bad"); $("writer").focus(); return; }
+    status("Opened in your email. Check it and hit Send there.", "ok");
+  }
+  $("gmail").addEventListener("click", check);
+  $("mail").addEventListener("click", check);
+  $("copy").addEventListener("click", async () => {
+    const l = letter();
+    try { await navigator.clipboard.writeText("To: " + (l.to || "") + "\nSubject: " + l.subject + "\n\n" + l.body); status("Copied. Paste it into any email.", "ok"); }
+    catch (e) { status("Couldn't copy. Select the text on the right instead.", "bad"); }
+  });
+  $("f").addEventListener("submit", e => e.preventDefault());
+})();
+</script>
+</body>
+</html>
