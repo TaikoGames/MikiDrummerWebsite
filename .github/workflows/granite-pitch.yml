@@ -1,0 +1,79 @@
+name: Granite booking pitch
+
+# Started from granite-send.html: finds the booking email on the website that
+# was pasted and sends a pitch for GRANITE from the Gmail account in the
+# secrets. See tools/granite_pitch.py.
+#
+# Needs two repository secrets:
+#   GMAIL_ADDRESS       the Gmail account that sends (replies come back here)
+#   GMAIL_APP_PASSWORD  an app password for that account (Google Account ->
+#                       Security -> App passwords; needs 2-Step Verification)
+
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: "Their website (or their email address)"
+        required: true
+      writer:
+        description: "Who's writing"
+        required: true
+      note:
+        description: "Anything to add (optional)"
+        required: false
+        default: ""
+      again:
+        description: "Type AGAIN to send even if they were pitched in the last 60 days"
+        required: false
+        default: ""
+      dry_run:
+        description: "Type DRY to find the email and write the pitch without sending"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: granite-pitch
+  cancel-in-progress: false
+
+jobs:
+  pitch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Self-test
+        run: python3 tools/granite_pitch.py --self-test
+
+      # Inputs go in through env, never pasted into the script, so nothing
+      # typed into the page can run as a command here.
+      - name: Find their email and send
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          SITE: ${{ inputs.site }}
+          WRITER: ${{ inputs.writer }}
+          NOTE: ${{ inputs.note }}
+          AGAIN: ${{ inputs.again }}
+          DRY: ${{ inputs.dry_run }}
+        run: |
+          args=(--site "$SITE" --writer "$WRITER" --note "$NOTE")
+          [ "$AGAIN" = "AGAIN" ] && args+=(--again)
+          [ "$DRY" = "DRY" ] && args+=(--dry-run)
+          python3 tools/granite_pitch.py "${args[@]}"
+
+      - name: Record it
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/granite-pitches.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Granite: booking pitch sent"
+          for i in 1 2 3; do
+            git pull --rebase -q origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep $((i * 5))
+          done
+          echo "::warning::The email went out but the sent log could not be saved."
