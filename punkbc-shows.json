@@ -2,20 +2,6 @@
   "_comment": "Source of truth for the Punk BC shows board. Edited by hand or by the weekly refresh. Run tools/build_punkbc.py after changing this to regenerate the static cards, MusicEvent JSON-LD, and sitemap lastmod in punkbc.html. The live page also merges newer rows from the Google Sheet at runtime.",
   "shows": [
     {
-      "band": "Babe Haven",
-      "date": "2026-11-25",
-      "time": "19:00",
-      "venue": "Fox Cabaret",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.ticketweb.ca/event/babe-haven-the-fox-cabaret-tickets/14940993",
-      "genre": "Punk / Hardcore",
-      "notes": "West Coast 2026. With Spaced and Scarlet Demore. MODO Live and The Plant present. 19+",
-      "image": "https://www.mikidrummer.ca/images/shows/babe-haven-2026-11-25.jpg",
-      "curated": "",
-      "image_source": "https://f4.bcbits.com/img/a1114099664_5.jpg"
-    },
-    {
       "band": "Anchoress",
       "date": "2026-11-27",
       "time": "",
@@ -100,6 +86,19 @@
       "image_source": "Made for Punk BC: no picture of this show or band could be found."
     },
     {
+      "band": "STVW @ Fortune Sound Club (punk themed rave)",
+      "date": "2026-12-03",
+      "time": "",
+      "venue": "Fortune Sound Club",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://on.fortunesoundclub.com/trk/TzTqc",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar"
+    },
+    {
       "band": "The Meteors",
       "date": "2026-12-03",
       "time": "19:00",
@@ -126,19 +125,6 @@
       "image": "https://www.mikidrummer.ca/images/shows/protest-the-hero-2026-12-03.jpg",
       "curated": "",
       "image_source": "https://en.wikipedia.org/wiki/Special:FilePath/ProtestAtSOMF.jpg?width=600"
-    },
-    {
-      "band": "STVW @ Fortune Sound Club (punk themed rave)",
-      "date": "2026-12-03",
-      "time": "",
-      "venue": "Fortune Sound Club",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://on.fortunesoundclub.com/trk/TzTqc",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "vancouver-punk-calendar"
     },
     {
       "band": "1876",
@@ -379,6 +365,19 @@
       "image_source": "https://s1.ticketm.net/dam/a/373/ff0e983f-3eba-4afa-8f94-76c9cf88f373_TABLET_LANDSCAPE_LARGE_16_9.jpg"
     },
     {
+      "band": "Retro Winter Fest 4 - Night 1 w/ The Greatest Son's, Quit It! Selfist, Earmarked",
+      "date": "2027-01-08",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/retro-winter-fest-4-celebratin/29136036206018138/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar"
+    },
+    {
       "band": "SuperSonic - North America's Tribute To OASIS",
       "date": "2027-01-08",
       "time": "19:00",
@@ -393,8 +392,8 @@
       "image_source": "https://s1.ticketm.net/dam/a/fa1/ab7742d7-c91c-4e3c-9faa-cf9123ddffa1_TABLET_LANDSCAPE_LARGE_16_9.jpg"
     },
     {
-      "band": "Retro Winter Fest 4 - Night 1 w/ The Greatest Son's, Quit It! Selfist, Earmarked",
-      "date": "2027-01-08",
+      "band": "Retro Winter Fest 4 - Night 2 w/ Shame Banger, Frank Love, Dead Streets, Speed Leopard",
+      "date": "2027-01-09",
       "time": "",
       "venue": "Red Gate Arts Society",
       "city": "Vancouver",
@@ -418,19 +417,6 @@
       "image": "https://www.mikidrummer.ca/images/shows/nghtmre-2027-01-09.jpg",
       "source": "commodore-ballroom",
       "image_source": "https://s1.ticketm.net/dam/a/501/e2203f20-2e27-41fb-8fc9-c9b230fd3501_1771001_TABLET_LANDSCAPE_LARGE_16_9.jpg"
-    },
-    {
-      "band": "Retro Winter Fest 4 - Night 2 w/ Shame Banger, Frank Love, Dead Streets, Speed Leopard",
-      "date": "2027-01-09",
-      "time": "",
-      "venue": "Red Gate Arts Society",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/retro-winter-fest-4-celebratin/29136036206018138/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "vancouver-punk-calendar"
     },
     {
       "band": "Wolves in the Throne Room",
