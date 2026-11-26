@@ -1,63 +1,6 @@
 {
   "_readme": "Shows found by tools/collect_shows.py, waiting for review at /shows-queue.html. Nothing in here is on the site. Approving a row moves it to punkbc-shows.json; turning one down records it in \"dismissed\" so the collector never offers it again.",
-  "pending": [
-    {
-      "band": "STVW @ Fortune Sound Club (punk themed rave)",
-      "date": "2026-12-03",
-      "time": "",
-      "venue": "Fortune Sound Club",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://on.fortunesoundclub.com/trk/TzTqc",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "vancouver-punk-calendar",
-      "first_seen": "2026-11-24"
-    },
-    {
-      "band": "Retro Winter Fest 4 - Night 1 w/ The Greatest Son's, Quit It! Selfist, Earmarked",
-      "date": "2027-01-08",
-      "time": "",
-      "venue": "Red Gate Arts Society",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/retro-winter-fest-4-celebratin/29136036206018138/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "vancouver-punk-calendar",
-      "first_seen": "2026-11-25"
-    },
-    {
-      "band": "Retro Winter Fest 4 - Night 2 w/ Shame Banger, Frank Love, Dead Streets, Speed Leopard",
-      "date": "2027-01-09",
-      "time": "",
-      "venue": "Red Gate Arts Society",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://facebook.com/events/s/retro-winter-fest-4-celebratin/29136036206018138/",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "vancouver-punk-calendar",
-      "first_seen": "2026-11-25"
-    },
-    {
-      "band": "KT Tunstall: 20th Anniversary \"Eye To the Telesope\" Tour",
-      "date": "2027-01-20",
-      "time": "19:00",
-      "venue": "Commodore Ballroom",
-      "city": "Vancouver",
-      "price": "",
-      "ticket": "https://www.ticketmaster.ca/kt-tunstall-20th-anniversary-eye-to-vancouver-british-columbia-01-20-2027/event/110065729E8A8614",
-      "genre": "",
-      "notes": "",
-      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
-      "source": "commodore-ballroom",
-      "first_seen": "2026-11-24"
-    }
-  ],
+  "pending": [],
   "dismissed": [
     {
       "band": "Morgan and Clay play acoustic guitar and sing songs for people playing pool downstairs at Wise Hall and Lounge",
