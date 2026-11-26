@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Pitch GRANITE | Miki Drummer</title>
+<title>Find a venue email | GRANITE</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="/images/icon-180.png">
 <style>
@@ -49,30 +49,21 @@
 <body>
 <div class="wrap">
   <div class="top"><span class="eyebrow">GRANITE · Booking</span><a class="back" href="/admin.html">← Admin</a></div>
-  <h1>Pitch GRANITE</h1>
-  <p class="lead">Paste a venue or promoter's website or their email. With a website, it finds their booking email for you. Either way it sends them our press kit, signed by you.</p>
+  <h1>Find their email</h1>
+  <p class="lead">Paste a venue or promoter's website and it finds their booking email. Then paste that into the <a href="https://claude.ai/artifact/Jc7ebMD6VpDHnXue9Qrqs5" style="color:var(--accent)">GRANITE sender</a>, which sends the pitch from your Gmail.</p>
 
   <form id="f" novalidate>
     <div>
-      <label for="site">Their website or email</label>
-      <input id="site" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="thecobalt.ca  or  booking@venue.com">
+      <label for="site">Their website</label>
+      <input id="site" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="thecobalt.ca">
     </div>
-    <div>
-      <label for="writer">Who's writing</label>
-      <input id="writer" autocomplete="name" placeholder="Your name">
-    </div>
-    <div>
-      <label for="note">Anything to add <span>(optional)</span></label>
-      <textarea id="note" maxlength="400" placeholder="We'd love a Friday in March."></textarea>
-    </div>
-    <button class="go" id="go" type="submit">📨 Send for GRANITE</button>
+    <button class="go" id="go" type="submit">🔎 Find their email</button>
     <div class="status" id="st" hidden role="status" aria-live="polite"></div>
   </form>
 
   <div class="setup" id="setup" hidden></div>
 
-  <h2>Sent so far</h2>
-  <ul id="hist"><li><span>Loading…</span></li></ul>
+  
 </div>
 
 <script>
@@ -81,6 +72,7 @@
   const $ = id => document.getElementById(id);
   const API = 'https://api.github.com/repos/TaikoGames/MikiDrummerWebsite';
   const FLOW = 'granite-pitch.yml';
+  const SENDER = 'https://claude.ai/artifact/Jc7ebMD6VpDHnXue9Qrqs5';
   const store = { get(k){ try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
                   set(k, v){ try { localStorage.setItem(k, v); } catch (e) {} } };
   const token = () => store.get('gh_token');
@@ -91,7 +83,6 @@
 
   function status(html, kind){ const s = $('st'); s.hidden = false; s.className = 'status ' + (kind || 'work'); s.innerHTML = html; }
 
-  $('writer').value = store.get('granite_writer');
 
   if (!token()) {
     $('setup').hidden = false;
@@ -139,59 +130,38 @@
     } catch (e) { return []; }
   }
 
-  async function send(again){
-    const site = $('site').value.trim(), writer = $('writer').value.trim(), note = $('note').value.trim();
-    if (!site) { status('Paste their website or email first.', 'err'); $('site').focus(); return; }
-    if (!writer) { status('Say who’s writing.', 'err'); $('writer').focus(); return; }
+  async function find(){
+    const site = $('site').value.trim();
+    if (!site) { status('Paste their website first.', 'err'); $('site').focus(); return; }
     if (!token()) { status('Connect GitHub in Admin first.', 'err'); return; }
-    store.set('granite_writer', writer);
     $('go').disabled = true; $('setup').hidden = true;
     status('Starting…');
     try {
-      const done = await follow(await start({ site, writer, note, again: again ? 'AGAIN' : '' }));
+      const done = await follow(await start({ site, writer: 'lookup', note: '', again: '', dry_run: 'DRY' }));
       const ann = await notes(done);
-      const sent = ann.find(a => a.title === 'sent'), why = ann.find(a => a.title === 'why');
-      if (done.conclusion === 'success' && sent) {
-        status('✓ ' + esc(sent.message) + '. Replies will come to your Gmail.', 'ok');
-        $('site').value = ''; $('note').value = '';
-        setTimeout(loadHistory, 4000);
-      } else if (why && /Already pitched/.test(why.message)) {
-        status(esc(why.message) + '<br><button type="button" id="again">Send anyway</button>', 'err');
-        $('again').onclick = () => send(true);
-      } else if (why && /GMAIL_/.test(why.message)) {
-        status('Sending isn’t set up yet (one time only). Steps below.', 'err'); showSetup();
+      const found = ann.find(a => a.title === 'found'), why = ann.find(a => a.title === 'why');
+      if (found) {
+        const [email, venue] = found.message.split(' | ');
+        status('');
+        const st = $('st'); st.className = 'status ok';
+        st.innerHTML = 'Found: <b id="foundEmail"></b>' + (venue ? ' <span id="foundVenue"></span>' : '') +
+          '<br><button type="button" id="copyGo">Copy it and open the sender</button>';
+        $('foundEmail').textContent = email;
+        if (venue) $('foundVenue').textContent = '(' + venue + ')';
+        $('copyGo').onclick = async () => {
+          try { await navigator.clipboard.writeText(email); } catch (e) {}
+          location.href = SENDER;
+        };
       } else if (why) {
         status(esc(why.message), 'err');
       } else {
-        status('Something went wrong. <a href="' + esc(done.html_url) + '" target="_blank" rel="noopener">See what happened ↗</a>', 'err');
+        status('Couldn’t tell what happened. <a href="' + esc(done.html_url) + '" target="_blank" rel="noopener">See the details ↗</a>', 'err');
       }
     } catch (e) { status(esc(e.message), 'err'); }
     $('go').disabled = false;
   }
-  $('f').addEventListener('submit', e => { e.preventDefault(); send(false); });
+  $('f').addEventListener('submit', e => { e.preventDefault(); find(); });
 
-  function showSetup(){
-    $('setup').hidden = false;
-    $('setup').innerHTML = '<b>One-time setup: let the site send from your Gmail.</b><ol>' +
-      '<li>Make sure 2-Step Verification is on for your Google account.</li>' +
-      '<li>Open <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">Google App passwords ↗</a>, name it “GRANITE pitches”, and copy the 16-letter password.</li>' +
-      '<li>Open <a href="https://github.com/TaikoGames/MikiDrummerWebsite/settings/secrets/actions/new" target="_blank" rel="noopener">GitHub’s new-secret page ↗</a>: name <code>GMAIL_APP_PASSWORD</code>, paste the password, save.</li>' +
-      '<li>New secret again: name <code>GMAIL_ADDRESS</code>, value your Gmail address, save.</li>' +
-      '<li>Come back and press Send.</li></ol>';
-  }
-
-  async function loadHistory(){
-    try {
-      const r = await fetch('/data/granite-pitches.json?_=' + Date.now(), { cache:'no-store' });
-      const d = r.ok ? await r.json() : { sent: [] };
-      const rows = (d.sent || []).slice().reverse().slice(0, 25);
-      $('hist').innerHTML = rows.length ? rows.map(s =>
-        '<li><b>' + esc(s.venue) + '</b><span>' + esc(s.to) + ' · ' +
-        new Date(s.at).toLocaleDateString([], { month:'short', day:'numeric', year:'numeric' }) + ' · by ' + esc(s.writer) + '</span></li>'
-      ).join('') : '<li><span>Nothing sent yet.</span></li>';
-    } catch (e) { $('hist').innerHTML = '<li><span>Couldn’t load the list.</span></li>'; }
-  }
-  loadHistory();
 })();
 </script>
 </body>

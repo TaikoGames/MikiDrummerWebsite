@@ -253,7 +253,7 @@ def main() -> int:
     log = load_log()
     now = datetime.now(timezone.utc)
     prev = recently_pitched(log, to, now)
-    if prev and not a.again:
+    if prev and not a.again and not a.dry_run:
         raise SystemExit(f"Already pitched {to} on {prev['at'][:10]} (by {prev.get('writer', '?')}). "
                          f"Not sending again within {REPEAT_DAYS} days.")
 
@@ -262,6 +262,9 @@ def main() -> int:
     msg = compose(to, venue, a.writer, a.note, sender or "granite@example.invalid")
     if a.dry_run:
         print("--- dry run, not sent ---\n" + msg.get_content())
+        if os.environ.get("GITHUB_ACTIONS"):
+            # granite-send.html reads this to show the address it found
+            print(f"::notice title=found::{to}" + (f" | {venue}" if venue else ""))
         return 0
     if not sender or not password:
         raise SystemExit("GMAIL_ADDRESS / GMAIL_APP_PASSWORD secrets are not set.")
