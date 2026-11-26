@@ -128,6 +128,19 @@
       "image_source": "https://en.wikipedia.org/wiki/Special:FilePath/ProtestAtSOMF.jpg?width=600"
     },
     {
+      "band": "STVW @ Fortune Sound Club (punk themed rave)",
+      "date": "2026-12-03",
+      "time": "",
+      "venue": "Fortune Sound Club",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://on.fortunesoundclub.com/trk/TzTqc",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar"
+    },
+    {
       "band": "1876",
       "date": "2026-12-04",
       "time": "",
@@ -380,6 +393,19 @@
       "image_source": "https://s1.ticketm.net/dam/a/fa1/ab7742d7-c91c-4e3c-9faa-cf9123ddffa1_TABLET_LANDSCAPE_LARGE_16_9.jpg"
     },
     {
+      "band": "Retro Winter Fest 4 - Night 1 w/ The Greatest Son's, Quit It! Selfist, Earmarked",
+      "date": "2027-01-08",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/retro-winter-fest-4-celebratin/29136036206018138/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar"
+    },
+    {
       "band": "Nghtmre",
       "date": "2027-01-09",
       "time": "22:00",
@@ -392,6 +418,19 @@
       "image": "https://www.mikidrummer.ca/images/shows/nghtmre-2027-01-09.jpg",
       "source": "commodore-ballroom",
       "image_source": "https://s1.ticketm.net/dam/a/501/e2203f20-2e27-41fb-8fc9-c9b230fd3501_1771001_TABLET_LANDSCAPE_LARGE_16_9.jpg"
+    },
+    {
+      "band": "Retro Winter Fest 4 - Night 2 w/ Shame Banger, Frank Love, Dead Streets, Speed Leopard",
+      "date": "2027-01-09",
+      "time": "",
+      "venue": "Red Gate Arts Society",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/retro-winter-fest-4-celebratin/29136036206018138/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar"
     },
     {
       "band": "Wolves in the Throne Room",
@@ -462,6 +501,19 @@
       "image": "https://www.mikidrummer.ca/images/shows/3-inches-of-blood-2027-01-16.jpg",
       "curated": "",
       "image_source": "https://s1.ticketm.net/dam/a/380/c6de1b26-fb80-4fab-a1f2-490311e53380_TABLET_LANDSCAPE_LARGE_16_9.jpg"
+    },
+    {
+      "band": "KT Tunstall: 20th Anniversary \"Eye To the Telesope\" Tour",
+      "date": "2027-01-20",
+      "time": "19:00",
+      "venue": "Commodore Ballroom",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://www.ticketmaster.ca/kt-tunstall-20th-anniversary-eye-to-vancouver-british-columbia-01-20-2027/event/110065729E8A8614",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "commodore-ballroom"
     },
     {
       "band": "YDG",
