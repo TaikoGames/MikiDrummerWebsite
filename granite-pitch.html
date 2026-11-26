@@ -109,7 +109,7 @@
   const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
   // The band's Google script that sends from the band Gmail
   // (tools/granite-sender.gs, set up with granite-sender-setup.html).
-  const SENDER_URL = "";
+  const SENDER_URL = "https://script.google.com/macros/s/AKfycbwMcyOyXhMFoLMByy4s5R8EW4xHolCDBAssVpZ8O0wWzBDqAMmNsUHjg_fmv_KUID5fMA/exec";
   const store = { get(k){ try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } },
                   set(k, v){ try { localStorage.setItem(k, v); } catch (e) {} } };
   $("writer").value = store.get("granite_writer");
