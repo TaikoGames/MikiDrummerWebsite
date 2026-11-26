@@ -41,13 +41,18 @@
   .hdr dt{color:#6a6a66}.hdr dd{margin:0;overflow-wrap:anywhere;font-weight:600}
   .body{white-space:pre-wrap;font:15px/1.6 Inter,system-ui,sans-serif;overflow-wrap:anywhere;margin:0}
   .cap{font-size:13px;color:var(--muted);margin:10px 2px 0}
+  .hist{font:400 22px/1.1 "Archivo Black",Impact,sans-serif;margin:36px 0 12px}
+  #hist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+  #hist li{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 13px;overflow-wrap:anywhere}
+  #hist li span{display:block;color:var(--muted);font-size:13px}
+  .status button{margin-top:8px;border:1px solid currentColor;background:none;color:inherit;border-radius:8px;padding:6px 11px;font:600 15px Inter,system-ui,sans-serif;cursor:pointer}
   @media(max-width:760px){.grid{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Pitch GRANITE</h1>
-  <p class="sub">Paste a venue or promoter's email, say who's writing, then open it in your email and hit Send. The pitch, the press kit PDF and our links are all written for you.</p>
+  <p class="sub">Paste a venue or promoter's email, say who's writing, press Send. It goes out with the press kit PDF attached and our links, all written for you.</p>
 
   <div class="grid">
     <div class="panel">
@@ -68,10 +73,13 @@
           <label for="note">Anything to add <small>(optional)</small></label>
           <textarea id="note" maxlength="500" placeholder="We'd love a Friday in March."></textarea>
         </div>
+        <div id="pwRow" hidden>
+          <label for="pw">Band password <small>(asked once on this phone)</small></label>
+          <input id="pw" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="from Miki">
+        </div>
         <div class="btns">
-          <a class="btn primary" id="gmail" href="#" target="_blank" rel="noopener">Open in Gmail</a>
-          <a class="btn" id="mail" href="#">Open in my email app</a>
-          <button class="btn" id="copy" type="button">Copy the email</button>
+          <button class="btn primary" id="send" type="submit">📨 Send for GRANITE</button>
+          <a class="btn" id="gmail" href="#" target="_blank" rel="noopener">Or open it in my own Gmail</a>
         </div>
         <div class="status" id="st" hidden role="status" aria-live="polite"></div>
       </form>
@@ -82,9 +90,12 @@
         <dl class="hdr"><dt>To</dt><dd id="pTo">their email</dd><dt>Subject</dt><dd id="pSub"></dd></dl>
         <pre class="body" id="pBody"></pre>
       </article>
-      <p class="cap">This is exactly what they'll get. It sends from your own email, so replies come to you.</p>
+      <p class="cap">This is exactly what they'll get, with GRANITE-press-kit.pdf attached. Replies go to the band's Gmail.</p>
     </div>
   </div>
+
+  <h2 class="hist">Sent so far</h2>
+  <ul id="hist"><li>Enter the band password to see what's been sent.</li></ul>
 </div>
 
 <script>
@@ -96,6 +107,9 @@
   const VIDEO = "https://www.youtube.com/watch?v=Qovij1CQUV4";
   const IG = "https://www.instagram.com/granitevancouver/";
   const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
+  // The band's Google script that sends from the band Gmail
+  // (tools/granite-sender.gs, set up with granite-sender-setup.html).
+  const SENDER_URL = "";
   const store = { get(k){ try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } },
                   set(k, v){ try { localStorage.setItem(k, v); } catch (e) {} } };
   $("writer").value = store.get("granite_writer");
@@ -108,7 +122,7 @@
     const body = (venue ? "Hi " + venue + " team," : "Hi there,") + "\n\n" +
       "I'm " + first + " from GRANITE, a metal and grunge band from Vancouver. Downtuned riffs, raw vocals, and a loud, sweaty live show. We'd love to play " + (venue || "your room") + ".\n" +
       (note ? "\n" + note + "\n" : "") +
-      "\nOur press kit (PDF, with our bio, press photos and artwork):\n" + KIT_PDF + "\n\n" +
+      "\nOur press kit is attached (PDF): a one-sheet with our bio, plus press photos and artwork. You can also download it here:\n" + KIT_PDF + "\n\n" +
       "Music, photos and everything else are on our press page:\n" + EPK + "\n\n" +
       "Live video: " + VIDEO + "\nInstagram: " + IG + "\n\n" +
       "If there's a night that could fit us, just reply to this email. Happy to share draw numbers, a stage plot, or anything else you need.\n\n" +
@@ -122,27 +136,65 @@
     $("pBody").textContent = l.body;
     const q = encodeURIComponent;
     $("gmail").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + q(l.to) + "&su=" + q(l.subject) + "&body=" + q(l.body);
-    $("mail").href = "mailto:" + l.to + "?subject=" + q(l.subject) + "&body=" + q(l.body);
     if (l.writer) store.set("granite_writer", l.writer);
   }
   ["to","writer","venue","note"].forEach(id => $(id).addEventListener("input", render));
   render();
 
-  function status(text, kind){ const s = $("st"); s.hidden = false; s.className = "status " + (kind || ""); s.textContent = text; }
-  function check(e){
+  function status(text, kind){ const st = $("st"); st.hidden = false; st.className = "status " + (kind || ""); st.textContent = text; return st; }
+  const pw = () => ($("pw").value.trim() || store.get("granite_pw"));
+  if (!store.get("granite_pw")) $("pwRow").hidden = false;
+
+  $("gmail").addEventListener("click", e => {
     const l = letter();
     if (!l.to) { e.preventDefault(); status("Paste their email address first.", "bad"); $("to").focus(); return; }
-    if (!l.writer) { e.preventDefault(); status("Say who's writing.", "bad"); $("writer").focus(); return; }
-    status("Opened in your email. Check it and hit Send there.", "ok");
-  }
-  $("gmail").addEventListener("click", check);
-  $("mail").addEventListener("click", check);
-  $("copy").addEventListener("click", async () => {
-    const l = letter();
-    try { await navigator.clipboard.writeText("To: " + (l.to || "") + "\nSubject: " + l.subject + "\n\n" + l.body); status("Copied. Paste it into any email.", "ok"); }
-    catch (e) { status("Couldn't copy. Select the text on the right instead.", "bad"); }
+    status("Opened in your Gmail. Note: this way the PDF is a link, not attached.", "ok");
   });
-  $("f").addEventListener("submit", e => e.preventDefault());
+
+  async function send(again){
+    const l = letter();
+    if (!l.to) { status("Paste their email address first.", "bad"); $("to").focus(); return; }
+    if (!l.writer) { status("Say who's writing.", "bad"); $("writer").focus(); return; }
+    if (!SENDER_URL) { status("Sending isn't switched on yet. Use “Or open it in my own Gmail” for now.", "bad"); return; }
+    if (!pw()) { $("pwRow").hidden = false; status("Enter the band password (ask Miki).", "bad"); $("pw").focus(); return; }
+    $("send").disabled = true; status("Sending…");
+    try {
+      const r = await fetch(SENDER_URL, { method: "POST", body: JSON.stringify({
+        pw: pw(), to: l.to, writer: l.writer, venue: $("venue").value.trim(), note: $("note").value.trim(), again: !!again }) });
+      const d = await r.json();
+      if (d.ok) {
+        store.set("granite_pw", pw()); $("pwRow").hidden = true;
+        status("✓ " + d.message + " Replies go to the band's Gmail.", "ok");
+        $("to").value = ""; $("venue").value = ""; $("note").value = ""; render(); loadHistory();
+      } else if (d.repeat) {
+        const st = status(d.error, "bad");
+        const b = document.createElement("button"); b.type = "button"; b.textContent = "Send anyway";
+        b.onclick = () => send(true); st.append(document.createElement("br"), b);
+      } else {
+        if (/password/i.test(d.error)) { store.set("granite_pw", ""); $("pwRow").hidden = false; }
+        status(d.error, "bad");
+      }
+    } catch (e) { status("Couldn't reach the sender. Check your connection and try again.", "bad"); }
+    $("send").disabled = false;
+  }
+
+  async function loadHistory(){
+    if (!SENDER_URL || !pw()) return;
+    try {
+      const d = await (await fetch(SENDER_URL + "?pw=" + encodeURIComponent(pw()))).json();
+      if (!d.ok) return;
+      const ul = $("hist"); ul.replaceChildren();
+      if (!d.sent.length) { const li = document.createElement("li"); li.textContent = "Nothing sent yet."; ul.append(li); return; }
+      for (const h of d.sent) {
+        const li = document.createElement("li"), sp = document.createElement("span");
+        li.textContent = h.venue || h.to;
+        sp.textContent = (h.venue ? h.to + " · " : "") + new Date(h.at).toLocaleDateString([], { month: "short", day: "numeric" }) + " · by " + h.writer;
+        li.append(sp); ul.append(li);
+      }
+    } catch (e) {}
+  }
+  loadHistory();
+  $("f").addEventListener("submit", e => { e.preventDefault(); send(false); });
 })();
 </script>
 </body>
