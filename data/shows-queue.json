@@ -1,6 +1,21 @@
 {
   "_readme": "Shows found by tools/collect_shows.py, waiting for review at /shows-queue.html. Nothing in here is on the site. Approving a row moves it to punkbc-shows.json; turning one down records it in \"dismissed\" so the collector never offers it again.",
-  "pending": [],
+  "pending": [
+    {
+      "band": "Ozzy's Birthday Bash: Fundraiser for Parkinson Society BC Ft. Black Wizard, Space Queen, Burnt Lung, Ever Age, Dark Recollection, SweetBeast",
+      "date": "2026-12-05",
+      "time": "",
+      "venue": "Rickshaw Theatre",
+      "city": "Vancouver",
+      "price": "",
+      "ticket": "https://facebook.com/events/s/ozzys-birthday-bash-fundraiser/2273647270155046/",
+      "genre": "",
+      "notes": "",
+      "image": "https://www.mikidrummer.ca/punkbc-placeholder.svg",
+      "source": "vancouver-punk-calendar",
+      "first_seen": "2026-11-27"
+    }
+  ],
   "dismissed": [
     {
       "band": "Morgan and Clay play acoustic guitar and sing songs for people playing pool downstairs at Wise Hall and Lounge",
@@ -49,8 +64,8 @@
     }
   ],
   "last_good": {
-    "vancouver-punk-calendar": 1151,
+    "vancouver-punk-calendar": 1152,
     "commodore-ballroom": 25
   },
-  "updated": "2026-11-26"
+  "updated": "2026-11-27"
 }
